@@ -153,22 +153,22 @@ export const SpeechPractice: React.FC = () => {
       </div>
 
       {/* Exercise Card */}
-      <div className="bg-white rounded-3xl p-6 sm:p-8 border-2 border-gray-200 shadow-sm space-y-6 text-center max-w-xl mx-auto animate-pop">
+      <div className="bg-white dark:bg-[#1a2c35] rounded-3xl p-6 sm:p-8 border-2 border-gray-200 dark:border-[#2b3d45] shadow-sm space-y-6 text-center max-w-xl mx-auto animate-pop transition-colors duration-300">
         <div className="flex items-center justify-between">
-          <span className="text-xs font-black uppercase bg-blue-50 text-blue-600 px-3 py-1 rounded-xl">
+          <span className="text-xs font-black uppercase bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-300 px-3 py-1 rounded-xl">
             {currentExercise.level}
           </span>
-          <span className="text-xs font-bold text-gray-400">
+          <span className="text-xs font-bold text-gray-400 dark:text-gray-500">
             Cümle {exerciseIndex + 1} / {SPEECH_EXERCISES.length}
           </span>
         </div>
 
         {/* Target Sentence Display */}
         <div className="space-y-2">
-          <h3 className="text-2xl font-black text-gray-800 leading-snug">
+          <h3 className="text-2xl font-black text-gray-800 dark:text-gray-100 leading-snug">
             "{currentExercise.targetSentence}"
           </h3>
-          <p className="text-sm font-semibold text-gray-500">
+          <p className="text-sm font-semibold text-gray-500 dark:text-gray-400">
             {currentExercise.translation}
           </p>
         </div>
@@ -177,7 +177,7 @@ export const SpeechPractice: React.FC = () => {
         <div>
           <button
             onClick={() => playNativeAudio(currentExercise.targetSentence)}
-            className="inline-flex items-center gap-2 bg-blue-50 hover:bg-blue-100 text-blue-600 font-black text-xs px-4 py-2 rounded-xl transition-all border border-blue-200 active:scale-95"
+            className="inline-flex items-center gap-2 bg-blue-50 dark:bg-blue-950/40 hover:bg-blue-100 dark:hover:bg-blue-900/60 text-blue-600 dark:text-blue-300 font-black text-xs px-4 py-2 rounded-xl transition-all border border-blue-200 dark:border-blue-800 active:scale-95"
           >
             <Volume2 className="w-4 h-4" />
             <span>Doğru Telaffuzu Dinle</span>
@@ -190,7 +190,7 @@ export const SpeechPractice: React.FC = () => {
             onClick={handleToggleListening}
             className={`w-24 h-24 rounded-full mx-auto flex items-center justify-center transition-all shadow-xl active:scale-95 ${
               isListening
-                ? 'bg-red-500 text-white animate-pulse ring-8 ring-red-200'
+                ? 'bg-red-500 text-white animate-pulse ring-8 ring-red-200 dark:ring-red-900'
                 : 'bg-[#1cb0f6] hover:bg-[#1899d6] text-white border-b-6 border-[#1899d6]'
             }`}
             title="Mikrofon ile Konuş"
@@ -198,16 +198,16 @@ export const SpeechPractice: React.FC = () => {
             {isListening ? <Mic className="w-10 h-10 animate-bounce" /> : <Mic className="w-10 h-10" />}
           </button>
 
-          <span className="text-xs font-black uppercase tracking-wider text-gray-400 block mt-3">
+          <span className="text-xs font-black uppercase tracking-wider text-gray-400 dark:text-gray-500 block mt-3">
             {isListening ? '🎙️ Seni Dinliyorum... Konuşun!' : 'Mikrofona Tıkla ve Cümleyi Oku'}
           </span>
         </div>
 
         {/* Spoken Result */}
         {spokenText && (
-          <div className="p-4 bg-gray-50 rounded-2xl border-2 border-gray-200 text-xs space-y-1">
-            <span className="font-black text-gray-400 uppercase text-[10px]">Senin Söylediğin:</span>
-            <div className="font-bold text-gray-800 text-sm">"{spokenText}"</div>
+          <div className="p-4 bg-gray-50 dark:bg-[#202f36] rounded-2xl border-2 border-gray-200 dark:border-[#2b3d45] text-xs space-y-1">
+            <span className="font-black text-gray-400 dark:text-gray-500 uppercase text-[10px]">Senin Söylediğin:</span>
+            <div className="font-bold text-gray-800 dark:text-gray-100 text-sm">"{spokenText}"</div>
           </div>
         )}
 

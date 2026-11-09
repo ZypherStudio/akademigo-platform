@@ -406,19 +406,19 @@ export const ExamSimulator: React.FC = () => {
 
       {/* 1. Exam Landing Start Screen */}
       {!examActive && !isFinished && (
-        <div className="bg-white rounded-3xl p-8 border-2 border-gray-200 shadow-sm text-center max-w-xl mx-auto space-y-6 animate-pop">
+        <div className="bg-white dark:bg-[#1a2c35] rounded-3xl p-8 border-2 border-gray-200 dark:border-[#2b3d45] shadow-sm text-center max-w-xl mx-auto space-y-6 animate-pop transition-colors duration-300">
           <div className="text-6xl animate-bounceSubtle">🎓</div>
           <div>
-            <span className="text-xs font-black uppercase bg-emerald-100 text-emerald-800 px-3 py-1 rounded-full">
+            <span className="text-xs font-black uppercase bg-emerald-100 dark:bg-emerald-950/50 text-emerald-800 dark:text-emerald-300 px-3 py-1 rounded-full">
               {selectedExam.badge}
             </span>
-            <h3 className="text-2xl font-black text-gray-800 mt-2">{selectedExam.title}</h3>
-            <p className="text-sm font-semibold text-gray-500 mt-1">
+            <h3 className="text-2xl font-black text-gray-800 dark:text-gray-100 mt-2">{selectedExam.title}</h3>
+            <p className="text-sm font-semibold text-gray-500 dark:text-gray-400 mt-1">
               {selectedExam.category} müfredatına tam uyumlu {selectedExam.questions.length} soruluk güncel deneme sınavı.
             </p>
           </div>
 
-          <div className="grid grid-cols-2 gap-3 max-w-xs mx-auto text-left text-xs font-bold text-gray-700 bg-gray-50 p-4 rounded-2xl border border-gray-200">
+          <div className="grid grid-cols-2 gap-3 max-w-xs mx-auto text-left text-xs font-bold text-gray-700 dark:text-gray-200 bg-gray-50 dark:bg-[#202f36] p-4 rounded-2xl border border-gray-200 dark:border-[#2b3d45]">
             <div>⏱️ Süre: {selectedExam.durationMinutes} Dakika</div>
             <div>❓ Soru: {selectedExam.questions.length} Adet</div>
             <div>📊 Kural: 4 Yanlış 1 Doğru</div>
@@ -439,28 +439,28 @@ export const ExamSimulator: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           
           {/* Main Question Display (8 Cols) */}
-          <div className="lg:col-span-8 bg-white rounded-3xl p-6 border-2 border-gray-200 shadow-sm space-y-6">
+          <div className="lg:col-span-8 bg-white dark:bg-[#1a2c35] rounded-3xl p-6 border-2 border-gray-200 dark:border-[#2b3d45] shadow-sm space-y-6 transition-colors duration-300">
             
             {/* Top Question Meta & Timer */}
-            <div className="flex items-center justify-between pb-4 border-b border-gray-100">
+            <div className="flex items-center justify-between pb-4 border-b border-gray-100 dark:border-[#2b3d45]">
               <div>
-                <span className="text-xs font-black uppercase text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-lg">
+                <span className="text-xs font-black uppercase text-emerald-600 bg-emerald-50 dark:bg-emerald-950/40 px-2.5 py-1 rounded-lg">
                   {q.subject} • {q.topic}
                 </span>
-                <span className="text-xs font-black text-gray-400 ml-3">
+                <span className="text-xs font-black text-gray-400 dark:text-gray-500 ml-3">
                   Soru {currentQIndex + 1} / {selectedExam.questions.length}
                 </span>
               </div>
 
               {/* Countdown Clock */}
-              <div className="flex items-center gap-1.5 font-mono font-black text-sm text-red-500 bg-red-50 px-3 py-1.5 rounded-xl border border-red-200">
+              <div className="flex items-center gap-1.5 font-mono font-black text-sm text-red-500 bg-red-50 dark:bg-red-950/40 px-3 py-1.5 rounded-xl border border-red-200 dark:border-red-800">
                 <Clock className="w-4 h-4" />
                 <span>{formatTimer(timeLeft)}</span>
               </div>
             </div>
 
             {/* Question Text */}
-            <h4 className="text-lg sm:text-xl font-bold text-gray-800 leading-relaxed">
+            <h4 className="text-lg sm:text-xl font-bold text-gray-800 dark:text-gray-100 leading-relaxed">
               {q.question}
             </h4>
 
@@ -474,12 +474,12 @@ export const ExamSimulator: React.FC = () => {
                     onClick={() => handleSelectOption(q.id, opt.id)}
                     className={`w-full p-4 rounded-2xl font-bold text-sm border-2 text-left transition-all flex items-start gap-3.5 ${
                       isSelected
-                        ? 'border-emerald-500 bg-emerald-50 text-emerald-900 shadow-sm'
-                        : 'border-gray-200 hover:border-gray-300 text-gray-700 hover:bg-gray-50'
+                        ? 'border-emerald-500 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-900 dark:text-emerald-200 shadow-sm'
+                        : 'border-gray-200 dark:border-[#2b3d45] hover:border-gray-300 dark:hover:border-gray-600 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-[#20343f] bg-white dark:bg-[#202f36]'
                     }`}
                   >
                     <span className={`w-7 h-7 rounded-xl text-xs font-black flex items-center justify-center ${
-                      isSelected ? 'bg-emerald-500 text-white' : 'bg-gray-100 text-gray-600'
+                      isSelected ? 'bg-emerald-500 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300'
                     }`}>
                       {opt.id}
                     </span>
@@ -490,21 +490,21 @@ export const ExamSimulator: React.FC = () => {
             </div>
 
             {/* Question Navigation Prev / Next */}
-            <div className="flex items-center justify-between pt-4 border-t border-gray-100">
+            <div className="flex items-center justify-between pt-4 border-t border-gray-100 dark:border-[#2b3d45]">
               <button
                 disabled={currentQIndex === 0}
                 onClick={() => {
                   sound.playClick();
                   setCurrentQIndex(i => i - 1);
                 }}
-                className="px-4 py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 disabled:opacity-40 text-xs font-black text-gray-700 flex items-center gap-1.5"
+                className="px-4 py-2.5 rounded-xl bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 disabled:opacity-40 text-xs font-black text-gray-700 dark:text-gray-300 flex items-center gap-1.5"
               >
                 <ChevronLeft className="w-4 h-4" /> Önceki
               </button>
 
               <button
                 onClick={() => handleSelectOption(q.id, '')}
-                className="text-xs font-bold text-gray-400 hover:text-gray-600"
+                className="text-xs font-bold text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300"
               >
                 İşareti Temizle
               </button>
@@ -526,8 +526,8 @@ export const ExamSimulator: React.FC = () => {
           {/* Right Optical Navigation Form (4 Cols) */}
           <div className="lg:col-span-4 space-y-4">
             
-            <div className="bg-white rounded-3xl p-5 border-2 border-gray-200 shadow-sm space-y-4">
-              <h4 className="font-black text-sm text-gray-800 flex items-center gap-2">
+            <div className="bg-white dark:bg-[#1a2c35] rounded-3xl p-5 border-2 border-gray-200 dark:border-[#2b3d45] shadow-sm space-y-4 transition-colors duration-300">
+              <h4 className="font-black text-sm text-gray-800 dark:text-gray-100 flex items-center gap-2">
                 <FileText className="w-4 h-4 text-emerald-600" />
                 Optik Cevap Formu
               </h4>
@@ -549,12 +549,12 @@ export const ExamSimulator: React.FC = () => {
                         isCurrent
                           ? 'border-emerald-600 ring-2 ring-emerald-400'
                           : marked
-                          ? 'border-emerald-400 bg-emerald-50 text-emerald-800'
-                          : 'border-gray-200 bg-gray-50 text-gray-500 hover:bg-gray-100'
+                          ? 'border-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300'
+                          : 'border-gray-200 dark:border-[#2b3d45] bg-gray-50 dark:bg-gray-800 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700'
                       }`}
                     >
                       <span>S{idx + 1}</span>
-                      <span className="text-[10px] text-emerald-600">{marked || '-'}</span>
+                      <span className="text-[10px] text-emerald-600 dark:text-emerald-400">{marked || '-'}</span>
                     </button>
                   );
                 })}
@@ -573,7 +573,7 @@ export const ExamSimulator: React.FC = () => {
             <Mascot
               size="sm"
               mood="thinking"
-              speech="Geri sayımı unutma! Yapamadığın soruları optik formdan kontrol edip son 2 dakikada gözden geçirebilirsin. 🦉"
+              speech="Geri sayımı unutma! Yapamadığın soruları optik formdan kontrol edip son 2 dakikada gözden geçirebilirsin. 🐻🍯"
             />
           </div>
 
@@ -585,27 +585,27 @@ export const ExamSimulator: React.FC = () => {
         <div className="space-y-6 animate-pop">
           
           {/* Karne Header Card */}
-          <div className="bg-white rounded-3xl p-6 border-2 border-gray-200 shadow-sm text-center max-w-xl mx-auto space-y-5">
+          <div className="bg-white dark:bg-[#1a2c35] rounded-3xl p-6 border-2 border-gray-200 dark:border-[#2b3d45] shadow-sm text-center max-w-xl mx-auto space-y-5 transition-colors duration-300">
             <div className="text-6xl animate-bounceSubtle">🏆</div>
-            <h3 className="text-2xl font-black text-gray-800">Sınav Karnen & Net Analizi</h3>
+            <h3 className="text-2xl font-black text-gray-800 dark:text-gray-100">Sınav Karnen & Net Analizi</h3>
 
             {/* Score Grid */}
             <div className="grid grid-cols-4 gap-2 text-center">
-              <div className="bg-green-50 border border-green-200 rounded-2xl p-3">
-                <span className="text-[10px] font-black uppercase text-green-600 block">DOĞRU</span>
-                <span className="text-xl font-black text-green-700">{correctCount}</span>
+              <div className="bg-green-50 dark:bg-green-950/40 border border-green-200 dark:border-green-800 rounded-2xl p-3">
+                <span className="text-[10px] font-black uppercase text-green-600 dark:text-green-400 block">DOĞRU</span>
+                <span className="text-xl font-black text-green-700 dark:text-green-300">{correctCount}</span>
               </div>
-              <div className="bg-red-50 border border-red-200 rounded-2xl p-3">
-                <span className="text-[10px] font-black uppercase text-red-600 block">YANLIŞ</span>
-                <span className="text-xl font-black text-red-700">{wrongCount}</span>
+              <div className="bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800 rounded-2xl p-3">
+                <span className="text-[10px] font-black uppercase text-red-600 dark:text-red-400 block">YANLIŞ</span>
+                <span className="text-xl font-black text-red-700 dark:text-red-300">{wrongCount}</span>
               </div>
-              <div className="bg-gray-100 border border-gray-200 rounded-2xl p-3">
-                <span className="text-[10px] font-black uppercase text-gray-500 block">BOŞ</span>
-                <span className="text-xl font-black text-gray-700">{emptyCount}</span>
+              <div className="bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-3">
+                <span className="text-[10px] font-black uppercase text-gray-500 dark:text-gray-400 block">BOŞ</span>
+                <span className="text-xl font-black text-gray-700 dark:text-gray-300">{emptyCount}</span>
               </div>
-              <div className="bg-emerald-50 border border-emerald-300 rounded-2xl p-3">
-                <span className="text-[10px] font-black uppercase text-emerald-600 block">NET</span>
-                <span className="text-xl font-black text-emerald-700">{netScore}</span>
+              <div className="bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-300 dark:border-emerald-800 rounded-2xl p-3">
+                <span className="text-[10px] font-black uppercase text-emerald-600 dark:text-emerald-400 block">NET</span>
+                <span className="text-xl font-black text-emerald-700 dark:text-emerald-300">{netScore}</span>
               </div>
             </div>
 
@@ -621,28 +621,28 @@ export const ExamSimulator: React.FC = () => {
           </div>
 
           {/* Solutions & Explanations List */}
-          <div className="bg-white rounded-3xl p-6 border-2 border-gray-200 shadow-sm space-y-4">
-            <h4 className="font-black text-lg text-gray-800">Soruların Detaylı Çözümleri</h4>
+          <div className="bg-white dark:bg-[#1a2c35] rounded-3xl p-6 border-2 border-gray-200 dark:border-[#2b3d45] shadow-sm space-y-4 transition-colors duration-300">
+            <h4 className="font-black text-lg text-gray-800 dark:text-gray-100">Soruların Detaylı Çözümleri</h4>
             <div className="space-y-4">
               {selectedExam.questions.map((item, idx) => {
                 const userChoice = userAnswers[item.id];
                 const isCorrect = userChoice === item.correctOption;
 
                 return (
-                  <div key={item.id} className="p-4 rounded-2xl border-2 border-gray-100 bg-gray-50/50 space-y-2">
+                  <div key={item.id} className="p-4 rounded-2xl border-2 border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-[#202f36] space-y-2">
                     <div className="flex items-center justify-between text-xs font-bold">
-                      <span className="font-black text-gray-700">Soru {idx + 1}: {item.topic}</span>
+                      <span className="font-black text-gray-700 dark:text-gray-200">Soru {idx + 1}: {item.topic}</span>
                       <span className={`px-2 py-0.5 rounded-md font-black ${
-                        isCorrect ? 'bg-green-100 text-green-700' : userChoice ? 'bg-red-100 text-red-700' : 'bg-gray-200 text-gray-600'
+                        isCorrect ? 'bg-green-100 dark:bg-green-950/50 text-green-700 dark:text-green-300' : userChoice ? 'bg-red-100 dark:bg-red-950/50 text-red-700 dark:text-red-300' : 'bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300'
                       }`}>
                         {isCorrect ? 'DOĞRU ✅' : userChoice ? 'YANLIŞ ❌' : 'BOŞ'}
                       </span>
                     </div>
 
-                    <p className="text-sm font-semibold text-gray-800">{item.question}</p>
+                    <p className="text-sm font-semibold text-gray-800 dark:text-gray-100">{item.question}</p>
 
-                    <div className="text-xs text-emerald-800 bg-emerald-50 p-3 rounded-xl border border-emerald-200 font-medium">
-                      <span className="font-black block text-emerald-900 mb-1">
+                    <div className="text-xs text-emerald-800 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/40 p-3 rounded-xl border border-emerald-200 dark:border-emerald-800 font-medium">
+                      <span className="font-black block text-emerald-900 dark:text-emerald-200 mb-1">
                         Doğru Şık: {item.correctOption} | Senin Cevabın: {userChoice || 'Boş'}
                       </span>
                       {item.solution}

@@ -65,7 +65,7 @@ const DEFAULT_STATS: UserStats = {
   openedChests: [],
   selectedCourseId: 'yks',
   theme: 'duo',
-  avatar: 'owl',
+  avatar: 'haribo',
   title: 'YKS Derece Adayı 🎓',
   bannerColor: 'from-emerald-500 to-green-600',
   totalQuestionsAnswered: 35,
@@ -111,6 +111,7 @@ const DEFAULT_NOTES: StudyNote[] = [
 ];
 
 export const AVATAR_MAP: Record<UserAvatar, { emoji: string; name: string }> = {
+  haribo: { emoji: '🐻', name: 'Haribo Ayıcık (Özel Maskot)' },
   owl: { emoji: '🦉', name: 'Bilge Baykuş' },
   fox: { emoji: '🦊', name: 'Zeki Tilki' },
   robot: { emoji: '🤖', name: 'AI Robot' },
@@ -149,6 +150,12 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   useEffect(() => {
     localStorage.setItem('akademi_user_stats', JSON.stringify(stats));
+    if (stats.theme === 'dark' || stats.theme === 'cyber') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+    document.documentElement.setAttribute('data-theme', stats.theme);
   }, [stats]);
 
   useEffect(() => {

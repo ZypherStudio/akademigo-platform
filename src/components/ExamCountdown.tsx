@@ -105,14 +105,14 @@ export const ExamCountdown: React.FC = () => {
               }}
               className={`p-4 rounded-3xl border-2 flex items-center gap-3 transition-all text-left ${
                 isSelected
-                  ? 'border-purple-500 bg-purple-50 shadow-md ring-2 ring-purple-300'
-                  : 'border-gray-200 bg-white hover:border-gray-300'
+                  ? 'border-purple-500 bg-purple-50 dark:bg-purple-950/40 shadow-md ring-2 ring-purple-300 dark:ring-purple-700'
+                  : 'border-gray-200 dark:border-[#2b3d45] bg-white dark:bg-[#1a2c35] hover:border-gray-300 dark:hover:border-gray-600'
               }`}
             >
               <span className="text-3xl select-none">{exam.icon}</span>
               <div>
-                <span className="text-[10px] font-black uppercase text-purple-600 block">{exam.badge}</span>
-                <span className="font-black text-sm text-gray-800">{exam.name}</span>
+                <span className="text-[10px] font-black uppercase text-purple-600 dark:text-purple-400 block">{exam.badge}</span>
+                <span className="font-black text-sm text-gray-800 dark:text-gray-100">{exam.name}</span>
               </div>
             </button>
           );
@@ -120,44 +120,44 @@ export const ExamCountdown: React.FC = () => {
       </div>
 
       {/* Big Animated Countdown Clock */}
-      <div className="bg-white rounded-3xl p-6 sm:p-8 border-2 border-gray-200 shadow-sm text-center space-y-6">
+      <div className="bg-white dark:bg-[#1a2c35] rounded-3xl p-6 sm:p-8 border-2 border-gray-200 dark:border-[#2b3d45] shadow-sm text-center space-y-6 transition-colors duration-300">
         <div>
-          <span className="text-xs font-black uppercase text-gray-400 tracking-wider">
+          <span className="text-xs font-black uppercase text-gray-400 dark:text-gray-500 tracking-wider">
             {activeExam.name} BAŞLAMASINA KALAN ZAMAN
           </span>
           <div className="grid grid-cols-4 gap-2 sm:gap-4 max-w-lg mx-auto mt-4 font-mono">
             {/* Days */}
-            <div className="bg-purple-50 border-2 border-purple-200 p-3 sm:p-4 rounded-2xl">
-              <div className="text-3xl sm:text-5xl font-black text-purple-700">{timeLeft.days}</div>
-              <span className="text-[10px] sm:text-xs font-black text-purple-900 uppercase">GÜN</span>
+            <div className="bg-purple-50 dark:bg-purple-950/40 border-2 border-purple-200 dark:border-purple-800 p-3 sm:p-4 rounded-2xl">
+              <div className="text-3xl sm:text-5xl font-black text-purple-700 dark:text-purple-300">{timeLeft.days}</div>
+              <span className="text-[10px] sm:text-xs font-black text-purple-900 dark:text-purple-200 uppercase">GÜN</span>
             </div>
             {/* Hours */}
-            <div className="bg-indigo-50 border-2 border-indigo-200 p-3 sm:p-4 rounded-2xl">
-              <div className="text-3xl sm:text-5xl font-black text-indigo-700">{timeLeft.hours}</div>
-              <span className="text-[10px] sm:text-xs font-black text-indigo-900 uppercase">SAAT</span>
+            <div className="bg-indigo-50 dark:bg-indigo-950/40 border-2 border-indigo-200 dark:border-indigo-800 p-3 sm:p-4 rounded-2xl">
+              <div className="text-3xl sm:text-5xl font-black text-indigo-700 dark:text-indigo-300">{timeLeft.hours}</div>
+              <span className="text-[10px] sm:text-xs font-black text-indigo-900 dark:text-indigo-200 uppercase">SAAT</span>
             </div>
             {/* Minutes */}
-            <div className="bg-blue-50 border-2 border-blue-200 p-3 sm:p-4 rounded-2xl">
-              <div className="text-3xl sm:text-5xl font-black text-blue-700">{timeLeft.minutes}</div>
-              <span className="text-[10px] sm:text-xs font-black text-blue-900 uppercase">DAKİKA</span>
+            <div className="bg-blue-50 dark:bg-blue-950/40 border-2 border-blue-200 dark:border-blue-800 p-3 sm:p-4 rounded-2xl">
+              <div className="text-3xl sm:text-5xl font-black text-blue-700 dark:text-blue-300">{timeLeft.minutes}</div>
+              <span className="text-[10px] sm:text-xs font-black text-blue-900 dark:text-blue-200 uppercase">DAKİKA</span>
             </div>
             {/* Seconds */}
-            <div className="bg-emerald-50 border-2 border-emerald-200 p-3 sm:p-4 rounded-2xl animate-pulse">
-              <div className="text-3xl sm:text-5xl font-black text-emerald-700">{timeLeft.seconds}</div>
-              <span className="text-[10px] sm:text-xs font-black text-emerald-900 uppercase">SANİYE</span>
+            <div className="bg-emerald-50 dark:bg-emerald-950/40 border-2 border-emerald-200 dark:border-emerald-800 p-3 sm:p-4 rounded-2xl animate-pulse">
+              <div className="text-3xl sm:text-5xl font-black text-emerald-700 dark:text-emerald-300">{timeLeft.seconds}</div>
+              <span className="text-[10px] sm:text-xs font-black text-emerald-900 dark:text-emerald-200 uppercase">SANİYE</span>
             </div>
           </div>
         </div>
       </div>
 
       {/* Daily Target Goal Manager */}
-      <div className="bg-white rounded-3xl p-6 border-2 border-gray-200 shadow-sm space-y-5">
+      <div className="bg-white dark:bg-[#1a2c35] rounded-3xl p-6 border-2 border-gray-200 dark:border-[#2b3d45] shadow-sm space-y-5 transition-colors duration-300">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Target className="w-5 h-5 text-purple-600" />
-            <h3 className="font-black text-base text-gray-800">Günlük Soru Hedefin</h3>
+            <Target className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+            <h3 className="font-black text-base text-gray-800 dark:text-gray-100">Günlük Soru Hedefin</h3>
           </div>
-          <span className="text-xs font-black bg-purple-100 text-purple-800 px-3 py-1 rounded-xl">
+          <span className="text-xs font-black bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-300 px-3 py-1 rounded-xl">
             Hedef: {dailyQuestionGoal} Soru / Gün
           </span>
         </div>

@@ -85,7 +85,7 @@ export const Shop: React.FC = () => {
         {items.map(item => (
           <div
             key={item.id}
-            className="bg-white rounded-3xl p-5 border-2 border-gray-200 shadow-sm flex items-center justify-between gap-4"
+            className="bg-white dark:bg-[#1a2c35] rounded-3xl p-5 border-2 border-gray-200 dark:border-[#2b3d45] shadow-sm flex items-center justify-between gap-4 transition-colors duration-300"
           >
             <div className="flex items-center gap-4">
               <div className={`w-14 h-14 rounded-2xl flex items-center justify-center text-3xl select-none ${item.iconBg}`}>
@@ -93,14 +93,14 @@ export const Shop: React.FC = () => {
               </div>
               <div>
                 <div className="flex items-center gap-2">
-                  <h4 className="font-extrabold text-base text-gray-800">{item.title}</h4>
+                  <h4 className="font-extrabold text-base text-gray-800 dark:text-gray-100">{item.title}</h4>
                   {item.owned !== undefined && (
-                    <span className="text-[10px] font-black bg-blue-100 text-blue-700 px-2 py-0.5 rounded-md">
+                    <span className="text-[10px] font-black bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 px-2 py-0.5 rounded-md">
                       Sahip: {item.owned} Adet
                     </span>
                   )}
                 </div>
-                <p className="text-xs text-gray-500 font-semibold mt-0.5 max-w-sm">
+                <p className="text-xs text-gray-500 dark:text-gray-400 font-semibold mt-0.5 max-w-sm">
                   {item.description}
                 </p>
               </div>

@@ -27,18 +27,18 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentTab, onSelectTab }) => 
   ];
 
   return (
-    <aside className="hidden md:flex md:w-64 bg-white border-r-2 border-gray-200 min-h-[calc(100vh-61px)] p-3 flex-col justify-between select-none flex-shrink-0">
+    <aside className="hidden md:flex md:w-64 bg-white dark:bg-[#1a2c35] border-r-2 border-gray-200 dark:border-[#2b3d45] min-h-[calc(100vh-61px)] p-3 flex-col justify-between select-none flex-shrink-0 transition-colors duration-300">
       <div className="space-y-1">
         
-        {/* Brand Logo */}
+        {/* Brand Logo with Haribo Bear */}
         <div className="hidden md:flex items-center gap-3 px-3 py-2 mb-2">
-          <div className="text-3xl animate-bounceSubtle">🦉</div>
+          <div className="text-3xl animate-bounceSubtle filter drop-shadow">🐻</div>
           <div>
             <h1 className="text-2xl font-black tracking-tight text-[#58cc02] leading-none">
               Akademi<span className="text-[#1cb0f6]">GO</span>
             </h1>
-            <span className="text-[10px] font-black uppercase text-gray-400 tracking-wider">
-              Süper Eğitim Evreni
+            <span className="text-[10px] font-black uppercase text-gray-400 dark:text-gray-500 tracking-wider">
+              Haribo Koçluk Evreni
             </span>
           </div>
         </div>
@@ -54,8 +54,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentTab, onSelectTab }) => 
                 onClick={() => onSelectTab(item.id as NavTab)}
                 className={`w-full flex items-center gap-3 px-3 py-2 rounded-2xl font-black text-xs tracking-wide transition-all ${
                   isActive
-                    ? 'bg-blue-50 border-2 border-[#1cb0f6] text-[#1cb0f6] shadow-sm'
-                    : 'text-gray-600 hover:bg-gray-100 border-2 border-transparent hover:border-gray-200'
+                    ? 'bg-blue-50 dark:bg-blue-950/40 border-2 border-[#1cb0f6] text-[#1cb0f6] shadow-sm'
+                    : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-[#20343f] border-2 border-transparent hover:border-gray-200 dark:hover:border-gray-700'
                 }`}
                 title={item.label}
               >

@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
 import { useGame } from '../context/GameContext';
 import { COURSES } from '../data/coursesData';
-import { Check, Lock, Star, Gift, ShieldAlert, Sparkles, BookOpen, Play } from 'lucide-react';
+import { Check, Lock, Star, Gift, ShieldAlert, Sparkles, BookOpen, Play, Filter } from 'lucide-react';
 import { Lesson, Unit } from '../types';
 import { Mascot } from './Mascot';
+import { sound } from '../utils/audio';
 
 export const LearnPath: React.FC = () => {
   const { stats, selectedCourseId, startLesson, openChest, leaderboard } = useGame();
   const [selectedGuideUnit, setSelectedGuideUnit] = useState<Unit | null>(null);
+  const [selectedDifficulty, setSelectedDifficulty] = useState<'all' | 'kolay' | 'orta' | 'zor'>('all');
 
   const course = COURSES.find(c => c.id === selectedCourseId) || COURSES[0];
 
@@ -35,6 +37,17 @@ export const LearnPath: React.FC = () => {
     return false;
   };
 
+  const handleLaunchLesson = (rawLesson: Lesson) => {
+    let filteredQuestions = rawLesson.questions;
+    if (selectedDifficulty !== 'all') {
+      const matched = rawLesson.questions.filter(q => q.difficulty === selectedDifficulty);
+      if (matched.length > 0) {
+        filteredQuestions = matched;
+      }
+    }
+    startLesson({ ...rawLesson, questions: filteredQuestions });
+  };
+
   // Find the exact active lesson (the first unlocked but not completed lesson)
   let activeFound = false;
 
@@ -58,7 +71,7 @@ export const LearnPath: React.FC = () => {
       
       {/* Course Header Banner */}
       <div 
-        className="rounded-3xl p-6 mb-8 text-white shadow-lg relative overflow-hidden"
+        className="rounded-3xl p-6 mb-6 text-white shadow-lg relative overflow-hidden"
         style={{
           background: `linear-gradient(135deg, ${course.color} 0%, ${course.accentColor} 100%)`
         }}
@@ -81,12 +94,43 @@ export const LearnPath: React.FC = () => {
         <div className="absolute -right-6 -bottom-6 w-32 h-32 rounded-full bg-white/10 pointer-events-none" />
       </div>
 
+      {/* Question Difficulty Filter Bar (MEB / ÖSYM / Derece) */}
+      <div className="bg-white dark:bg-[#1a2c35] border-2 border-gray-200 dark:border-[#2b3d45] rounded-2xl p-2.5 sm:p-3 mb-6 flex flex-wrap items-center justify-between gap-2 shadow-sm transition-colors duration-300">
+        <div className="flex items-center gap-2 text-xs font-black text-gray-700 dark:text-gray-200 px-1">
+          <Filter className="w-4 h-4 text-blue-500" />
+          <span>Soru Zorluğu:</span>
+        </div>
+        <div className="flex items-center gap-1.5 flex-1 justify-end flex-wrap">
+          {[
+            { id: 'all', label: '🌟 Tümü' },
+            { id: 'kolay', label: '🟢 Basit (Kavrama)' },
+            { id: 'orta', label: '🟡 Orta (ÖSYM)' },
+            { id: 'zor', label: '🔴 İleri (Yeni Nesil)' }
+          ].map(lvl => (
+            <button
+              key={lvl.id}
+              onClick={() => {
+                sound.playClick();
+                setSelectedDifficulty(lvl.id as any);
+              }}
+              className={`px-3 py-1.5 rounded-xl text-xs font-black transition-all ${
+                selectedDifficulty === lvl.id
+                  ? 'bg-blue-600 text-white shadow-sm ring-2 ring-blue-300'
+                  : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
+              }`}
+            >
+              {lvl.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
       {/* Mobile Welcome Mascot (Visible on mobile/tablet) */}
       <div className="xl:hidden flex justify-center mb-8">
         <Mascot
           size="md"
           mood="idle"
-          speech="Hazır mısın? Bugün hedefin için harika bir gün! 🦉🔥"
+          speech="Hazır mısın? Haribo Ayıcık ile hedefine adım adım koşuyoruz! 🐻🍯"
         />
       </div>
 
@@ -141,10 +185,10 @@ export const LearnPath: React.FC = () => {
                     >
                       {/* Active "BAŞLA" floating bubble */}
                       {isCurrentActive && (
-                        <div className="absolute -top-11 z-20 animate-bounce bg-white text-gray-800 font-black text-xs px-3 py-1.5 rounded-xl shadow-lg border-2 border-gray-200 flex items-center gap-1.5 whitespace-nowrap">
+                        <div className="absolute -top-11 z-20 animate-bounce bg-white dark:bg-[#1a2c35] text-gray-800 dark:text-gray-100 font-black text-xs px-3 py-1.5 rounded-xl shadow-lg border-2 border-gray-200 dark:border-[#2b3d45] flex items-center gap-1.5 whitespace-nowrap">
                           <Play className="w-3.5 h-3.5 fill-[#58cc02] text-[#58cc02]" />
                           BAŞLA!
-                          <div className="absolute left-1/2 -bottom-2 -translate-x-1/2 w-0 h-0 border-x-8 border-x-transparent border-t-8 border-t-white" />
+                          <div className="absolute left-1/2 -bottom-2 -translate-x-1/2 w-0 h-0 border-x-8 border-x-transparent border-t-8 border-t-white dark:border-t-[#1a2c35]" />
                         </div>
                       )}
 
@@ -155,10 +199,10 @@ export const LearnPath: React.FC = () => {
                           onClick={() => openChest(lesson.id, lesson.xpReward, lesson.gemReward)}
                           className={`w-16 h-16 sm:w-20 sm:h-20 rounded-2xl flex items-center justify-center transition-all ${
                             chestOpened
-                              ? 'bg-amber-100 border-b-4 border-amber-300 opacity-70'
+                              ? 'bg-amber-100 dark:bg-amber-950/40 border-b-4 border-amber-300 dark:border-amber-700 opacity-70'
                               : unlocked
                               ? 'bg-amber-400 border-b-6 border-amber-600 hover:scale-105 active:border-b-0 active:translate-y-1.5 shadow-lg animate-wiggle'
-                              : 'bg-gray-200 border-b-4 border-gray-300 cursor-not-allowed opacity-60'
+                              : 'bg-gray-200 dark:bg-gray-800 border-b-4 border-gray-300 dark:border-gray-700 cursor-not-allowed opacity-60'
                           }`}
                           title={lesson.title}
                         >
@@ -168,13 +212,13 @@ export const LearnPath: React.FC = () => {
                         /* Boss Checkpoint Node */
                         <button
                           disabled={!unlocked}
-                          onClick={() => startLesson(lesson)}
+                          onClick={() => handleLaunchLesson(lesson)}
                           className={`w-20 h-20 sm:w-24 sm:h-24 rounded-full flex flex-col items-center justify-center transition-all ${
                             completed
                               ? 'bg-yellow-400 border-b-6 border-yellow-600 shadow-xl'
                               : unlocked
                               ? 'bg-red-500 border-b-6 border-red-700 hover:scale-105 active:border-b-0 active:translate-y-1.5 shadow-xl animate-pulse'
-                              : 'bg-gray-200 border-b-4 border-gray-300 cursor-not-allowed opacity-60'
+                              : 'bg-gray-200 dark:bg-gray-800 border-b-4 border-gray-300 dark:border-gray-700 cursor-not-allowed opacity-60'
                           }`}
                           title={lesson.title}
                         >
@@ -184,7 +228,7 @@ export const LearnPath: React.FC = () => {
                         /* Standard Lesson Node */
                         <button
                           disabled={!unlocked}
-                          onClick={() => startLesson(lesson)}
+                          onClick={() => handleLaunchLesson(lesson)}
                           className={`w-16 h-16 sm:w-20 sm:h-20 rounded-full flex items-center justify-center transition-all font-black text-white relative ${
                             completed
                               ? 'bg-amber-400 border-b-6 border-amber-500 hover:scale-105 shadow-md active:border-b-0 active:translate-y-1'
@@ -192,7 +236,7 @@ export const LearnPath: React.FC = () => {
                               ? 'bg-[#58cc02] border-b-6 border-[#46a302] hover:scale-105 shadow-xl ring-8 ring-[#58cc02]/20 active:border-b-0 active:translate-y-1.5'
                               : unlocked
                               ? 'bg-blue-400 border-b-6 border-blue-500 hover:scale-105 active:border-b-0 active:translate-y-1'
-                              : 'bg-gray-200 border-b-4 border-gray-300 cursor-not-allowed opacity-60 text-gray-400'
+                              : 'bg-gray-200 dark:bg-gray-800 border-b-4 border-gray-300 dark:border-gray-700 cursor-not-allowed opacity-60 text-gray-400'
                           }`}
                           title={lesson.title}
                         >
@@ -207,7 +251,7 @@ export const LearnPath: React.FC = () => {
                       )}
 
                       {/* Lesson title label */}
-                      <span className="text-xs font-black text-gray-700 mt-2 max-w-[150px] text-center leading-tight">
+                      <span className="text-xs font-black text-gray-700 dark:text-gray-200 mt-2 max-w-[150px] text-center leading-tight">
                         {lesson.title}
                       </span>
                     </div>
@@ -223,30 +267,30 @@ export const LearnPath: React.FC = () => {
       {/* Guidebook Modal */}
       {selectedGuideUnit && (
         <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4 backdrop-blur-sm animate-pop">
-          <div className="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl border-2 border-gray-200">
-            <div className="flex items-center justify-between pb-4 border-b border-gray-100">
+          <div className="bg-white dark:bg-[#1a2c35] rounded-3xl max-w-lg w-full p-6 shadow-2xl border-2 border-gray-200 dark:border-[#2b3d45] transition-colors duration-300">
+            <div className="flex items-center justify-between pb-4 border-b border-gray-100 dark:border-[#2b3d45]">
               <div>
-                <span className="text-xs font-black uppercase text-gray-400">Ünite Rehberi</span>
-                <h3 className="text-xl font-black text-gray-800">{selectedGuideUnit.title}</h3>
+                <span className="text-xs font-black uppercase text-gray-400 dark:text-gray-500">Ünite Rehberi</span>
+                <h3 className="text-xl font-black text-gray-800 dark:text-gray-100">{selectedGuideUnit.title}</h3>
               </div>
               <button
                 onClick={() => setSelectedGuideUnit(null)}
-                className="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center font-black text-gray-600"
+                className="w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 flex items-center justify-center font-black text-gray-600 dark:text-gray-300"
               >
                 ✕
               </button>
             </div>
 
             <div className="py-4 space-y-4">
-              <p className="text-sm text-gray-600 font-medium leading-relaxed">
+              <p className="text-sm text-gray-600 dark:text-gray-300 font-medium leading-relaxed">
                 {selectedGuideUnit.description}
               </p>
 
-              <div className="bg-amber-50 border-2 border-amber-200 rounded-2xl p-4">
-                <h4 className="font-black text-amber-900 text-sm mb-2 flex items-center gap-1.5">
+              <div className="bg-amber-50 dark:bg-amber-950/40 border-2 border-amber-200 dark:border-amber-800 rounded-2xl p-4">
+                <h4 className="font-black text-amber-900 dark:text-amber-200 text-sm mb-2 flex items-center gap-1.5">
                   💡 Bu Ünitedeki Önemli Taktikler
                 </h4>
-                <ul className="text-xs text-amber-800 font-semibold space-y-1.5 list-disc list-inside">
+                <ul className="text-xs text-amber-800 dark:text-amber-300 font-semibold space-y-1.5 list-disc list-inside">
                   {selectedGuideUnit.lessons.flatMap(l => l.summaryNotes || []).map((note, i) => (
                     <li key={i}>{note}</li>
                   ))}

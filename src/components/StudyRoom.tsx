@@ -104,19 +104,19 @@ export const StudyRoom: React.FC = () => {
         <div className="lg:col-span-2 space-y-6">
           
           {/* Video Player Card */}
-          <div className="bg-white rounded-3xl p-5 shadow-sm border-2 border-gray-200">
+          <div className="bg-white dark:bg-[#1a2c35] rounded-3xl p-5 shadow-sm border-2 border-gray-200 dark:border-[#2b3d45] transition-colors duration-300">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
                 <Video className="w-6 h-6 text-red-500" />
-                <h3 className="font-black text-gray-800 text-lg">Açık Ders Anlatımı</h3>
+                <h3 className="font-black text-gray-800 dark:text-gray-100 text-lg">Açık Ders Anlatımı</h3>
               </div>
-              <span className="text-xs font-black text-green-600 bg-green-50 px-2.5 py-1 rounded-lg border border-green-200">
+              <span className="text-xs font-black text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-950/40 px-2.5 py-1 rounded-lg border border-green-200 dark:border-green-800">
                 Açık Kaynak & Telifsiz
               </span>
             </div>
 
             {/* Embedded Player or Interactive Educational Viewer */}
-            <div className="relative aspect-video rounded-2xl overflow-hidden bg-gray-900 border-2 border-gray-100 shadow-inner">
+            <div className="relative aspect-video rounded-2xl overflow-hidden bg-gray-900 border-2 border-gray-100 dark:border-gray-800 shadow-inner">
               <iframe
                 className="w-full h-full"
                 src={`https://www.youtube-nocookie.com/embed/${activeVideo?.youtubeId || 'videoseries'}`}
@@ -130,15 +130,15 @@ export const StudyRoom: React.FC = () => {
             {activeVideo && (
               <div className="mt-4">
                 <div className="flex items-start justify-between gap-2">
-                  <h4 className="font-extrabold text-base text-gray-800">{activeVideo.title}</h4>
-                  <span className="text-xs font-bold text-gray-400 bg-gray-100 px-2 py-1 rounded-md whitespace-nowrap">
+                  <h4 className="font-extrabold text-base text-gray-800 dark:text-gray-100">{activeVideo.title}</h4>
+                  <span className="text-xs font-bold text-gray-400 dark:text-gray-500 bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded-md whitespace-nowrap">
                     {activeVideo.duration}
                   </span>
                 </div>
-                <p className="text-xs text-gray-500 font-medium mt-1">{activeVideo.description}</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400 font-medium mt-1">{activeVideo.description}</p>
                 <div className="flex flex-wrap gap-1.5 mt-3">
                   {activeVideo.tags.map((t, idx) => (
-                    <span key={idx} className="text-[11px] font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-md">
+                    <span key={idx} className="text-[11px] font-bold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/40 px-2 py-0.5 rounded-md">
                       #{t}
                     </span>
                   ))}
@@ -147,8 +147,8 @@ export const StudyRoom: React.FC = () => {
             )}
 
             {/* Other Videos in this course */}
-            <div className="mt-6 pt-4 border-t border-gray-100">
-              <div className="text-xs font-black uppercase text-gray-400 mb-3">DİĞER DERS VİDEOLARI</div>
+            <div className="mt-6 pt-4 border-t border-gray-100 dark:border-[#2b3d45]">
+              <div className="text-xs font-black uppercase text-gray-400 dark:text-gray-500 mb-3">DİĞER DERS VİDEOLARI</div>
               <div className="space-y-2">
                 {filteredVideos.map((vid) => (
                   <button
@@ -159,20 +159,20 @@ export const StudyRoom: React.FC = () => {
                     }}
                     className={`w-full flex items-center justify-between p-3 rounded-2xl border-2 text-left transition-all ${
                       activeVideo?.id === vid.id
-                        ? 'border-[#af72ff] bg-purple-50 text-purple-900'
-                        : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50 text-gray-700'
+                        ? 'border-[#af72ff] bg-purple-50 dark:bg-purple-950/40 text-purple-900 dark:text-purple-200'
+                        : 'border-gray-200 dark:border-[#2b3d45] hover:border-gray-300 dark:hover:border-gray-600 hover:bg-gray-50 dark:hover:bg-[#20343f] text-gray-700 dark:text-gray-200 bg-white dark:bg-[#202f36]'
                     }`}
                   >
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-xl bg-purple-100 flex items-center justify-center text-purple-600 font-bold">
+                      <div className="w-8 h-8 rounded-xl bg-purple-100 dark:bg-purple-900/50 flex items-center justify-center text-purple-600 dark:text-purple-300 font-bold">
                         ▶
                       </div>
                       <div>
                         <div className="font-bold text-xs sm:text-sm">{vid.title}</div>
-                        <div className="text-[11px] text-gray-400">{vid.channel}</div>
+                        <div className="text-[11px] text-gray-400 dark:text-gray-500">{vid.channel}</div>
                       </div>
                     </div>
-                    <span className="text-xs font-bold text-gray-400">{vid.duration}</span>
+                    <span className="text-xs font-bold text-gray-400 dark:text-gray-500">{vid.duration}</span>
                   </button>
                 ))}
               </div>
@@ -181,13 +181,13 @@ export const StudyRoom: React.FC = () => {
           </div>
 
           {/* Quick Study Notes (Defter) */}
-          <div className="bg-white rounded-3xl p-5 shadow-sm border-2 border-gray-200">
+          <div className="bg-white dark:bg-[#1a2c35] rounded-3xl p-5 shadow-sm border-2 border-gray-200 dark:border-[#2b3d45] transition-colors duration-300">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
                 <BookOpen className="w-6 h-6 text-indigo-500" />
-                <h3 className="font-black text-gray-800 text-lg">Ders Notlarım</h3>
+                <h3 className="font-black text-gray-800 dark:text-gray-100 text-lg">Ders Notlarım</h3>
               </div>
-              <span className="text-xs font-bold text-gray-400">{notes.length} Not Kayıtlı</span>
+              <span className="text-xs font-bold text-gray-400 dark:text-gray-500">{notes.length} Not Kayıtlı</span>
             </div>
 
             {/* Note Input Form */}
@@ -197,14 +197,14 @@ export const StudyRoom: React.FC = () => {
                 placeholder="Not Başlığı (örn. TYT Matematik Bölünebilme Kuralı)..."
                 value={noteTitle}
                 onChange={e => setNoteTitle(e.target.value)}
-                className="w-full px-4 py-2.5 rounded-xl border-2 border-gray-200 focus:border-indigo-500 focus:outline-none text-sm font-bold text-gray-800"
+                className="w-full px-4 py-2.5 rounded-xl border-2 border-gray-200 dark:border-[#2b3d45] focus:border-indigo-500 focus:outline-none text-sm font-bold text-gray-800 dark:text-gray-100 bg-white dark:bg-[#202f36]"
               />
               <textarea
                 placeholder="Önemli formülü, kilit cümleyi veya püf noktasını buraya yaz..."
                 value={noteContent}
                 onChange={e => setNoteContent(e.target.value)}
                 rows={2}
-                className="w-full px-4 py-2.5 rounded-xl border-2 border-gray-200 focus:border-indigo-500 focus:outline-none text-xs font-medium text-gray-700"
+                className="w-full px-4 py-2.5 rounded-xl border-2 border-gray-200 dark:border-[#2b3d45] focus:border-indigo-500 focus:outline-none text-xs font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-[#202f36]"
               />
               <button
                 type="submit"
@@ -224,13 +224,13 @@ export const StudyRoom: React.FC = () => {
                 </div>
               ) : (
                 notes.map(note => (
-                  <div key={note.id} className="p-3.5 bg-gray-50 border-2 border-gray-200 rounded-2xl flex items-start justify-between gap-3">
+                  <div key={note.id} className="p-3.5 bg-gray-50 dark:bg-[#202f36] border-2 border-gray-200 dark:border-[#2b3d45] rounded-2xl flex items-start justify-between gap-3">
                     <div>
                       <div className="flex items-center gap-2">
-                        <span className="font-extrabold text-xs text-gray-800">{note.title}</span>
-                        <span className="text-[10px] font-bold text-gray-400">{note.createdAt}</span>
+                        <span className="font-extrabold text-xs text-gray-800 dark:text-gray-100">{note.title}</span>
+                        <span className="text-[10px] font-bold text-gray-400 dark:text-gray-500">{note.createdAt}</span>
                       </div>
-                      <p className="text-xs text-gray-600 font-medium mt-1 leading-relaxed">{note.content}</p>
+                      <p className="text-xs text-gray-600 dark:text-gray-300 font-medium mt-1 leading-relaxed">{note.content}</p>
                     </div>
                     <button
                       onClick={() => deleteNote(note.id)}
@@ -252,10 +252,10 @@ export const StudyRoom: React.FC = () => {
         <div className="space-y-6">
           
           {/* Pomodoro Timer */}
-          <div className="bg-white rounded-3xl p-5 shadow-sm border-2 border-gray-200 text-center">
+          <div className="bg-white dark:bg-[#1a2c35] rounded-3xl p-5 shadow-sm border-2 border-gray-200 dark:border-[#2b3d45] text-center transition-colors duration-300">
             <div className="flex items-center justify-center gap-2 mb-4">
               <Clock className="w-5 h-5 text-red-500" />
-              <h3 className="font-black text-gray-800 text-base">Pomodoro Odak Sayacı</h3>
+              <h3 className="font-black text-gray-800 dark:text-gray-100 text-base">Pomodoro Odak Sayacı</h3>
             </div>
 
             {/* Preset Modes */}

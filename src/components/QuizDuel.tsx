@@ -199,18 +199,18 @@ export const QuizDuel: React.FC = () => {
           </div>
 
           {/* Rating Profile Card */}
-          <div className="bg-white rounded-3xl p-6 border-2 border-gray-200 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-6">
+          <div className="bg-white dark:bg-[#1a2c35] rounded-3xl p-6 border-2 border-gray-200 dark:border-[#2b3d45] shadow-sm flex flex-col sm:flex-row items-center justify-between gap-6 transition-colors duration-300">
             <div className="flex items-center gap-4 text-center sm:text-left">
-              <div className="w-20 h-20 rounded-2xl bg-amber-50 border-2 border-amber-300 flex items-center justify-center text-4xl shadow-inner">
-                {AVATAR_MAP[stats.avatar]?.emoji || '🦉'}
+              <div className="w-20 h-20 rounded-2xl bg-amber-50 dark:bg-amber-950/40 border-2 border-amber-300 dark:border-amber-700 flex items-center justify-center text-4xl shadow-inner">
+                {AVATAR_MAP[stats.avatar]?.emoji || '🐻'}
               </div>
               <div>
                 <span className={`text-xs font-black uppercase px-2.5 py-0.5 rounded-md border ${currentTier.color}`}>
                   {currentTier.title}
                 </span>
-                <h3 className="text-2xl font-black text-gray-800 mt-1">{stats.eloRating} ELO</h3>
-                <div className="text-xs font-bold text-gray-500 mt-0.5">
-                  Galibiyet: <span className="text-green-600 font-black">{stats.duelWins}</span> | Mağlubiyet: <span className="text-red-500 font-black">{stats.duelLosses}</span>
+                <h3 className="text-2xl font-black text-gray-800 dark:text-gray-100 mt-1">{stats.eloRating} ELO</h3>
+                <div className="text-xs font-bold text-gray-500 dark:text-gray-400 mt-0.5">
+                  Galibiyet: <span className="text-green-600 dark:text-green-400 font-black">{stats.duelWins}</span> | Mağlubiyet: <span className="text-red-500 dark:text-red-400 font-black">{stats.duelLosses}</span>
                 </div>
               </div>
             </div>
@@ -228,20 +228,20 @@ export const QuizDuel: React.FC = () => {
 
       {/* 2. Matchmaking Phase */}
       {phase === 'matchmaking' && (
-        <div className="bg-white rounded-3xl p-10 border-2 border-gray-200 shadow-sm text-center max-w-md mx-auto space-y-6 animate-pop">
+        <div className="bg-white dark:bg-[#1a2c35] rounded-3xl p-10 border-2 border-gray-200 dark:border-[#2b3d45] shadow-sm text-center max-w-md mx-auto space-y-6 animate-pop transition-colors duration-300">
           <div className="relative w-24 h-24 mx-auto flex items-center justify-center">
             <div className="absolute inset-0 rounded-full border-4 border-amber-500 border-t-transparent animate-spin" />
             <span className="text-4xl animate-pulse">⚔️</span>
           </div>
 
           <div>
-            <h3 className="text-2xl font-black text-gray-800">Rakip Aranıyor...</h3>
-            <p className="text-xs font-bold text-gray-500 mt-1">
+            <h3 className="text-2xl font-black text-gray-800 dark:text-gray-100">Rakip Aranıyor...</h3>
+            <p className="text-xs font-bold text-gray-500 dark:text-gray-400 mt-1">
               Senin ELO seviyene ({stats.eloRating} ± 50) uygun öğrenci eşleştiriliyor.
             </p>
           </div>
 
-          <div className="bg-gray-50 border-2 border-gray-200 p-3 rounded-2xl text-xs font-bold text-gray-700 animate-pulse">
+          <div className="bg-gray-50 dark:bg-[#202f36] border-2 border-gray-200 dark:border-[#2b3d45] p-3 rounded-2xl text-xs font-bold text-gray-700 dark:text-gray-200 animate-pulse">
             Eşleşen: {opponent.name} ({opponent.elo} ELO)
           </div>
         </div>
@@ -256,7 +256,7 @@ export const QuizDuel: React.FC = () => {
             {/* Player */}
             <div className="flex items-center gap-2 sm:gap-3 min-w-0">
               <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-blue-600/30 border border-blue-400 flex items-center justify-center text-xl sm:text-2xl flex-shrink-0">
-                {AVATAR_MAP[stats.avatar]?.emoji || '🦉'}
+                {AVATAR_MAP[stats.avatar]?.emoji || '🐻'}
               </div>
               <div className="min-w-0">
                 <div className="text-[10px] sm:text-xs font-black text-blue-400 truncate">SEN ({stats.eloRating})</div>
@@ -277,22 +277,22 @@ export const QuizDuel: React.FC = () => {
           </div>
 
           {/* Question Card with Timer */}
-          <div className="bg-white rounded-3xl p-6 border-2 border-gray-200 shadow-sm space-y-6">
-            <div className="flex items-center justify-between pb-3 border-b border-gray-100">
-              <span className="text-xs font-black uppercase text-amber-600 bg-amber-50 px-3 py-1 rounded-lg">
+          <div className="bg-white dark:bg-[#1a2c35] rounded-3xl p-6 border-2 border-gray-200 dark:border-[#2b3d45] shadow-sm space-y-6 transition-colors duration-300">
+            <div className="flex items-center justify-between pb-3 border-b border-gray-100 dark:border-[#2b3d45]">
+              <span className="text-xs font-black uppercase text-amber-600 bg-amber-50 dark:bg-amber-950/40 px-3 py-1 rounded-lg">
                 Raunt {currentRound + 1} / {DUEL_QUESTIONS.length} • {q.category}
               </span>
 
               {/* Countdown Clock */}
               <div className={`flex items-center gap-1.5 font-mono font-black text-sm px-3 py-1 rounded-xl border ${
-                roundTimeLeft <= 3 ? 'bg-red-50 text-red-600 border-red-200 animate-bounce' : 'bg-gray-100 text-gray-700 border-gray-200'
+                roundTimeLeft <= 3 ? 'bg-red-50 text-red-600 border-red-200 animate-bounce' : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 border-gray-200 dark:border-gray-700'
               }`}>
                 <Timer className="w-4 h-4" />
                 <span>{roundTimeLeft}s</span>
               </div>
             </div>
 
-            <h3 className="text-xl sm:text-2xl font-black text-gray-800 leading-snug">
+            <h3 className="text-xl sm:text-2xl font-black text-gray-800 dark:text-gray-100 leading-snug">
               {q.prompt}
             </h3>
 
@@ -311,13 +311,13 @@ export const QuizDuel: React.FC = () => {
                     className={`p-4 rounded-2xl font-extrabold text-sm border-2 text-left transition-all ${
                       showFeedback
                         ? isCorrect
-                          ? 'border-green-500 bg-green-50 text-green-800'
+                          ? 'border-green-500 bg-green-50 dark:bg-green-950/50 text-green-800 dark:text-green-300'
                           : isSelected
-                          ? 'border-red-500 bg-red-50 text-red-800'
-                          : 'border-gray-200 opacity-50'
+                          ? 'border-red-500 bg-red-50 dark:bg-red-950/50 text-red-800 dark:text-red-300'
+                          : 'border-gray-200 dark:border-[#2b3d45] opacity-50'
                         : isSelected
-                        ? 'border-amber-500 bg-amber-50 text-amber-900'
-                        : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50 text-gray-700'
+                        ? 'border-amber-500 bg-amber-50 dark:bg-amber-950/40 text-amber-900 dark:text-amber-200'
+                        : 'border-gray-200 dark:border-[#2b3d45] hover:border-gray-300 dark:hover:border-gray-600 hover:bg-gray-50 dark:hover:bg-[#20343f] text-gray-700 dark:text-gray-200 bg-white dark:bg-[#202f36]'
                     }`}
                   >
                     {opt}
@@ -332,23 +332,23 @@ export const QuizDuel: React.FC = () => {
 
       {/* 4. Results Screen with Chess.com-style ELO Gain Animation */}
       {phase === 'result' && (
-        <div className="bg-white rounded-3xl p-8 border-2 border-gray-200 shadow-xl text-center max-w-md mx-auto space-y-6 animate-pop">
+        <div className="bg-white dark:bg-[#1a2c35] rounded-3xl p-8 border-2 border-gray-200 dark:border-[#2b3d45] shadow-xl text-center max-w-md mx-auto space-y-6 animate-pop transition-colors duration-300">
           <div className="text-6xl animate-bounceSubtle">
             {userScore >= opponentScore ? '🏆' : '💀'}
           </div>
 
           <div>
-            <h3 className="text-3xl font-black text-gray-800">
+            <h3 className="text-3xl font-black text-gray-800 dark:text-gray-100">
               {userScore >= opponentScore ? 'ZAFER! Kazandın!' : 'MAĞLUBİYET!'}
             </h3>
-            <p className="text-xs font-bold text-gray-500 mt-1">
-              Sen: <span className="font-black text-gray-800">{userScore} Puan</span> vs Rakip: <span className="font-black text-gray-800">{opponentScore} Puan</span>
+            <p className="text-xs font-bold text-gray-500 dark:text-gray-400 mt-1">
+              Sen: <span className="font-black text-gray-800 dark:text-gray-100">{userScore} Puan</span> vs Rakip: <span className="font-black text-gray-800 dark:text-gray-100">{opponentScore} Puan</span>
             </p>
           </div>
 
           {/* ELO Rating Delta Box */}
           <div className={`p-4 rounded-2xl border-2 text-center ${
-            eloDelta > 0 ? 'bg-green-50 border-green-300 text-green-800' : 'bg-red-50 border-red-300 text-red-800'
+            eloDelta > 0 ? 'bg-green-50 dark:bg-green-950/40 border-green-300 dark:border-green-800 text-green-800 dark:text-green-300' : 'bg-red-50 dark:bg-red-950/40 border-red-300 dark:border-red-800 text-red-800 dark:text-red-300'
           }`}>
             <span className="text-xs font-black uppercase block">ELO PUANI DEĞİŞİMİ</span>
             <div className="text-3xl font-black mt-1">

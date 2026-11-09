@@ -10,17 +10,17 @@ export const Header: React.FC = () => {
   const [showHeartModal, setShowHeartModal] = useState(false);
 
   const currentCourse = COURSES.find(c => c.id === selectedCourseId) || COURSES[0];
-  const userAvatarEmoji = AVATAR_MAP[stats.avatar]?.emoji || '🦉';
+  const userAvatarEmoji = AVATAR_MAP[stats.avatar]?.emoji || '🐻';
 
   return (
-    <header className="sticky top-0 z-30 bg-white border-b-2 border-gray-200 px-2.5 py-2 sm:px-6">
+    <header className="sticky top-0 z-30 bg-white dark:bg-[#1a2c35] border-b-2 border-gray-200 dark:border-[#2b3d45] px-2.5 py-2 sm:px-6 transition-colors duration-300">
       <div className="max-w-6xl mx-auto flex items-center justify-between gap-1">
         
         {/* Course Selector Dropdown */}
         <div className="relative">
           <button
             onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-            className="flex items-center gap-1.5 sm:gap-2.5 px-2 py-1 sm:px-3 sm:py-1.5 rounded-xl border-2 border-gray-200 hover:border-gray-300 hover:bg-gray-50 transition-all font-bold text-gray-700 active:scale-95"
+            className="flex items-center gap-1.5 sm:gap-2.5 px-2 py-1 sm:px-3 sm:py-1.5 rounded-xl border-2 border-gray-200 dark:border-[#2b3d45] hover:border-gray-300 dark:hover:border-gray-500 hover:bg-gray-50 dark:hover:bg-[#20343f] transition-all font-bold text-gray-700 dark:text-gray-200 active:scale-95"
           >
             <span className="text-xl sm:text-2xl">{currentCourse.icon}</span>
             <span className="hidden md:inline font-black text-sm tracking-wide">{currentCourse.name}</span>
@@ -28,8 +28,8 @@ export const Header: React.FC = () => {
           </button>
 
           {isDropdownOpen && (
-            <div className="absolute top-11 left-0 w-64 sm:w-72 max-w-[90vw] bg-white rounded-2xl shadow-xl border-2 border-gray-200 p-2 z-50 animate-pop">
-              <div className="text-xs font-black uppercase text-gray-400 px-3 py-1.5 tracking-wider">
+            <div className="absolute top-11 left-0 w-64 sm:w-72 max-w-[90vw] bg-white dark:bg-[#1a2c35] rounded-2xl shadow-xl border-2 border-gray-200 dark:border-[#2b3d45] p-2 z-50 animate-pop">
+              <div className="text-xs font-black uppercase text-gray-400 dark:text-gray-400 px-3 py-1.5 tracking-wider">
                 DERS & SINAV ALANI SEÇ
               </div>
               <div className="space-y-1">
@@ -43,14 +43,16 @@ export const Header: React.FC = () => {
                         setIsDropdownOpen(false);
                       }}
                       className={`w-full flex items-center justify-between p-2 rounded-xl transition-all text-left ${
-                        isSelected ? 'bg-green-50 border-2 border-[#58cc02]' : 'hover:bg-gray-100'
+                        isSelected 
+                          ? 'bg-green-50 dark:bg-green-950/40 border-2 border-[#58cc02]' 
+                          : 'hover:bg-gray-100 dark:hover:bg-[#20343f]'
                       }`}
                     >
                       <div className="flex items-center gap-2.5">
                         <span className="text-xl sm:text-2xl">{course.icon}</span>
                         <div>
-                          <div className="font-extrabold text-xs sm:text-sm text-gray-800">{course.name}</div>
-                          <div className="text-[11px] text-gray-500 font-medium">{course.subTitle}</div>
+                          <div className="font-extrabold text-xs sm:text-sm text-gray-800 dark:text-gray-100">{course.name}</div>
+                          <div className="text-[11px] text-gray-500 dark:text-gray-400 font-medium">{course.subTitle}</div>
                         </div>
                       </div>
                       {isSelected && <Check className="w-4 h-4 text-[#58cc02]" />}
@@ -66,7 +68,7 @@ export const Header: React.FC = () => {
         <div className="flex items-center gap-2 sm:gap-4">
           
           {/* User Level & Avatar Pill */}
-          <div className="hidden sm:flex items-center gap-1.5 bg-amber-50 border-2 border-amber-200 px-2.5 py-1 rounded-xl text-amber-900 font-black text-xs shadow-sm">
+          <div className="hidden sm:flex items-center gap-1.5 bg-amber-50 dark:bg-amber-950/50 border-2 border-amber-200 dark:border-amber-700/60 px-2.5 py-1 rounded-xl text-amber-900 dark:text-amber-300 font-black text-xs shadow-sm">
             <span className="text-base">{userAvatarEmoji}</span>
             <span>Lvl {userLevel}</span>
           </div>
@@ -94,13 +96,13 @@ export const Header: React.FC = () => {
             </button>
 
             {showHeartModal && (
-              <div className="absolute right-0 top-10 w-64 max-w-[90vw] bg-white rounded-2xl shadow-2xl border-2 border-gray-200 p-4 z-50 text-center animate-pop">
+              <div className="absolute right-0 top-10 w-64 max-w-[90vw] bg-white dark:bg-[#1a2c35] rounded-2xl shadow-2xl border-2 border-gray-200 dark:border-[#2b3d45] p-4 z-50 text-center animate-pop">
                 <Heart className="w-10 h-10 fill-red-500 text-red-500 mx-auto mb-2" />
-                <h4 className="font-extrabold text-gray-800 text-sm sm:text-base">Can Sistemi</h4>
-                <p className="text-xs text-gray-500 mt-1 mb-3">
+                <h4 className="font-extrabold text-gray-800 dark:text-gray-100 text-sm sm:text-base">Can Sistemi</h4>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 mb-3">
                   Yanlış cevaplar canını azaltır. Canların bitince derslere devam etmek için yenileyebilirsin!
                 </p>
-                <div className="bg-red-50 text-red-600 font-black text-xs sm:text-sm py-1.5 px-3 rounded-lg mb-3">
+                <div className="bg-red-50 dark:bg-red-950/50 text-red-600 dark:text-red-400 font-black text-xs sm:text-sm py-1.5 px-3 rounded-lg mb-3">
                   {stats.hearts} / {stats.maxHearts} Can Kaldı
                 </div>
                 {stats.hearts < stats.maxHearts ? (
@@ -115,7 +117,7 @@ export const Header: React.FC = () => {
                     <span className="bg-white/20 px-1.5 py-0.5 rounded text-white font-black">💎 50</span>
                   </button>
                 ) : (
-                  <div className="text-xs font-bold text-green-600 bg-green-50 py-2 rounded-xl">
+                  <div className="text-xs font-bold text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-950/40 py-2 rounded-xl">
                     Canların tamamen dolu! 🔥
                   </div>
                 )}
@@ -127,7 +129,7 @@ export const Header: React.FC = () => {
           <button
             onClick={toggleSound}
             aria-label="Sesi Aç/Kapat"
-            className="p-1.5 sm:p-2 rounded-xl text-gray-500 hover:text-gray-800 hover:bg-gray-100 transition-all active:scale-95"
+            className="p-1.5 sm:p-2 rounded-xl text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-[#20343f] transition-all active:scale-95"
           >
             {soundMuted ? <VolumeX className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400" /> : <Volume2 className="w-4 h-4 sm:w-5 sm:h-5 text-green-600" />}
           </button>

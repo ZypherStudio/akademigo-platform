@@ -2,7 +2,7 @@ export type CourseCategory = 'yks' | 'lgs' | 'kpss' | 'kodlama' | 'dil';
 
 export type AppTheme = 'duo' | 'dark' | 'cyber' | 'gold' | 'ocean';
 
-export type UserAvatar = 'owl' | 'fox' | 'robot' | 'astronaut' | 'wizard' | 'coder_cat';
+export type UserAvatar = 'haribo' | 'owl' | 'fox' | 'robot' | 'astronaut' | 'wizard' | 'coder_cat';
 
 export interface Course {
   id: CourseCategory;

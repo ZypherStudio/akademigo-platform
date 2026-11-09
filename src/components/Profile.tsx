@@ -130,7 +130,7 @@ export const Profile: React.FC = () => {
       </div>
 
       {/* Sub Tabs: İstatistikler, Temalar & Renkler, Avatar & Ünvan */}
-      <div className="flex items-center gap-1.5 p-1 bg-white border-2 border-gray-200 rounded-2xl shadow-sm">
+      <div className="flex items-center gap-1.5 p-1 bg-white dark:bg-[#1a2c35] border-2 border-gray-200 dark:border-[#2b3d45] rounded-2xl shadow-sm transition-colors duration-300">
         {[
           { id: 'stats', label: '📊 İstatistik', fullLabel: '📊 İstatistikler & Rozetler' },
           { id: 'themes', label: '🎨 Temalar', fullLabel: '🎨 Tema & Arka Plan' },
@@ -144,8 +144,8 @@ export const Profile: React.FC = () => {
             }}
             className={`flex-1 py-2 sm:py-2.5 text-xs sm:text-sm font-black rounded-xl transition-all truncate text-center ${
               activeTab === t.id
-                ? 'bg-blue-50 text-blue-600 border-2 border-blue-200 shadow-sm'
-                : 'text-gray-500 hover:text-gray-800'
+                ? 'bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-300 border-2 border-blue-200 dark:border-blue-700 shadow-sm'
+                : 'text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'
             }`}
           >
             <span className="sm:hidden">{t.label}</span>
@@ -159,34 +159,34 @@ export const Profile: React.FC = () => {
         <div className="space-y-6 animate-pop">
           {/* Key Stat Counters */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            <div className="bg-white rounded-3xl p-4 border-2 border-gray-200 text-center shadow-sm">
+            <div className="bg-white dark:bg-[#1a2c35] rounded-3xl p-4 border-2 border-gray-200 dark:border-[#2b3d45] text-center shadow-sm">
               <span className="text-2xl">⚡</span>
-              <span className="text-[10px] font-black uppercase text-gray-400 block mt-1">TOPLAM PUAN</span>
+              <span className="text-[10px] font-black uppercase text-gray-400 dark:text-gray-400 block mt-1">TOPLAM PUAN</span>
               <span className="text-xl font-black text-amber-500">{stats.xp} XP</span>
             </div>
 
-            <div className="bg-white rounded-3xl p-4 border-2 border-gray-200 text-center shadow-sm">
+            <div className="bg-white dark:bg-[#1a2c35] rounded-3xl p-4 border-2 border-gray-200 dark:border-[#2b3d45] text-center shadow-sm">
               <span className="text-2xl">🔥</span>
-              <span className="text-[10px] font-black uppercase text-gray-400 block mt-1">GÜNLÜK SERİ</span>
+              <span className="text-[10px] font-black uppercase text-gray-400 dark:text-gray-400 block mt-1">GÜNLÜK SERİ</span>
               <span className="text-xl font-black text-orange-500">{stats.streak} Gün</span>
             </div>
 
-            <div className="bg-white rounded-3xl p-4 border-2 border-gray-200 text-center shadow-sm">
+            <div className="bg-white dark:bg-[#1a2c35] rounded-3xl p-4 border-2 border-gray-200 dark:border-[#2b3d45] text-center shadow-sm">
               <span className="text-2xl">🎯</span>
-              <span className="text-[10px] font-black uppercase text-gray-400 block mt-1">ÇÖZÜLEN SORU</span>
+              <span className="text-[10px] font-black uppercase text-gray-400 dark:text-gray-400 block mt-1">ÇÖZÜLEN SORU</span>
               <span className="text-xl font-black text-blue-500">{stats.totalQuestionsAnswered} Soru</span>
             </div>
 
-            <div className="bg-white rounded-3xl p-4 border-2 border-gray-200 text-center shadow-sm">
+            <div className="bg-white dark:bg-[#1a2c35] rounded-3xl p-4 border-2 border-gray-200 dark:border-[#2b3d45] text-center shadow-sm">
               <span className="text-2xl">⏱️</span>
-              <span className="text-[10px] font-black uppercase text-gray-400 block mt-1">ÇALIŞMA SÜRESİ</span>
+              <span className="text-[10px] font-black uppercase text-gray-400 dark:text-gray-400 block mt-1">ÇALIŞMA SÜRESİ</span>
               <span className="text-xl font-black text-emerald-500">{stats.totalStudyMinutes} Dk</span>
             </div>
           </div>
 
           {/* Badges / Rozetler */}
-          <div className="bg-white rounded-3xl p-6 border-2 border-gray-200 shadow-sm space-y-4">
-            <h3 className="font-black text-lg text-gray-800 flex items-center gap-2">
+          <div className="bg-white dark:bg-[#1a2c35] rounded-3xl p-6 border-2 border-gray-200 dark:border-[#2b3d45] shadow-sm space-y-4">
+            <h3 className="font-black text-lg text-gray-800 dark:text-gray-100 flex items-center gap-2">
               <Award className="w-5 h-5 text-amber-500" />
               Kazanılan Başarılar & Rozetler
             </h3>
@@ -197,18 +197,18 @@ export const Profile: React.FC = () => {
                   key={badge.id}
                   className={`p-4 rounded-2xl border-2 text-center transition-all ${
                     badge.unlocked
-                      ? 'border-amber-300 bg-amber-50/40 text-gray-800'
-                      : 'border-gray-200 bg-gray-50/50 opacity-40 grayscale'
+                      ? 'border-amber-300 dark:border-amber-600 bg-amber-50/40 dark:bg-amber-950/30 text-gray-800 dark:text-gray-100'
+                      : 'border-gray-200 dark:border-[#2b3d45] bg-gray-50/50 dark:bg-gray-800/40 opacity-40 grayscale'
                   }`}
                 >
                   <div className="text-4xl mb-2 select-none">{badge.icon}</div>
                   <h5 className="font-black text-xs sm:text-sm">{badge.title}</h5>
-                  <p className="text-[11px] text-gray-500 font-semibold mt-1 leading-snug">
+                  <p className="text-[11px] text-gray-500 dark:text-gray-400 font-semibold mt-1 leading-snug">
                     {badge.description}
                   </p>
                   <div className="mt-2 text-[10px] font-black uppercase">
                     {badge.unlocked ? (
-                      <span className="text-green-600">AÇILDI ✅</span>
+                      <span className="text-green-600 dark:text-green-400">AÇILDI ✅</span>
                     ) : (
                       <span className="text-gray-400">KİLİTLİ 🔒</span>
                     )}
@@ -224,10 +224,10 @@ export const Profile: React.FC = () => {
       {activeTab === 'themes' && (
         <div className="space-y-6 animate-pop">
           {/* App Themes */}
-          <div className="bg-white rounded-3xl p-6 border-2 border-gray-200 shadow-sm space-y-4">
+          <div className="bg-white dark:bg-[#1a2c35] rounded-3xl p-6 border-2 border-gray-200 dark:border-[#2b3d45] shadow-sm space-y-4">
             <div>
-              <h3 className="font-black text-lg text-gray-800">Uygulama Teması Seçimi</h3>
-              <p className="text-xs text-gray-500 font-medium">
+              <h3 className="font-black text-lg text-gray-800 dark:text-gray-100">Uygulama Teması Seçimi</h3>
+              <p className="text-xs text-gray-500 dark:text-gray-400 font-medium">
                 Platformun genel renk tonunu ve atmosferini değiştirebilirsin.
               </p>
             </div>
@@ -241,15 +241,15 @@ export const Profile: React.FC = () => {
                     onClick={() => setTheme(th.id)}
                     className={`p-4 rounded-2xl border-2 flex items-center justify-between text-left transition-all ${
                       isSelected
-                        ? 'border-blue-500 bg-blue-50 shadow-md ring-2 ring-blue-300'
-                        : 'border-gray-200 hover:border-gray-300 bg-white'
+                        ? 'border-blue-500 bg-blue-50 dark:bg-blue-950/40 shadow-md ring-2 ring-blue-300 dark:ring-blue-700'
+                        : 'border-gray-200 dark:border-[#2b3d45] hover:border-gray-300 dark:hover:border-gray-600 bg-white dark:bg-[#202f36]'
                     }`}
                   >
                     <div className="flex items-center gap-3">
                       <div className={`w-8 h-8 rounded-xl ${th.bg} border ${th.border}`} />
-                      <span className="font-black text-xs sm:text-sm text-gray-800">{th.name}</span>
+                      <span className="font-black text-xs sm:text-sm text-gray-800 dark:text-gray-100">{th.name}</span>
                     </div>
-                    {isSelected && <Check className="w-5 h-5 text-blue-600" />}
+                    {isSelected && <Check className="w-5 h-5 text-blue-600 dark:text-blue-400" />}
                   </button>
                 );
               })}
@@ -257,10 +257,10 @@ export const Profile: React.FC = () => {
           </div>
 
           {/* Banner Colors */}
-          <div className="bg-white rounded-3xl p-6 border-2 border-gray-200 shadow-sm space-y-4">
+          <div className="bg-white dark:bg-[#1a2c35] rounded-3xl p-6 border-2 border-gray-200 dark:border-[#2b3d45] shadow-sm space-y-4">
             <div>
-              <h3 className="font-black text-lg text-gray-800">Profil Başlığı (Banner) Rengi</h3>
-              <p className="text-xs text-gray-500 font-medium">Profil kartının tepe gradyanını özelleştir.</p>
+              <h3 className="font-black text-lg text-gray-800 dark:text-gray-100">Profil Başlığı (Banner) Rengi</h3>
+              <p className="text-xs text-gray-500 dark:text-gray-400 font-medium">Profil kartının tepe gradyanını özelleştir.</p>
             </div>
 
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
@@ -274,14 +274,14 @@ export const Profile: React.FC = () => {
                       setBannerColor(b.id);
                     }}
                     className={`p-3 rounded-2xl border-2 flex items-center justify-between transition-all ${
-                      isSelected ? 'border-gray-900 ring-2 ring-gray-400' : 'border-gray-200'
+                      isSelected ? 'border-gray-900 dark:border-white ring-2 ring-gray-400' : 'border-gray-200 dark:border-[#2b3d45] bg-white dark:bg-[#202f36]'
                     }`}
                   >
                     <div className="flex items-center gap-2.5">
                       <div className={`w-6 h-6 rounded-lg bg-gradient-to-r ${b.id}`} />
-                      <span className="font-bold text-xs text-gray-700">{b.name}</span>
+                      <span className="font-bold text-xs text-gray-700 dark:text-gray-200">{b.name}</span>
                     </div>
-                    {isSelected && <Check className="w-4 h-4 text-gray-900" />}
+                    {isSelected && <Check className="w-4 h-4 text-gray-900 dark:text-white" />}
                   </button>
                 );
               })}
@@ -294,10 +294,10 @@ export const Profile: React.FC = () => {
       {activeTab === 'avatar' && (
         <div className="space-y-6 animate-pop">
           {/* Avatar Selector */}
-          <div className="bg-white rounded-3xl p-6 border-2 border-gray-200 shadow-sm space-y-4">
+          <div className="bg-white dark:bg-[#1a2c35] rounded-3xl p-6 border-2 border-gray-200 dark:border-[#2b3d45] shadow-sm space-y-4">
             <div>
-              <h3 className="font-black text-lg text-gray-800">Karakterini / Avatarını Seç</h3>
-              <p className="text-xs text-gray-500 font-medium">
+              <h3 className="font-black text-lg text-gray-800 dark:text-gray-100">Karakterini / Avatarını Seç</h3>
+              <p className="text-xs text-gray-500 dark:text-gray-400 font-medium">
                 Liderlik tablosunda ve derslerde seni temsil edecek avatar.
               </p>
             </div>
@@ -313,12 +313,12 @@ export const Profile: React.FC = () => {
                     onClick={() => setAvatar(key)}
                     className={`p-4 rounded-2xl border-2 flex flex-col items-center text-center transition-all ${
                       isSelected
-                        ? 'border-[#58cc02] bg-green-50 shadow-md ring-2 ring-green-300'
-                        : 'border-gray-200 hover:border-gray-300 bg-white'
+                        ? 'border-[#58cc02] bg-green-50 dark:bg-green-950/40 shadow-md ring-2 ring-green-300 dark:ring-green-700'
+                        : 'border-gray-200 dark:border-[#2b3d45] hover:border-gray-300 dark:hover:border-gray-600 bg-white dark:bg-[#202f36]'
                     }`}
                   >
                     <span className="text-4xl mb-1">{item.emoji}</span>
-                    <span className="font-black text-xs text-gray-800">{item.name}</span>
+                    <span className="font-black text-xs text-gray-800 dark:text-gray-100">{item.name}</span>
                     {isSelected && (
                       <span className="text-[10px] font-black text-[#58cc02] mt-1">SEÇİLİ ✅</span>
                     )}
@@ -329,10 +329,10 @@ export const Profile: React.FC = () => {
           </div>
 
           {/* Title Selector */}
-          <div className="bg-white rounded-3xl p-6 border-2 border-gray-200 shadow-sm space-y-4">
+          <div className="bg-white dark:bg-[#1a2c35] rounded-3xl p-6 border-2 border-gray-200 dark:border-[#2b3d45] shadow-sm space-y-4">
             <div>
-              <h3 className="font-black text-lg text-gray-800">Öğrenci Ünvanını Seç</h3>
-              <p className="text-xs text-gray-500 font-medium">Hedefine uygun havalı bir lakap edin.</p>
+              <h3 className="font-black text-lg text-gray-800 dark:text-gray-100">Öğrenci Ünvanını Seç</h3>
+              <p className="text-xs text-gray-500 dark:text-gray-400 font-medium">Hedefine uygun havalı bir lakap edin.</p>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
@@ -347,8 +347,8 @@ export const Profile: React.FC = () => {
                     }}
                     className={`p-3 rounded-2xl border-2 text-left font-black text-xs sm:text-sm flex items-center justify-between transition-all ${
                       isSelected
-                        ? 'border-[#1cb0f6] bg-blue-50 text-[#1cb0f6]'
-                        : 'border-gray-200 hover:border-gray-300 text-gray-700'
+                        ? 'border-[#1cb0f6] bg-blue-50 dark:bg-blue-950/40 text-[#1cb0f6]'
+                        : 'border-gray-200 dark:border-[#2b3d45] hover:border-gray-300 dark:hover:border-gray-600 text-gray-700 dark:text-gray-200 bg-white dark:bg-[#202f36]'
                     }`}
                   >
                     <span>{title}</span>

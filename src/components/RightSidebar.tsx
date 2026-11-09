@@ -16,15 +16,15 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({ onNavigate }) => {
   return (
     <aside className="hidden xl:block w-80 space-y-5 p-4 select-none">
       
-      {/* Custom Animated Mascot "Bibo" Card */}
-      <div className="bg-white rounded-3xl p-5 border-2 border-gray-200 shadow-sm flex flex-col items-center text-center">
+      {/* Custom Animated Mascot "Haribo Ayıcık" Card */}
+      <div className="bg-white dark:bg-[#1a2c35] rounded-3xl p-5 border-2 border-gray-200 dark:border-[#2b3d45] shadow-sm flex flex-col items-center text-center transition-colors duration-300">
         <Mascot
           size="md"
           mood="idle"
-          speech="Günde 5 soru çöz, şampiyonlar ligine tırman! 🦉✨"
+          speech="Günde 5 soru çöz, şampiyonlar ligine tırman! 🐻🍯"
         />
-        <span className="text-[10px] font-black uppercase text-gray-400 mt-2">
-          Bibo'ya tıkla, sana yeni bir taktik söylesin!
+        <span className="text-[10px] font-black uppercase text-gray-400 dark:text-gray-500 mt-2">
+          Haribo Ayıcık'a tıkla, sana yeni bir taktik söylesin!
         </span>
       </div>
 
@@ -57,11 +57,11 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({ onNavigate }) => {
       </div>
 
       {/* Leaderboard Preview Card */}
-      <div className="bg-white rounded-3xl p-5 border-2 border-gray-200 shadow-sm space-y-3">
+      <div className="bg-white dark:bg-[#1a2c35] rounded-3xl p-5 border-2 border-gray-200 dark:border-[#2b3d45] shadow-sm space-y-3 transition-colors duration-300">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Trophy className="w-5 h-5 text-amber-500" />
-            <h4 className="font-black text-sm text-gray-800">Elmas Ligi</h4>
+            <h4 className="font-black text-sm text-gray-800 dark:text-gray-100">Elmas Ligi</h4>
           </div>
           <button
             onClick={() => onNavigate('leaderboard')}
@@ -71,25 +71,25 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({ onNavigate }) => {
           </button>
         </div>
 
-        <div className="bg-blue-50/60 rounded-2xl p-3 border border-blue-100 flex items-center justify-between">
+        <div className="bg-blue-50/60 dark:bg-blue-950/40 rounded-2xl p-3 border border-blue-100 dark:border-blue-800 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <span className="font-black text-blue-600 text-sm">#{userRank}</span>
-            <div className="text-xl">🦉</div>
+            <span className="font-black text-blue-600 dark:text-blue-300 text-sm">#{userRank}</span>
+            <div className="text-xl">🐻</div>
             <div>
-              <div className="text-xs font-black text-gray-800">Sen</div>
-              <div className="text-[10px] font-bold text-blue-600">Terfi Hattındasın</div>
+              <div className="text-xs font-black text-gray-800 dark:text-gray-100">Sen</div>
+              <div className="text-[10px] font-bold text-blue-600 dark:text-blue-400">Terfi Hattındasın</div>
             </div>
           </div>
-          <span className="font-black text-xs text-gray-700">{stats.xp} XP</span>
+          <span className="font-black text-xs text-gray-700 dark:text-gray-300">{stats.xp} XP</span>
         </div>
       </div>
 
       {/* Daily Quests Mini Preview */}
-      <div className="bg-white rounded-3xl p-5 border-2 border-gray-200 shadow-sm space-y-3">
+      <div className="bg-white dark:bg-[#1a2c35] rounded-3xl p-5 border-2 border-gray-200 dark:border-[#2b3d45] shadow-sm space-y-3 transition-colors duration-300">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Target className="w-5 h-5 text-blue-500" />
-            <h4 className="font-black text-sm text-gray-800">Günün Görevleri</h4>
+            <h4 className="font-black text-sm text-gray-800 dark:text-gray-100">Günün Görevleri</h4>
           </div>
           <button
             onClick={() => onNavigate('quests')}
@@ -101,11 +101,11 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({ onNavigate }) => {
 
         <div className="space-y-2">
           <div className="text-xs">
-            <div className="flex justify-between font-bold text-gray-600 mb-1">
+            <div className="flex justify-between font-bold text-gray-600 dark:text-gray-300 mb-1">
               <span>Günün Dersi</span>
               <span className="font-black">{stats.dailyQuestProgress.completedLessonsToday}/1</span>
             </div>
-            <div className="w-full bg-gray-100 h-2.5 rounded-full overflow-hidden">
+            <div className="w-full bg-gray-100 dark:bg-gray-800 h-2.5 rounded-full overflow-hidden">
               <div
                 className="bg-[#58cc02] h-full rounded-full transition-all"
                 style={{ width: `${Math.min(100, stats.dailyQuestProgress.completedLessonsToday * 100)}%` }}
@@ -114,11 +114,11 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({ onNavigate }) => {
           </div>
 
           <div className="text-xs">
-            <div className="flex justify-between font-bold text-gray-600 mb-1">
+            <div className="flex justify-between font-bold text-gray-600 dark:text-gray-300 mb-1">
               <span>50 XP Topla</span>
               <span className="font-black">{stats.dailyQuestProgress.xpGainedToday}/50</span>
             </div>
-            <div className="w-full bg-gray-100 h-2.5 rounded-full overflow-hidden">
+            <div className="w-full bg-gray-100 dark:bg-gray-800 h-2.5 rounded-full overflow-hidden">
               <div
                 className="bg-[#1cb0f6] h-full rounded-full transition-all"
                 style={{ width: `${Math.min(100, (stats.dailyQuestProgress.xpGainedToday / 50) * 100)}%` }}
@@ -129,11 +129,11 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({ onNavigate }) => {
       </div>
 
       {/* Streak Freeze Card */}
-      <div className="bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-3xl p-4 flex items-center gap-3">
+      <div className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/40 dark:to-indigo-950/40 border-2 border-blue-200 dark:border-blue-800 rounded-3xl p-4 flex items-center gap-3">
         <div className="text-3xl select-none">❄️</div>
         <div>
-          <div className="text-xs font-black text-blue-900">Seri Koruması Aktif</div>
-          <div className="text-[11px] text-blue-700 font-semibold">
+          <div className="text-xs font-black text-blue-900 dark:text-blue-200">Seri Koruması Aktif</div>
+          <div className="text-[11px] text-blue-700 dark:text-blue-300 font-semibold">
             {stats.inventory.streakFreeze} adet seri dondurucun bulunuyor.
           </div>
         </div>

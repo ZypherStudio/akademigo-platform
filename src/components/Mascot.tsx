@@ -12,13 +12,13 @@ interface MascotProps {
   className?: string;
 }
 
-const WITTY_QUOTES = [
-  "Her gün 5 soru çözmek, beynini şampiyon yapar! 🧠",
-  "Hata yapmaktan korkma, en iyi öğrenme yanlışlardan doğar! ✨",
+const HARIBO_QUOTES = [
+  "Haribo Ayıcığıyla dersler artık jelibon gibi tatlı! 🐻🍯",
+  "Her gün 5 soru çözmek, beynini şampiyon yapar! 🧠✨",
+  "Hata yapmaktan korkma, tatlı bir tekrarla hemen öğrenirsin! 🍬",
   "Bugün harika bir odaklanma günündesin! Hadi başlayalım! 🚀",
-  "Tebrikler! Adım adım hedefe koşuyorsun! 🦉",
-  "Mola vermeyi unutma, su içmeyi de ihmal etme! 💧",
-  "Biraz Kodlama veya Deneme Sınavı çözmeye ne dersin? 💻"
+  "Mola vermeyi ve biraz su içmeyi unutma! 💧",
+  "Zor seviye sorular seni dereceye taşır, pes etmek yok! 🏆"
 ];
 
 export const Mascot: React.FC<MascotProps> = ({
@@ -29,7 +29,7 @@ export const Mascot: React.FC<MascotProps> = ({
   onMascotClick,
   className = ''
 }) => {
-  const [currentSpeech, setCurrentSpeech] = useState<string>(speech || WITTY_QUOTES[0]);
+  const [currentSpeech, setCurrentSpeech] = useState<string>(speech || HARIBO_QUOTES[0]);
   const [isBlinking, setIsBlinking] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
 
@@ -43,16 +43,15 @@ export const Mascot: React.FC<MascotProps> = ({
   useEffect(() => {
     const blinkInterval = setInterval(() => {
       setIsBlinking(true);
-      setTimeout(() => setIsBlinking(false), 200);
-    }, 4000);
+      setTimeout(() => setIsBlinking(false), 180);
+    }, 3500);
     return () => clearInterval(blinkInterval);
   }, []);
 
   const handleClick = () => {
     if (!interactive) return;
     sound.playClick();
-    // Rotate to a random witty quote if no static speech provided
-    const randomQuote = WITTY_QUOTES[Math.floor(Math.random() * WITTY_QUOTES.length)];
+    const randomQuote = HARIBO_QUOTES[Math.floor(Math.random() * HARIBO_QUOTES.length)];
     setCurrentSpeech(randomQuote);
     if (onMascotClick) {
       onMascotClick();
@@ -75,168 +74,186 @@ export const Mascot: React.FC<MascotProps> = ({
       {currentSpeech && (
         <div 
           onClick={handleClick}
-          className="mb-2 max-w-[260px] sm:max-w-sm bg-white border-2 border-gray-200 text-gray-800 font-extrabold text-xs sm:text-sm px-3 py-2 sm:px-4 sm:py-2.5 rounded-2xl shadow-md relative animate-pop cursor-pointer hover:border-[#58cc02] hover:bg-green-50/50 transition-all text-center leading-snug"
+          className="mb-2 max-w-[260px] sm:max-w-sm bg-white dark:bg-gray-800 border-2 border-amber-300 dark:border-amber-500 text-gray-800 dark:text-gray-100 font-extrabold text-xs sm:text-sm px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-2xl shadow-lg relative animate-pop cursor-pointer hover:border-amber-400 hover:scale-105 transition-all text-center leading-snug"
         >
           {currentSpeech}
           {/* Bubble tail pointing downwards */}
-          <div className="absolute left-1/2 -bottom-2 -translate-x-1/2 w-0 h-0 border-x-8 border-x-transparent border-t-8 border-t-white" />
-          <div className="absolute left-1/2 -bottom-2.5 -translate-x-1/2 w-0 h-0 border-x-8 border-x-transparent border-t-8 border-t-gray-200 -z-10" />
+          <div className="absolute left-1/2 -bottom-2 -translate-x-1/2 w-0 h-0 border-x-8 border-x-transparent border-t-8 border-t-white dark:border-t-gray-800" />
+          <div className="absolute left-1/2 -bottom-2.5 -translate-x-1/2 w-0 h-0 border-x-8 border-x-transparent border-t-8 border-t-amber-300 dark:border-t-amber-500 -z-10" />
         </div>
       )}
 
-      {/* SVG Custom Mascot: "BİBO" the Scholar Owl */}
+      {/* SVG Custom Mascot: "HARİBO AYICIK" (Gummy Bear of Wisdom) */}
       <div 
         onClick={handleClick}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
-        className={`${sizeClasses[size]} relative cursor-pointer transition-transform duration-300 hover:scale-105 active:scale-95 ${
-          activeMood === 'excited' || activeMood === 'happy' ? 'animate-bounce' : 'animate-bounceSubtle'
+        className={`${sizeClasses[size]} relative cursor-pointer transition-transform duration-300 hover:scale-110 active:scale-95 ${
+          activeMood === 'excited' || activeMood === 'happy' || activeMood === 'cheering'
+            ? 'animate-bounce'
+            : 'animate-bounceSubtle'
         }`}
-        title="Bibo - Senin Eğitim Rehberin (Tıkla ve konuş!)"
+        title="Haribo Ayıcık - Senin Sevimli Çalışma Koçun (Tıkla ve konuş!)"
       >
-        <svg viewBox="0 0 200 200" className="w-full h-full drop-shadow-lg overflow-visible">
+        <svg viewBox="0 0 200 220" className="w-full h-full drop-shadow-xl overflow-visible">
           <defs>
-            {/* Feathers Gradient */}
-            <linearGradient id="owlGreenGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#68e005" />
-              <stop offset="100%" stopColor="#48b002" />
-            </linearGradient>
-            
-            {/* Belly Soft Gradient */}
-            <linearGradient id="owlBellyGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stopColor="#ffffff" />
-              <stop offset="100%" stopColor="#e8f8d6" />
+            {/* Gummy Gold Honey Gradient */}
+            <linearGradient id="gummyBearGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#fde047" />
+              <stop offset="35%" stopColor="#f59e0b" />
+              <stop offset="100%" stopColor="#d97706" />
             </linearGradient>
 
-            {/* Mortarboard Graduation Cap Gradient */}
-            <linearGradient id="capGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#1e293b" />
-              <stop offset="100%" stopColor="#0f172a" />
+            {/* Inner Ear & Snout Gradient */}
+            <linearGradient id="gummyInnerGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stopColor="#fef08a" />
+              <stop offset="100%" stopColor="#fcd34d" />
+            </linearGradient>
+
+            {/* Belly Gloss Gradient */}
+            <linearGradient id="gummyGlossGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stopColor="#ffffff" stopOpacity="0.6" />
+              <stop offset="100%" stopColor="#ffffff" stopOpacity="0.05" />
+            </linearGradient>
+
+            {/* Bowtie Red Gradient */}
+            <linearGradient id="bowtieGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#ff4b4b" />
+              <stop offset="100%" stopColor="#dc2626" />
             </linearGradient>
           </defs>
 
-          {/* Feet */}
-          <ellipse cx="75" cy="182" rx="14" ry="7" fill="#f59e0b" />
-          <ellipse cx="125" cy="182" rx="14" ry="7" fill="#f59e0b" />
+          {/* Bear Feet */}
+          <ellipse cx="70" cy="195" rx="20" ry="14" fill="#d97706" />
+          <ellipse cx="130" cy="195" rx="20" ry="14" fill="#d97706" />
+          <ellipse cx="70" cy="194" rx="14" ry="9" fill="#fcd34d" />
+          <ellipse cx="130" cy="194" rx="14" ry="9" fill="#fcd34d" />
 
-          {/* Left & Right Wings */}
-          {activeMood === 'happy' || activeMood === 'cheering' ? (
-            /* Waving / Happy Wings UP */
+          {/* Left & Right Round Bear Ears */}
+          <circle cx="56" cy="48" r="22" fill="#d97706" />
+          <circle cx="56" cy="48" r="18" fill="url(#gummyBearGrad)" />
+          <circle cx="56" cy="48" r="11" fill="url(#gummyInnerGrad)" />
+
+          <circle cx="144" cy="48" r="22" fill="#d97706" />
+          <circle cx="144" cy="48" r="18" fill="url(#gummyBearGrad)" />
+          <circle cx="144" cy="48" r="11" fill="url(#gummyInnerGrad)" />
+
+          {/* Bear Body */}
+          <ellipse cx="100" cy="140" rx="52" ry="58" fill="url(#gummyBearGrad)" />
+
+          {/* Gummy Belly Highlight */}
+          <ellipse cx="100" cy="142" rx="36" ry="40" fill="url(#gummyInnerGrad)" />
+          <ellipse cx="94" cy="130" rx="22" ry="26" fill="url(#gummyGlossGrad)" />
+
+          {/* Paws */}
+          {activeMood === 'happy' || activeMood === 'cheering' || activeMood === 'excited' ? (
+            /* Waving Happy Paws (Raised) */
             <>
-              <path
-                d="M 35 110 C 15 90, 10 65, 30 75 C 45 82, 55 105, 50 130 Z"
-                fill="#46a302"
-                className="transition-transform duration-300 transform -rotate-12 origin-bottom-right"
-              />
-              <path
-                d="M 165 110 C 185 90, 190 65, 170 75 C 155 82, 145 105, 150 130 Z"
-                fill="#46a302"
-                className="transition-transform duration-300 transform rotate-12 origin-bottom-left"
-              />
+              <ellipse cx="44" cy="95" rx="16" ry="22" fill="url(#gummyBearGrad)" transform="rotate(-30 44 95)" />
+              <ellipse cx="156" cy="95" rx="16" ry="22" fill="url(#gummyBearGrad)" transform="rotate(30 156 95)" />
+              {/* Paw pads */}
+              <circle cx="42" cy="88" r="6" fill="#fcd34d" />
+              <circle cx="158" cy="88" r="6" fill="#fcd34d" />
             </>
           ) : (
-            /* Rest / Down Wings */
+            /* Resting Paws on Belly */
             <>
-              <path
-                d="M 40 100 C 20 120, 25 155, 45 160 C 55 162, 60 140, 55 115 Z"
-                fill="#46a302"
-              />
-              <path
-                d="M 160 100 C 180 120, 175 155, 155 160 C 145 162, 140 140, 145 115 Z"
-                fill="#46a302"
-              />
+              <ellipse cx="56" cy="130" rx="16" ry="18" fill="url(#gummyBearGrad)" />
+              <ellipse cx="144" cy="130" rx="16" ry="18" fill="url(#gummyBearGrad)" />
+              <circle cx="56" cy="130" r="7" fill="#fcd34d" />
+              <circle cx="144" cy="130" r="7" fill="#fcd34d" />
             </>
           )}
 
-          {/* Main Body (Friendly Owl Shape) */}
-          <path
-            d="M 100 30 C 50 30, 35 70, 35 125 C 35 170, 65 185, 100 185 C 135 185, 165 170, 165 125 C 165 70, 150 30, 100 30 Z"
-            fill="url(#owlGreenGrad)"
-          />
+          {/* Bear Head (Cute Round Shape) */}
+          <circle cx="100" cy="78" r="48" fill="url(#gummyBearGrad)" />
 
-          {/* Feather Ears / Tuft */}
-          <path d="M 55 42 L 40 18 L 70 34 Z" fill="#3f9602" />
-          <path d="M 145 42 L 160 18 L 130 34 Z" fill="#3f9602" />
+          {/* Gummy Gloss Sheen on Forehead */}
+          <ellipse cx="86" cy="54" rx="16" ry="8" fill="url(#gummyGlossGrad)" transform="rotate(-15 86 54)" />
 
-          {/* White Belly */}
-          <ellipse cx="100" cy="135" rx="42" ry="40" fill="url(#owlBellyGrad)" />
+          {/* Snout / Muzzle */}
+          <ellipse cx="100" cy="88" rx="22" ry="17" fill="url(#gummyInnerGrad)" />
 
-          {/* Belly Feather Chevrons (Duolingo style) */}
-          <path d="M 90 125 Q 100 132 110 125" stroke="#89e219" strokeWidth="3" fill="none" strokeLinecap="round" />
-          <path d="M 85 142 Q 100 150 115 142" stroke="#89e219" strokeWidth="3" fill="none" strokeLinecap="round" />
-          <path d="M 92 158 Q 100 164 108 158" stroke="#89e219" strokeWidth="3" fill="none" strokeLinecap="round" />
+          {/* Cute Black Bear Nose */}
+          <path d="M 94 81 Q 100 86 106 81 Q 100 90 94 81 Z" fill="#1c1917" />
+          <circle cx="98" cy="82" r="1.5" fill="#ffffff" />
 
-          {/* Big Expressive Eye Rings */}
-          <circle cx="70" cy="85" r="28" fill="#ffffff" stroke="#e2e8f0" strokeWidth="2" />
-          <circle cx="130" cy="85" r="28" fill="#ffffff" stroke="#e2e8f0" strokeWidth="2" />
+          {/* Mouth */}
+          {activeMood === 'happy' || activeMood === 'cheering' || activeMood === 'excited' ? (
+            /* Open Smiling Mouth */
+            <path d="M 92 88 Q 100 98 108 88" stroke="#1c1917" strokeWidth="3" fill="#ef4444" strokeLinecap="round" />
+          ) : activeMood === 'sad' ? (
+            /* Sad Drooping Mouth */
+            <path d="M 93 94 Q 100 88 107 94" stroke="#1c1917" strokeWidth="2.5" fill="none" strokeLinecap="round" />
+          ) : (
+            /* Gentle Smile */
+            <path d="M 94 88 Q 100 94 106 88" stroke="#1c1917" strokeWidth="2.5" fill="none" strokeLinecap="round" />
+          )}
 
-          {/* Eyes State depending on Mood */}
+          {/* Eyes */}
           {isBlinking ? (
-            /* Blinking horizontal slit */
+            /* Blinking Eyes */
             <>
-              <line x1="55" y1="85" x2="85" y2="85" stroke="#1e293b" strokeWidth="4" strokeLinecap="round" />
-              <line x1="115" y1="85" x2="145" y2="85" stroke="#1e293b" strokeWidth="4" strokeLinecap="round" />
+              <line x1="74" y1="68" x2="88" y2="68" stroke="#1c1917" strokeWidth="3.5" strokeLinecap="round" />
+              <line x1="112" y1="68" x2="126" y2="68" stroke="#1c1917" strokeWidth="3.5" strokeLinecap="round" />
             </>
           ) : activeMood === 'happy' || activeMood === 'cheering' ? (
-            /* Happy curved eyes (^_^) */
+            /* Joyful Curved Eyes (^_^) */
             <>
-              <path d="M 56 88 Q 70 72 84 88" stroke="#1e293b" strokeWidth="5" fill="none" strokeLinecap="round" />
-              <path d="M 116 88 Q 130 72 144 88" stroke="#1e293b" strokeWidth="5" fill="none" strokeLinecap="round" />
+              <path d="M 74 72 Q 81 60 88 72" stroke="#1c1917" strokeWidth="4" fill="none" strokeLinecap="round" />
+              <path d="M 112 72 Q 119 60 126 72" stroke="#1c1917" strokeWidth="4" fill="none" strokeLinecap="round" />
               {/* Rosy Cheeks */}
-              <circle cx="50" cy="105" r="7" fill="#ff7675" opacity="0.6" />
-              <circle cx="150" cy="105" r="7" fill="#ff7675" opacity="0.6" />
+              <circle cx="68" cy="84" r="7" fill="#f87171" opacity="0.65" />
+              <circle cx="132" cy="84" r="7" fill="#f87171" opacity="0.65" />
             </>
           ) : activeMood === 'sad' ? (
-            /* Sad Drooping Eyes + Tear */
+            /* Sad Eyes + Tear */
             <>
-              <circle cx="70" cy="88" r="14" fill="#1e293b" />
-              <circle cx="66" cy="84" r="5" fill="#ffffff" />
-              <circle cx="130" cy="88" r="14" fill="#1e293b" />
-              <circle cx="126" cy="84" r="5" fill="#ffffff" />
-              {/* Tear drop */}
-              <ellipse cx="145" cy="105" rx="3" ry="5" fill="#60a5fa" />
+              <circle cx="81" cy="70" r="7" fill="#1c1917" />
+              <circle cx="79" cy="67" r="2.5" fill="#ffffff" />
+              <circle cx="119" cy="70" r="7" fill="#1c1917" />
+              <circle cx="117" cy="67" r="2.5" fill="#ffffff" />
+              <ellipse cx="128" cy="85" rx="3" ry="5" fill="#60a5fa" />
             </>
           ) : activeMood === 'thinking' ? (
-            /* Thinking / Looking Up */
+            /* Looking Up Thinking */
             <>
-              <circle cx="70" cy="78" r="14" fill="#1e293b" />
-              <circle cx="66" cy="74" r="5" fill="#ffffff" />
-              <circle cx="130" cy="78" r="14" fill="#1e293b" />
-              <circle cx="126" cy="74" r="5" fill="#ffffff" />
-              {/* Lightbulb Sparkle Above */}
-              <circle cx="100" cy="15" r="6" fill="#fbbf24" />
+              <circle cx="81" cy="64" r="7" fill="#1c1917" />
+              <circle cx="79" cy="61" r="2.5" fill="#ffffff" />
+              <circle cx="119" cy="64" r="7" fill="#1c1917" />
+              <circle cx="117" cy="61" r="2.5" fill="#ffffff" />
+              <circle cx="100" cy="18" r="6" fill="#facc15" />
             </>
           ) : (
-            /* Normal Alert Pupils with reflection */
+            /* Sparkly Shiny Eyes */
             <>
-              <circle cx="73" cy="85" r="15" fill="#1e293b" />
-              <circle cx="69" cy="80" r="5" fill="#ffffff" />
-              <circle cx="127" cy="85" r="15" fill="#1e293b" />
-              <circle cx="123" cy="80" r="5" fill="#ffffff" />
+              <circle cx="81" cy="68" r="7" fill="#1c1917" />
+              <circle cx="79" cy="65" r="2.8" fill="#ffffff" />
+              <circle cx="83" cy="71" r="1.2" fill="#ffffff" />
+
+              <circle cx="119" cy="68" r="7" fill="#1c1917" />
+              <circle cx="117" cy="65" r="2.8" fill="#ffffff" />
+              <circle cx="121" cy="71" r="1.2" fill="#ffffff" />
+
+              {/* Sweet Rosy Cheeks */}
+              <circle cx="68" cy="82" r="6" fill="#f87171" opacity="0.45" />
+              <circle cx="132" cy="82" r="6" fill="#f87171" opacity="0.45" />
             </>
           )}
 
-          {/* Beak */}
-          <polygon points="90,95 110,95 100,118" fill="#f59e0b" />
-          <polygon points="90,95 100,118 100,95" fill="#d97706" />
-
-          {/* Graduation Cap (Scholar / AkademiGO Symbol) */}
-          <g transform="translate(10, -5)">
-            {/* Cap base diamond */}
-            <polygon points="90,15 150,28 90,40 30,28" fill="url(#capGrad)" stroke="#334155" strokeWidth="2" />
-            {/* Skullcap underneath */}
-            <path d="M 65 32 Q 90 42 115 32 L 115 40 Q 90 48 65 40 Z" fill="#0f172a" />
-            {/* Golden Tassel */}
-            <circle cx="90" cy="27" r="3" fill="#f59e0b" />
-            <path d="M 90 27 Q 120 32 135 50" stroke="#f59e0b" strokeWidth="2.5" fill="none" />
-            <rect x="132" y="48" width="6" height="12" rx="2" fill="#f59e0b" />
+          {/* Haribo Red Bowtie or Scholar Cap */}
+          <g transform="translate(100, 114)">
+            <polygon points="-16,-7 -16,7 0,0" fill="url(#bowtieGrad)" />
+            <polygon points="16,-7 16,7 0,0" fill="url(#bowtieGrad)" />
+            <circle cx="0" cy="0" r="4.5" fill="#b91c1c" />
           </g>
 
-          {/* Sparkles if excited */}
+          {/* Sparkles if Excited */}
           {(activeMood === 'excited' || activeMood === 'cheering') && (
             <>
-              <text x="20" y="50" fontSize="18" fill="#fbbf24" className="animate-ping">✨</text>
-              <text x="160" y="50" fontSize="18" fill="#fbbf24" className="animate-ping">⭐</text>
+              <text x="20" y="45" fontSize="20" className="animate-ping">✨</text>
+              <text x="165" y="45" fontSize="20" className="animate-ping">⭐</text>
+              <text x="100" y="20" fontSize="16" className="animate-bounce">🍬</text>
             </>
           )}
         </svg>

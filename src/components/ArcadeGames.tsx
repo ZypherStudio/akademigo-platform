@@ -286,13 +286,13 @@ export const ArcadeGames: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5 animate-pop">
           
           {/* Game 1: Balloon Pop */}
-          <div className="bg-white rounded-3xl p-5 border-2 border-gray-200 shadow-sm hover:border-green-400 hover:shadow-md transition-all flex flex-col justify-between">
+          <div className="bg-white dark:bg-[#1a2c35] rounded-3xl p-5 border-2 border-gray-200 dark:border-[#2b3d45] shadow-sm hover:border-green-400 dark:hover:border-green-600 hover:shadow-md transition-all flex flex-col justify-between">
             <div>
-              <div className="w-14 h-14 rounded-2xl bg-green-100 text-green-600 flex items-center justify-center text-3xl mb-3">
+              <div className="w-14 h-14 rounded-2xl bg-green-100 dark:bg-green-950/50 text-green-600 dark:text-green-300 flex items-center justify-center text-3xl mb-3">
                 🎈
               </div>
-              <h3 className="font-black text-lg text-gray-800">Sayı & Balon Avcısı</h3>
-              <p className="text-xs text-gray-500 font-semibold mt-1 leading-relaxed">
+              <h3 className="font-black text-lg text-gray-800 dark:text-gray-100">Sayı & Balon Avcısı</h3>
+              <p className="text-xs text-gray-500 dark:text-gray-400 font-semibold mt-1 leading-relaxed">
                 60 saniyede matematik sorularının doğru balonlarını yakala, kombo yap ve yüksek skor kır!
               </p>
             </div>
@@ -308,13 +308,13 @@ export const ArcadeGames: React.FC = () => {
           </div>
 
           {/* Game 2: Memory Cards */}
-          <div className="bg-white rounded-3xl p-5 border-2 border-gray-200 shadow-sm hover:border-blue-400 hover:shadow-md transition-all flex flex-col justify-between">
+          <div className="bg-white dark:bg-[#1a2c35] rounded-3xl p-5 border-2 border-gray-200 dark:border-[#2b3d45] shadow-sm hover:border-blue-400 dark:hover:border-blue-600 hover:shadow-md transition-all flex flex-col justify-between">
             <div>
-              <div className="w-14 h-14 rounded-2xl bg-blue-100 text-blue-600 flex items-center justify-center text-3xl mb-3">
+              <div className="w-14 h-14 rounded-2xl bg-blue-100 dark:bg-blue-950/50 text-blue-600 dark:text-blue-300 flex items-center justify-center text-3xl mb-3">
                 🧠
               </div>
-              <h3 className="font-black text-lg text-gray-800">Kavram Hafıza Kartları</h3>
-              <p className="text-xs text-gray-500 font-semibold mt-1 leading-relaxed">
+              <h3 className="font-black text-lg text-gray-800 dark:text-gray-100">Kavram Hafıza Kartları</h3>
+              <p className="text-xs text-gray-500 dark:text-gray-400 font-semibold mt-1 leading-relaxed">
                 Tarih, Biyoloji ve Kodlama kavramlarını eşleştir. Zihnini ve görsel hafızanı güçlendir!
               </p>
             </div>
@@ -330,13 +330,13 @@ export const ArcadeGames: React.FC = () => {
           </div>
 
           {/* Game 3: Chrono Rush */}
-          <div className="bg-white rounded-3xl p-5 border-2 border-gray-200 shadow-sm hover:border-purple-400 hover:shadow-md transition-all flex flex-col justify-between">
+          <div className="bg-white dark:bg-[#1a2c35] rounded-3xl p-5 border-2 border-gray-200 dark:border-[#2b3d45] shadow-sm hover:border-purple-400 dark:hover:border-purple-600 hover:shadow-md transition-all flex flex-col justify-between">
             <div>
-              <div className="w-14 h-14 rounded-2xl bg-purple-100 text-purple-600 flex items-center justify-center text-3xl mb-3">
+              <div className="w-14 h-14 rounded-2xl bg-purple-100 dark:bg-purple-950/50 text-purple-600 dark:text-purple-300 flex items-center justify-center text-3xl mb-3">
                 ⏳
               </div>
-              <h3 className="font-black text-lg text-gray-800">Kronoloji & Mantık Koşusu</h3>
-              <p className="text-xs text-gray-500 font-semibold mt-1 leading-relaxed">
+              <h3 className="font-black text-lg text-gray-800 dark:text-gray-100">Kronoloji & Mantık Koşusu</h3>
+              <p className="text-xs text-gray-500 dark:text-gray-400 font-semibold mt-1 leading-relaxed">
                 Tarihi olayları veya kodlama algoritmalarını doğru sıralamaya dizerek şampiyon ol!
               </p>
             </div>
@@ -356,7 +356,7 @@ export const ArcadeGames: React.FC = () => {
 
       {/* 2. Balloon Pop Game View */}
       {activeGame === 'balloon' && (
-        <div className="bg-white rounded-3xl p-6 border-2 border-gray-200 shadow-sm space-y-6 animate-pop">
+        <div className="bg-white dark:bg-[#1a2c35] rounded-3xl p-6 border-2 border-gray-200 dark:border-[#2b3d45] shadow-sm space-y-6 animate-pop transition-colors duration-300">
           {/* Game Status Bar */}
           <div className="flex items-center justify-between bg-gray-50 p-4 rounded-2xl border-2 border-gray-200">
             <div className="flex items-center gap-2">

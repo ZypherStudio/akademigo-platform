@@ -42,7 +42,7 @@ export const ErrorNotebook: React.FC = () => {
       </div>
 
       {/* Filter and Clear All Bar */}
-      <div className="flex flex-wrap items-center justify-between gap-3 bg-white p-3 rounded-2xl border-2 border-gray-200 shadow-sm">
+      <div className="flex flex-wrap items-center justify-between gap-3 bg-white dark:bg-[#1a2c35] p-3 rounded-2xl border-2 border-gray-200 dark:border-[#2b3d45] shadow-sm transition-colors duration-300">
         <div className="flex items-center gap-2 overflow-x-auto">
           <Filter className="w-4 h-4 text-gray-400 ml-1" />
           {subjects.map(s => (
@@ -54,8 +54,8 @@ export const ErrorNotebook: React.FC = () => {
               }}
               className={`px-3 py-1.5 rounded-xl text-xs font-black transition-all ${
                 selectedSubject === s
-                  ? 'bg-rose-50 text-rose-600 border border-rose-300 shadow-sm'
-                  : 'text-gray-500 hover:text-gray-800'
+                  ? 'bg-rose-50 dark:bg-rose-950/50 text-rose-600 dark:text-rose-300 border border-rose-300 dark:border-rose-700 shadow-sm'
+                  : 'text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'
               }`}
             >
               {s === 'all' ? 'Tüm Hatalar' : s}
@@ -80,10 +80,10 @@ export const ErrorNotebook: React.FC = () => {
 
       {/* Mistakes List */}
       {filteredMistakes.length === 0 ? (
-        <div className="bg-white rounded-3xl p-10 border-2 border-gray-200 shadow-sm text-center max-w-md mx-auto space-y-4 animate-pop">
-          <Mascot size="lg" mood="happy" speech="Tebrikler! Hata defterin tertemiz! Tüm eksiklerini kapattın! 🎉" />
-          <h3 className="text-xl font-black text-gray-800">Hiç Hatan Kalmadı!</h3>
-          <p className="text-xs font-semibold text-gray-500">
+        <div className="bg-white dark:bg-[#1a2c35] rounded-3xl p-10 border-2 border-gray-200 dark:border-[#2b3d45] shadow-sm text-center max-w-md mx-auto space-y-4 animate-pop transition-colors duration-300">
+          <Mascot size="lg" mood="happy" speech="Tebrikler! Hata defterin tertemiz! Tüm eksiklerini kapattın! 🐻🎉" />
+          <h3 className="text-xl font-black text-gray-800 dark:text-gray-100">Hiç Hatan Kalmadı!</h3>
+          <p className="text-xs font-semibold text-gray-500 dark:text-gray-400">
             Ders veya deneme çözerken yanlış yaparsan sistem otomatik olarak buraya kaydedecek.
           </p>
         </div>
@@ -92,31 +92,31 @@ export const ErrorNotebook: React.FC = () => {
           {filteredMistakes.map(item => (
             <div
               key={item.id}
-              className="bg-white rounded-3xl p-5 border-2 border-rose-100 shadow-sm space-y-3 hover:border-rose-300 transition-all animate-pop"
+              className="bg-white dark:bg-[#1a2c35] rounded-3xl p-5 border-2 border-rose-100 dark:border-[#2b3d45] shadow-sm space-y-3 hover:border-rose-300 dark:hover:border-rose-600 transition-all animate-pop"
             >
               <div className="flex items-center justify-between">
-                <span className="text-xs font-black uppercase text-rose-600 bg-rose-50 px-2.5 py-1 rounded-lg">
+                <span className="text-xs font-black uppercase text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/40 px-2.5 py-1 rounded-lg">
                   {item.subject}
                 </span>
-                <span className="text-[11px] font-bold text-gray-400">{item.addedAt}</span>
+                <span className="text-[11px] font-bold text-gray-400 dark:text-gray-500">{item.addedAt}</span>
               </div>
 
-              <h4 className="text-base font-bold text-gray-800 leading-snug">
+              <h4 className="text-base font-bold text-gray-800 dark:text-gray-100 leading-snug">
                 {item.prompt}
               </h4>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs font-bold">
-                <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-red-800">
-                  <span className="font-black block text-red-900 mb-0.5">Senin Verdiğin Cevap:</span>
+                <div className="p-3 bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800 rounded-xl text-red-800 dark:text-red-300">
+                  <span className="font-black block text-red-900 dark:text-red-200 mb-0.5">Senin Verdiğin Cevap:</span>
                   {item.userAnswer || 'Hatalı Cevap'}
                 </div>
-                <div className="p-3 bg-green-50 border border-green-200 rounded-xl text-green-800">
-                  <span className="font-black block text-green-900 mb-0.5">Doğru Cevap:</span>
+                <div className="p-3 bg-green-50 dark:bg-green-950/40 border border-green-200 dark:border-green-800 rounded-xl text-green-800 dark:text-green-300">
+                  <span className="font-black block text-green-900 dark:text-green-200 mb-0.5">Doğru Cevap:</span>
                   {item.correctAnswer}
                 </div>
               </div>
 
-              <div className="p-3 bg-amber-50 border border-amber-200 rounded-xl text-xs font-semibold text-amber-900">
+              <div className="p-3 bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 rounded-xl text-xs font-semibold text-amber-900 dark:text-amber-200">
                 <span className="font-black block mb-0.5">💡 Çözüm ve Püf Noktası:</span>
                 {item.explanation}
               </div>

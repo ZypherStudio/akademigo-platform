@@ -276,6 +276,135 @@ export const COURSES: Course[] = [
             ]
           }
         ]
+      },
+      {
+        id: 'yks-u4',
+        number: 4,
+        title: 'AYT Matematik: Fonksiyonlar & Parabol',
+        description: 'Fonksiyon grafikleri, bileşke, ters fonksiyon ve parabol tepe noktası',
+        color: '#af72ff',
+        lessons: [
+          {
+            id: 'yks-u4-l1',
+            unitId: 'yks-u4',
+            title: 'Fonksiyonlarda Değer Bulma & Bileşke',
+            description: 'f(x) fonksiyonlarında işlem ve (fog)(x) bileşke fonksiyon kuralları.',
+            xpReward: 25,
+            gemReward: 8,
+            type: 'lesson',
+            summaryNotes: [
+              '(f ∘ g)(x) = f(g(x)) demektir; önce içteki g(x) hesaplanır!',
+              'f(x) = ax + b doğrusal fonksiyonun tersi f⁻¹(x) = (x - b) / a olur.',
+              'Birebir ve örten fonksiyonların daima tersi vardır.'
+            ],
+            questions: [
+              {
+                id: 'yks-fnc-1',
+                type: 'multiple_choice',
+                prompt: 'f(x) = 3x - 5 olduğuna göre, f(4) değeri kaçtır?',
+                difficulty: 'kolay',
+                explanation: 'x yerine 4 yazılır: f(4) = 3(4) - 5 = 12 - 5 = 7 bulunur.',
+                options: [
+                  { id: 'fn1', text: '7', isCorrect: true },
+                  { id: 'fn2', text: '9', isCorrect: false },
+                  { id: 'fn3', text: '11', isCorrect: false },
+                  { id: 'fn4', text: '5', isCorrect: false }
+                ]
+              },
+              {
+                id: 'yks-fnc-2',
+                type: 'multiple_choice',
+                prompt: 'f(x) = 2x + 1 ve g(x) = x² - 3 olduğuna göre, (f ∘ g)(2) ifadesinin sonucu kaçtır?',
+                difficulty: 'orta',
+                explanation: '(f ∘ g)(2) = f(g(2)). Önce g(2) = 2² - 3 = 4 - 3 = 1 bulunur. Sonra f(1) = 2(1) + 1 = 3 bulunur!',
+                options: [
+                  { id: 'fg1', text: '3', isCorrect: true },
+                  { id: 'fg2', text: '5', isCorrect: false },
+                  { id: 'fg3', text: '7', isCorrect: false },
+                  { id: 'fg4', text: '1', isCorrect: false }
+                ]
+              },
+              {
+                id: 'yks-fnc-3',
+                type: 'multiple_choice',
+                prompt: 'f(x) = x² - 6x + 14 parabolünün Tepe Noktasının ordinatı (k değeri) kaçtır?',
+                difficulty: 'zor',
+                hint: 'Tepe noktası T(r, k) formülü: r = -b / (2a) ve k = f(r).',
+                explanation: 'r = -(-6) / (2 × 1) = 6 / 2 = 3. Şimdi fonksiyonda x = 3 yazalım: k = f(3) = 3² - 6(3) + 14 = 9 - 18 + 14 = 5 bulunur!',
+                options: [
+                  { id: 'tp1', text: '5', isCorrect: true },
+                  { id: 'tp2', text: '3', isCorrect: false },
+                  { id: 'tp3', text: '7', isCorrect: false },
+                  { id: 'tp4', text: '14', isCorrect: false }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        id: 'yks-u5',
+        number: 5,
+        title: 'TYT - AYT Geometri: Üçgenler & Açılar',
+        description: 'Özel üçgenler (3-4-5, 30-60-90), Öklid bağıntıları ve Pisagor teoremi',
+        color: '#ffc800',
+        lessons: [
+          {
+            id: 'yks-u5-l1',
+            unitId: 'yks-u5',
+            title: 'Pisagor & Özel Dik Üçgenler',
+            description: 'Hipotenüs bağıntısı ve kenarlarına göre özel dik üçgenler.',
+            xpReward: 25,
+            gemReward: 8,
+            type: 'lesson',
+            summaryNotes: [
+              'Pisagor Teoremi: a² + b² = c² (c: hipotenüs)',
+              'Özel kenarlı dik üçgenler: (3-4-5), (5-12-13), (8-15-17), (7-24-25)',
+              '30-60-90 üçgeninde: 30° nin karşısı a ise 90° nin karşısı 2a, 60° nin karşısı a√3 olur.'
+            ],
+            questions: [
+              {
+                id: 'geo-q1',
+                type: 'multiple_choice',
+                prompt: 'Dik kenar uzunlukları 6 cm ve 8 cm olan dik üçgenin hipotenüs uzunluğu kaç cm\'dir?',
+                difficulty: 'kolay',
+                explanation: '3-4-5 üçgeninin 2 katı: 6 - 8 - 10 üçgenidir! Dolayısıyla hipotenüs 10 cm bulunur.',
+                options: [
+                  { id: 'g1', text: '10 cm', isCorrect: true },
+                  { id: 'g2', text: '12 cm', isCorrect: false },
+                  { id: 'g3', text: '14 cm', isCorrect: false },
+                  { id: 'g4', text: '9 cm', isCorrect: false }
+                ]
+              },
+              {
+                id: 'geo-q2',
+                type: 'matching',
+                prompt: 'Özel dik üçgen kenar oranlarını doğru eşleştirin:',
+                difficulty: 'orta',
+                explanation: '3-4-5, 5-12-13 ve 8-15-17 ÖSYM\'nin en sık sorduğu Pisagor üçgenleridir.',
+                pairs: [
+                  { id: 'gp1', left: 'Dik kenarlar: 5 ve 12', right: 'Hipotenüs: 13' },
+                  { id: 'gp2', left: 'Dik kenarlar: 8 ve 15', right: 'Hipotenüs: 17' },
+                  { id: 'gp3', left: 'Dik kenarlar: 7 ve 24', right: 'Hipotenüs: 25' }
+                ]
+              },
+              {
+                id: 'geo-q3',
+                type: 'multiple_choice',
+                prompt: 'Bir dik üçgende hipotenüse ait yükseklik h, hipotenüste ayırdığı parçalar p ve k olsun. h = 6 cm ve p = 4 cm olduğuna göre k uzunluğu kaç cm\'dir? (Öklid Bağıntısı)',
+                difficulty: 'zor',
+                hint: 'Öklid yüksekliğin karesi bağıntısı: h² = p × k.',
+                explanation: 'Öklid teoremi: h² = p × k ➔ 6² = 4 × k ➔ 36 = 4k ➔ k = 9 cm bulunur!',
+                options: [
+                  { id: 'ok1', text: '9 cm', isCorrect: true },
+                  { id: 'ok2', text: '6 cm', isCorrect: false },
+                  { id: 'ok3', text: '8 cm', isCorrect: false },
+                  { id: 'ok4', text: '12 cm', isCorrect: false }
+                ]
+              }
+            ]
+          }
+        ]
       }
     ]
   },
@@ -562,6 +691,66 @@ export const COURSES: Course[] = [
             ]
           }
         ]
+      },
+      {
+        id: 'kpss-u3',
+        number: 3,
+        title: 'KPSS Vatandaşlık & 1982 Anayasası',
+        description: 'Devlet organları, TBMM yapısı, Cumhurbaşkanlığı ve yargı denetimi',
+        color: '#ff9600',
+        lessons: [
+          {
+            id: 'kpss-u3-l1',
+            unitId: 'kpss-u3',
+            title: 'Yasama & TBMM Seçimleri',
+            description: 'Milletvekili sayısı, seçim dönemleri ve kanun yapma süreci.',
+            xpReward: 25,
+            gemReward: 8,
+            type: 'lesson',
+            summaryNotes: [
+              'TBMM üye sayısı: 600 milletvekilidir.',
+              'Milletvekili seçilme yaşı: 18 yaştır.',
+              'Genel seçimler 5 yılda bir Cumhurbaşkanı seçimi ile aynı gün yapılır.',
+              'Anayasa Mahkemesi 15 üyeden oluşur.'
+            ],
+            questions: [
+              {
+                id: 'kpss-v1',
+                type: 'multiple_choice',
+                prompt: '1982 Anayasası\'na göre Türkiye Büyük Millet Meclisi (TBMM) kaç milletvekilinden oluşur?',
+                difficulty: 'kolay',
+                explanation: '2017 anayasa değişikliği ile TBMM milletvekili sayısı 550\'den 600\'e çıkarılmıştır.',
+                options: [
+                  { id: 'v1', text: '600 Milletvekili', isCorrect: true },
+                  { id: 'v2', text: '550 Milletvekili', isCorrect: false },
+                  { id: 'v3', text: '450 Milletvekili', isCorrect: false },
+                  { id: 'v4', text: '650 Milletvekili', isCorrect: false }
+                ]
+              },
+              {
+                id: 'kpss-v2',
+                type: 'multiple_choice',
+                prompt: '1982 Anayasası\'na göre Anayasa Mahkemesi (AYM) toplam kaç üyeden oluşur?',
+                difficulty: 'orta',
+                explanation: 'Anayasa Mahkemesi 15 üyeden oluşur (12 üye Cumhurbaşkanı, 3 üye TBMM tarafından seçilir).',
+                options: [
+                  { id: 'ay1', text: '15 üye', isCorrect: true },
+                  { id: 'ay2', text: '12 üye', isCorrect: false },
+                  { id: 'ay3', text: '17 üye', isCorrect: false },
+                  { id: 'ay4', text: '11 üye', isCorrect: false }
+                ]
+              },
+              {
+                id: 'kpss-v3',
+                type: 'true_false',
+                prompt: 'Cumhurbaşkanı kararnamesi ile temel haklar sınırlandırılabilir mi?',
+                statement: 'Anayasada münhasıran kanunla düzenlenmesi öngörülen konularda Cumhurbaşkanlığı kararnamesi çıkarılamaz.',
+                correctAnswer: true,
+                explanation: 'Doğrudur! Anayasa madde 104 gereği kanunla açıkça düzenlenen konularda CB kararnamesi çıkarılamaz.'
+              }
+            ]
+          }
+        ]
       }
     ]
   },
@@ -619,6 +808,65 @@ export const COURSES: Course[] = [
                   { id: 'lp2', left: 'Farklı aralıklarla çalan iki zilin tekrar birlikte çalması', right: 'EKOK (Parçadan bütüne)' },
                   { id: 'lp3', left: 'Tarlanın etrafına eşit aralıklarla fidan dikme', right: 'EBOB (Bölme / Parçalama)' }
                 ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        id: 'lgs-u2',
+        number: 2,
+        title: 'LGS Fen Bilimleri: Mevsimler & DNA',
+        description: 'Eksen eğikliği, güneş ışınlarının geliş açısı ve DNA replikasyonu',
+        color: '#58cc02',
+        lessons: [
+          {
+            id: 'lgs-u2-l1',
+            unitId: 'lgs-u2',
+            title: 'Mevsimlerin Oluşumu & Eksen Eğikliği',
+            description: '21 Haziran, 21 Aralık gün dönümleri ve gece-gündüz süreleri.',
+            xpReward: 25,
+            gemReward: 8,
+            type: 'lesson',
+            summaryNotes: [
+              'Mevsimlerin oluşmasının 2 temel sebebi vardır: Dünyanın Güneş etrafında dolanması ve 23° 27\' eksen eğikliği.',
+              'Güneş ışınları dik açıyla (90°) gelirse birim yüzeye düşen enerji fazla olur, sıcaklık artar (Yaz).',
+              '21 Haziran\'da Kuzey Yarım Küre\'de en uzun gündüz yaşanır.'
+            ],
+            questions: [
+              {
+                id: 'lgs-fen-1',
+                type: 'multiple_choice',
+                prompt: 'Dünya\'da mevsimlerin oluşmasının temel sebebi aşağıdakilerden hangisidir?',
+                difficulty: 'kolay',
+                explanation: 'Mevsimlerin oluşumu eksen eğikliği ve Dünya\'nın Güneş etrafındaki dolanma hareketinden kaynaklanır.',
+                options: [
+                  { id: 'm1', text: 'Dünya\'nın eksen eğikliği ve Güneş etrafında dolanması', isCorrect: true },
+                  { id: 'm2', text: 'Dünya\'nın Güneş\'e olan mesafesinin değişmesi', isCorrect: false },
+                  { id: 'm3', text: 'Dünya\'nın kendi ekseni etrafında dönmesi', isCorrect: false },
+                  { id: 'm4', text: 'Ay\'ın evreleri', isCorrect: false }
+                ]
+              },
+              {
+                id: 'lgs-fen-2',
+                type: 'multiple_choice',
+                prompt: 'DNA molekülünde Adenin (A) nükleotidinin karşısına her zaman hangi nükleotid gelir?',
+                difficulty: 'kolay',
+                explanation: 'DNA çift sarmalında Adenin (A) daima Timin (T) ile, Guanin (G) ise daima Sitozin (C/S) ile eşleşir.',
+                options: [
+                  { id: 'dna1', text: 'Timin (T)', isCorrect: true },
+                  { id: 'dna2', text: 'Guanin (G)', isCorrect: false },
+                  { id: 'dna3', text: 'Sitozin (S)', isCorrect: false },
+                  { id: 'dna4', text: 'Urasil (U)', isCorrect: false }
+                ]
+              },
+              {
+                id: 'lgs-fen-3',
+                type: 'true_false',
+                prompt: '21 Mart ve 23 Eylül tarihlerinde tüm Dünya\'da gece ve gündüz süreleri eşit (12 saat) midir?',
+                statement: 'Ekinoks tarihlerinde (21 Mart - 23 Eylül) Güneş ışınları Ekvator\'a dik gelir ve Dünya genelinde gece-gündüz süreleri eşittir.',
+                correctAnswer: true,
+                explanation: 'Harika! Ekinoks dönemlerinde gece ve gündüz 12\'şer saat olarak eşitlenir.'
               }
             ]
           }
@@ -690,6 +938,56 @@ export const COURSES: Course[] = [
                 options: ['is', 'are', 'am', 'be'],
                 correctAnswer: 'is',
                 explanation: 'Present Continuous Tense yapısında "he/she/it" özneleri "is" yardımcı fiilini alır.'
+              }
+            ]
+          }
+        ]
+      },
+      {
+        id: 'dil-u2',
+        number: 2,
+        title: 'YDS & YÖKDİL Akademik Kelimeler & Phrasal Verbs',
+        description: 'Sık çıkan bağlaçlar, akademik sıfatlar ve phrasal verb kalıpları',
+        color: '#1899d6',
+        lessons: [
+          {
+            id: 'dil-u2-l1',
+            unitId: 'dil-u2',
+            title: 'Akademik Sıfatlar & Fiiller',
+            description: 'Significant, Essential, Considerably ve Carry out kalıpları.',
+            xpReward: 25,
+            gemReward: 8,
+            type: 'lesson',
+            summaryNotes: [
+              'Carry out = Perform / Do (Uygulamak, gerçekleştirmek)',
+              'Significant = Important / Notable (Önemli, kayda değer)',
+              'Although / Even though = Zıtlık bağlaçları (-e rağmen)'
+            ],
+            questions: [
+              {
+                id: 'dil-yds-1',
+                type: 'multiple_choice',
+                prompt: 'The scientists decided to ___ a series of experiments to test the new medicine. (Boşluğa en uygun phrasal verb hangisidir?)',
+                difficulty: 'orta',
+                explanation: '"Carry out" deneyi yürütmek / gerçekleştirmek anlamına gelir.',
+                options: [
+                  { id: 'y1', text: 'carry out', isCorrect: true },
+                  { id: 'y2', text: 'give up', isCorrect: false },
+                  { id: 'y3', text: 'look down', isCorrect: false },
+                  { id: 'y4', text: 'run out', isCorrect: false }
+                ]
+              },
+              {
+                id: 'dil-yds-2',
+                type: 'matching',
+                prompt: 'YDS akademik kelimeleri Türkçe anlamlarıyla eşleştirin:',
+                difficulty: 'zor',
+                explanation: 'Sınavda en yüksek frekansta çıkan akademik kelimeler.',
+                pairs: [
+                  { id: 'yp1', left: 'Substantial', right: 'Büyük, önemli ölçüde' },
+                  { id: 'yp2', left: 'Deteriorate', right: 'Kötüleşmek, bozulmak' },
+                  { id: 'yp3', left: 'Compulsory', right: 'Zorunlu, mecburi' }
+                ]
               }
             ]
           }

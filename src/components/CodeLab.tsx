@@ -230,9 +230,9 @@ export const CodeLab: React.FC = () => {
         <div className="lg:col-span-5 space-y-5">
           
           {/* Instructions Card */}
-          <div className="bg-white rounded-3xl p-5 border-2 border-gray-200 shadow-sm space-y-4">
+          <div className="bg-white dark:bg-[#1a2c35] rounded-3xl p-5 border-2 border-gray-200 dark:border-[#2b3d45] shadow-sm space-y-4 transition-colors duration-300">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-black uppercase text-purple-600 bg-purple-50 px-2.5 py-1 rounded-lg">
+              <span className="text-xs font-black uppercase text-purple-600 dark:text-purple-400 bg-purple-50 dark:bg-purple-950/40 px-2.5 py-1 rounded-lg">
                 {challenge.level} Seviye
               </span>
               <div className="flex items-center gap-2 text-xs font-black text-amber-500">
@@ -241,12 +241,12 @@ export const CodeLab: React.FC = () => {
               </div>
             </div>
 
-            <h3 className="font-black text-lg text-gray-800">{challenge.title}</h3>
-            <p className="text-xs text-gray-600 font-medium leading-relaxed">{challenge.description}</p>
+            <h3 className="font-black text-lg text-gray-800 dark:text-gray-100">{challenge.title}</h3>
+            <p className="text-xs text-gray-600 dark:text-gray-300 font-medium leading-relaxed">{challenge.description}</p>
 
-            <div className="bg-gray-50 border-2 border-gray-100 rounded-2xl p-4 space-y-2">
-              <h4 className="text-xs font-black uppercase text-gray-500">GÖREV ADIMLARI</h4>
-              <ul className="text-xs text-gray-700 font-semibold space-y-1.5 list-disc list-inside">
+            <div className="bg-gray-50 dark:bg-[#202f36] border-2 border-gray-100 dark:border-[#2b3d45] rounded-2xl p-4 space-y-2">
+              <h4 className="text-xs font-black uppercase text-gray-500 dark:text-gray-400">GÖREV ADIMLARI</h4>
+              <ul className="text-xs text-gray-700 dark:text-gray-300 font-semibold space-y-1.5 list-disc list-inside">
                 {challenge.instructions.map((ins, i) => (
                   <li key={i}>{ins}</li>
                 ))}
@@ -257,14 +257,14 @@ export const CodeLab: React.FC = () => {
             <div>
               <button
                 onClick={() => setShowHint(!showHint)}
-                className="flex items-center gap-1.5 text-xs font-bold text-amber-600 hover:text-amber-700 bg-amber-50 px-3 py-1.5 rounded-xl border border-amber-200"
+                className="flex items-center gap-1.5 text-xs font-bold text-amber-600 dark:text-amber-400 hover:text-amber-700 bg-amber-50 dark:bg-amber-950/40 px-3 py-1.5 rounded-xl border border-amber-200 dark:border-amber-800"
               >
                 <Lightbulb className="w-4 h-4" />
                 {showHint ? 'İpucunu Kapat' : 'İpucu İste 💡'}
               </button>
 
               {showHint && (
-                <div className="mt-2 p-3 bg-amber-50 border-2 border-amber-200 rounded-xl text-xs font-bold text-amber-900 animate-pop">
+                <div className="mt-2 p-3 bg-amber-50 dark:bg-amber-950/40 border-2 border-amber-200 dark:border-amber-800 rounded-xl text-xs font-bold text-amber-900 dark:text-amber-200 animate-pop">
                   {challenge.solutionHint}
                 </div>
               )}
@@ -272,8 +272,8 @@ export const CodeLab: React.FC = () => {
           </div>
 
           {/* Automated Test Cases Card */}
-          <div className="bg-white rounded-3xl p-5 border-2 border-gray-200 shadow-sm space-y-3">
-            <h4 className="font-black text-sm text-gray-800 flex items-center gap-2">
+          <div className="bg-white dark:bg-[#1a2c35] rounded-3xl p-5 border-2 border-gray-200 dark:border-[#2b3d45] shadow-sm space-y-3 transition-colors duration-300">
+            <h4 className="font-black text-sm text-gray-800 dark:text-gray-100 flex items-center gap-2">
               <CheckCircle2 className="w-4 h-4 text-green-500" />
               Doğrulama Testleri (Test Cases)
             </h4>

@@ -103,7 +103,7 @@ const MainLayout: React.FC = () => {
       </div>
 
       {/* Mobile Bottom Navigation Bar (No sidebars squeezing, clean full-width experience) */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t-2 border-gray-200 px-2 py-1.5 pb-[max(0.6rem,env(safe-area-inset-bottom))] flex items-center justify-around z-40 shadow-2xl">
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white/95 dark:bg-[#1a2c35]/95 backdrop-blur-md border-t-2 border-gray-200 dark:border-[#2b3d45] px-2 py-1.5 pb-[max(0.6rem,env(safe-area-inset-bottom))] flex items-center justify-around z-40 shadow-2xl transition-colors duration-300">
         {mobilePrimaryTabs.map((tab) => {
           const Icon = tab.icon;
           const isActive = currentTab === tab.id;
@@ -112,7 +112,7 @@ const MainLayout: React.FC = () => {
               key={tab.id}
               onClick={() => handleSelectTab(tab.id as NavTab)}
               className={`flex-1 flex flex-col items-center py-1 rounded-xl transition-all active:scale-90 ${
-                isActive ? 'text-[#1cb0f6]' : 'text-gray-400 hover:text-gray-600'
+                isActive ? 'text-[#1cb0f6]' : 'text-gray-400 hover:text-gray-600 dark:hover:text-gray-200'
               }`}
             >
               <Icon className="w-5 h-5 stroke-[2.5]" />
@@ -130,7 +130,7 @@ const MainLayout: React.FC = () => {
             setShowMobileDrawer(true);
           }}
           className={`flex-1 flex flex-col items-center py-1 rounded-xl transition-all active:scale-90 ${
-            showMobileDrawer ? 'text-[#1cb0f6]' : 'text-gray-400 hover:text-gray-600'
+            showMobileDrawer ? 'text-[#1cb0f6]' : 'text-gray-400 hover:text-gray-600 dark:hover:text-gray-200'
           }`}
         >
           <Menu className="w-5 h-5 stroke-[2.5]" />
@@ -143,20 +143,20 @@ const MainLayout: React.FC = () => {
       {/* Mobile Bottom Drawer Overlay */}
       {showMobileDrawer && (
         <div className="md:hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex flex-col justify-end animate-fade">
-          <div className="bg-white rounded-t-3xl p-5 max-h-[85vh] overflow-y-auto space-y-4 shadow-2xl animate-pop border-t-2 border-gray-200">
+          <div className="bg-white dark:bg-[#1a2c35] rounded-t-3xl p-5 max-h-[85vh] overflow-y-auto space-y-4 shadow-2xl animate-pop border-t-2 border-gray-200 dark:border-[#2b3d45]">
             
             {/* Drawer Header */}
-            <div className="flex items-center justify-between pb-3 border-b border-gray-100">
+            <div className="flex items-center justify-between pb-3 border-b border-gray-100 dark:border-[#2b3d45]">
               <div className="flex items-center gap-2">
-                <span className="text-2xl">🦉</span>
+                <span className="text-2xl animate-bounceSubtle">🐻</span>
                 <div>
-                  <h3 className="font-black text-gray-800 text-base">AkademiGO Menüsü</h3>
-                  <span className="text-[10px] font-bold text-gray-400">Tüm Eğitici Odalar & Özellikler</span>
+                  <h3 className="font-black text-gray-800 dark:text-gray-100 text-base">AkademiGO Menüsü</h3>
+                  <span className="text-[10px] font-bold text-gray-400 dark:text-gray-400">Tüm Eğitici Odalar & Özellikler</span>
                 </div>
               </div>
               <button
                 onClick={() => setShowMobileDrawer(false)}
-                className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 font-black"
+                className="w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-gray-600 dark:text-gray-300 font-black"
               >
                 ✕
               </button>
@@ -173,8 +173,8 @@ const MainLayout: React.FC = () => {
                     onClick={() => handleSelectTab(item.id as NavTab)}
                     className={`p-3 rounded-2xl border-2 flex items-center gap-2.5 text-left transition-all active:scale-95 ${
                       isCurrent
-                        ? 'border-[#1cb0f6] bg-blue-50 text-[#1cb0f6] shadow-sm font-black'
-                        : 'border-gray-200 hover:border-gray-300 text-gray-700 bg-white font-bold'
+                        ? 'border-[#1cb0f6] bg-blue-50 dark:bg-blue-950/40 text-[#1cb0f6] shadow-sm font-black'
+                        : 'border-gray-200 dark:border-[#2b3d45] hover:border-gray-300 text-gray-700 dark:text-gray-200 bg-white dark:bg-[#202f36] font-bold'
                     }`}
                   >
                     <div className={`w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 ${item.color}`}>
@@ -186,7 +186,7 @@ const MainLayout: React.FC = () => {
               })}
             </div>
 
-            <div className="pt-2 text-center text-[11px] font-bold text-gray-400">
+            <div className="pt-2 text-center text-[11px] font-bold text-gray-400 dark:text-gray-500">
               Kapatmak için yukarıdaki ✕ butonuna basabilirsiniz.
             </div>
 

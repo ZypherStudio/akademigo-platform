@@ -192,20 +192,20 @@ export const LessonModal: React.FC<LessonModalProps> = ({ lesson, onClose }) => 
   }
 
   return (
-    <div className="fixed inset-0 z-50 bg-white flex flex-col justify-between select-none overflow-y-auto w-full">
+    <div className="fixed inset-0 z-50 bg-white dark:bg-[#131f24] text-gray-800 dark:text-gray-100 flex flex-col justify-between select-none overflow-y-auto w-full transition-colors duration-300">
       
       {/* Top Header with Progress and Hearts */}
-      <div className="sticky top-0 bg-white z-30 border-b border-gray-100 max-w-4xl w-full mx-auto px-3 sm:px-4 py-3 sm:py-4 flex items-center justify-between gap-3 shadow-xs">
+      <div className="sticky top-0 bg-white dark:bg-[#1a2c35] z-30 border-b border-gray-100 dark:border-[#2b3d45] max-w-4xl w-full mx-auto px-3 sm:px-4 py-3 sm:py-4 flex items-center justify-between gap-3 shadow-xs">
         <button
           onClick={onClose}
-          className="text-gray-400 hover:text-gray-600 p-1.5 sm:p-2 rounded-xl transition-colors"
+          className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-200 p-1.5 sm:p-2 rounded-xl transition-colors"
           title="Dersi Kapat"
         >
           <X className="w-5 h-5 sm:w-6 sm:h-6 stroke-[3]" />
         </button>
 
         {/* Dynamic Progress Bar */}
-        <div className="flex-1 bg-gray-200 h-3.5 sm:h-4 rounded-full overflow-hidden relative">
+        <div className="flex-1 bg-gray-200 dark:bg-gray-700 h-3.5 sm:h-4 rounded-full overflow-hidden relative">
           <div
             className="bg-[#58cc02] h-full transition-all duration-500 rounded-full"
             style={{ width: `${progressPercent}%` }}
@@ -224,16 +224,30 @@ export const LessonModal: React.FC<LessonModalProps> = ({ lesson, onClose }) => 
         {currentQ && (
           <div className="space-y-6 animate-pop">
             
-            {/* Header info / Hint */}
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-black uppercase tracking-wider text-gray-400">
-                Soru {currentIndex + 1} / {lesson.questions.length}
-              </span>
+            {/* Header info / Difficulty Badge / Hint */}
+            <div className="flex items-center justify-between flex-wrap gap-2">
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-black uppercase tracking-wider text-gray-400 dark:text-gray-500">
+                  Soru {currentIndex + 1} / {lesson.questions.length}
+                </span>
+
+                {currentQ.difficulty && (
+                  <span className={`text-[10px] font-black uppercase px-2 py-0.5 rounded-md border ${
+                    currentQ.difficulty === 'kolay'
+                      ? 'bg-green-100 dark:bg-green-950/40 text-green-800 dark:text-green-300 border-green-300 dark:border-green-800'
+                      : currentQ.difficulty === 'zor'
+                      ? 'bg-red-100 dark:bg-red-950/40 text-red-800 dark:text-red-300 border-red-300 dark:border-red-800'
+                      : 'bg-amber-100 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300 border-amber-300 dark:border-amber-800'
+                  }`}>
+                    {currentQ.difficulty === 'kolay' ? '🟢 Basit' : currentQ.difficulty === 'zor' ? '🔴 İleri' : '🟡 Orta'}
+                  </span>
+                )}
+              </div>
 
               {currentQ.hint && (
                 <button
                   onClick={() => setShowHint(!showHint)}
-                  className="flex items-center gap-1 text-xs font-bold text-amber-600 hover:text-amber-700 bg-amber-50 px-2.5 py-1 rounded-lg border border-amber-200"
+                  className="flex items-center gap-1 text-xs font-bold text-amber-600 dark:text-amber-400 hover:text-amber-700 bg-amber-50 dark:bg-amber-950/40 px-2.5 py-1 rounded-lg border border-amber-200 dark:border-amber-800"
                 >
                   <Lightbulb className="w-3.5 h-3.5" />
                   {showHint ? 'İpucunu Gizle' : 'İpucu Gör'}
@@ -242,13 +256,13 @@ export const LessonModal: React.FC<LessonModalProps> = ({ lesson, onClose }) => 
             </div>
 
             {showHint && currentQ.hint && (
-              <div className="p-3 bg-amber-50 border-2 border-amber-200 text-amber-900 rounded-2xl text-xs font-bold animate-pop">
+              <div className="p-3 bg-amber-50 dark:bg-amber-950/40 border-2 border-amber-200 dark:border-amber-800 text-amber-900 dark:text-amber-200 rounded-2xl text-xs font-bold animate-pop">
                 💡 İpucu: {currentQ.hint}
               </div>
             )}
 
             {/* Question Prompt */}
-            <h3 className="text-xl sm:text-2xl font-black text-gray-800 leading-snug">
+            <h3 className="text-xl sm:text-2xl font-black text-gray-800 dark:text-gray-100 leading-snug">
               {currentQ.prompt}
             </h3>
 
@@ -268,12 +282,12 @@ export const LessonModal: React.FC<LessonModalProps> = ({ lesson, onClose }) => 
                       }}
                       className={`p-4 rounded-2xl font-extrabold text-sm sm:text-base border-2 text-left transition-all flex items-start gap-3 ${
                         isSelected
-                          ? 'border-[#1cb0f6] bg-blue-50 text-[#1cb0f6] shadow-sm'
-                          : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50 text-gray-700'
+                          ? 'border-[#1cb0f6] bg-blue-50 dark:bg-blue-950/50 text-[#1cb0f6] shadow-sm'
+                          : 'border-gray-200 dark:border-[#2b3d45] hover:border-gray-300 dark:hover:border-gray-600 hover:bg-gray-50 dark:hover:bg-[#20343f] text-gray-700 dark:text-gray-200 bg-white dark:bg-[#1a2c35]'
                       }`}
                     >
                       <span className={`w-6 h-6 rounded-lg text-xs flex items-center justify-center font-black ${
-                        isSelected ? 'bg-[#1cb0f6] text-white' : 'bg-gray-100 text-gray-500'
+                        isSelected ? 'bg-[#1cb0f6] text-white' : 'bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400'
                       }`}>
                         {letters[i]}
                       </span>
@@ -414,10 +428,10 @@ export const LessonModal: React.FC<LessonModalProps> = ({ lesson, onClose }) => 
       {/* Bottom Feedback Drawer */}
       <div className={`sticky bottom-0 z-30 p-3.5 sm:p-6 pb-[max(1rem,env(safe-area-inset-bottom))] border-t-2 transition-all shadow-lg ${
         status === 'correct'
-          ? 'bg-[#d7ffb8] border-[#a2f263]'
+          ? 'bg-[#d7ffb8] dark:bg-green-950/80 border-[#a2f263] dark:border-green-700'
           : status === 'wrong'
-          ? 'bg-[#ffdfe0] border-[#f8a8a8]'
-          : 'bg-white border-gray-200'
+          ? 'bg-[#ffdfe0] dark:bg-red-950/80 border-[#f8a8a8] dark:border-red-700'
+          : 'bg-white dark:bg-[#1a2c35] border-gray-200 dark:border-[#2b3d45]'
       }`}>
         <div className="max-w-2xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
           

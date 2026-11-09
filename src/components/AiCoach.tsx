@@ -9,7 +9,7 @@ const INITIAL_MESSAGES: AiChatMessage[] = [
   {
     id: 'msg-1',
     sender: 'bibo',
-    text: 'Merhaba! Ben senin yapay zeka özel ders koçun Bibo 🦉. TYT, KPSS, LGS veya Kodlama ile ilgili aklına takılan her soruyu, formülü veya sınav stratejisini bana sorabilirsin!',
+    text: 'Merhaba! Ben senin sevimli çalışma koçun Haribo Ayıcık 🐻🍯! TYT, KPSS, LGS veya Kodlama ile ilgili aklına takılan her soruyu, formülü veya sınav stratejisini bana sorabilirsin!',
     timestamp: 'Şimdi',
     cardTip: '💡 İpucu: Aşağıdaki hızlı soru butonlarına basarak hemen pratik başlatabilirsin!'
   }
@@ -88,7 +88,7 @@ export const AiCoach: React.FC = () => {
         tip = '💻 KodLab sekmesinde canlı Python editörümüz seni bekliyor.';
       } else {
         replyText = `Bu konuda harika bir noktaya değindin! Sınav hazırlığında en önemli şey istikrar ve doğru stratejidir. Günlük serini (streak) bozmadan her gün en az 1 ders çözmek seni hedefine ulaştıracaktır. Başka merak ettiğin bir konu var mı?`;
-        tip = '🦉 Bibo her zaman yanında!';
+        tip = '🐻 Haribo Ayıcık her zaman yanında!';
       }
 
       const biboMsg: AiChatMessage = {
@@ -108,19 +108,19 @@ export const AiCoach: React.FC = () => {
     <div className="flex-1 max-w-4xl mx-auto py-6 px-4 space-y-4 pb-24 select-none">
       
       {/* Header Card */}
-      <div className="bg-gradient-to-r from-emerald-600 via-teal-700 to-indigo-700 rounded-3xl p-5 text-white shadow-lg flex items-center justify-between">
+      <div className="bg-gradient-to-r from-amber-500 via-orange-600 to-amber-700 rounded-3xl p-5 text-white shadow-lg flex items-center justify-between">
         <div className="flex items-center gap-4">
           <div className="w-14 h-14 rounded-2xl bg-white/20 border-2 border-white/40 flex items-center justify-center text-3xl select-none animate-bounceSubtle">
-            🦉
+            🐻
           </div>
           <div>
             <div className="inline-flex items-center gap-1.5 bg-black/20 px-3 py-0.5 rounded-full text-xs font-black uppercase tracking-wider mb-1">
               <Sparkles className="w-3 h-3 text-amber-300" />
-              Yapay Zeka Özel Koç
+              Özel Maskot & Yapay Zeka Koç
             </div>
-            <h2 className="text-xl sm:text-2xl font-black">Bibo AI ile Konuş</h2>
+            <h2 className="text-xl sm:text-2xl font-black">Haribo Ayıcık AI ile Konuş</h2>
             <p className="text-white/80 text-xs font-semibold">
-              Kişisel çalışma koçun, sınav rehberin ve soru çözücün.
+              Kişisel tatlı koçun, sınav rehberin ve soru çözücün.
             </p>
           </div>
         </div>
@@ -149,7 +149,7 @@ export const AiCoach: React.FC = () => {
           <button
             key={i}
             onClick={() => handleSendMessage(p)}
-            className="whitespace-nowrap px-3.5 py-2 rounded-xl bg-white border-2 border-gray-200 hover:border-emerald-500 hover:bg-emerald-50 text-xs font-bold text-gray-700 transition-all active:scale-95 shadow-sm"
+            className="whitespace-nowrap px-3.5 py-2 rounded-xl bg-white dark:bg-[#1a2c35] border-2 border-gray-200 dark:border-[#2b3d45] hover:border-amber-500 hover:bg-amber-50 dark:hover:bg-[#20343f] text-xs font-bold text-gray-700 dark:text-gray-200 transition-all active:scale-95 shadow-sm"
           >
             {p}
           </button>
@@ -157,7 +157,7 @@ export const AiCoach: React.FC = () => {
       </div>
 
       {/* Chat Messages Container */}
-      <div className="bg-white rounded-3xl border-2 border-gray-200 shadow-sm p-3 sm:p-6 min-h-[260px] max-h-[calc(100vh-270px)] sm:max-h-[480px] overflow-y-auto space-y-3 sm:space-y-4">
+      <div className="bg-white dark:bg-[#1a2c35] rounded-3xl border-2 border-gray-200 dark:border-[#2b3d45] shadow-sm p-3 sm:p-6 min-h-[260px] max-h-[calc(100vh-270px)] sm:max-h-[480px] overflow-y-auto space-y-3 sm:space-y-4 transition-colors duration-300">
         {messages.map((msg) => (
           <div
             key={msg.id}
@@ -165,27 +165,27 @@ export const AiCoach: React.FC = () => {
           >
             {/* Avatar */}
             <div className={`w-9 h-9 rounded-xl flex items-center justify-center text-lg flex-shrink-0 select-none ${
-              msg.sender === 'user' ? 'bg-blue-100 border border-blue-300' : 'bg-green-100 border border-green-300'
+              msg.sender === 'user' ? 'bg-blue-100 border border-blue-300' : 'bg-amber-100 border border-amber-300'
             }`}>
-              {msg.sender === 'user' ? '👤' : '🦉'}
+              {msg.sender === 'user' ? '👤' : '🐻'}
             </div>
 
             {/* Bubble */}
             <div className={`max-w-[80%] rounded-2xl p-4 text-xs sm:text-sm font-semibold leading-relaxed shadow-sm ${
               msg.sender === 'user'
                 ? 'bg-blue-600 text-white rounded-tr-none'
-                : 'bg-gray-50 border-2 border-gray-200 text-gray-800 rounded-tl-none space-y-2'
+                : 'bg-gray-50 dark:bg-[#202f36] border-2 border-gray-200 dark:border-[#2b3d45] text-gray-800 dark:text-gray-100 rounded-tl-none space-y-2'
             }`}>
               <div className="whitespace-pre-wrap">{msg.text}</div>
 
               {msg.cardTip && (
-                <div className="mt-2 p-2.5 bg-amber-50 border border-amber-200 rounded-xl text-xs font-bold text-amber-900 flex items-center gap-2">
+                <div className="mt-2 p-2.5 bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-700/60 rounded-xl text-xs font-bold text-amber-900 dark:text-amber-200 flex items-center gap-2">
                   <Lightbulb className="w-4 h-4 text-amber-500 flex-shrink-0" />
                   <span>{msg.cardTip}</span>
                 </div>
               )}
 
-              <div className={`text-[10px] mt-1 text-right ${msg.sender === 'user' ? 'text-blue-200' : 'text-gray-400'}`}>
+              <div className={`text-[10px] mt-1 text-right ${msg.sender === 'user' ? 'text-blue-200' : 'text-gray-400 dark:text-gray-500'}`}>
                 {msg.timestamp}
               </div>
             </div>
@@ -194,11 +194,11 @@ export const AiCoach: React.FC = () => {
 
         {isTyping && (
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-green-100 border border-green-300 flex items-center justify-center text-lg">
-              🦉
+            <div className="w-9 h-9 rounded-xl bg-amber-100 border border-amber-300 flex items-center justify-center text-lg">
+              🐻
             </div>
-            <div className="bg-gray-100 px-4 py-3 rounded-2xl rounded-tl-none text-xs font-black text-gray-500 flex items-center gap-1.5 animate-pulse">
-              <span>Bibo düşünüyor</span>
+            <div className="bg-gray-100 dark:bg-[#202f36] px-4 py-3 rounded-2xl rounded-tl-none text-xs font-black text-gray-500 dark:text-gray-400 flex items-center gap-1.5 animate-pulse">
+              <span>Haribo Ayıcık düşünüyor</span>
               <span className="animate-bounce">.</span>
               <span className="animate-bounce delay-100">.</span>
               <span className="animate-bounce delay-200">.</span>
@@ -215,19 +215,19 @@ export const AiCoach: React.FC = () => {
           e.preventDefault();
           handleSendMessage();
         }}
-        className="flex items-center gap-2 bg-white p-2 rounded-2xl border-2 border-gray-200 shadow-sm"
+        className="flex items-center gap-2 bg-white dark:bg-[#1a2c35] p-2 rounded-2xl border-2 border-gray-200 dark:border-[#2b3d45] shadow-sm transition-colors duration-300"
       >
         <input
           type="text"
-          placeholder="Bibo'ya soru sor, formül iste veya çalışma taktiği danış..."
+          placeholder="Haribo Ayıcık'a soru sor, formül iste veya çalışma taktiği danış..."
           value={inputText}
           onChange={(e) => setInputText(e.target.value)}
-          className="flex-1 px-3 py-2 text-xs sm:text-sm font-bold text-gray-800 focus:outline-none"
+          className="flex-1 px-3 py-2 text-xs sm:text-sm font-bold text-gray-800 dark:text-gray-100 bg-transparent focus:outline-none placeholder-gray-400 dark:placeholder-gray-500"
         />
         <button
           type="submit"
           disabled={!inputText.trim()}
-          className="bg-[#58cc02] hover:bg-[#46a302] disabled:opacity-40 text-white font-black px-4 py-2.5 rounded-xl border-b-4 border-[#46a302] active:border-b-0 active:translate-y-1 transition-all flex items-center gap-1 text-xs"
+          className="bg-amber-500 hover:bg-amber-600 disabled:opacity-40 text-white font-black px-4 py-2.5 rounded-xl border-b-4 border-amber-700 active:border-b-0 active:translate-y-1 transition-all flex items-center gap-1 text-xs"
         >
           <Send className="w-4 h-4" />
           <span className="hidden sm:inline">GÖNDER</span>

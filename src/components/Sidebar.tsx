@@ -27,7 +27,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentTab, onSelectTab }) => 
   ];
 
   return (
-    <aside className="w-20 md:w-64 bg-white border-r-2 border-gray-200 min-h-[calc(100vh-61px)] p-2.5 md:p-3 flex flex-col justify-between select-none">
+    <aside className="hidden md:flex md:w-64 bg-white border-r-2 border-gray-200 min-h-[calc(100vh-61px)] p-3 flex-col justify-between select-none flex-shrink-0">
       <div className="space-y-1">
         
         {/* Brand Logo */}

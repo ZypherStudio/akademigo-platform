@@ -252,25 +252,25 @@ export const QuizDuel: React.FC = () => {
         <div className="space-y-6 animate-pop">
           
           {/* Split Screen Score Bar: Player vs Opponent */}
-          <div className="grid grid-cols-2 gap-3 bg-gray-900 text-white p-4 rounded-3xl border-2 border-gray-800 shadow-lg">
+          <div className="grid grid-cols-2 gap-2 sm:gap-3 bg-gray-900 text-white p-3 sm:p-4 rounded-3xl border-2 border-gray-800 shadow-lg">
             {/* Player */}
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-xl bg-blue-600/30 border border-blue-400 flex items-center justify-center text-2xl">
+            <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-blue-600/30 border border-blue-400 flex items-center justify-center text-xl sm:text-2xl flex-shrink-0">
                 {AVATAR_MAP[stats.avatar]?.emoji || '🦉'}
               </div>
-              <div>
-                <div className="text-xs font-black text-blue-400">SEN ({stats.eloRating})</div>
-                <div className="text-2xl font-black">{userScore} Puan</div>
+              <div className="min-w-0">
+                <div className="text-[10px] sm:text-xs font-black text-blue-400 truncate">SEN ({stats.eloRating})</div>
+                <div className="text-lg sm:text-2xl font-black">{userScore} Puan</div>
               </div>
             </div>
 
             {/* Opponent */}
-            <div className="flex items-center justify-end gap-3 text-right">
-              <div>
-                <div className="text-xs font-black text-red-400">{opponent.name} ({opponent.elo})</div>
-                <div className="text-2xl font-black">{opponentScore} Puan</div>
+            <div className="flex items-center justify-end gap-2 sm:gap-3 text-right min-w-0">
+              <div className="min-w-0">
+                <div className="text-[10px] sm:text-xs font-black text-red-400 truncate">{opponent.name} ({opponent.elo})</div>
+                <div className="text-lg sm:text-2xl font-black">{opponentScore} Puan</div>
               </div>
-              <div className="w-12 h-12 rounded-xl bg-red-600/30 border border-red-400 flex items-center justify-center text-2xl">
+              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-red-600/30 border border-red-400 flex items-center justify-center text-xl sm:text-2xl flex-shrink-0">
                 {opponent.avatar}
               </div>
             </div>

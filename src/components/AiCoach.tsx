@@ -157,7 +157,7 @@ export const AiCoach: React.FC = () => {
       </div>
 
       {/* Chat Messages Container */}
-      <div className="bg-white rounded-3xl border-2 border-gray-200 shadow-sm p-4 sm:p-6 min-h-[360px] max-h-[500px] overflow-y-auto space-y-4">
+      <div className="bg-white rounded-3xl border-2 border-gray-200 shadow-sm p-3 sm:p-6 min-h-[260px] max-h-[calc(100vh-270px)] sm:max-h-[480px] overflow-y-auto space-y-3 sm:space-y-4">
         {messages.map((msg) => (
           <div
             key={msg.id}

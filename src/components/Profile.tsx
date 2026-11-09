@@ -130,11 +130,11 @@ export const Profile: React.FC = () => {
       </div>
 
       {/* Sub Tabs: İstatistikler, Temalar & Renkler, Avatar & Ünvan */}
-      <div className="flex items-center gap-2 p-1 bg-white border-2 border-gray-200 rounded-2xl shadow-sm">
+      <div className="flex items-center gap-1.5 p-1 bg-white border-2 border-gray-200 rounded-2xl shadow-sm">
         {[
-          { id: 'stats', label: '📊 İstatistikler & Rozetler' },
-          { id: 'themes', label: '🎨 Tema & Arka Plan' },
-          { id: 'avatar', label: '👤 Avatar & Ünvan' }
+          { id: 'stats', label: '📊 İstatistik', fullLabel: '📊 İstatistikler & Rozetler' },
+          { id: 'themes', label: '🎨 Temalar', fullLabel: '🎨 Tema & Arka Plan' },
+          { id: 'avatar', label: '👤 Avatar', fullLabel: '👤 Avatar & Ünvan' }
         ].map(t => (
           <button
             key={t.id}
@@ -142,13 +142,14 @@ export const Profile: React.FC = () => {
               sound.playClick();
               setActiveTab(t.id as 'stats' | 'themes' | 'avatar');
             }}
-            className={`flex-1 py-2.5 text-xs sm:text-sm font-black rounded-xl transition-all ${
+            className={`flex-1 py-2 sm:py-2.5 text-xs sm:text-sm font-black rounded-xl transition-all truncate text-center ${
               activeTab === t.id
                 ? 'bg-blue-50 text-blue-600 border-2 border-blue-200 shadow-sm'
                 : 'text-gray-500 hover:text-gray-800'
             }`}
           >
-            {t.label}
+            <span className="sm:hidden">{t.label}</span>
+            <span className="hidden sm:inline">{t.fullLabel}</span>
           </button>
         ))}
       </div>

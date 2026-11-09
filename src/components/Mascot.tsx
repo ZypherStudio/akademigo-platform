@@ -75,7 +75,7 @@ export const Mascot: React.FC<MascotProps> = ({
       {currentSpeech && (
         <div 
           onClick={handleClick}
-          className="mb-2 max-w-xs sm:max-w-sm bg-white border-2 border-gray-200 text-gray-800 font-extrabold text-xs sm:text-sm px-4 py-2.5 rounded-2xl shadow-md relative animate-pop cursor-pointer hover:border-[#58cc02] hover:bg-green-50/50 transition-all text-center leading-snug"
+          className="mb-2 max-w-[260px] sm:max-w-sm bg-white border-2 border-gray-200 text-gray-800 font-extrabold text-xs sm:text-sm px-3 py-2 sm:px-4 sm:py-2.5 rounded-2xl shadow-md relative animate-pop cursor-pointer hover:border-[#58cc02] hover:bg-green-50/50 transition-all text-center leading-snug"
         >
           {currentSpeech}
           {/* Bubble tail pointing downwards */}

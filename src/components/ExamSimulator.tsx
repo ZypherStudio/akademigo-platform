@@ -365,7 +365,7 @@ export const ExamSimulator: React.FC = () => {
   const netScore = (correctCount - (wrongCount / 4)).toFixed(2);
 
   return (
-    <div className="flex-1 max-w-5xl mx-auto py-6 px-4 space-y-6 pb-24">
+    <div className="flex-1 max-w-5xl mx-auto py-4 sm:py-6 px-2.5 sm:px-4 space-y-4 sm:space-y-6 pb-28 w-full overflow-x-hidden">
       
       {/* Exam Header */}
       <div className="bg-gradient-to-r from-emerald-600 via-teal-700 to-cyan-800 rounded-3xl p-6 text-white shadow-xl relative overflow-hidden">

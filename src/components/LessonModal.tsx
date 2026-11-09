@@ -192,20 +192,20 @@ export const LessonModal: React.FC<LessonModalProps> = ({ lesson, onClose }) => 
   }
 
   return (
-    <div className="fixed inset-0 z-50 bg-white flex flex-col justify-between select-none overflow-y-auto">
+    <div className="fixed inset-0 z-50 bg-white flex flex-col justify-between select-none overflow-y-auto w-full">
       
       {/* Top Header with Progress and Hearts */}
-      <div className="max-w-4xl w-full mx-auto px-4 py-4 sm:py-6 flex items-center justify-between gap-4">
+      <div className="sticky top-0 bg-white z-30 border-b border-gray-100 max-w-4xl w-full mx-auto px-3 sm:px-4 py-3 sm:py-4 flex items-center justify-between gap-3 shadow-xs">
         <button
           onClick={onClose}
-          className="text-gray-400 hover:text-gray-600 p-2 rounded-xl transition-colors"
+          className="text-gray-400 hover:text-gray-600 p-1.5 sm:p-2 rounded-xl transition-colors"
           title="Dersi Kapat"
         >
-          <X className="w-6 h-6 stroke-[3]" />
+          <X className="w-5 h-5 sm:w-6 sm:h-6 stroke-[3]" />
         </button>
 
         {/* Dynamic Progress Bar */}
-        <div className="flex-1 bg-gray-200 h-4 rounded-full overflow-hidden relative">
+        <div className="flex-1 bg-gray-200 h-3.5 sm:h-4 rounded-full overflow-hidden relative">
           <div
             className="bg-[#58cc02] h-full transition-all duration-500 rounded-full"
             style={{ width: `${progressPercent}%` }}
@@ -213,14 +213,14 @@ export const LessonModal: React.FC<LessonModalProps> = ({ lesson, onClose }) => 
         </div>
 
         {/* Hearts */}
-        <div className="flex items-center gap-1.5 font-black text-red-500">
-          <Heart className="w-6 h-6 fill-red-500 text-red-500" />
-          <span className="text-lg">{stats.hearts}</span>
+        <div className="flex items-center gap-1 font-black text-red-500 text-sm sm:text-base">
+          <Heart className="w-5 h-5 sm:w-6 sm:h-6 fill-red-500 text-red-500" />
+          <span>{stats.hearts}</span>
         </div>
       </div>
 
       {/* Main Question Body */}
-      <div className="max-w-2xl w-full mx-auto px-4 py-4 flex-1 flex flex-col justify-center">
+      <div className="max-w-2xl w-full mx-auto px-3 sm:px-4 py-4 sm:py-6 flex-1 flex flex-col justify-center min-h-[50vh]">
         {currentQ && (
           <div className="space-y-6 animate-pop">
             
@@ -412,7 +412,7 @@ export const LessonModal: React.FC<LessonModalProps> = ({ lesson, onClose }) => 
       </div>
 
       {/* Bottom Feedback Drawer */}
-      <div className={`p-4 sm:p-6 border-t-2 transition-all ${
+      <div className={`sticky bottom-0 z-30 p-3.5 sm:p-6 pb-[max(1rem,env(safe-area-inset-bottom))] border-t-2 transition-all shadow-lg ${
         status === 'correct'
           ? 'bg-[#d7ffb8] border-[#a2f263]'
           : status === 'wrong'

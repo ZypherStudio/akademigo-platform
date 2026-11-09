@@ -38,15 +38,23 @@ export const LearnPath: React.FC = () => {
   // Find the exact active lesson (the first unlocked but not completed lesson)
   let activeFound = false;
 
-  // Zigzag offsets for the nodes: [0, -45, -60, -30, 0, 30, 60, 45]
-  const getOffsetStyle = (index: number) => {
-    const offsets = [0, -40, -60, -35, 0, 35, 60, 40];
-    const px = offsets[index % offsets.length];
-    return { transform: `translateX(${px}px)` };
+  // Responsive Zigzag offsets using Tailwind classes
+  const getOffsetClass = (index: number) => {
+    const patterns = [
+      'translate-x-0',
+      '-translate-x-3 sm:-translate-x-10',
+      '-translate-x-5 sm:-translate-x-14',
+      '-translate-x-3 sm:-translate-x-8',
+      'translate-x-0',
+      'translate-x-3 sm:translate-x-8',
+      'translate-x-5 sm:translate-x-14',
+      'translate-x-3 sm:translate-x-10',
+    ];
+    return patterns[index % patterns.length];
   };
 
   return (
-    <div className="flex-1 max-w-4xl mx-auto py-6 px-4 pb-24">
+    <div className="flex-1 max-w-4xl mx-auto py-4 sm:py-6 px-2.5 sm:px-4 pb-28 overflow-x-hidden w-full">
       
       {/* Course Header Banner */}
       <div 
@@ -129,8 +137,7 @@ export const LearnPath: React.FC = () => {
                   return (
                     <div
                       key={lesson.id}
-                      style={getOffsetStyle(lessonIndex)}
-                      className="relative flex flex-col items-center group transition-transform duration-300"
+                      className={`relative flex flex-col items-center group transition-transform duration-300 ${getOffsetClass(lessonIndex)}`}
                     >
                       {/* Active "BAŞLA" floating bubble */}
                       {isCurrentActive && (

@@ -55,7 +55,7 @@ const MainLayout: React.FC = () => {
         <Sidebar currentTab={currentTab} onSelectTab={setCurrentTab} />
 
         {/* Central Content Area */}
-        <main className="flex-1 flex justify-center min-w-0 px-2 sm:px-4">
+        <main className="flex-1 flex justify-center min-w-0 px-2 sm:px-4 pb-28 md:pb-8 w-full overflow-x-hidden">
           {currentTab === 'learn' && <LearnPath />}
           {currentTab === 'duel' && <QuizDuel />}
           {currentTab === 'aicoach' && <AiCoach />}
@@ -79,8 +79,8 @@ const MainLayout: React.FC = () => {
 
       </div>
 
-      {/* Mobile Bottom Navigation Bar (Ultra-responsive touch bar) */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t-2 border-gray-200 px-2 py-1.5 flex items-center justify-around z-30 shadow-lg">
+      {/* Mobile Bottom Navigation Bar (Ultra-responsive touch bar with safe area padding) */}
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t-2 border-gray-200 px-1 py-1.5 pb-[max(0.6rem,env(safe-area-inset-bottom))] flex items-center justify-around z-40 shadow-2xl">
         {mobileTabs.map((tab) => {
           const Icon = tab.icon;
           const isActive = currentTab === tab.id;
@@ -88,12 +88,14 @@ const MainLayout: React.FC = () => {
             <button
               key={tab.id}
               onClick={() => setCurrentTab(tab.id as NavTab)}
-              className={`flex flex-col items-center py-1 px-2.5 rounded-xl transition-all active:scale-90 ${
+              className={`flex-1 max-w-[62px] flex flex-col items-center py-1 px-0.5 rounded-xl transition-all active:scale-90 ${
                 isActive ? 'text-[#1cb0f6]' : 'text-gray-400 hover:text-gray-600'
               }`}
             >
               <Icon className="w-5 h-5 stroke-[2.5]" />
-              <span className="text-[10px] font-black mt-0.5 tracking-tight">{tab.label}</span>
+              <span className="text-[9px] font-black mt-0.5 tracking-tighter truncate w-full text-center">
+                {tab.label}
+              </span>
             </button>
           );
         })}

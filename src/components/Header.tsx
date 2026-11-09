@@ -13,22 +13,22 @@ export const Header: React.FC = () => {
   const userAvatarEmoji = AVATAR_MAP[stats.avatar]?.emoji || '🦉';
 
   return (
-    <header className="sticky top-0 z-30 bg-white border-b-2 border-gray-200 px-4 py-2.5 sm:px-6">
-      <div className="max-w-6xl mx-auto flex items-center justify-between">
+    <header className="sticky top-0 z-30 bg-white border-b-2 border-gray-200 px-2.5 py-2 sm:px-6">
+      <div className="max-w-6xl mx-auto flex items-center justify-between gap-1">
         
         {/* Course Selector Dropdown */}
         <div className="relative">
           <button
             onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-            className="flex items-center gap-2.5 px-3 py-1.5 rounded-xl border-2 border-gray-200 hover:border-gray-300 hover:bg-gray-50 transition-all font-bold text-gray-700 active:scale-95"
+            className="flex items-center gap-1.5 sm:gap-2.5 px-2 py-1 sm:px-3 sm:py-1.5 rounded-xl border-2 border-gray-200 hover:border-gray-300 hover:bg-gray-50 transition-all font-bold text-gray-700 active:scale-95"
           >
-            <span className="text-2xl">{currentCourse.icon}</span>
+            <span className="text-xl sm:text-2xl">{currentCourse.icon}</span>
             <span className="hidden md:inline font-black text-sm tracking-wide">{currentCourse.name}</span>
-            <ChevronDown className="w-4 h-4 text-gray-400" />
+            <ChevronDown className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-gray-400" />
           </button>
 
           {isDropdownOpen && (
-            <div className="absolute top-12 left-0 w-72 bg-white rounded-2xl shadow-xl border-2 border-gray-200 p-2 z-50 animate-pop">
+            <div className="absolute top-11 left-0 w-64 sm:w-72 max-w-[90vw] bg-white rounded-2xl shadow-xl border-2 border-gray-200 p-2 z-50 animate-pop">
               <div className="text-xs font-black uppercase text-gray-400 px-3 py-1.5 tracking-wider">
                 DERS & SINAV ALANI SEÇ
               </div>
@@ -42,18 +42,18 @@ export const Header: React.FC = () => {
                         setSelectedCourseId(course.id as CourseCategory);
                         setIsDropdownOpen(false);
                       }}
-                      className={`w-full flex items-center justify-between p-2.5 rounded-xl transition-all text-left ${
+                      className={`w-full flex items-center justify-between p-2 rounded-xl transition-all text-left ${
                         isSelected ? 'bg-green-50 border-2 border-[#58cc02]' : 'hover:bg-gray-100'
                       }`}
                     >
-                      <div className="flex items-center gap-3">
-                        <span className="text-2xl">{course.icon}</span>
+                      <div className="flex items-center gap-2.5">
+                        <span className="text-xl sm:text-2xl">{course.icon}</span>
                         <div>
-                          <div className="font-extrabold text-sm text-gray-800">{course.name}</div>
-                          <div className="text-xs text-gray-500 font-medium">{course.subTitle}</div>
+                          <div className="font-extrabold text-xs sm:text-sm text-gray-800">{course.name}</div>
+                          <div className="text-[11px] text-gray-500 font-medium">{course.subTitle}</div>
                         </div>
                       </div>
-                      {isSelected && <Check className="w-5 h-5 text-[#58cc02]" />}
+                      {isSelected && <Check className="w-4 h-4 text-[#58cc02]" />}
                     </button>
                   );
                 })}
@@ -63,7 +63,7 @@ export const Header: React.FC = () => {
         </div>
 
         {/* Gamification Stats: Level/Avatar, Streak, Gems, Hearts, Sound */}
-        <div className="flex items-center gap-2.5 sm:gap-4">
+        <div className="flex items-center gap-2 sm:gap-4">
           
           {/* User Level & Avatar Pill */}
           <div className="hidden sm:flex items-center gap-1.5 bg-amber-50 border-2 border-amber-200 px-2.5 py-1 rounded-xl text-amber-900 font-black text-xs shadow-sm">
@@ -72,35 +72,35 @@ export const Header: React.FC = () => {
           </div>
 
           {/* Streak (Ateş / Seri) */}
-          <div className="flex items-center gap-1.5 font-black text-orange-500 group cursor-default">
-            <Flame className="w-6 h-6 fill-orange-500 text-orange-500 animate-bounceSubtle" />
-            <span className="text-base">{stats.streak}</span>
+          <div className="flex items-center gap-1 font-black text-orange-500 group cursor-default text-xs sm:text-base">
+            <Flame className="w-4 h-4 sm:w-6 sm:h-6 fill-orange-500 text-orange-500 animate-bounceSubtle" />
+            <span>{stats.streak}</span>
           </div>
 
           {/* Gems (Elmaslar) */}
-          <div className="flex items-center gap-1.5 font-black text-blue-500 group cursor-default">
-            <Gem className="w-6 h-6 fill-blue-500 text-blue-500" />
-            <span className="text-base">{stats.gems}</span>
+          <div className="flex items-center gap-1 font-black text-blue-500 group cursor-default text-xs sm:text-base">
+            <Gem className="w-4 h-4 sm:w-6 sm:h-6 fill-blue-500 text-blue-500" />
+            <span>{stats.gems}</span>
           </div>
 
           {/* Hearts (Canlar) */}
           <div className="relative">
             <button
               onClick={() => setShowHeartModal(!showHeartModal)}
-              className="flex items-center gap-1.5 font-black text-red-500 hover:opacity-80 active:scale-95 transition-all"
+              className="flex items-center gap-1 font-black text-red-500 hover:opacity-80 active:scale-95 transition-all text-xs sm:text-base"
             >
-              <Heart className="w-6 h-6 fill-red-500 text-red-500" />
-              <span className="text-base">{stats.hearts}</span>
+              <Heart className="w-4 h-4 sm:w-6 sm:h-6 fill-red-500 text-red-500" />
+              <span>{stats.hearts}</span>
             </button>
 
             {showHeartModal && (
-              <div className="absolute right-0 top-11 w-64 bg-white rounded-2xl shadow-2xl border-2 border-gray-200 p-4 z-50 text-center animate-pop">
-                <Heart className="w-12 h-12 fill-red-500 text-red-500 mx-auto mb-2" />
-                <h4 className="font-extrabold text-gray-800 text-base">Can Sistemi</h4>
+              <div className="absolute right-0 top-10 w-64 max-w-[90vw] bg-white rounded-2xl shadow-2xl border-2 border-gray-200 p-4 z-50 text-center animate-pop">
+                <Heart className="w-10 h-10 fill-red-500 text-red-500 mx-auto mb-2" />
+                <h4 className="font-extrabold text-gray-800 text-sm sm:text-base">Can Sistemi</h4>
                 <p className="text-xs text-gray-500 mt-1 mb-3">
                   Yanlış cevaplar canını azaltır. Canların bitince derslere devam etmek için yenileyebilirsin!
                 </p>
-                <div className="bg-red-50 text-red-600 font-black text-sm py-1.5 px-3 rounded-lg mb-3">
+                <div className="bg-red-50 text-red-600 font-black text-xs sm:text-sm py-1.5 px-3 rounded-lg mb-3">
                   {stats.hearts} / {stats.maxHearts} Can Kaldı
                 </div>
                 {stats.hearts < stats.maxHearts ? (
@@ -127,9 +127,9 @@ export const Header: React.FC = () => {
           <button
             onClick={toggleSound}
             aria-label="Sesi Aç/Kapat"
-            className="p-2 rounded-xl text-gray-500 hover:text-gray-800 hover:bg-gray-100 transition-all active:scale-95"
+            className="p-1.5 sm:p-2 rounded-xl text-gray-500 hover:text-gray-800 hover:bg-gray-100 transition-all active:scale-95"
           >
-            {soundMuted ? <VolumeX className="w-5 h-5 text-gray-400" /> : <Volume2 className="w-5 h-5 text-green-600" />}
+            {soundMuted ? <VolumeX className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400" /> : <Volume2 className="w-4 h-4 sm:w-5 sm:h-5 text-green-600" />}
           </button>
 
         </div>

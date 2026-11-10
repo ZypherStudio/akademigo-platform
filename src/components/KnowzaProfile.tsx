@@ -216,7 +216,7 @@ export const KnowzaProfile: React.FC<KnowzaProfileProps> = ({
           </button>
         </div>
 
-        {/* ÖZEL KNOWZA PROFİL FOTOĞRAFLARI & LOGO İNDİRME MERKEZİ (Gmail / Sosyal Medya) */}
+        {/* ÖZEL AI ÜRETİMİ KNOWZA LOGOLARI & PROFİL FOTOĞRAFLARI MERKEZİ */}
         <div className="bg-gradient-to-br from-amber-500 via-[#FFB800] to-amber-600 rounded-3xl p-5 text-slate-900 shadow-xl border-2 border-amber-300/80 relative overflow-hidden">
           {/* Background Decorative Rings */}
           <div className="absolute -right-8 -bottom-8 w-40 h-40 rounded-full bg-white/10 pointer-events-none" />
@@ -226,79 +226,92 @@ export const KnowzaProfile: React.FC<KnowzaProfileProps> = ({
             <div className="flex items-center justify-between">
               <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-slate-900 text-amber-300 text-[10px] font-black rounded-full uppercase tracking-wider shadow-sm">
                 <Sparkles className="w-3.5 h-3.5" />
-                Resmi Gmail & Profil Paketi
+                Özel AI Üretimi Logo & Profil Paketi
               </span>
               <span className="text-[10px] font-black bg-white/80 text-amber-900 px-2 py-0.5 rounded-full">
-                1024x1024 HD
+                1024x1024 3D HD
               </span>
             </div>
 
-            <div className="flex items-center gap-4">
-              {/* Live Profile Photo Thumbnail Preview (Circle safe) */}
-              <div className="relative w-20 h-20 rounded-2xl overflow-hidden border-2 border-white shadow-lg flex-shrink-0 group cursor-pointer bg-amber-100"
+            {/* Grid of Two Distinct Logos: 1. Character Logo, 2. Typography Logo */}
+            <div className="grid grid-cols-2 gap-3 pt-1">
+              {/* Logo 1: 3D Karakterli Maskot Logosu */}
+              <div
                 onClick={() => setActiveModal('previewAvatar')}
-                title="Büyük boyutta önizle"
+                className="bg-white/95 rounded-2xl p-2.5 shadow-md border border-amber-200 flex flex-col items-center text-center cursor-pointer hover:scale-102 transition group"
               >
-                <img
-                  src="/assets/knowza_profile_gold_1024.png"
-                  alt="Knowza Profil Önizleme"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform"
-                />
-                <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 flex items-center justify-center text-white text-[10px] font-black transition-opacity">
-                  Önizle
+                <div className="w-full aspect-square rounded-xl overflow-hidden mb-2 bg-amber-50 border border-amber-200/60 shadow-xs relative">
+                  <img
+                    src="/assets/knowza_mascot_logo_ai.png"
+                    alt="3D Karakterli Knowza Logosu"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                  />
+                  <span className="absolute bottom-1 right-1 bg-black/60 text-white text-[9px] font-black px-1.5 py-0.5 rounded">
+                    Önizle
+                  </span>
                 </div>
+                <span className="text-xs font-black text-slate-950 block">1. Karakterli 3D Logo</span>
+                <span className="text-[10px] font-bold text-amber-800">Gmail & Profil Fotosu</span>
               </div>
 
-              <div>
-                <h4 className="text-base font-black text-slate-950 leading-tight">
-                  Gmail & Sosyal Medya Profil Fotosu
-                </h4>
-                <p className="text-xs font-bold text-amber-950/80 mt-1 leading-snug">
-                  Arka planlı, 3D mezuniyet kepli maskot ve Knowza logolu yüksek çözünürlüklü avatar!
-                </p>
-                <span className="inline-block mt-1 text-[11px] font-bold text-slate-900/90 bg-amber-300/80 px-2 py-0.5 rounded-md">
-                  ✓ Daire kesimlere tam uyumlu (Hiçbir yer kesilmez)
-                </span>
+              {/* Logo 2: 3D Tipografi Wordmark Logosu */}
+              <div
+                onClick={() => setActiveModal('previewWordmark')}
+                className="bg-white/95 rounded-2xl p-2.5 shadow-md border border-amber-200 flex flex-col items-center text-center cursor-pointer hover:scale-102 transition group"
+              >
+                <div className="w-full aspect-square rounded-xl overflow-hidden mb-2 bg-slate-50 border border-slate-200/60 shadow-xs flex items-center justify-center p-2 relative">
+                  <img
+                    src="/assets/knowza_wordmark_tight.png"
+                    alt="3D Tipografi Knowza Logosu"
+                    className="w-full h-auto object-contain group-hover:scale-105 transition-transform"
+                  />
+                  <span className="absolute bottom-1 right-1 bg-black/60 text-white text-[9px] font-black px-1.5 py-0.5 rounded">
+                    Önizle
+                  </span>
+                </div>
+                <span className="text-xs font-black text-slate-950 block">2. Yazılı 3D Logo</span>
+                <span className="text-[10px] font-bold text-slate-600">Başlık & Marka Logosu</span>
               </div>
             </div>
 
-            {/* Download Action Buttons */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
+            {/* Direct Download Buttons */}
+            <div className="space-y-2 pt-1">
               <a
-                href="/assets/knowza_profile_gold_1024.png"
-                download="Knowza_Gmail_Profil_Foto_1024.png"
-                className="py-2.5 px-3 bg-white hover:bg-amber-50 active:scale-98 text-slate-900 font-black text-xs rounded-xl shadow-md flex items-center justify-center gap-2 transition"
-              >
-                <Download className="w-4 h-4 text-amber-600" />
-                <span>Altın Profil Fotosu (HD)</span>
-              </a>
-
-              <a
-                href="/assets/knowza_profile_dark_1024.png"
-                download="Knowza_Karanlik_VIP_Profil_1024.png"
-                className="py-2.5 px-3 bg-slate-900 hover:bg-slate-800 active:scale-98 text-amber-300 font-black text-xs rounded-xl shadow-md flex items-center justify-center gap-2 transition"
+                href="/assets/knowza_mascot_logo_ai.png"
+                download="Knowza_3D_Karakterli_Logo_1024.png"
+                className="w-full py-2.5 px-3 bg-slate-950 hover:bg-slate-900 active:scale-98 text-amber-300 font-black text-xs rounded-xl shadow-md flex items-center justify-center gap-2 transition"
               >
                 <Download className="w-4 h-4 text-amber-400" />
-                <span>Karanlık VIP Profil (HD)</span>
+                <span>1. Karakterli 3D Logoyu İndir (1024x1024 PNG)</span>
+              </a>
+
+              <a
+                href="/assets/knowza_wordmark_tight.png"
+                download="Knowza_3D_Yazili_Logo.png"
+                className="w-full py-2.5 px-3 bg-white hover:bg-amber-50 active:scale-98 text-slate-900 font-black text-xs rounded-xl shadow-md flex items-center justify-center gap-2 transition"
+              >
+                <Download className="w-4 h-4 text-amber-600" />
+                <span>2. Yazılı 3D Logoyu İndir (HD Tipografi)</span>
               </a>
             </div>
 
-            <div className="pt-1 border-t border-white/20 flex items-center justify-between text-[11px] font-bold text-slate-900/80">
+            {/* Sub-links for circle crop and vector */}
+            <div className="pt-2 border-t border-white/20 grid grid-cols-2 gap-2 text-[11px] font-bold text-slate-900/90 text-center">
               <a
-                href="/assets/knowza_logo_hd.png"
-                download="Knowza_3D_Logo_HD.png"
-                className="hover:underline flex items-center gap-1"
+                href="/assets/knowza_mascot_logo_circle.png"
+                download="Knowza_Daire_Profil_1024.png"
+                className="hover:underline flex items-center justify-center gap-1 bg-white/40 py-1 rounded-lg"
               >
-                <Download className="w-3.5 h-3.5" />
-                <span>Tek Başına 3D Logo İndir (PNG)</span>
+                <Download className="w-3 h-3" />
+                <span>Daire Kesimli Avatar</span>
               </a>
               <a
-                href="/assets/knowza_logo.svg"
-                download="Knowza_Vector_Logo.svg"
-                className="hover:underline flex items-center gap-1"
+                href="/assets/knowza_wordmark_transparent.png"
+                download="Knowza_Yazi_Saydam.png"
+                className="hover:underline flex items-center justify-center gap-1 bg-white/40 py-1 rounded-lg"
               >
-                <Download className="w-3.5 h-3.5" />
-                <span>Vektörel SVG Logo</span>
+                <Download className="w-3 h-3" />
+                <span>Saydam Yazı Logo</span>
               </a>
             </div>
           </div>
@@ -342,7 +355,8 @@ export const KnowzaProfile: React.FC<KnowzaProfileProps> = ({
               {activeModal === 'languages' && 'Dil Tercihleri 🌍'}
               {activeModal === 'settings' && 'Uygulama & Ses Ayarları ⚙️'}
               {activeModal === 'help' && 'Yardım & Destek 💬'}
-              {activeModal === 'previewAvatar' && 'Gmail & Profil Fotosu Önizleme 📸'}
+              {activeModal === 'previewAvatar' && '1. Karakterli 3D Logo & Profil Fotosu 🐻'}
+              {activeModal === 'previewWordmark' && '2. 3D Yazılı Tipografi Logosu ✨'}
             </h4>
 
             {activeModal === 'previewAvatar' ? (
@@ -353,7 +367,7 @@ export const KnowzaProfile: React.FC<KnowzaProfileProps> = ({
                     <span className="text-[10px] font-bold text-slate-500 uppercase">Kare (YouTube/Web)</span>
                     <div className="w-28 h-28 rounded-2xl overflow-hidden shadow-lg border-2 border-amber-300">
                       <img
-                        src="/assets/knowza_profile_gold_1024.png"
+                        src="/assets/knowza_mascot_logo_ai.png"
                         alt="Kare Önizleme"
                         className="w-full h-full object-cover"
                       />
@@ -365,7 +379,7 @@ export const KnowzaProfile: React.FC<KnowzaProfileProps> = ({
                     <span className="text-[10px] font-bold text-slate-500 uppercase">Daire (Gmail/WhatsApp)</span>
                     <div className="w-28 h-28 rounded-full overflow-hidden shadow-lg border-2 border-amber-400">
                       <img
-                        src="/assets/knowza_profile_gold_1024.png"
+                        src="/assets/knowza_mascot_logo_circle.png"
                         alt="Daire Önizleme"
                         className="w-full h-full object-cover"
                       />
@@ -374,25 +388,58 @@ export const KnowzaProfile: React.FC<KnowzaProfileProps> = ({
                 </div>
 
                 <p className="text-xs font-bold text-slate-600 bg-amber-50 p-2.5 rounded-xl border border-amber-200/60 leading-snug">
-                  🎉 Kep, kulaklar, 3D maskot ve Knowza logosu daire içine tam oturur, Gmail veya Google profilinize yüklediğinizde hiçbir kısmı kesilmez!
+                  🎉 Özel AI üretimi 3D maskot, kepi ve kabartmalı Knowza yazısıyla daire içine tam oturur, Gmail veya Google profilinize yüklediğinizde hiçbir kısmı kesilmez!
                 </p>
 
                 <div className="space-y-2 pt-1">
                   <a
-                    href="/assets/knowza_profile_gold_1024.png"
-                    download="Knowza_Altin_Profil_Foto_1024.png"
+                    href="/assets/knowza_mascot_logo_ai.png"
+                    download="Knowza_3D_Karakterli_Logo_1024.png"
                     className="w-full py-2.5 bg-gradient-to-r from-amber-400 to-[#FFB800] text-slate-900 font-black text-xs rounded-xl shadow-md flex items-center justify-center gap-2"
                   >
                     <Download className="w-4 h-4" />
-                    <span>Altın Profil Fotosunu İndir (1024x1024)</span>
+                    <span>Kare 3D Karakterli Logoyu İndir (1024x1024)</span>
                   </a>
                   <a
-                    href="/assets/knowza_profile_dark_1024.png"
-                    download="Knowza_Karanlik_VIP_Profil_1024.png"
+                    href="/assets/knowza_mascot_logo_circle.png"
+                    download="Knowza_3D_Daire_Avatar.png"
                     className="w-full py-2.5 bg-slate-900 text-amber-300 font-black text-xs rounded-xl shadow-md flex items-center justify-center gap-2"
                   >
                     <Download className="w-4 h-4" />
-                    <span>Karanlık VIP Profil Fotosunu İndir</span>
+                    <span>Daire Kesimli Altın Avatarı İndir</span>
+                  </a>
+                </div>
+              </div>
+            ) : activeModal === 'previewWordmark' ? (
+              <div className="space-y-4 mb-5 text-center">
+                <div className="w-full bg-slate-50 rounded-2xl p-4 border border-slate-200 shadow-inner flex items-center justify-center">
+                  <img
+                    src="/assets/knowza_wordmark_tight.png"
+                    alt="Knowza Wordmark"
+                    className="max-h-24 w-auto object-contain"
+                  />
+                </div>
+
+                <p className="text-xs font-bold text-slate-600 bg-amber-50 p-2.5 rounded-xl border border-amber-200/60 leading-snug">
+                  ✨ Özel 3D altın "K" amblemi ve modern "nowza" harfleriyle üretilen saf marka logomuz. Web sitelerinde, afişlerde ve başlıklarda kullanım için idealdir.
+                </p>
+
+                <div className="space-y-2 pt-1">
+                  <a
+                    href="/assets/knowza_wordmark_tight.png"
+                    download="Knowza_3D_Yazili_Logo.png"
+                    className="w-full py-2.5 bg-gradient-to-r from-amber-400 to-[#FFB800] text-slate-900 font-black text-xs rounded-xl shadow-md flex items-center justify-center gap-2"
+                  >
+                    <Download className="w-4 h-4" />
+                    <span>3D Yazılı Logoyu İndir (PNG)</span>
+                  </a>
+                  <a
+                    href="/assets/knowza_wordmark_transparent.png"
+                    download="Knowza_Yazi_Saydam.png"
+                    className="w-full py-2.5 bg-slate-900 text-amber-300 font-black text-xs rounded-xl shadow-md flex items-center justify-center gap-2"
+                  >
+                    <Download className="w-4 h-4" />
+                    <span>Arka Plansız Saydam Logoyu İndir</span>
                   </a>
                 </div>
               </div>

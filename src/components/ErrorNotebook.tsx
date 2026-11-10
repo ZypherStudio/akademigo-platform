@@ -81,7 +81,7 @@ export const ErrorNotebook: React.FC = () => {
       {/* Mistakes List */}
       {filteredMistakes.length === 0 ? (
         <div className="bg-white dark:bg-[#1a2c35] rounded-3xl p-10 border-2 border-gray-200 dark:border-[#2b3d45] shadow-sm text-center max-w-md mx-auto space-y-4 animate-pop transition-colors duration-300">
-          <Mascot size="lg" mood="happy" speech="Tebrikler! Hata defterin tertemiz! Tüm eksiklerini kapattın! 🐻🎉" />
+          <Mascot size="lg" mood="happy" speech="Tebrikler! Hata defterin tertemiz! Tüm eksiklerini kapattın! 🍯🎉" />
           <h3 className="text-xl font-black text-gray-800 dark:text-gray-100">Hiç Hatan Kalmadı!</h3>
           <p className="text-xs font-semibold text-gray-500 dark:text-gray-400">
             Ders veya deneme çözerken yanlış yaparsan sistem otomatik olarak buraya kaydedecek.

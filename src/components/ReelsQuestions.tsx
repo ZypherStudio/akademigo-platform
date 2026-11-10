@@ -5,6 +5,7 @@ import { sound } from '../utils/audio';
 import { speakText, stopSpeech } from '../utils/speech';
 import confetti from 'canvas-confetti';
 import { Mascot } from './Mascot';
+import { HariboAvatar } from './HariboAvatar';
 
 interface ReelQuestion {
   id: string;
@@ -33,7 +34,7 @@ const REEL_QUESTIONS: ReelQuestion[] = [
     ],
     correctIndex: 0,
     explanation: '3a ve 5b sayılarından biri tek, biri çifttir. Dolayısıyla en az biri çift olduğu için çarpımları kesinlikle ÇİFT olur!',
-    hariboTip: 'Toplama tek ise biri Tek, diğeri Çift olmak zorundadır! Çarpımda bir çift varsa sonuç daima çifttir! 🐻🍯'
+    hariboTip: 'Toplama tek ise biri Tek, diğeri Çift olmak zorundadır! Çarpımda bir çift varsa sonuç daima çifttir! 🍯✨'
   },
   {
     id: 'rq-2',
@@ -81,7 +82,7 @@ const REEL_QUESTIONS: ReelQuestion[] = [
     ],
     correctIndex: 0,
     explanation: '3-4-5 üçgeninin 3 katı: 9 - 12 - 15 özel dik üçgenidir!',
-    hariboTip: 'Pisagor formülüyle vakit kaybetme! 3-4-5\'in 3 katını hemen gör ve 15\'i işaretle! 🐻'
+    hariboTip: 'Pisagor formülüyle vakit kaybetme! 3-4-5\'in 3 katını hemen gör ve 15\'i işaretle! ⚡📐'
   },
   {
     id: 'rq-5',
@@ -113,7 +114,7 @@ const REEL_QUESTIONS: ReelQuestion[] = [
     ],
     correctIndex: 0,
     explanation: 'Büyükten küçüğe KeDiGeNi kodlaması kullanılır. Küçükten büyüğe ise Nükleotid < Gen < DNA < Kromozom şeklindedir.',
-    hariboTip: 'Ke-Di-Ge-Ni taktiğini aklında tut: Kromozom > DNA > Gen > Nükleotid! 🐻🐾'
+    hariboTip: 'Ke-Di-Ge-Ni taktiğini aklında tut: Kromozom > DNA > Gen > Nükleotid! 🧬✨'
   },
   {
     id: 'rq-7',
@@ -198,7 +199,7 @@ export const ReelsQuestions: React.FC = () => {
 
   const handleShare = () => {
     sound.playClick();
-    const shareText = `🔥 AkademiGO Soru Kaydır'da ${combo > 0 ? combo : 5} soru üst üste doğru yaptım! 🐻🍯\n"${currentQ.prompt.slice(0, 70)}..."\nSen bu soruyu 10 saniyede çözebilir misin? Meydan okuyorum!\n🚀 Hemen oyna: ${window.location.origin}`;
+    const shareText = `🔥 AkademiGO Soru Kaydır'da ${combo > 0 ? combo : 5} soru üst üste doğru yaptım! 🍯✨\n"${currentQ.prompt.slice(0, 70)}..."\nSen bu soruyu 10 saniyede çözebilir misin? Meydan okuyorum!\n🚀 Hemen oyna: ${window.location.origin}`;
     
     if (navigator.share) {
       navigator.share({
@@ -330,10 +331,10 @@ export const ReelsQuestions: React.FC = () => {
             
             {/* Mascot Tactical Tip Box */}
             <div className="bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-950/40 dark:to-orange-950/40 border-2 border-amber-300 dark:border-amber-700 rounded-2xl p-3.5 flex items-start gap-3">
-              <span className="text-3xl select-none animate-bounceSubtle">🐻</span>
+              <HariboAvatar size="md" animate={true} />
               <div className="flex-1">
                 <div className="text-xs font-black text-amber-900 dark:text-amber-200 flex items-center gap-1.5">
-                  <span>Haribo Ayıcık Taktik Notu</span>
+                  <span>Haribo Altın Ayıcık Taktik Notu</span>
                   {isCorrectAnswer ? (
                     <span className="text-[10px] bg-green-500 text-white px-2 py-0.2 rounded-full font-black">HARİKASIN! +15 XP</span>
                   ) : (

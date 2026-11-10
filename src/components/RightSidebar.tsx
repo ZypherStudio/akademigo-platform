@@ -3,6 +3,7 @@ import { useGame } from '../context/GameContext';
 import { Trophy, Target, ArrowRight, Gamepad2, Code2, Sparkles } from 'lucide-react';
 import { NavTab } from './Sidebar';
 import { Mascot } from './Mascot';
+import { HariboAvatar } from './HariboAvatar';
 
 interface RightSidebarProps {
   onNavigate: (tab: NavTab) => void;
@@ -21,10 +22,10 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({ onNavigate }) => {
         <Mascot
           size="md"
           mood="idle"
-          speech="Günde 5 soru çöz, şampiyonlar ligine tırman! 🐻🍯"
+          speech="Günde 5 soru çöz, şampiyonlar ligine tırman! 🍯✨"
         />
-        <span className="text-[10px] font-black uppercase text-gray-400 dark:text-gray-500 mt-2">
-          Haribo Ayıcık'a tıkla, sana yeni bir taktik söylesin!
+        <span className="text-[10px] font-black uppercase text-amber-500 dark:text-amber-400 mt-2">
+          Haribo Altın Ayıcık'a tıkla, taktik al!
         </span>
       </div>
 
@@ -74,7 +75,7 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({ onNavigate }) => {
         <div className="bg-blue-50/60 dark:bg-blue-950/40 rounded-2xl p-3 border border-blue-100 dark:border-blue-800 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
             <span className="font-black text-blue-600 dark:text-blue-300 text-sm">#{userRank}</span>
-            <div className="text-xl">🐻</div>
+            <HariboAvatar size="xs" />
             <div>
               <div className="text-xs font-black text-gray-800 dark:text-gray-100">Sen</div>
               <div className="text-[10px] font-bold text-blue-600 dark:text-blue-400">Terfi Hattındasın</div>

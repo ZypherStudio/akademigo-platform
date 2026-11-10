@@ -4,6 +4,7 @@ import { Swords, Trophy, Shield, Zap, Timer, Flame, CheckCircle2, XCircle, Rotat
 import { sound } from '../utils/audio';
 import confetti from 'canvas-confetti';
 import { Mascot } from './Mascot';
+import { HariboAvatar } from './HariboAvatar';
 
 interface DuelQuestion {
   id: number;
@@ -161,7 +162,7 @@ export const QuizDuel: React.FC = () => {
 
   const handleCopyRoomLink = () => {
     sound.playClick();
-    const text = `⚔️ AkademiGO'da seninle 1v1 Bilgi Düellosuna girmek istiyorum! 🐻🍯\nOda Kodum: *${roomCode}*\nHemen gir ve kapışalım: ${window.location.origin}`;
+    const text = `⚔️ AkademiGO'da seninle 1v1 Bilgi Düellosuna girmek istiyorum! 🍯✨\nOda Kodum: *${roomCode}*\nHemen gir ve kapışalım: ${window.location.origin}`;
     navigator.clipboard.writeText(text);
     setRoomCopied(true);
     setTimeout(() => setRoomCopied(false), 2500);
@@ -252,8 +253,8 @@ export const QuizDuel: React.FC = () => {
           {/* Rating Profile Card */}
           <div className="bg-white dark:bg-[#1a2c35] rounded-3xl p-6 border-2 border-gray-200 dark:border-[#2b3d45] shadow-sm flex flex-col sm:flex-row items-center justify-between gap-6 transition-colors duration-300">
             <div className="flex items-center gap-4 text-center sm:text-left">
-              <div className="w-20 h-20 rounded-2xl bg-amber-50 dark:bg-amber-950/40 border-2 border-amber-300 dark:border-amber-700 flex items-center justify-center text-4xl shadow-inner">
-                {AVATAR_MAP[stats.avatar]?.emoji || '🐻'}
+              <div className="w-20 h-20 rounded-2xl bg-amber-50 dark:bg-amber-950/40 border-2 border-amber-300 dark:border-amber-700 flex items-center justify-center text-4xl shadow-inner p-2">
+                {stats.avatar === 'haribo' ? <HariboAvatar size="lg" /> : (AVATAR_MAP[stats.avatar]?.emoji || '⚔️')}
               </div>
               <div>
                 <span className={`text-xs font-black uppercase px-2.5 py-0.5 rounded-md border ${currentTier.color}`}>
@@ -447,8 +448,8 @@ export const QuizDuel: React.FC = () => {
           <div className="grid grid-cols-2 gap-2 sm:gap-3 bg-gray-900 text-white p-3 sm:p-4 rounded-3xl border-2 border-gray-800 shadow-lg">
             {/* Player */}
             <div className="flex items-center gap-2 sm:gap-3 min-w-0">
-              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-blue-600/30 border border-blue-400 flex items-center justify-center text-xl sm:text-2xl flex-shrink-0">
-                {AVATAR_MAP[stats.avatar]?.emoji || '🐻'}
+              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-blue-600/30 border border-blue-400 flex items-center justify-center text-xl sm:text-2xl flex-shrink-0 p-1">
+                {stats.avatar === 'haribo' ? <HariboAvatar size="sm" /> : (AVATAR_MAP[stats.avatar]?.emoji || '⚔️')}
               </div>
               <div className="min-w-0">
                 <div className="text-[10px] sm:text-xs font-black text-blue-400 truncate">SEN ({stats.eloRating})</div>

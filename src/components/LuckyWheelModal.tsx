@@ -3,6 +3,7 @@ import { useGame } from '../context/GameContext';
 import { X, Sparkles, Gem, Zap, Heart, Shield, Trophy, ArrowDown } from 'lucide-react';
 import { sound } from '../utils/audio';
 import confetti from 'canvas-confetti';
+import { HariboAvatar } from './HariboAvatar';
 
 interface LuckyWheelModalProps {
   onClose: () => void;
@@ -90,7 +91,7 @@ export const LuckyWheelModal: React.FC<LuckyWheelModalProps> = ({ onClose }) => 
           </div>
           <h2 className="text-2xl font-black text-gray-800 dark:text-gray-100">Çarkıfelek Arenası</h2>
           <p className="text-xs text-gray-500 dark:text-gray-400 font-semibold mt-0.5">
-            Çarkı çevir, Haribo Ayıcık'ın hazinesinden sürpriz ödülleri topla! 🐻🍯
+            Çarkı çevir, Haribo Altın Ayıcık'ın hazinesinden sürpriz ödülleri topla! 🍯✨
           </p>
         </div>
 
@@ -150,9 +151,9 @@ export const LuckyWheelModal: React.FC<LuckyWheelModalProps> = ({ onClose }) => 
             </svg>
           </div>
 
-          {/* Center Hub with Bear Emoji */}
-          <div className="absolute w-14 h-14 rounded-full bg-white dark:bg-[#1a2c35] border-4 border-amber-400 shadow-lg flex items-center justify-center text-2xl select-none z-20">
-            🐻
+          {/* Center Hub with Golden Haribo Bear */}
+          <div className="absolute w-14 h-14 rounded-full bg-white dark:bg-[#1a2c35] border-4 border-amber-400 shadow-lg flex items-center justify-center select-none z-20 p-1">
+            <HariboAvatar size="sm" animate={true} />
           </div>
 
         </div>

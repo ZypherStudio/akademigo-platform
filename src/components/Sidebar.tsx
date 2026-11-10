@@ -1,5 +1,6 @@
 import React from 'react';
 import { Map, Flame, Swords, Bot, BookMarked, Mic, Clock, Gamepad2, Code2, FileText, Tv, Trophy, Target, ShoppingBag, User } from 'lucide-react';
+import { HariboAvatar } from './HariboAvatar';
 
 export type NavTab = 'learn' | 'reels' | 'duel' | 'aicoach' | 'errors' | 'speech' | 'countdown' | 'games' | 'codelab' | 'exams' | 'study' | 'leaderboard' | 'quests' | 'shop' | 'profile';
 
@@ -13,7 +14,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentTab, onSelectTab }) => 
     { id: 'learn', label: 'ÖĞREN', icon: Map, color: 'text-green-500' },
     { id: 'reels', label: 'SORU KAYDIR 🔥', icon: Flame, color: 'text-orange-500' },
     { id: 'duel', label: '1v1 DÜELLO', icon: Swords, color: 'text-red-500' },
-    { id: 'aicoach', label: 'BİBO AI KOÇ', icon: Bot, color: 'text-emerald-500' },
+    { id: 'aicoach', label: 'HARİBO AI KOÇ', icon: Bot, color: 'text-amber-500' },
     { id: 'errors', label: 'HATA DEFTERİ', icon: BookMarked, color: 'text-rose-500' },
     { id: 'speech', label: 'SESLİ PRATİK', icon: Mic, color: 'text-cyan-500' },
     { id: 'countdown', label: 'SINAV SAYACI', icon: Clock, color: 'text-violet-500' },
@@ -31,15 +32,15 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentTab, onSelectTab }) => 
     <aside className="hidden md:flex md:w-64 bg-white dark:bg-[#1a2c35] border-r-2 border-gray-200 dark:border-[#2b3d45] min-h-[calc(100vh-61px)] p-3 flex-col justify-between select-none flex-shrink-0 transition-colors duration-300">
       <div className="space-y-1">
         
-        {/* Brand Logo with Haribo Bear */}
+        {/* Brand Logo with Custom Yellow Haribo Mascot */}
         <div className="hidden md:flex items-center gap-3 px-3 py-2 mb-2">
-          <div className="text-3xl animate-bounceSubtle filter drop-shadow">🐻</div>
+          <HariboAvatar size="md" animate={true} />
           <div>
             <h1 className="text-2xl font-black tracking-tight text-[#58cc02] leading-none">
               Akademi<span className="text-[#1cb0f6]">GO</span>
             </h1>
-            <span className="text-[10px] font-black uppercase text-gray-400 dark:text-gray-500 tracking-wider">
-              Haribo Koçluk Evreni
+            <span className="text-[10px] font-black uppercase text-amber-500 dark:text-amber-400 tracking-wider font-mono">
+              Haribo Altın Maskot 🍯
             </span>
           </div>
         </div>
@@ -69,9 +70,9 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentTab, onSelectTab }) => 
       </div>
 
       {/* Mini Footer Mascot Info */}
-      <div className="hidden md:block bg-gradient-to-br from-green-50 to-emerald-100 border-2 border-green-200 rounded-2xl p-2.5 text-center mt-2">
-        <div className="text-xs font-black text-green-800">Chess ELO + Bibo AI 🚀</div>
-        <div className="text-[10px] text-green-700 font-semibold mt-0.5">
+      <div className="hidden md:block bg-gradient-to-br from-amber-50 to-orange-100 border-2 border-amber-200 rounded-2xl p-2.5 text-center mt-2">
+        <div className="text-xs font-black text-amber-900">Chess ELO + Haribo AI 🚀</div>
+        <div className="text-[10px] text-amber-800 font-semibold mt-0.5">
           Günde 15 dk ile hedefe ulaş!
         </div>
       </div>

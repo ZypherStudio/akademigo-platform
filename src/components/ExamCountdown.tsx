@@ -203,7 +203,7 @@ export const ExamCountdown: React.FC = () => {
         <Mascot
           size="md"
           mood="thinking"
-          speech="Geri sayan saat seni korkutmasın! Her gün çözdüğün 30 soru sınav günü sana yüz binlerce sıralama kazandıracak! 🦉⏳"
+          speech="Geri sayan saat seni korkutmasın! Her gün çözdüğün 30 soru sınav günü sana yüz binlerce sıralama kazandıracak! 🍯⏳"
         />
       </div>
 

@@ -1,9 +1,10 @@
 import React from 'react';
 import { useGame } from '../context/GameContext';
 import { Trophy, Medal, Sparkles, TrendingUp } from 'lucide-react';
+import { HariboAvatar } from './HariboAvatar';
 
 export const Leaderboard: React.FC = () => {
-  const { leaderboard } = useGame();
+  const { leaderboard, stats } = useGame();
 
   return (
     <div className="flex-1 max-w-2xl mx-auto py-6 px-4 space-y-6 pb-24">
@@ -58,8 +59,12 @@ export const Leaderboard: React.FC = () => {
                 </div>
 
                 {/* Avatar */}
-                <div className="w-11 h-11 rounded-2xl bg-gray-100 dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 flex items-center justify-center text-2xl select-none">
-                  {user.avatar}
+                <div className="w-11 h-11 rounded-2xl bg-gray-100 dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 flex items-center justify-center text-2xl select-none p-1">
+                  {user.isCurrentUser && stats.avatar === 'haribo' ? (
+                    <HariboAvatar size="sm" />
+                  ) : (
+                    user.avatar
+                  )}
                 </div>
 
                 {/* Name */}

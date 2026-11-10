@@ -4,6 +4,7 @@ import { COURSES } from '../data/coursesData';
 import { Flame, Gem, Heart, Volume2, VolumeX, ChevronDown, Check, Sparkles } from 'lucide-react';
 import { CourseCategory } from '../types';
 import { LuckyWheelModal } from './LuckyWheelModal';
+import { HariboAvatar } from './HariboAvatar';
 import { sound } from '../utils/audio';
 
 export const Header: React.FC = () => {
@@ -13,7 +14,7 @@ export const Header: React.FC = () => {
   const [showLuckyWheel, setShowLuckyWheel] = useState(false);
 
   const currentCourse = COURSES.find(c => c.id === selectedCourseId) || COURSES[0];
-  const userAvatarEmoji = AVATAR_MAP[stats.avatar]?.emoji || '🐻';
+  const userAvatarEmoji = AVATAR_MAP[stats.avatar]?.emoji || '🍯';
 
   return (
     <header className="sticky top-0 z-30 bg-white dark:bg-[#1a2c35] border-b-2 border-gray-200 dark:border-[#2b3d45] px-2.5 py-2 sm:px-6 transition-colors duration-300">
@@ -72,7 +73,7 @@ export const Header: React.FC = () => {
           
           {/* User Level & Avatar Pill */}
           <div className="hidden sm:flex items-center gap-1.5 bg-amber-50 dark:bg-amber-950/50 border-2 border-amber-200 dark:border-amber-700/60 px-2.5 py-1 rounded-xl text-amber-900 dark:text-amber-300 font-black text-xs shadow-sm">
-            <span className="text-base">{userAvatarEmoji}</span>
+            {stats.avatar === 'haribo' ? <HariboAvatar size="xs" /> : <span className="text-base">{userAvatarEmoji}</span>}
             <span>Lvl {userLevel}</span>
           </div>
 

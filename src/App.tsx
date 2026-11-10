@@ -19,6 +19,7 @@ import { SpeechPractice } from './components/SpeechPractice';
 import { ExamCountdown } from './components/ExamCountdown';
 import { ReelsQuestions } from './components/ReelsQuestions';
 import { RightSidebar } from './components/RightSidebar';
+import { HariboAvatar } from './components/HariboAvatar';
 import { Map, Flame, Swords, Bot, FileText, Menu, X, BookMarked, Mic, Clock, Gamepad2, Code2, Tv, Trophy, Target, ShoppingBag, User } from 'lucide-react';
 import { sound } from './utils/audio';
 
@@ -41,7 +42,7 @@ const MainLayout: React.FC = () => {
     { id: 'learn', label: 'Öğren', icon: Map },
     { id: 'reels', label: 'Kaydır 🔥', icon: Flame },
     { id: 'duel', label: 'Düello', icon: Swords },
-    { id: 'aicoach', label: 'Bibo AI', icon: Bot },
+    { id: 'aicoach', label: 'Haribo AI', icon: Bot },
     { id: 'exams', label: 'Deneme', icon: FileText },
   ];
 
@@ -49,7 +50,7 @@ const MainLayout: React.FC = () => {
     { id: 'learn', label: 'Öğren / Harita', icon: Map, color: 'text-green-500 bg-green-50' },
     { id: 'reels', label: 'Soru Kaydır (Reels 🔥)', icon: Flame, color: 'text-orange-500 bg-orange-50' },
     { id: 'duel', label: '1v1 Düello', icon: Swords, color: 'text-red-500 bg-red-50' },
-    { id: 'aicoach', label: 'Bibo AI Koç', icon: Bot, color: 'text-emerald-500 bg-emerald-50' },
+    { id: 'aicoach', label: 'Haribo AI Koç', icon: Bot, color: 'text-amber-500 bg-amber-50' },
     { id: 'exams', label: 'Deneme Sınavları', icon: FileText, color: 'text-teal-500 bg-teal-50' },
     { id: 'errors', label: 'Hata Defteri', icon: BookMarked, color: 'text-rose-500 bg-rose-50' },
     { id: 'games', label: 'Mini Oyunlar', icon: Gamepad2, color: 'text-pink-500 bg-pink-50' },
@@ -151,8 +152,8 @@ const MainLayout: React.FC = () => {
             
             {/* Drawer Header */}
             <div className="flex items-center justify-between pb-3 border-b border-gray-100 dark:border-[#2b3d45]">
-              <div className="flex items-center gap-2">
-                <span className="text-2xl animate-bounceSubtle">🐻</span>
+              <div className="flex items-center gap-2.5">
+                <HariboAvatar size="sm" animate={true} />
                 <div>
                   <h3 className="font-black text-gray-800 dark:text-gray-100 text-base">AkademiGO Menüsü</h3>
                   <span className="text-[10px] font-bold text-gray-400 dark:text-gray-400">Tüm Eğitici Odalar & Özellikler</span>

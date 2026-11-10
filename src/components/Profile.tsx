@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useGame, AVATAR_MAP } from '../context/GameContext';
 import { AppTheme, UserAvatar } from '../types';
 import { Flame, Gem, Trophy, Award, Palette, User, Shield, Check, Sparkles, BookOpen, Clock, Heart } from 'lucide-react';
+import { HariboAvatar } from './HariboAvatar';
 import { sound } from '../utils/audio';
 
 const THEMES: { id: AppTheme; name: string; bg: string; border: string; accent: string }[] = [
@@ -89,8 +90,12 @@ export const Profile: React.FC = () => {
           
           {/* Avatar with Level Badge */}
           <div className="relative">
-            <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-3xl bg-white/20 backdrop-blur-md border-4 border-white/40 flex items-center justify-center text-6xl shadow-inner select-none animate-bounceSubtle">
-              {currentAvatarInfo.emoji}
+            <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-3xl bg-white/20 backdrop-blur-md border-4 border-white/40 flex items-center justify-center text-6xl shadow-inner select-none animate-bounceSubtle p-2">
+              {stats.avatar === 'haribo' ? (
+                <HariboAvatar size="xl" animate={true} />
+              ) : (
+                currentAvatarInfo.emoji
+              )}
             </div>
             {/* Level Badge */}
             <div className="absolute -bottom-2 -right-2 bg-amber-400 text-amber-950 font-black text-xs px-2.5 py-1 rounded-xl shadow-md border-2 border-white flex items-center gap-1">
@@ -317,7 +322,11 @@ export const Profile: React.FC = () => {
                         : 'border-gray-200 dark:border-[#2b3d45] hover:border-gray-300 dark:hover:border-gray-600 bg-white dark:bg-[#202f36]'
                     }`}
                   >
-                    <span className="text-4xl mb-1">{item.emoji}</span>
+                    {key === 'haribo' ? (
+                      <HariboAvatar size="lg" className="mb-1" />
+                    ) : (
+                      <span className="text-4xl mb-1">{item.emoji}</span>
+                    )}
                     <span className="font-black text-xs text-gray-800 dark:text-gray-100">{item.name}</span>
                     {isSelected && (
                       <span className="text-[10px] font-black text-[#58cc02] mt-1">SEÇİLİ ✅</span>

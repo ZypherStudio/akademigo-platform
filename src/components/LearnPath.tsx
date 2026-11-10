@@ -145,7 +145,7 @@ export const LearnPath: React.FC = () => {
         <Mascot
           size="md"
           mood="idle"
-          speech="Hazır mısın? Haribo Ayıcık ile hedefine adım adım koşuyoruz! İstediğin konudan başla 🐻🍯"
+          speech="Hazır mısın? Haribo Sarı Ayıcık ile hedefine adım adım koşuyoruz! İstediğin konudan başla 🍯✨"
         />
       </div>
 
@@ -178,8 +178,8 @@ export const LearnPath: React.FC = () => {
                 </button>
               </div>
 
-              {/* Zigzag Lesson Path with proper vertical spacing */}
-              <div className="flex flex-col items-center space-y-12 sm:space-y-16 my-6 relative">
+              {/* Zigzag Lesson Path with proper vertical spacing (preventing badge & title overlap) */}
+              <div className="flex flex-col items-center space-y-20 sm:space-y-24 my-8 relative">
                 {unit.lessons.map((lesson, lessonIndex) => {
                   const completed = isLessonCompleted(lesson.id);
                   const chestOpened = isChestOpened(lesson.id);
@@ -200,7 +200,7 @@ export const LearnPath: React.FC = () => {
                     >
                       {/* Active "BAŞLA" floating bubble - comfortably positioned above */}
                       {isCurrentActive && (
-                        <div className="absolute -top-11 z-20 animate-bounce bg-white dark:bg-[#1a2c35] text-gray-800 dark:text-gray-100 font-black text-xs px-3 py-1.5 rounded-xl shadow-lg border-2 border-gray-200 dark:border-[#2b3d45] flex items-center gap-1.5 whitespace-nowrap pointer-events-none">
+                        <div className="absolute -top-12 z-20 animate-bounce bg-white dark:bg-[#1a2c35] text-gray-800 dark:text-gray-100 font-black text-xs px-3.5 py-1.5 rounded-xl shadow-xl border-2 border-amber-400 dark:border-amber-500 flex items-center gap-1.5 whitespace-nowrap pointer-events-none">
                           <Play className="w-3.5 h-3.5 fill-[#58cc02] text-[#58cc02]" />
                           BAŞLA!
                           <div className="absolute left-1/2 -bottom-2 -translate-x-1/2 w-0 h-0 border-x-8 border-x-transparent border-t-8 border-t-white dark:border-t-[#1a2c35]" />
@@ -264,7 +264,7 @@ export const LearnPath: React.FC = () => {
                       )}
 
                       {/* Lesson title label */}
-                      <span className="text-xs font-black text-gray-700 dark:text-gray-200 mt-2.5 max-w-[150px] text-center leading-tight">
+                      <span className="text-xs font-black text-gray-700 dark:text-gray-200 mt-3 max-w-[150px] text-center leading-tight">
                         {lesson.title}
                       </span>
                     </div>

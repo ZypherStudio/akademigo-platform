@@ -111,7 +111,7 @@ const DEFAULT_NOTES: StudyNote[] = [
 ];
 
 export const AVATAR_MAP: Record<UserAvatar, { emoji: string; name: string }> = {
-  haribo: { emoji: '🐻', name: 'Haribo Ayıcık (Özel Maskot)' },
+  haribo: { emoji: '🍯', name: 'Haribo Altın Ayıcık (Özel Maskot)' },
   owl: { emoji: '🦉', name: 'Bilge Baykuş' },
   fox: { emoji: '🦊', name: 'Zeki Tilki' },
   robot: { emoji: '🤖', name: 'AI Robot' },
@@ -395,7 +395,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const levelProgress = stats.xp % 100;
 
   // Dynamic Leaderboard
-  const userEmoji = AVATAR_MAP[stats.avatar]?.emoji || '🦉';
+  const userEmoji = stats.avatar === 'haribo' ? '🍯' : (AVATAR_MAP[stats.avatar]?.emoji || '🎓');
   const leaderboard: LeaderboardUser[] = ([
     { id: 'lb-1', name: 'Zeynep Yılmaz', avatar: '👩‍🎓', xp: Math.max(480, stats.xp + 40), tier: 'diamond' as const },
     { id: 'lb-user', name: `Sen (${stats.title})`, avatar: userEmoji, xp: stats.xp, tier: 'diamond' as const, isCurrentUser: true },

@@ -573,7 +573,7 @@ export const ExamSimulator: React.FC = () => {
             <Mascot
               size="sm"
               mood="thinking"
-              speech="Geri sayımı unutma! Yapamadığın soruları optik formdan kontrol edip son 2 dakikada gözden geçirebilirsin. 🐻🍯"
+              speech="Geri sayımı unutma! Yapamadığın soruları optik formdan kontrol edip son 2 dakikada gözden geçirebilirsin. 🍯✨"
             />
           </div>
 

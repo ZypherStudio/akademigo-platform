@@ -158,7 +158,7 @@ export const LessonModal: React.FC<LessonModalProps> = ({ lesson, onClose }) => 
     return (
       <div className="fixed inset-0 z-50 bg-[#131f24] text-white flex flex-col items-center justify-center p-6 select-none animate-pop">
         <div className="max-w-md w-full text-center space-y-6">
-          <Mascot size="lg" mood="cheering" speech="Harikasın! Bu dersi ustalıkla bitirdin! 🦉🎉" />
+          <Mascot size="lg" mood="cheering" speech="Harikasın! Bu dersi ustalıkla bitirdin! 🍯🎉" />
           <div>
             <h2 className="text-3xl font-black text-[#58cc02]">Ders Tamamlandı!</h2>
             <p className="text-gray-400 font-semibold mt-1">

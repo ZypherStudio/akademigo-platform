@@ -195,3 +195,5 @@ class SoundSystem {
 }
 
 export const sound = new SoundSystem();
+export const soundSystem = sound;
+

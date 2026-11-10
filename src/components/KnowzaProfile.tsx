@@ -1,0 +1,282 @@
+import React, { useState } from 'react';
+import { useGame } from '../context/GameContext';
+import {
+  ArrowLeft,
+  Settings,
+  User,
+  Globe,
+  Bell,
+  Sliders,
+  HelpCircle,
+  ChevronRight,
+  LogOut,
+  Sparkles,
+  Check,
+  Edit3
+} from 'lucide-react';
+import { soundSystem } from '../utils/audio';
+
+interface KnowzaProfileProps {
+  onBack?: () => void;
+  onOpenAuth?: () => void;
+}
+
+export const KnowzaProfile: React.FC<KnowzaProfileProps> = ({
+  onBack,
+  onOpenAuth
+}) => {
+  const { stats, updateUsername, logoutUser } = useGame();
+  const [notificationsEnabled, setNotificationsEnabled] = useState(true);
+  const [isEditingName, setIsEditingName] = useState(false);
+  const [nameInput, setNameInput] = useState(stats.username || 'Alp');
+  const [activeModal, setActiveModal] = useState<string | null>(null);
+
+  const handleSaveName = () => {
+    if (nameInput.trim()) {
+      updateUsername(nameInput.trim());
+      setIsEditingName(false);
+      soundSystem.playCorrect();
+    }
+  };
+
+  const currentLevel = Math.max(13, Math.floor((stats.xp || 1200) / 100));
+  const currentXp = stats.xp || 720;
+  const targetXp = 1000;
+  const xpPercent = Math.min(100, Math.round((currentXp / targetXp) * 100));
+
+  return (
+    <div className="min-h-screen bg-[#FFFDF7] text-slate-800 pb-28 select-none">
+      {/* Top Header */}
+      <div className="sticky top-0 z-30 bg-[#FFFDF7]/95 backdrop-blur-md px-4 py-3 flex items-center justify-between border-b border-amber-100/50">
+        <button
+          onClick={onBack}
+          className="w-10 h-10 rounded-full flex items-center justify-center text-slate-700 hover:bg-amber-100/60 active:scale-95 transition"
+        >
+          <ArrowLeft className="w-5 h-5" />
+        </button>
+        <span className="text-base font-bold text-slate-900">Profil</span>
+        <button
+          onClick={() => setActiveModal('settings')}
+          className="w-10 h-10 rounded-full flex items-center justify-center text-slate-700 hover:bg-amber-100/60 active:scale-95 transition"
+        >
+          <Settings className="w-5 h-5" />
+        </button>
+      </div>
+
+      <div className="max-w-md mx-auto px-5 pt-4 space-y-6">
+        {/* User Card matching Screen 8 */}
+        <div className="flex flex-col items-center text-center pt-2">
+          {/* Avatar with gold badge */}
+          <div className="relative w-24 h-24 mb-3">
+            <img
+              src="/assets/knowza_profile_avatar.png"
+              alt="Knowza Avatar"
+              className="w-full h-full object-contain filter drop-shadow-md rounded-full"
+              onError={(e) => {
+                (e.target as HTMLImageElement).src = '/assets/knowza_icon.png';
+              }}
+            />
+            {/* Verified badge */}
+            <div className="absolute bottom-0 right-1 w-6 h-6 rounded-full bg-[#FFB800] border-2 border-white flex items-center justify-center shadow-sm">
+              <Check className="w-3.5 h-3.5 text-slate-900 stroke-[3]" />
+            </div>
+          </div>
+
+          {/* Name & Editing */}
+          {isEditingName ? (
+            <div className="flex items-center gap-2 mb-1">
+              <input
+                type="text"
+                value={nameInput}
+                onChange={(e) => setNameInput(e.target.value)}
+                className="px-3 py-1 bg-white border-2 border-amber-400 rounded-xl font-extrabold text-lg text-slate-900 text-center w-36 outline-none shadow-inner"
+                autoFocus
+              />
+              <button
+                onClick={handleSaveName}
+                className="px-2.5 py-1 bg-amber-400 hover:bg-amber-500 rounded-xl text-xs font-bold text-slate-900 shadow-sm"
+              >
+                Kaydet
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={() => setIsEditingName(true)}
+              className="group flex items-center gap-1.5 text-xl font-extrabold text-slate-900 hover:text-amber-600 transition"
+            >
+              <span>{stats.username || 'Alp'}</span>
+              <Edit3 className="w-4 h-4 text-slate-400 group-hover:text-amber-500 transition" />
+            </button>
+          )}
+
+          <p className="text-sm font-semibold text-slate-500 mb-3">
+            Seviye {currentLevel}
+          </p>
+
+          {/* XP Progress Bar (720 / 1.000 XP) */}
+          <div className="w-full max-w-xs space-y-1">
+            <div className="w-full bg-[#ECE7DC] h-3 rounded-full overflow-hidden p-0.5">
+              <div
+                className="h-full bg-gradient-to-r from-amber-400 to-[#FFB800] rounded-full transition-all duration-500 shadow-sm"
+                style={{ width: `${xpPercent}%` }}
+              />
+            </div>
+            <div className="text-[12px] font-bold text-slate-500 text-center">
+              {currentXp.toLocaleString()} / {targetXp.toLocaleString()} XP
+            </div>
+          </div>
+        </div>
+
+        {/* Menu Items matching Screen 8 */}
+        <div className="bg-white rounded-3xl p-2 shadow-sm border border-amber-100/70 divide-y divide-amber-50">
+          {/* Profil Bilgileri */}
+          <button
+            onClick={() => setActiveModal('profileInfo')}
+            className="w-full flex items-center justify-between p-3.5 hover:bg-amber-50/60 rounded-2xl transition text-left"
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl bg-amber-100/70 text-amber-900 flex items-center justify-center">
+                <User className="w-5 h-5" />
+              </div>
+              <span className="text-sm font-bold text-slate-800">Profil Bilgileri</span>
+            </div>
+            <ChevronRight className="w-5 h-5 text-slate-400" />
+          </button>
+
+          {/* Dil Tercihleri */}
+          <button
+            onClick={() => setActiveModal('languages')}
+            className="w-full flex items-center justify-between p-3.5 hover:bg-amber-50/60 rounded-2xl transition text-left"
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl bg-purple-100/70 text-purple-700 flex items-center justify-center">
+                <Globe className="w-5 h-5" />
+              </div>
+              <span className="text-sm font-bold text-slate-800">Dil Tercihleri</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <span className="text-xs font-semibold text-slate-400">Türkçe / İngilizce</span>
+              <ChevronRight className="w-5 h-5 text-slate-400" />
+            </div>
+          </button>
+
+          {/* Bildirimler (Toggle Switch) */}
+          <div className="w-full flex items-center justify-between p-3.5 rounded-2xl">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl bg-amber-100/70 text-amber-800 flex items-center justify-center">
+                <Bell className="w-5 h-5" />
+              </div>
+              <span className="text-sm font-bold text-slate-800">Bildirimler</span>
+            </div>
+            <button
+              onClick={() => {
+                soundSystem.playClick();
+                setNotificationsEnabled(!notificationsEnabled);
+              }}
+              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                notificationsEnabled ? 'bg-[#FFB800]' : 'bg-slate-300'
+              }`}
+            >
+              <span
+                className={`inline-block h-4 w-4 transform rounded-full bg-white shadow-md transition-transform ${
+                  notificationsEnabled ? 'translate-x-6' : 'translate-x-1'
+                }`}
+              />
+            </button>
+          </div>
+
+          {/* Hesap Ayarları */}
+          <button
+            onClick={() => (onOpenAuth ? onOpenAuth() : setActiveModal('account'))}
+            className="w-full flex items-center justify-between p-3.5 hover:bg-amber-50/60 rounded-2xl transition text-left"
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl bg-slate-100 text-slate-700 flex items-center justify-center">
+                <Settings className="w-5 h-5" />
+              </div>
+              <div>
+                <span className="text-sm font-bold text-slate-800 block">Hesap Ayarları</span>
+                <span className="text-[11px] font-medium text-slate-400">
+                  {!stats.isLoggedIn ? 'Misafir Hesabı (Google ile bağla)' : stats.email || 'Giriş yapıldı'}
+                </span>
+              </div>
+            </div>
+            <ChevronRight className="w-5 h-5 text-slate-400" />
+          </button>
+
+          {/* Yardım & Destek */}
+          <button
+            onClick={() => setActiveModal('help')}
+            className="w-full flex items-center justify-between p-3.5 hover:bg-amber-50/60 rounded-2xl transition text-left"
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl bg-sky-100 text-sky-700 flex items-center justify-center">
+                <HelpCircle className="w-5 h-5" />
+              </div>
+              <span className="text-sm font-bold text-slate-800">Yardım & Destek</span>
+            </div>
+            <ChevronRight className="w-5 h-5 text-slate-400" />
+          </button>
+        </div>
+
+        {/* Logout or Account Action */}
+        {stats.isLoggedIn ? (
+          <button
+            onClick={() => {
+              logoutUser();
+              soundSystem.playClick();
+            }}
+            className="w-full py-3 rounded-2xl bg-rose-50 hover:bg-rose-100 text-rose-600 font-bold text-xs flex items-center justify-center gap-2 transition"
+          >
+            <LogOut className="w-4 h-4" />
+            <span>Hesaptan Çıkış Yap</span>
+          </button>
+        ) : (
+          <button
+            onClick={onOpenAuth}
+            className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-amber-400 to-[#FFB800] text-slate-900 font-extrabold text-sm shadow-md active:scale-95 transition flex items-center justify-center gap-2"
+          >
+            <Sparkles className="w-4 h-4" />
+            <span>Google veya E-posta ile Kaydol / Giriş Yap</span>
+          </button>
+        )}
+      </div>
+
+      {/* Info Modal */}
+      {activeModal && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-fade-in"
+          onClick={() => setActiveModal(null)}
+        >
+          <div
+            className="w-full max-w-sm bg-white rounded-3xl p-6 shadow-2xl border border-amber-100 text-slate-800"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h4 className="text-lg font-bold mb-2">
+              {activeModal === 'profileInfo' && 'Profil Bilgileri'}
+              {activeModal === 'languages' && 'Dil Tercihleri'}
+              {activeModal === 'settings' && 'Ayarlar'}
+              {activeModal === 'help' && 'Yardım & Destek'}
+            </h4>
+            <p className="text-sm text-slate-600 mb-5">
+              {activeModal === 'profileInfo' &&
+                `Kullanıcı adınız: ${stats.username || 'Alp'}. Günlük seri: ${stats.streak} gün. Seviye: ${currentLevel}.`}
+              {activeModal === 'languages' &&
+                'Knowza üzerinde Türkçe, İngilizce, Almanca ve Fransızca dilleri arasında pratik yapabilirsiniz.'}
+              {activeModal === 'settings' &&
+                'Uygulama sürümü: Knowza v2.0 (Play Store Edition). Tüm verileriniz bulutta güvenle saklanır.'}
+              {activeModal === 'help' &&
+                'Herhangi bir sorun için destek@knowza.app üzerinden bizimle 7/24 iletişime geçebilirsiniz.'}
+            </p>
+            <button
+              onClick={() => setActiveModal(null)}
+              className="w-full py-3 rounded-2xl bg-[#FFB800] text-slate-900 font-extrabold text-sm shadow-sm"
+            >
+              Kapat
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};

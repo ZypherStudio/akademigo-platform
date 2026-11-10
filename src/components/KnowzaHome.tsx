@@ -67,95 +67,74 @@ export const KnowzaHome: React.FC<KnowzaHomeProps> = ({
   };
 
   return (
-    <div className="flex-1 max-w-md mx-auto px-4 py-3 space-y-4 pb-36 select-none animate-fade">
-      {/* Top Header Bar with Brand Logo */}
-      <div className="space-y-2.5 pt-1">
-        {/* Top Brand & Controls Row */}
-        <div className="flex items-center justify-between">
-          {/* Official 3D Knowza Brand Wordmark Logo */}
-          <div className="flex items-center gap-1.5 cursor-pointer" onClick={() => onNavigateTab('home')}>
-            <img
-              src="/assets/knowza_wordmark_transparent.png"
-              alt="Knowza"
-              className="h-7 sm:h-8 w-auto object-contain filter drop-shadow-xs transform hover:scale-105 transition"
-            />
-            <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-full bg-amber-400 text-slate-950 shadow-xs tracking-wider">
-              3D
-            </span>
+    <div className="flex-1 max-w-md mx-auto px-4 py-4 space-y-5 pb-36 select-none animate-fade">
+      {/* Top Header Bar */}
+      <div className="flex items-center justify-between pt-1">
+        {/* User Profile Pill */}
+        <div
+          onClick={() => onNavigateTab('profile')}
+          className="flex items-center gap-2.5 cursor-pointer group active:scale-95 transition-all"
+        >
+          <div className="flex-shrink-0">
+            <KnowzaAvatar size="md" costume={stats.selectedCostume} />
           </div>
-
-          {/* Quick Sound & Settings */}
-          <div className="flex items-center gap-1.5">
-            {/* Music Toggle */}
-            <button
-              onClick={() => {
-                const bgmOn = sound.toggleBgm();
-                setIsMusicPlaying(bgmOn);
-              }}
-              className={`w-8 h-8 rounded-xl border flex items-center justify-center transition-all active:scale-90 shadow-xs ${
-                isMusicPlaying
-                  ? 'bg-amber-100 border-amber-300 text-amber-900 shadow-sm animate-pulse'
-                  : 'bg-white border-[#F2E8D5] text-[#A0988A] hover:text-[#70685A]'
-              }`}
-              title={isMusicPlaying ? 'Müziği Duraklat' : 'Çalışma Müziğini Başlat 🎵'}
-            >
-              {isMusicPlaying ? <Music className="w-3.5 h-3.5 text-amber-600" /> : <VolumeX className="w-3.5 h-3.5" />}
-            </button>
-
-            {/* Settings Button */}
-            <button
-              onClick={() => {
-                sound.playClick();
-                onOpenSettings();
-              }}
-              className="w-8 h-8 rounded-xl bg-white border border-[#F2E8D5] flex items-center justify-center text-[#70685A] hover:text-[#2A1E00] hover:bg-[#FFF9EC] shadow-xs active:scale-90 transition-all"
-              title="Ayarlar & Profil"
-            >
-              <Settings className="w-3.5 h-3.5" />
-            </button>
+          <div className="min-w-0 max-w-[100px] sm:max-w-[140px]">
+            <span className="text-[10px] font-bold text-[#8C7A5E] block leading-none truncate">Merhaba!</span>
+            <h2 className="text-base sm:text-lg font-black text-[#2A1E00] flex items-center gap-1 leading-snug truncate">
+              <span className="truncate">{stats.username || 'Alp'}</span>
+              <span className="text-xs">👑</span>
+            </h2>
           </div>
         </div>
 
-        {/* User Profile & Status Row */}
-        <div className="flex items-center justify-between bg-white/90 border border-amber-100/80 px-3 py-2 rounded-2xl shadow-xs">
-          {/* User Profile Pill */}
-          <div
-            onClick={() => onNavigateTab('profile')}
-            className="flex items-center gap-2 cursor-pointer group active:scale-95 transition-all"
+        {/* Right Action Icons: Gems/Shop, Streak, Music & Settings */}
+        <div className="flex items-center gap-1.5 sm:gap-2">
+          {/* Gems & Direct Shop Pill */}
+          <button
+            onClick={() => {
+              sound.playClick();
+              onNavigateTab('shop');
+            }}
+            className="flex items-center gap-1 bg-[#EBF5FF] border border-[#BCE1FE] px-2.5 py-1.5 rounded-2xl text-[#1C8BD6] font-black text-xs shadow-xs hover:scale-105 active:scale-95 transition"
+            title="Knowza Mağaza & Elmaslar"
           >
-            <div className="flex-shrink-0">
-              <KnowzaAvatar size="sm" costume={stats.selectedCostume} />
-            </div>
-            <div className="min-w-0 max-w-[100px] sm:max-w-[140px]">
-              <span className="text-[10px] font-bold text-[#8C7A5E] block leading-none truncate">Merhaba!</span>
-              <h2 className="text-sm font-black text-[#2A1E00] flex items-center gap-1 leading-snug truncate">
-                <span className="truncate">{stats.username || 'Alp'}</span>
-                <span className="text-xs">👑</span>
-              </h2>
-            </div>
+            <Gem className="w-3.5 h-3.5 fill-[#1CB0F6] text-[#1CB0F6]" />
+            <span>{stats.gems || 280}</span>
+          </button>
+
+          {/* Daily Streak Pill */}
+          <div className="flex items-center gap-1 bg-[#FFF2D6] border border-[#FFE2A3] px-2.5 py-1.5 rounded-2xl text-[#D96B00] font-black text-xs shadow-xs">
+            <Flame className="w-3.5 h-3.5 fill-[#FF8A00] text-[#FF8A00] animate-bounceSubtle" />
+            <span>{stats.streak || 6}g</span>
           </div>
 
-          {/* Right Action Icons: Gems/Shop & Streak */}
-          <div className="flex items-center gap-1.5 sm:gap-2">
-            {/* Gems & Direct Shop Pill */}
-            <button
-              onClick={() => {
-                sound.playClick();
-                onNavigateTab('shop');
-              }}
-              className="flex items-center gap-1 bg-[#EBF5FF] border border-[#BCE1FE] px-2.5 py-1 rounded-xl text-[#1C8BD6] font-black text-xs shadow-xs hover:scale-105 active:scale-95 transition"
-              title="Knowza Mağaza & Elmaslar"
-            >
-              <Gem className="w-3.5 h-3.5 fill-[#1CB0F6] text-[#1CB0F6]" />
-              <span>{stats.gems || 280}</span>
-            </button>
+          {/* Music Toggle */}
+          <button
+            onClick={() => {
+              const bgmOn = sound.toggleBgm();
+              setIsMusicPlaying(bgmOn);
+            }}
+            className={`w-9 h-9 rounded-2xl border flex items-center justify-center transition-all active:scale-90 shadow-xs ${
+              isMusicPlaying
+                ? 'bg-amber-100 border-amber-300 text-amber-900 shadow-sm animate-pulse'
+                : 'bg-white border-[#F2E8D5] text-[#A0988A] hover:text-[#70685A]'
+            }`}
+            title={isMusicPlaying ? 'Müziği Duraklat' : 'Çalışma Müziğini Başlat 🎵'}
+          >
+            {isMusicPlaying ? <Music className="w-4 h-4 text-amber-600" /> : <VolumeX className="w-4 h-4" />}
+          </button>
 
-            {/* Daily Streak Pill */}
-            <div className="flex items-center gap-1 bg-[#FFF2D6] border border-[#FFE2A3] px-2.5 py-1 rounded-xl text-[#D96B00] font-black text-xs shadow-xs">
-              <Flame className="w-3.5 h-3.5 fill-[#FF8A00] text-[#FF8A00] animate-bounceSubtle" />
-              <span>{stats.streak || 6}g</span>
-            </div>
-          </div>
+          {/* Settings Button */}
+          <button
+            onClick={() => {
+              sound.playClick();
+              onOpenSettings();
+            }}
+            className="w-9 h-9 rounded-2xl bg-white border border-[#F2E8D5] flex items-center justify-center text-[#70685A] hover:text-[#2A1E00] hover:bg-[#FFF9EC] shadow-xs active:scale-90 transition-all"
+            title="Ayarlar & Profil"
+          >
+            <Settings className="w-4 h-4" />
+          </button>
         </div>
       </div>
 
@@ -201,8 +180,8 @@ export const KnowzaHome: React.FC<KnowzaHomeProps> = ({
           </button>
         </div>
 
-        {/* Category Horizontal Scroll Pills */}
-        <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-none">
+        {/* Category Horizontal Scroll Pills with clean screen edge padding */}
+        <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-none -mx-4 px-4">
           {categories.map((cat) => {
             const isSelected = selectedCourseId === cat.id;
             return (
@@ -225,20 +204,20 @@ export const KnowzaHome: React.FC<KnowzaHomeProps> = ({
 
       {/* Section: Bugünün Dersleri & Aktif Kategori Testleri */}
       <div className="space-y-3">
-        <div className="flex items-center justify-between">
-          <div>
-            <h3 className="text-base font-black text-[#2A1E00]">
+        <div className="flex items-center justify-between gap-2">
+          <div className="min-w-0 flex-1">
+            <h3 className="text-base font-black text-[#2A1E00] truncate">
               {currentCourse?.name || 'Bugünün Dersleri'}
             </h3>
-            <p className="text-[11px] font-bold text-[#8C7A5E]">
+            <p className="text-[11px] font-bold text-[#8C7A5E] truncate">
               {currentCourse?.subTitle || 'Adım adım pratik yap ve seviye atla'}
             </p>
           </div>
           <button
             onClick={() => setShowAllCategoriesModal(true)}
-            className="text-xs font-black text-[#FFB800] hover:underline"
+            className="text-xs font-black text-[#FFB800] hover:underline whitespace-nowrap flex-shrink-0"
           >
-            Tüm Testler ({allUnits.length} Bölüm)
+            Tüm Testler ({allUnits.length})
           </button>
         </div>
 
@@ -246,28 +225,28 @@ export const KnowzaHome: React.FC<KnowzaHomeProps> = ({
         {primaryLesson ? (
           <div
             onClick={() => handleLaunchLesson(primaryLesson)}
-            className="bg-white rounded-3xl p-5 border-2 border-[#FFE2A3] hover:border-[#FFB800] shadow-[0_8px_24px_rgba(255,184,0,0.1)] flex items-center justify-between cursor-pointer active:scale-98 transition-all group"
+            className="bg-white rounded-3xl p-4 sm:p-5 border-2 border-[#FFE2A3] hover:border-[#FFB800] shadow-[0_8px_24px_rgba(255,184,0,0.1)] flex items-center justify-between cursor-pointer active:scale-98 transition-all group"
           >
-            <div className="flex items-center gap-4 min-w-0 flex-1 pr-2">
-              <div className="w-14 h-14 rounded-2xl bg-[#FFF8E7] border border-[#FFE2A3] flex items-center justify-center text-3xl shadow-inner group-hover:scale-105 transition-transform flex-shrink-0">
+            <div className="flex items-center gap-3.5 min-w-0 flex-1 pr-2">
+              <div className="w-13 h-13 sm:w-14 sm:h-14 rounded-2xl bg-[#FFF8E7] border border-[#FFE2A3] flex items-center justify-center text-3xl shadow-inner group-hover:scale-105 transition-transform flex-shrink-0">
                 {currentCourse.icon}
               </div>
-              <div className="min-w-0">
+              <div className="min-w-0 flex-1">
                 <div className="inline-flex items-center gap-1 bg-amber-100 px-2 py-0.5 rounded-full text-[10px] font-black text-amber-900 mb-0.5">
                   <Sparkles className="w-3 h-3 text-[#FFB800]" />
                   <span>+{primaryLesson.xpReward} XP</span>
                 </div>
-                <h4 className="text-base sm:text-lg font-black text-[#2A1E00] truncate">
+                <h4 className="text-sm sm:text-base font-black text-[#2A1E00] line-clamp-2 leading-snug">
                   {primaryLesson.title}
                 </h4>
-                <p className="text-xs font-bold text-[#8C7A5E] truncate">
+                <p className="text-[11px] font-bold text-[#8C7A5E] truncate mt-0.5">
                   {primaryUnit?.title || 'Temel Seviye'}
                 </p>
               </div>
             </div>
 
             {/* Golden Circle Play Button */}
-            <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-[#FFB800] to-[#FFD54F] border-b-4 border-[#D99000] flex items-center justify-center text-[#2A1E00] shadow-md group-hover:scale-110 active:border-b-0 active:translate-y-1 transition-all flex-shrink-0">
+            <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-gradient-to-tr from-[#FFB800] to-[#FFD54F] border-b-4 border-[#D99000] flex items-center justify-center text-[#2A1E00] shadow-md group-hover:scale-110 active:border-b-0 active:translate-y-1 transition-all flex-shrink-0">
               <Play className="w-5 h-5 fill-[#2A1E00] ml-0.5" />
             </div>
           </div>

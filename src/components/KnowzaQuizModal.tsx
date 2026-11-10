@@ -102,9 +102,12 @@ export const KnowzaQuizModal: React.FC<KnowzaQuizModalProps> = ({ subject, onClo
         {/* Peeking Knowza Bear */}
         <div className="w-24 sm:w-28 filter drop-shadow-md -mb-3 z-10 animate-bounceSubtle">
           <img 
-            src="/assets/knowza_icon.png" 
+            src="/assets/knowza_peeking.png" 
             alt="Knowza Maskot" 
-            className="w-full h-auto object-contain rounded-3xl"
+            className="w-full h-auto object-contain"
+            onError={(e) => {
+              (e.target as HTMLImageElement).src = '/assets/knowza_thinking.png';
+            }}
           />
         </div>
 

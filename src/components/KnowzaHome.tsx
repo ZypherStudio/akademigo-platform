@@ -90,7 +90,7 @@ export const KnowzaHome: React.FC<KnowzaHomeProps> = ({
             </h3>
           </div>
           <p className="text-xs font-bold text-[#D98200]">
-            Devam et! Yarın serin 13 gün olacak.
+            Devam et! Yarın serin {(stats.streak || 1) + 1} gün olacak.
           </p>
         </div>
 

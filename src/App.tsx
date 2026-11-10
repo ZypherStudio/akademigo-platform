@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { GameProvider, useGame } from './context/GameContext';
 import { KnowzaSplash } from './components/KnowzaSplash';
 import { KnowzaHome } from './components/KnowzaHome';
@@ -13,7 +13,7 @@ import { QuizDuel } from './components/QuizDuel';
 import { ReelsQuestions } from './components/ReelsQuestions';
 import { AiCoach } from './components/AiCoach';
 import { AuthModal } from './components/AuthModal';
-import { ArrowLeft, Sparkles, Smartphone, Monitor } from 'lucide-react';
+import { ArrowLeft, Smartphone, Monitor } from 'lucide-react';
 import { soundSystem } from './utils/audio';
 
 const KnowzaAppContent: React.FC = () => {
@@ -23,6 +23,7 @@ const KnowzaAppContent: React.FC = () => {
     return localStorage.getItem('knowza_has_started') === 'true';
   });
 
+  const [isExpandedWebMode, setIsExpandedWebMode] = useState(false);
   const [activeQuizSubject, setActiveQuizSubject] = useState<string | null>(null);
   const [showLevelUpModal, setShowLevelUpModal] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
@@ -61,10 +62,37 @@ const KnowzaAppContent: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#FFFDF7] flex justify-center items-start text-slate-900 select-none antialiased">
-      {/* Centered Mobile App Shell (Play Store Ready Container) */}
-      <div className="w-full max-w-md min-h-screen relative bg-[#FFFDF7] sm:shadow-2xl sm:border sm:border-amber-100 flex flex-col">
-        
+    <div className="min-h-screen bg-[#FFFDF7] flex justify-center items-start text-slate-900 select-none antialiased relative">
+      {/* Desktop Responsive Test Mode Toggle (Only visible on wide desktop screens) */}
+      <div className="hidden lg:flex fixed top-4 right-4 z-50 items-center gap-1.5 bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-full border border-amber-200/80 shadow-md text-xs font-bold text-slate-700">
+        <button
+          onClick={() => setIsExpandedWebMode(false)}
+          className={`flex items-center gap-1 px-2.5 py-1 rounded-full transition ${
+            !isExpandedWebMode ? 'bg-[#FFB800] text-slate-900 font-black shadow-sm' : 'hover:bg-amber-50'
+          }`}
+          title="Play Store Mobil Boyutu (448px)"
+        >
+          <Smartphone className="w-3.5 h-3.5" />
+          <span>Mobil (448px)</span>
+        </button>
+        <button
+          onClick={() => setIsExpandedWebMode(true)}
+          className={`flex items-center gap-1 px-2.5 py-1 rounded-full transition ${
+            isExpandedWebMode ? 'bg-[#FFB800] text-slate-900 font-black shadow-sm' : 'hover:bg-amber-50'
+          }`}
+          title="Geniş Web Görünümü"
+        >
+          <Monitor className="w-3.5 h-3.5" />
+          <span>Geniş Web</span>
+        </button>
+      </div>
+
+      {/* Main App Container */}
+      <div
+        className={`w-full min-h-screen relative bg-[#FFFDF7] sm:shadow-2xl sm:border sm:border-amber-100 flex flex-col transition-all duration-300 ${
+          isExpandedWebMode ? 'max-w-2xl sm:my-4 sm:rounded-[36px]' : 'max-w-md'
+        }`}
+      >
         {/* Main Tab Views */}
         <main className="flex-1 w-full flex flex-col">
           {currentTab === 'home' && (

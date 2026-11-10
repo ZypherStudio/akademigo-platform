@@ -232,37 +232,41 @@ export const QuizDuel: React.FC = () => {
   };
 
   return (
-    <div className="flex-1 max-w-4xl mx-auto py-6 px-4 space-y-6 pb-24 select-none">
+    <div className="flex-1 max-w-md mx-auto py-4 px-3 space-y-4 pb-24 select-none">
       
       {/* 1. Lobby Phase: Quick Play or Friend Room */}
       {phase === 'lobby' && (
-        <div className="space-y-6 animate-pop">
+        <div className="space-y-4 animate-pop">
           {/* Header Banner */}
-          <div className="bg-gradient-to-r from-red-600 via-orange-600 to-amber-600 rounded-3xl p-6 text-white shadow-xl text-center relative overflow-hidden">
-            <div className="inline-flex items-center gap-1.5 bg-black/20 px-4 py-1 rounded-full text-xs font-black uppercase tracking-wider mb-2">
-              <Swords className="w-4 h-4 text-amber-300" />
-              Chess.com Tarzı Canlı Bilgi Arenası
+          <div className="bg-gradient-to-r from-red-600 via-orange-600 to-amber-600 rounded-3xl p-5 text-white shadow-xl text-center relative overflow-hidden">
+            <div className="inline-flex items-center gap-1.5 bg-black/20 px-3.5 py-1 rounded-full text-[11px] font-black uppercase tracking-wider mb-2">
+              <Swords className="w-3.5 h-3.5 text-amber-300" />
+              Knowza Canlı Bilgi Arenası
             </div>
-            <div className="text-6xl mb-2 animate-bounceSubtle">⚔️</div>
-            <h2 className="text-3xl font-black">1v1 Bilgi Düellosu</h2>
-            <p className="text-white/90 text-sm font-semibold max-w-md mx-auto mt-1">
-              Rakiplerinle veya arkadaşlarınla oda kurarak anlık yarış, soruları ışık hızında cevapla ve ELO zirvesine tırman!
+            <div className="text-5xl mb-2 animate-bounceSubtle">⚔️</div>
+            <h2 className="text-2xl font-black">1v1 Bilgi Düellosu</h2>
+            <p className="text-white/90 text-xs font-semibold max-w-xs mx-auto mt-1">
+              Rakiplerinle veya arkadaşlarınla canlı yarış, soruları ışık hızında cevapla ve zirveye tırman!
             </p>
           </div>
 
           {/* Rating Profile Card */}
-          <div className="bg-white dark:bg-[#1a2c35] rounded-3xl p-6 border-2 border-gray-200 dark:border-[#2b3d45] shadow-sm flex flex-col sm:flex-row items-center justify-between gap-6 transition-colors duration-300">
-            <div className="flex items-center gap-4 text-center sm:text-left">
-              <div className="w-20 h-20 rounded-2xl bg-amber-50 dark:bg-amber-950/40 border-2 border-amber-300 dark:border-amber-700 flex items-center justify-center text-4xl shadow-inner p-2">
-                {stats.avatar === 'haribo' ? <HariboAvatar size="lg" /> : (AVATAR_MAP[stats.avatar]?.emoji || '⚔️')}
+          <div className="bg-white dark:bg-[#1a2c35] rounded-3xl p-4 sm:p-5 border-2 border-gray-200 dark:border-[#2b3d45] shadow-sm flex flex-col gap-4 transition-colors duration-300">
+            <div className="flex items-center gap-3.5">
+              <div className="w-16 h-16 rounded-2xl bg-amber-50 border-2 border-amber-300 flex items-center justify-center shadow-inner overflow-hidden flex-shrink-0">
+                <img
+                  src="/assets/knowza_icon.png"
+                  alt="Profil"
+                  className="w-full h-full object-cover"
+                />
               </div>
-              <div>
-                <span className={`text-xs font-black uppercase px-2.5 py-0.5 rounded-md border ${currentTier.color}`}>
+              <div className="min-w-0 flex-1">
+                <span className={`text-[10px] font-black uppercase px-2 py-0.5 rounded-md border ${currentTier.color}`}>
                   {currentTier.title}
                 </span>
-                <h3 className="text-2xl font-black text-gray-800 dark:text-gray-100 mt-1">{stats.eloRating} ELO</h3>
+                <h3 className="text-xl font-black text-gray-800 dark:text-gray-100 mt-0.5">{stats.eloRating} ELO</h3>
                 <div className="text-xs font-bold text-gray-500 dark:text-gray-400 mt-0.5">
-                  Galibiyet: <span className="text-green-600 dark:text-green-400 font-black">{stats.duelWins}</span> | Mağlubiyet: <span className="text-red-500 dark:text-red-400 font-black">{stats.duelLosses}</span>
+                  Galibiyet: <span className="text-green-600 font-black">{stats.duelWins}</span> | Mağlubiyet: <span className="text-red-500 font-black">{stats.duelLosses}</span>
                 </div>
               </div>
             </div>
@@ -270,66 +274,66 @@ export const QuizDuel: React.FC = () => {
             {/* Quick Matchmaking Button */}
             <button
               onClick={handleStartMatchmaking}
-              className="w-full sm:w-auto bg-[#ff9600] hover:bg-[#e08300] text-white font-black text-sm px-8 py-4 rounded-2xl border-b-4 border-[#e08300] active:border-b-0 active:translate-y-1 transition-all flex items-center justify-center gap-2 shadow-lg"
+              className="w-full bg-[#ff9600] hover:bg-[#e08300] text-white font-black text-sm py-3.5 rounded-2xl border-b-4 border-[#e08300] active:border-b-0 active:translate-y-1 transition-all flex items-center justify-center gap-2 shadow-md"
             >
-              <Swords className="w-5 h-5" />
-              <span>HIZLI RAKİP BUL & KAPIS</span>
+              <Swords className="w-4 h-4" />
+              <span>HIZLI RAKİP BUL & KAPIŞ</span>
             </button>
           </div>
 
-          {/* Viral Feature: Friend Room (Oda Kur & Odaya Katıl) */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* Viral Feature: Friend Room (Oda Kur & Odaya Katıl) - Vertical Stack on Mobile! */}
+          <div className="grid grid-cols-1 gap-3.5">
             
             {/* Create Room Card */}
-            <div className="bg-gradient-to-br from-blue-500 to-indigo-600 rounded-3xl p-6 text-white shadow-lg space-y-4 flex flex-col justify-between">
+            <div className="bg-gradient-to-br from-blue-500 to-indigo-600 rounded-3xl p-5 text-white shadow-md space-y-3 flex flex-col justify-between">
               <div>
-                <div className="flex items-center gap-2 text-xs font-black uppercase tracking-wider text-blue-200">
-                  <Users className="w-4 h-4" />
+                <div className="flex items-center gap-1.5 text-[11px] font-black uppercase tracking-wider text-blue-200">
+                  <Users className="w-3.5 h-3.5" />
                   Özel Oda Oluştur
                 </div>
-                <h3 className="text-xl font-black mt-1">Arkadaşına Meydan Oku</h3>
+                <h3 className="text-lg font-black mt-1">Arkadaşına Meydan Oku</h3>
                 <p className="text-xs text-blue-100 mt-1 leading-relaxed">
-                  Tek tıkla 4 haneli özel oda kodu oluştur. Kodu WhatsApp'tan arkadaşına gönder, canlı düelloda kapışın!
+                  Tek tıkla 4 haneli özel oda kodu oluştur. Kodu WhatsApp'tan arkadaşına gönder, anında kapışın!
                 </p>
               </div>
 
               <button
                 onClick={handleCreateRoom}
-                className="w-full bg-white hover:bg-gray-100 text-blue-700 font-black py-3 rounded-2xl border-b-4 border-blue-200 active:border-b-0 active:translate-y-1 transition-all flex items-center justify-center gap-2 text-xs uppercase"
+                className="w-full bg-white hover:bg-gray-100 text-blue-700 font-black py-2.5 rounded-2xl border-b-4 border-blue-200 active:border-b-0 active:translate-y-1 transition-all flex items-center justify-center gap-2 text-xs uppercase shadow-sm"
               >
-                <KeyRound className="w-4 h-4" />
+                <KeyRound className="w-3.5 h-3.5" />
                 <span>ODA KUR & KOD AL</span>
               </button>
             </div>
 
             {/* Join Room Card */}
-            <div className="bg-white dark:bg-[#1a2c35] border-2 border-gray-200 dark:border-[#2b3d45] rounded-3xl p-6 shadow-sm space-y-4 flex flex-col justify-between transition-colors duration-300">
+            <div className="bg-white dark:bg-[#1a2c35] border-2 border-gray-200 dark:border-[#2b3d45] rounded-3xl p-5 shadow-sm space-y-3 flex flex-col justify-between transition-colors duration-300">
               <div>
-                <div className="flex items-center gap-2 text-xs font-black uppercase tracking-wider text-gray-400 dark:text-gray-400">
-                  <KeyRound className="w-4 h-4 text-emerald-500" />
+                <div className="flex items-center gap-1.5 text-[11px] font-black uppercase tracking-wider text-gray-400 dark:text-gray-400">
+                  <KeyRound className="w-3.5 h-3.5 text-emerald-500" />
                   Mevcut Odaya Bağlan
                 </div>
-                <h3 className="text-xl font-black text-gray-800 dark:text-gray-100 mt-1">Oda Koduyla Katıl</h3>
+                <h3 className="text-lg font-black text-gray-800 dark:text-gray-100 mt-1">Oda Koduyla Katıl</h3>
                 <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">
-                  Arkadaşının paylaştığı 4 haneli kodu girerek onun odasına anında bağlan.
+                  Arkadaşının paylaştığı 4 haneli kodu girerek odasına anında bağlan.
                 </p>
               </div>
 
-              <div className="flex gap-2">
+              <div className="flex items-center gap-2 w-full">
                 <input
                   type="text"
                   value={joinCodeInput}
                   onChange={(e) => setJoinCodeInput(e.target.value.toUpperCase())}
                   placeholder="Örn: GO-742"
                   maxLength={8}
-                  className="flex-1 bg-gray-100 dark:bg-gray-800 border-2 border-gray-200 dark:border-[#2b3d45] rounded-2xl px-3 py-2 text-sm font-black text-gray-800 dark:text-gray-100 uppercase tracking-widest text-center focus:outline-none focus:border-blue-500"
+                  className="min-w-0 flex-1 bg-gray-100 dark:bg-gray-800 border-2 border-gray-200 dark:border-[#2b3d45] rounded-2xl px-3 py-2 text-xs sm:text-sm font-black text-gray-800 dark:text-gray-100 uppercase tracking-widest text-center focus:outline-none focus:border-amber-500"
                 />
                 <button
                   onClick={handleJoinWithCode}
                   disabled={!joinCodeInput.trim()}
-                  className="bg-emerald-500 hover:bg-emerald-600 disabled:opacity-50 text-white font-black px-4 py-2 rounded-2xl border-b-4 border-emerald-700 active:border-b-0 active:translate-y-1 transition-all text-xs flex items-center gap-1.5"
+                  className="flex-shrink-0 bg-emerald-500 hover:bg-emerald-600 disabled:opacity-50 text-white font-black px-4 py-2.5 rounded-2xl border-b-4 border-emerald-700 active:border-b-0 active:translate-y-1 transition-all text-xs flex items-center gap-1 shadow-sm"
                 >
-                  <Play className="w-4 h-4 fill-white" />
+                  <Play className="w-3.5 h-3.5 fill-white" />
                   <span>GİR</span>
                 </button>
               </div>

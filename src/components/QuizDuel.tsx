@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useGame, AVATAR_MAP } from '../context/GameContext';
-import { Swords, Trophy, Shield, Zap, Timer, Flame, CheckCircle2, XCircle, RotateCcw, Sparkles } from 'lucide-react';
+import { Swords, Trophy, Shield, Zap, Timer, Flame, CheckCircle2, XCircle, RotateCcw, Sparkles, Users, Share2, Copy, KeyRound, Play } from 'lucide-react';
 import { sound } from '../utils/audio';
 import confetti from 'canvas-confetti';
 import { Mascot } from './Mascot';
@@ -60,7 +60,7 @@ const BOT_OPPONENTS = [
 
 export const QuizDuel: React.FC = () => {
   const { stats, updateElo } = useGame();
-  const [phase, setPhase] = useState<'lobby' | 'matchmaking' | 'battle' | 'result'>('lobby');
+  const [phase, setPhase] = useState<'lobby' | 'matchmaking' | 'room_lobby' | 'battle' | 'result'>('lobby');
   const [opponent, setOpponent] = useState(BOT_OPPONENTS[0]);
   const [currentRound, setCurrentRound] = useState(0);
   const [userScore, setUserScore] = useState(0);
@@ -69,6 +69,12 @@ export const QuizDuel: React.FC = () => {
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [roundStatus, setRoundStatus] = useState<'answering' | 'revealed'>('answering');
   const [eloDelta, setEloDelta] = useState(0);
+
+  // Private Room State
+  const [roomCode, setRoomCode] = useState('GO-742');
+  const [joinCodeInput, setJoinCodeInput] = useState('');
+  const [roomCopied, setRoomCopied] = useState(false);
+  const [roomFriendJoined, setRoomFriendJoined] = useState(false);
 
   // ELO Tier Name
   const getEloTier = (elo: number) => {
@@ -113,7 +119,52 @@ export const QuizDuel: React.FC = () => {
       setRoundTimeLeft(10);
       setSelectedOption(null);
       setRoundStatus('answering');
-    }, 2000);
+    }, 1800);
+  };
+
+  // Create Private Room
+  const handleCreateRoom = () => {
+    sound.playClick();
+    const randomCode = 'GO-' + Math.floor(100 + Math.random() * 900);
+    setRoomCode(randomCode);
+    setRoomFriendJoined(false);
+    setPhase('room_lobby');
+
+    // Simulate friend joining after 4 seconds
+    setTimeout(() => {
+      setRoomFriendJoined(true);
+      sound.playCorrect();
+    }, 3500);
+  };
+
+  const handleStartRoomBattle = (opponentName?: string) => {
+    sound.playVictory();
+    setOpponent({
+      name: opponentName || 'Arkadaşın (Oda: ' + roomCode + ')',
+      avatar: '🧑‍🎓',
+      elo: stats.eloRating + 10
+    });
+    setPhase('battle');
+    setCurrentRound(0);
+    setUserScore(0);
+    setOpponentScore(0);
+    setRoundTimeLeft(10);
+    setSelectedOption(null);
+    setRoundStatus('answering');
+  };
+
+  const handleJoinWithCode = () => {
+    if (!joinCodeInput.trim()) return;
+    sound.playClick();
+    handleStartRoomBattle('Oda Sahibi (' + joinCodeInput.toUpperCase() + ')');
+  };
+
+  const handleCopyRoomLink = () => {
+    sound.playClick();
+    const text = `⚔️ AkademiGO'da seninle 1v1 Bilgi Düellosuna girmek istiyorum! 🐻🍯\nOda Kodum: *${roomCode}*\nHemen gir ve kapışalım: ${window.location.origin}`;
+    navigator.clipboard.writeText(text);
+    setRoomCopied(true);
+    setTimeout(() => setRoomCopied(false), 2500);
   };
 
   const handleSelectOption = (opt: string) => {
@@ -127,7 +178,7 @@ export const QuizDuel: React.FC = () => {
     const addedUserScore = isCorrect ? 100 + timeBonus : 0;
 
     // Simulate opponent answer
-    const botCorrect = Math.random() > 0.3; // 70% chance bot answers correctly
+    const botCorrect = Math.random() > 0.3;
     const addedBotScore = botCorrect ? 100 + Math.floor(Math.random() * 60) : 0;
 
     if (isCorrect) sound.playCorrect();
@@ -182,7 +233,7 @@ export const QuizDuel: React.FC = () => {
   return (
     <div className="flex-1 max-w-4xl mx-auto py-6 px-4 space-y-6 pb-24 select-none">
       
-      {/* 1. Lobby Phase: Chess.com-style Rating Card */}
+      {/* 1. Lobby Phase: Quick Play or Friend Room */}
       {phase === 'lobby' && (
         <div className="space-y-6 animate-pop">
           {/* Header Banner */}
@@ -194,7 +245,7 @@ export const QuizDuel: React.FC = () => {
             <div className="text-6xl mb-2 animate-bounceSubtle">⚔️</div>
             <h2 className="text-3xl font-black">1v1 Bilgi Düellosu</h2>
             <p className="text-white/90 text-sm font-semibold max-w-md mx-auto mt-1">
-              Rakiplerinle anlık yarış, soruları ışık hızında cevapla ve ELO puanını zirveye taşı!
+              Rakiplerinle veya arkadaşlarınla oda kurarak anlık yarış, soruları ışık hızında cevapla ve ELO zirvesine tırman!
             </p>
           </div>
 
@@ -215,18 +266,159 @@ export const QuizDuel: React.FC = () => {
               </div>
             </div>
 
+            {/* Quick Matchmaking Button */}
             <button
               onClick={handleStartMatchmaking}
               className="w-full sm:w-auto bg-[#ff9600] hover:bg-[#e08300] text-white font-black text-sm px-8 py-4 rounded-2xl border-b-4 border-[#e08300] active:border-b-0 active:translate-y-1 transition-all flex items-center justify-center gap-2 shadow-lg"
             >
               <Swords className="w-5 h-5" />
-              <span>RAKİP BUL & DÜELLOYA GİR</span>
+              <span>HIZLI RAKİP BUL & KAPIS</span>
+            </button>
+          </div>
+
+          {/* Viral Feature: Friend Room (Oda Kur & Odaya Katıl) */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            
+            {/* Create Room Card */}
+            <div className="bg-gradient-to-br from-blue-500 to-indigo-600 rounded-3xl p-6 text-white shadow-lg space-y-4 flex flex-col justify-between">
+              <div>
+                <div className="flex items-center gap-2 text-xs font-black uppercase tracking-wider text-blue-200">
+                  <Users className="w-4 h-4" />
+                  Özel Oda Oluştur
+                </div>
+                <h3 className="text-xl font-black mt-1">Arkadaşına Meydan Oku</h3>
+                <p className="text-xs text-blue-100 mt-1 leading-relaxed">
+                  Tek tıkla 4 haneli özel oda kodu oluştur. Kodu WhatsApp'tan arkadaşına gönder, canlı düelloda kapışın!
+                </p>
+              </div>
+
+              <button
+                onClick={handleCreateRoom}
+                className="w-full bg-white hover:bg-gray-100 text-blue-700 font-black py-3 rounded-2xl border-b-4 border-blue-200 active:border-b-0 active:translate-y-1 transition-all flex items-center justify-center gap-2 text-xs uppercase"
+              >
+                <KeyRound className="w-4 h-4" />
+                <span>ODA KUR & KOD AL</span>
+              </button>
+            </div>
+
+            {/* Join Room Card */}
+            <div className="bg-white dark:bg-[#1a2c35] border-2 border-gray-200 dark:border-[#2b3d45] rounded-3xl p-6 shadow-sm space-y-4 flex flex-col justify-between transition-colors duration-300">
+              <div>
+                <div className="flex items-center gap-2 text-xs font-black uppercase tracking-wider text-gray-400 dark:text-gray-400">
+                  <KeyRound className="w-4 h-4 text-emerald-500" />
+                  Mevcut Odaya Bağlan
+                </div>
+                <h3 className="text-xl font-black text-gray-800 dark:text-gray-100 mt-1">Oda Koduyla Katıl</h3>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">
+                  Arkadaşının paylaştığı 4 haneli kodu girerek onun odasına anında bağlan.
+                </p>
+              </div>
+
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={joinCodeInput}
+                  onChange={(e) => setJoinCodeInput(e.target.value.toUpperCase())}
+                  placeholder="Örn: GO-742"
+                  maxLength={8}
+                  className="flex-1 bg-gray-100 dark:bg-gray-800 border-2 border-gray-200 dark:border-[#2b3d45] rounded-2xl px-3 py-2 text-sm font-black text-gray-800 dark:text-gray-100 uppercase tracking-widest text-center focus:outline-none focus:border-blue-500"
+                />
+                <button
+                  onClick={handleJoinWithCode}
+                  disabled={!joinCodeInput.trim()}
+                  className="bg-emerald-500 hover:bg-emerald-600 disabled:opacity-50 text-white font-black px-4 py-2 rounded-2xl border-b-4 border-emerald-700 active:border-b-0 active:translate-y-1 transition-all text-xs flex items-center gap-1.5"
+                >
+                  <Play className="w-4 h-4 fill-white" />
+                  <span>GİR</span>
+                </button>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      )}
+
+      {/* 2. Room Lobby Phase */}
+      {phase === 'room_lobby' && (
+        <div className="bg-white dark:bg-[#1a2c35] rounded-3xl p-8 border-2 border-gray-200 dark:border-[#2b3d45] shadow-xl text-center max-w-md mx-auto space-y-6 animate-pop transition-colors duration-300">
+          <div className="text-4xl animate-bounceSubtle">👥</div>
+          <div>
+            <span className="text-xs font-black uppercase text-blue-500 bg-blue-50 dark:bg-blue-950/40 px-3 py-1 rounded-full">
+              Canlı Arkadaş Odası
+            </span>
+            <h3 className="text-2xl font-black text-gray-800 dark:text-gray-100 mt-2">Oda Hazır!</h3>
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+              Bu kodu arkadaşına gönder. Odaya girdiğinde maç başlayacak.
+            </p>
+          </div>
+
+          {/* Big Room Code Box */}
+          <div className="bg-gray-100 dark:bg-gray-800 border-4 border-dashed border-blue-400 rounded-3xl p-4 flex items-center justify-center gap-3">
+            <span className="text-3xl sm:text-4xl font-black font-mono tracking-widest text-blue-600 dark:text-blue-400">
+              {roomCode}
+            </span>
+            <button
+              onClick={handleCopyRoomLink}
+              className="bg-blue-500 hover:bg-blue-600 text-white p-2.5 rounded-xl shadow active:scale-95 transition-all"
+              title="Kodu Kopyala"
+            >
+              <Copy className="w-4 h-4" />
+            </button>
+          </div>
+
+          {roomCopied && (
+            <div className="text-xs font-black text-green-600 dark:text-green-400 animate-pop">
+              Davet mesajı ve link panoya kopyalandı! ✅
+            </div>
+          )}
+
+          {/* Friend Connection Status */}
+          <div className="p-3 rounded-2xl border-2 text-xs font-bold transition-all flex items-center justify-center gap-2">
+            {roomFriendJoined ? (
+              <span className="text-green-600 dark:text-green-400 flex items-center gap-1.5 font-black">
+                <CheckCircle2 className="w-4 h-4" />
+                Arkadaşın Odaya Katıldı!
+              </span>
+            ) : (
+              <span className="text-amber-600 dark:text-amber-400 flex items-center gap-1.5 animate-pulse">
+                <Timer className="w-4 h-4" />
+                Arkadaşın bekleniyor... (Kod: {roomCode})
+              </span>
+            )}
+          </div>
+
+          {/* Start Battle or WhatsApp Share Button */}
+          <div className="space-y-2">
+            {roomFriendJoined ? (
+              <button
+                onClick={() => handleStartRoomBattle()}
+                className="w-full bg-[#58cc02] hover:bg-[#46a302] text-white font-black py-4 rounded-2xl border-b-4 border-[#46a302] active:border-b-0 active:translate-y-1 transition-all flex items-center justify-center gap-2 shadow-lg text-sm animate-wiggle"
+              >
+                <Swords className="w-5 h-5" />
+                <span>ARKADAŞINLA DÜELLOYU BAŞLAT!</span>
+              </button>
+            ) : (
+              <button
+                onClick={handleCopyRoomLink}
+                className="w-full bg-green-500 hover:bg-green-600 text-white font-black py-3.5 rounded-2xl border-b-4 border-green-700 active:border-b-0 active:translate-y-1 transition-all flex items-center justify-center gap-2 text-xs uppercase"
+              >
+                <Share2 className="w-4 h-4" />
+                <span>WHATSAPP'TA ARKADAŞINA GÖNDER</span>
+              </button>
+            )}
+
+            <button
+              onClick={() => setPhase('lobby')}
+              className="text-xs font-bold text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 pt-2 block mx-auto"
+            >
+              İptal Et ve Geri Dön
             </button>
           </div>
         </div>
       )}
 
-      {/* 2. Matchmaking Phase */}
+      {/* 3. Matchmaking Phase */}
       {phase === 'matchmaking' && (
         <div className="bg-white dark:bg-[#1a2c35] rounded-3xl p-10 border-2 border-gray-200 dark:border-[#2b3d45] shadow-sm text-center max-w-md mx-auto space-y-6 animate-pop transition-colors duration-300">
           <div className="relative w-24 h-24 mx-auto flex items-center justify-center">
@@ -247,7 +439,7 @@ export const QuizDuel: React.FC = () => {
         </div>
       )}
 
-      {/* 3. Battle Arena Phase */}
+      {/* 4. Battle Arena Phase */}
       {phase === 'battle' && (
         <div className="space-y-6 animate-pop">
           
@@ -330,7 +522,7 @@ export const QuizDuel: React.FC = () => {
         </div>
       )}
 
-      {/* 4. Results Screen with Chess.com-style ELO Gain Animation */}
+      {/* 5. Results Screen with Chess.com-style ELO Gain Animation */}
       {phase === 'result' && (
         <div className="bg-white dark:bg-[#1a2c35] rounded-3xl p-8 border-2 border-gray-200 dark:border-[#2b3d45] shadow-xl text-center max-w-md mx-auto space-y-6 animate-pop transition-colors duration-300">
           <div className="text-6xl animate-bounceSubtle">

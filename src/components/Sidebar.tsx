@@ -1,7 +1,7 @@
 import React from 'react';
-import { Map, Swords, Bot, BookMarked, Mic, Clock, Gamepad2, Code2, FileText, Tv, Trophy, Target, ShoppingBag, User } from 'lucide-react';
+import { Map, Flame, Swords, Bot, BookMarked, Mic, Clock, Gamepad2, Code2, FileText, Tv, Trophy, Target, ShoppingBag, User } from 'lucide-react';
 
-export type NavTab = 'learn' | 'duel' | 'aicoach' | 'errors' | 'speech' | 'countdown' | 'games' | 'codelab' | 'exams' | 'study' | 'leaderboard' | 'quests' | 'shop' | 'profile';
+export type NavTab = 'learn' | 'reels' | 'duel' | 'aicoach' | 'errors' | 'speech' | 'countdown' | 'games' | 'codelab' | 'exams' | 'study' | 'leaderboard' | 'quests' | 'shop' | 'profile';
 
 interface SidebarProps {
   currentTab: NavTab;
@@ -11,6 +11,7 @@ interface SidebarProps {
 export const Sidebar: React.FC<SidebarProps> = ({ currentTab, onSelectTab }) => {
   const menuItems = [
     { id: 'learn', label: 'ÖĞREN', icon: Map, color: 'text-green-500' },
+    { id: 'reels', label: 'SORU KAYDIR 🔥', icon: Flame, color: 'text-orange-500' },
     { id: 'duel', label: '1v1 DÜELLO', icon: Swords, color: 'text-red-500' },
     { id: 'aicoach', label: 'BİBO AI KOÇ', icon: Bot, color: 'text-emerald-500' },
     { id: 'errors', label: 'HATA DEFTERİ', icon: BookMarked, color: 'text-rose-500' },

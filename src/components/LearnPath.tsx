@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useGame } from '../context/GameContext';
 import { COURSES } from '../data/coursesData';
-import { Check, Lock, Star, Gift, ShieldAlert, Sparkles, BookOpen, Play, Filter } from 'lucide-react';
+import { Check, Lock, Star, Gift, ShieldAlert, Sparkles, BookOpen, Play, Filter, Unlock, LockKeyhole } from 'lucide-react';
 import { Lesson, Unit } from '../types';
 import { Mascot } from './Mascot';
 import { sound } from '../utils/audio';
@@ -10,6 +10,7 @@ export const LearnPath: React.FC = () => {
   const { stats, selectedCourseId, startLesson, openChest, leaderboard } = useGame();
   const [selectedGuideUnit, setSelectedGuideUnit] = useState<Unit | null>(null);
   const [selectedDifficulty, setSelectedDifficulty] = useState<'all' | 'kolay' | 'orta' | 'zor'>('all');
+  const [freeMode, setFreeMode] = useState<boolean>(true); // Tüm dersler serbest pratik açık
 
   const course = COURSES.find(c => c.id === selectedCourseId) || COURSES[0];
 
@@ -17,24 +18,19 @@ export const LearnPath: React.FC = () => {
   const isLessonCompleted = (lessonId: string) => stats.completedLessons.includes(lessonId);
   const isChestOpened = (chestId: string) => stats.openedChests.includes(chestId);
 
-  // An unlocked lesson is either the first lesson, completed, or follows a completed lesson
+  // An unlocked lesson is either in freeMode, the first lesson, completed, or follows an opened node
   const isLessonUnlocked = (unitIndex: number, lessonIndex: number, currentUnit: Unit) => {
-    if (unitIndex === 0 && lessonIndex === 0) return true;
+    if (freeMode) return true;
+    if (lessonIndex === 0) return true; // Her ünitenin ilk dersi daima açık
     
     // Check previous lesson in this unit
     if (lessonIndex > 0) {
       const prevLesson = currentUnit.lessons[lessonIndex - 1];
+      if (prevLesson.type === 'chest') return true; // Sandıklar ilerlemeyi engellemez
       return isLessonCompleted(prevLesson.id) || isChestOpened(prevLesson.id);
     }
 
-    // First lesson of unit > 0 requires previous unit's last lesson completed
-    const prevUnit = course.units[unitIndex - 1];
-    if (prevUnit && prevUnit.lessons.length > 0) {
-      const lastLesson = prevUnit.lessons[prevUnit.lessons.length - 1];
-      return isLessonCompleted(lastLesson.id) || isChestOpened(lastLesson.id);
-    }
-
-    return false;
+    return true;
   };
 
   const handleLaunchLesson = (rawLesson: Lesson) => {
@@ -94,18 +90,20 @@ export const LearnPath: React.FC = () => {
         <div className="absolute -right-6 -bottom-6 w-32 h-32 rounded-full bg-white/10 pointer-events-none" />
       </div>
 
-      {/* Question Difficulty Filter Bar (MEB / ÖSYM / Derece) */}
-      <div className="bg-white dark:bg-[#1a2c35] border-2 border-gray-200 dark:border-[#2b3d45] rounded-2xl p-2.5 sm:p-3 mb-6 flex flex-wrap items-center justify-between gap-2 shadow-sm transition-colors duration-300">
-        <div className="flex items-center gap-2 text-xs font-black text-gray-700 dark:text-gray-200 px-1">
-          <Filter className="w-4 h-4 text-blue-500" />
-          <span>Soru Zorluğu:</span>
-        </div>
-        <div className="flex items-center gap-1.5 flex-1 justify-end flex-wrap">
+      {/* Control Bar: Difficulty Filter & Free Mode Toggle */}
+      <div className="bg-white dark:bg-[#1a2c35] border-2 border-gray-200 dark:border-[#2b3d45] rounded-2xl p-2.5 sm:p-3 mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-sm transition-colors duration-300">
+        
+        {/* Difficulty buttons */}
+        <div className="flex items-center gap-1.5 flex-wrap">
+          <div className="flex items-center gap-1.5 text-xs font-black text-gray-700 dark:text-gray-200 pr-1">
+            <Filter className="w-4 h-4 text-blue-500" />
+            <span>Zorluk:</span>
+          </div>
           {[
             { id: 'all', label: '🌟 Tümü' },
-            { id: 'kolay', label: '🟢 Basit (Kavrama)' },
-            { id: 'orta', label: '🟡 Orta (ÖSYM)' },
-            { id: 'zor', label: '🔴 İleri (Yeni Nesil)' }
+            { id: 'kolay', label: '🟢 Basit' },
+            { id: 'orta', label: '🟡 Orta' },
+            { id: 'zor', label: '🔴 İleri' }
           ].map(lvl => (
             <button
               key={lvl.id}
@@ -113,7 +111,7 @@ export const LearnPath: React.FC = () => {
                 sound.playClick();
                 setSelectedDifficulty(lvl.id as any);
               }}
-              className={`px-3 py-1.5 rounded-xl text-xs font-black transition-all ${
+              className={`px-2.5 py-1.5 rounded-xl text-xs font-black transition-all ${
                 selectedDifficulty === lvl.id
                   ? 'bg-blue-600 text-white shadow-sm ring-2 ring-blue-300'
                   : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
@@ -123,6 +121,23 @@ export const LearnPath: React.FC = () => {
             </button>
           ))}
         </div>
+
+        {/* Free Mode / Serbest Çalışma Toggle */}
+        <button
+          onClick={() => {
+            sound.playClick();
+            setFreeMode(!freeMode);
+          }}
+          className={`px-3 py-1.5 rounded-xl text-xs font-black flex items-center justify-center gap-1.5 transition-all border-2 ${
+            freeMode
+              ? 'bg-green-500 text-white border-green-600 shadow-sm'
+              : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 border-gray-300 dark:border-gray-700'
+          }`}
+          title="Tüm ünite ve dersleri kilit olmadan serbestçe çöz"
+        >
+          {freeMode ? <Unlock className="w-3.5 h-3.5" /> : <LockKeyhole className="w-3.5 h-3.5" />}
+          <span>{freeMode ? '🔓 Serbest Mod: Tüm Sorular Açık' : '🔒 Sıralı İlerleme Modu'}</span>
+        </button>
       </div>
 
       {/* Mobile Welcome Mascot (Visible on mobile/tablet) */}
@@ -130,19 +145,19 @@ export const LearnPath: React.FC = () => {
         <Mascot
           size="md"
           mood="idle"
-          speech="Hazır mısın? Haribo Ayıcık ile hedefine adım adım koşuyoruz! 🐻🍯"
+          speech="Hazır mısın? Haribo Ayıcık ile hedefine adım adım koşuyoruz! İstediğin konudan başla 🐻🍯"
         />
       </div>
 
       {/* Units & Learning Path */}
-      <div className="space-y-12">
+      <div className="space-y-16">
         {course.units.map((unit, unitIndex) => {
           return (
             <div key={unit.id} className="relative">
               
               {/* Unit Header Card */}
               <div 
-                className="rounded-2xl p-4 sm:p-5 text-white mb-8 shadow-md flex items-center justify-between"
+                className="rounded-2xl p-4 sm:p-5 text-white mb-10 shadow-md flex items-center justify-between"
                 style={{ backgroundColor: unit.color }}
               >
                 <div>
@@ -163,8 +178,8 @@ export const LearnPath: React.FC = () => {
                 </button>
               </div>
 
-              {/* Zigzag Lesson Path */}
-              <div className="flex flex-col items-center space-y-6 sm:space-y-8 my-4 relative">
+              {/* Zigzag Lesson Path with proper vertical spacing */}
+              <div className="flex flex-col items-center space-y-12 sm:space-y-16 my-6 relative">
                 {unit.lessons.map((lesson, lessonIndex) => {
                   const completed = isLessonCompleted(lesson.id);
                   const chestOpened = isChestOpened(lesson.id);
@@ -183,9 +198,9 @@ export const LearnPath: React.FC = () => {
                       key={lesson.id}
                       className={`relative flex flex-col items-center group transition-transform duration-300 ${getOffsetClass(lessonIndex)}`}
                     >
-                      {/* Active "BAŞLA" floating bubble */}
+                      {/* Active "BAŞLA" floating bubble - comfortably positioned above */}
                       {isCurrentActive && (
-                        <div className="absolute -top-11 z-20 animate-bounce bg-white dark:bg-[#1a2c35] text-gray-800 dark:text-gray-100 font-black text-xs px-3 py-1.5 rounded-xl shadow-lg border-2 border-gray-200 dark:border-[#2b3d45] flex items-center gap-1.5 whitespace-nowrap">
+                        <div className="absolute -top-11 z-20 animate-bounce bg-white dark:bg-[#1a2c35] text-gray-800 dark:text-gray-100 font-black text-xs px-3 py-1.5 rounded-xl shadow-lg border-2 border-gray-200 dark:border-[#2b3d45] flex items-center gap-1.5 whitespace-nowrap pointer-events-none">
                           <Play className="w-3.5 h-3.5 fill-[#58cc02] text-[#58cc02]" />
                           BAŞLA!
                           <div className="absolute left-1/2 -bottom-2 -translate-x-1/2 w-0 h-0 border-x-8 border-x-transparent border-t-8 border-t-white dark:border-t-[#1a2c35]" />
@@ -211,14 +226,13 @@ export const LearnPath: React.FC = () => {
                       ) : isBoss ? (
                         /* Boss Checkpoint Node */
                         <button
-                          disabled={!unlocked}
                           onClick={() => handleLaunchLesson(lesson)}
                           className={`w-20 h-20 sm:w-24 sm:h-24 rounded-full flex flex-col items-center justify-center transition-all ${
                             completed
                               ? 'bg-yellow-400 border-b-6 border-yellow-600 shadow-xl'
                               : unlocked
                               ? 'bg-red-500 border-b-6 border-red-700 hover:scale-105 active:border-b-0 active:translate-y-1.5 shadow-xl animate-pulse'
-                              : 'bg-gray-200 dark:bg-gray-800 border-b-4 border-gray-300 dark:border-gray-700 cursor-not-allowed opacity-60'
+                              : 'bg-gray-200 dark:bg-gray-800 border-b-4 border-gray-300 dark:border-gray-700 opacity-60'
                           }`}
                           title={lesson.title}
                         >
@@ -227,7 +241,6 @@ export const LearnPath: React.FC = () => {
                       ) : (
                         /* Standard Lesson Node */
                         <button
-                          disabled={!unlocked}
                           onClick={() => handleLaunchLesson(lesson)}
                           className={`w-16 h-16 sm:w-20 sm:h-20 rounded-full flex items-center justify-center transition-all font-black text-white relative ${
                             completed
@@ -236,7 +249,7 @@ export const LearnPath: React.FC = () => {
                               ? 'bg-[#58cc02] border-b-6 border-[#46a302] hover:scale-105 shadow-xl ring-8 ring-[#58cc02]/20 active:border-b-0 active:translate-y-1.5'
                               : unlocked
                               ? 'bg-blue-400 border-b-6 border-blue-500 hover:scale-105 active:border-b-0 active:translate-y-1'
-                              : 'bg-gray-200 dark:bg-gray-800 border-b-4 border-gray-300 dark:border-gray-700 cursor-not-allowed opacity-60 text-gray-400'
+                              : 'bg-gray-200 dark:bg-gray-800 border-b-4 border-gray-300 dark:border-gray-700 opacity-60 text-gray-400'
                           }`}
                           title={lesson.title}
                         >
@@ -251,7 +264,7 @@ export const LearnPath: React.FC = () => {
                       )}
 
                       {/* Lesson title label */}
-                      <span className="text-xs font-black text-gray-700 dark:text-gray-200 mt-2 max-w-[150px] text-center leading-tight">
+                      <span className="text-xs font-black text-gray-700 dark:text-gray-200 mt-2.5 max-w-[150px] text-center leading-tight">
                         {lesson.title}
                       </span>
                     </div>

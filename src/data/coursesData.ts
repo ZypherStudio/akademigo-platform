@@ -1,405 +1,2053 @@
 import { Course } from '../types';
 
 export const COURSES: Course[] = [
-  // ==========================================
-  // 1. YKS (TYT - AYT)
-  // ==========================================
   {
-    id: 'yks',
-    name: 'YKS (TYT - AYT)',
-    subTitle: '2025 - 2026 Üniversite Sınavı Hazırlık',
-    icon: '🎓',
-    badge: 'En Popüler',
-    color: '#58cc02',
-    accentColor: '#46a302',
-    units: [
+    "id": "yks",
+    "name": "YKS (TYT - AYT)",
+    "subTitle": "2025 - 2026 Üniversite Sınavı Hazırlık",
+    "icon": "🎓",
+    "badge": "En Popüler",
+    "color": "#58cc02",
+    "accentColor": "#46a302",
+    "units": [
       {
-        id: 'yks-u1',
-        number: 1,
-        title: 'TYT Matematik: Temel Sayılar & Mantık',
-        description: 'Tek/Çift sayılar, asal sayılar, bölünebilme ve ardışık sayılar',
-        color: '#58cc02',
-        lessons: [
+        "id": "yks-u1",
+        "number": 1,
+        "title": "TYT Matematik: Temel Sayılar & Mantık",
+        "description": "Tek/Çift sayılar, asal sayılar, bölünebilme ve ardışık sayılar",
+        "color": "#58cc02",
+        "lessons": [
           {
-            id: 'yks-u1-l1',
-            unitId: 'yks-u1',
-            title: 'Sayı Kümeleri & Tek/Çift Sayılar',
-            description: 'Temel kavramlar ve tek-çift sayıların çarpım/toplam kuralları.',
-            xpReward: 20,
-            gemReward: 5,
-            type: 'lesson',
-            summaryNotes: [
-              'Tek ± Tek = Çift',
-              'Tek × Tek = Tek',
-              'Çarpımın tek olması için tüm çarpanların tek olması şarttır!',
-              'İki çift sayının toplamı daima çifttir.'
+            "id": "yks-u1-l1",
+            "unitId": "yks-u1",
+            "title": "Sayı Kümeleri & Tek/Çift Sayılar",
+            "description": "Temel kavramlar ve tek-çift sayıların çarpım/toplam kuralları.",
+            "xpReward": 20,
+            "gemReward": 5,
+            "type": "lesson",
+            "summaryNotes": [
+              "Tek ± Tek = Çift, Çift ± Çift = Çift, Tek ± Çift = Tek",
+              "Tek × Tek = Tek, Çarpanlardan en az biri çiftse çarpım çifttir!",
+              "İki çift sayının toplamı daima çifttir.",
+              "Pozitif tam sayılarda tek sayının tüm pozitif kuvvetleri tektir."
             ],
-            questions: [
+            "questions": [
               {
-                id: 'yks-q1',
-                type: 'multiple_choice',
-                prompt: 'a ve b pozitif tam sayılardır. (3a + 5b) ifadesinin sonucu TEK sayı olduğuna göre, aşağıdakilerden hangisi DAİMA DOĞRUDUR?',
-                difficulty: 'orta',
-                hint: 'İki sayının toplamı tek ise, biri tek diğeri çift olmalıdır.',
-                explanation: '3a ve 5b sayılarından biri tek, diğeri çifttir. Dolayısıyla a ve b sayılarından biri tek, biri çifttir (biri T, diğeri Ç). Bu durumda (a × b) çarpımı bir çift çarpan içerdiği için kesinlikle ÇİFT olur.',
-                options: [
-                  { id: 'opt1', text: 'a × b çarpımı daima çifttir', isCorrect: true },
-                  { id: 'opt2', text: 'a daima tek sayıdır', isCorrect: false },
-                  { id: 'opt3', text: 'b daima çift sayıdır', isCorrect: false },
-                  { id: 'opt4', text: 'a + b toplamı tek sayıdır', isCorrect: false }
+                "id": "yks-q1",
+                "type": "multiple_choice",
+                "prompt": "a ve b pozitif tam sayılardır. (3a + 5b) ifadesinin sonucu TEK sayı olduğuna göre, aşağıdakilerden hangisi DAİMA DOĞRUDUR?",
+                "difficulty": "orta",
+                "hint": "İki sayının toplamı tek ise, biri tek diğeri çift olmalıdır.",
+                "explanation": "3a ve 5b sayılarından biri tek, diğeri çifttir. Dolayısıyla a ve b sayılarından biri tek, biri çifttir. Bu durumda (a × b) çarpımı bir çift çarpan içerdiği için kesinlikle ÇİFT olur.",
+                "options": [
+                  {
+                    "id": "opt1",
+                    "text": "a × b çarpımı daima çifttir",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "opt2",
+                    "text": "a daima tek sayıdır",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "opt3",
+                    "text": "b daima çift sayıdır",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "opt4",
+                    "text": "a + b toplamı tek sayıdır",
+                    "isCorrect": false
+                  }
                 ]
               },
               {
-                id: 'yks-q2',
-                type: 'matching',
-                prompt: 'Sayı kümeleri sembollerini anlamlarıyla doğru eşleştirin:',
-                difficulty: 'kolay',
-                explanation: 'N: Doğal Sayılar (0, 1, 2...), Z: Tam Sayılar (...-1, 0, 1...), Q: Rasyonel Sayılar, R: Gerçek Sayılar',
-                pairs: [
-                  { id: 'p1', left: 'ℕ (N)', right: 'Doğal Sayılar' },
-                  { id: 'p2', left: 'ℤ (Z)', right: 'Tam Sayılar' },
-                  { id: 'p3', left: 'ℚ (Q)', right: 'Rasyonel Sayılar' },
-                  { id: 'p4', left: 'ℝ (R)', right: 'Reel (Gerçek) Sayılar' }
+                "id": "yks-q2",
+                "type": "matching",
+                "prompt": "Sayı kümeleri sembollerini anlamlarıyla doğru eşleştirin:",
+                "difficulty": "kolay",
+                "explanation": "N: Doğal Sayılar (0, 1, 2...), Z: Tam Sayılar (...-1, 0, 1...), Q: Rasyonel Sayılar, R: Gerçek Sayılar",
+                "pairs": [
+                  {
+                    "id": "p1",
+                    "left": "ℕ (N)",
+                    "right": "Doğal Sayılar"
+                  },
+                  {
+                    "id": "p2",
+                    "left": "ℤ (Z)",
+                    "right": "Tam Sayılar"
+                  },
+                  {
+                    "id": "p3",
+                    "left": "ℚ (Q)",
+                    "right": "Rasyonel Sayılar"
+                  },
+                  {
+                    "id": "p4",
+                    "left": "ℝ (R)",
+                    "right": "Reel (Gerçek) Sayılar"
+                  }
                 ]
               },
               {
-                id: 'yks-q3',
-                type: 'true_false',
-                prompt: 'Asal sayılar hakkında verilen ifade doğru mu yanlış mı?',
-                statement: '2 sayısı hem en küçük asal sayıdır, hem de tek çift asal sayıdır.',
-                correctAnswer: true,
-                explanation: 'Harika! 2 tek çift asal sayıdır. 2\'den başka hiçbir çift sayı asal olamaz çünkü hepsi 2\'ye bölünür.'
+                "id": "yks-q3",
+                "type": "true_false",
+                "prompt": "Asal sayılar hakkında verilen ifade doğru mu yanlış mı?",
+                "statement": "2 sayısı hem en küçük asal sayıdır, hem de tek çift asal sayıdır.",
+                "correctAnswer": true,
+                "explanation": "Harika! 2 tek çift asal sayıdır. 2'den başka hiçbir çift sayı asal olamaz çünkü hepsi 2'ye bölünür."
               },
               {
-                id: 'yks-q4',
-                type: 'multiple_choice',
-                prompt: 'x negatif bir tam sayı olduğuna göre, aşağıdakilerden hangisinin sonucu daima POZİTİF bir sayıdır?',
-                difficulty: 'kolay',
-                explanation: 'Negatif bir sayının çift kuvvetleri her zaman pozitiftir: (-2)² = +4. Tek kuvvetleri negatiftir: (-2)³ = -8.',
-                options: [
-                  { id: 'o1', text: 'x³ (x üzeri 3)', isCorrect: false },
-                  { id: 'o2', text: 'x² (x kare)', isCorrect: true },
-                  { id: 'o3', text: '2x', isCorrect: false },
-                  { id: 'o4', text: 'x - 5', isCorrect: false }
+                "id": "yks-q4",
+                "type": "multiple_choice",
+                "prompt": "x negatif bir tam sayı olduğuna göre, aşağıdakilerden hangisinin sonucu daima POZİTİF bir sayıdır?",
+                "difficulty": "kolay",
+                "explanation": "Negatif bir sayının çift kuvvetleri her zaman pozitiftir: (-2)² = +4. Tek kuvvetleri negatiftir: (-2)³ = -8.",
+                "options": [
+                  {
+                    "id": "o1",
+                    "text": "x³ (x üzeri 3)",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "o2",
+                    "text": "x² (x kare)",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "o3",
+                    "text": "2x",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "o4",
+                    "text": "x - 5",
+                    "isCorrect": false
+                  }
+                ]
+              },
+              {
+                "id": "yks-q4b",
+                "type": "multiple_choice",
+                "prompt": "İki basamaklı en büyük asal sayı ile iki basamaklı en küçük asal sayının farkı kaçtır?",
+                "difficulty": "orta",
+                "explanation": "İki basamaklı en büyük asal sayı 97, en küçük asal sayı 11'dir. Fark: 97 - 11 = 86.",
+                "options": [
+                  {
+                    "id": "b1",
+                    "text": "86",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "b2",
+                    "text": "88",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "b3",
+                    "text": "84",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "b4",
+                    "text": "90",
+                    "isCorrect": false
+                  }
                 ]
               }
             ]
           },
           {
-            id: 'yks-u1-l2',
-            unitId: 'yks-u1',
-            title: 'Asal Sayılar & Ardışık Sayılar',
-            description: 'Ardışık sayıların toplam formülleri ve aralarında asallık kuralları.',
-            xpReward: 25,
-            gemReward: 8,
-            type: 'lesson',
-            questions: [
+            "id": "yks-u1-l2",
+            "unitId": "yks-u1",
+            "title": "Asal Sayılar & Ardışık Sayılar",
+            "description": "Ardışık sayıların toplam formülleri ve aralarında asallık kuralları.",
+            "xpReward": 25,
+            "gemReward": 8,
+            "type": "lesson",
+            "summaryNotes": [
+              "Gauss Toplam Formülü: 1 + 2 + ... + n = [n × (n + 1)] / 2",
+              "Ardışık iki tam sayı daima aralarında asaldır!",
+              "Terim Sayısı = [(Son Terim - İlk Terim) / Artış Miktarı] + 1"
+            ],
+            "questions": [
               {
-                id: 'yks-q5',
-                type: 'multiple_choice',
-                prompt: '1\'den 20\'ye kadar olan ardışık doğal sayıların toplamı kaçtır? [1 + 2 + 3 + ... + 20]',
-                difficulty: 'kolay',
-                hint: 'Gauss Toplam Formülü: [n × (n + 1)] / 2',
-                explanation: 'Gauss formülü ile: (20 × 21) / 2 = 10 × 21 = 210 bulunur.',
-                options: [
-                  { id: 'opt1', text: '210', isCorrect: true },
-                  { id: 'opt2', text: '200', isCorrect: false },
-                  { id: 'opt3', text: '220', isCorrect: false },
-                  { id: 'opt4', text: '190', isCorrect: false }
+                "id": "yks-q5",
+                "type": "multiple_choice",
+                "prompt": "1'den 20'ye kadar olan ardışık doğal sayıların toplamı kaçtır? [1 + 2 + 3 + ... + 20]",
+                "difficulty": "kolay",
+                "hint": "Gauss Toplam Formülü: [n × (n + 1)] / 2",
+                "explanation": "Gauss formülü ile: (20 × 21) / 2 = 10 × 21 = 210 bulunur.",
+                "options": [
+                  {
+                    "id": "opt1",
+                    "text": "210",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "opt2",
+                    "text": "200",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "opt3",
+                    "text": "220",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "opt4",
+                    "text": "190",
+                    "isCorrect": false
+                  }
                 ]
               },
               {
-                id: 'yks-q6',
-                type: 'matching',
-                prompt: 'Aralarında asal sayı çiftlerini eşleştirin:',
-                difficulty: 'orta',
-                explanation: 'Aralarında asal iki sayının 1 dışında ortak pozitif böleni yoktur.',
-                pairs: [
-                  { id: 'p1', left: '8 ve 15', right: 'Ortak bölenleri yalnızca 1\'dir' },
-                  { id: 'p2', left: '12 ve 18', right: 'Ortak bölenleri 6\'dır (Asal Değil)' },
-                  { id: 'p3', left: '9 ve 10', right: 'Ardışık sayılar daima aralarında asaldır' }
+                "id": "yks-q6",
+                "type": "matching",
+                "prompt": "Aralarında asal sayı çiftlerini eşleştirin:",
+                "difficulty": "orta",
+                "explanation": "Aralarında asal iki sayının 1 dışında ortak pozitif böleni yoktur.",
+                "pairs": [
+                  {
+                    "id": "p1",
+                    "left": "8 ve 15",
+                    "right": "Ortak bölenleri yalnızca 1'dir"
+                  },
+                  {
+                    "id": "p2",
+                    "left": "12 ve 18",
+                    "right": "Ortak bölenleri 6'dır (Asal Değil)"
+                  },
+                  {
+                    "id": "p3",
+                    "left": "9 ve 10",
+                    "right": "Ardışık sayılar daima aralarında asaldır"
+                  }
                 ]
               },
               {
-                id: 'yks-q7',
-                type: 'multiple_choice',
-                prompt: 'Dört basamaklı 4A7B sayısı 10 ile bölündüğünde 3 kalanını veriyor. Bu sayı 9 ile tam bölünebildiğine göre A kaçtır?',
-                difficulty: 'orta',
-                explanation: '10 ile bölümünden kalan 3 ise birler basamağı B = 3 olur. Sayı 4A73 oldu. 9 ile tam bölünmesi için rakamlar toplamı 9\'un katı olmalıdır: 4 + A + 7 + 3 = 14 + A = 18 ➔ A = 4.',
-                options: [
-                  { id: 'a1', text: '4', isCorrect: true },
-                  { id: 'a2', text: '5', isCorrect: false },
-                  { id: 'a3', text: '2', isCorrect: false },
-                  { id: 'a4', text: '6', isCorrect: false }
+                "id": "yks-q7",
+                "type": "multiple_choice",
+                "prompt": "Dört basamaklı 4A7B sayısı 10 ile bölündüğünde 3 kalanını veriyor. Bu sayı 9 ile tam bölünebildiğine göre A kaçtır?",
+                "difficulty": "orta",
+                "explanation": "10 ile bölümünden kalan 3 ise birler basamağı B = 3 olur. Sayı 4A73 oldu. 9 ile tam bölünmesi için rakamlar toplamı 9'un katı olmalıdır: 4 + A + 7 + 3 = 14 + A = 18 ➔ A = 4.",
+                "options": [
+                  {
+                    "id": "a1",
+                    "text": "4",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "a2",
+                    "text": "5",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "a3",
+                    "text": "2",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "a4",
+                    "text": "6",
+                    "isCorrect": false
+                  }
+                ]
+              },
+              {
+                "id": "yks-q8",
+                "type": "true_false",
+                "prompt": "Ardışık üç tek sayının toplamı her zaman 3'e tam bölünür mü?",
+                "statement": "Herhangi ardışık üç tek tam sayının toplamı daima 3 ile tam bölünür.",
+                "correctAnswer": true,
+                "explanation": "Doğrudur! Sayılar (x - 2), x, (x + 2) şeklinde yazılırsa toplamları 3x olur ve 3'ün tam katıdır."
+              }
+            ]
+          },
+          {
+            "id": "yks-u1-chest",
+            "unitId": "yks-u1",
+            "title": "Sayılar Sandığı 🎁",
+            "description": "Matematik temellerini sağlamlaştırdığın için ödül sandığı!",
+            "xpReward": 50,
+            "gemReward": 25,
+            "type": "chest",
+            "questions": []
+          },
+          {
+            "id": "yks-u1-boss",
+            "unitId": "yks-u1",
+            "title": "Ünite Sonu Şampiyonluk Sınavı",
+            "description": "Tüm ünite kazanımlarını ölçen zorlu TYT meydan okuması!",
+            "xpReward": 40,
+            "gemReward": 15,
+            "type": "boss",
+            "questions": [
+              {
+                "id": "yks-boss-1",
+                "type": "multiple_choice",
+                "prompt": "a, b ve c ardışık çift tam sayılardır (a < b < c). Buna göre [(c - a) × (c - b)] / (b - a) işleminin sonucu kaçtır?",
+                "difficulty": "zor",
+                "explanation": "Ardışık çift sayılar arasında 2 fark vardır. a = 2, b = 4, c = 6 seçebiliriz. c - a = 4, c - b = 2, b - a = 2. (4 × 2) / 2 = 4 bulunur!",
+                "options": [
+                  {
+                    "id": "b1",
+                    "text": "4",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "b2",
+                    "text": "2",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "b3",
+                    "text": "8",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "b4",
+                    "text": "1",
+                    "isCorrect": false
+                  }
+                ]
+              },
+              {
+                "id": "yks-boss-2",
+                "type": "true_false",
+                "prompt": "Aralarında asal iki sayının EBOB'u daima 1'dir.",
+                "statement": "Aralarında asal a ve b sayıları için EBOB(a, b) = 1'dir.",
+                "correctAnswer": true,
+                "explanation": "Doğru! Aralarında asal sayıların 1 dışında pozitif ortak böleni yoktur."
+              },
+              {
+                "id": "yks-boss-3",
+                "type": "multiple_choice",
+                "prompt": "x, y, z pozitif tam sayılardır. x × y = 18 ve y × z = 24 olduğuna göre x + y + z toplamının alabileceği EN KÜÇÜK değer kaçtır?",
+                "difficulty": "zor",
+                "explanation": "Toplamın en küçük olması için ortak olan y sayısını mümkün olan en büyük seçmeliyiz. EBOB(18, 24) = 6. y = 6 için x = 3 ve z = 4 olur. x + y + z = 3 + 6 + 4 = 13.",
+                "options": [
+                  {
+                    "id": "bs1",
+                    "text": "13",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "bs2",
+                    "text": "15",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "bs3",
+                    "text": "17",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "bs4",
+                    "text": "43",
+                    "isCorrect": false
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "yks-u2",
+        "number": 2,
+        "title": "TYT Türkçe: Paragrafta Hız & Taktikler",
+        "description": "ÖSYM yeni nesil paragraf analizi, ana düşünce ve akış bozma",
+        "color": "#1cb0f6",
+        "lessons": [
+          {
+            "id": "yks-u2-l1",
+            "unitId": "yks-u2",
+            "title": "Ana Düşünceyi Nokta Atışı Yakalama",
+            "description": "Vurgulanan asıl düşünceyi anahtar kelimelerle 30 saniyede tespit etme.",
+            "xpReward": 20,
+            "gemReward": 5,
+            "type": "lesson",
+            "summaryNotes": [
+              "Ana düşünce genellikle paragrafın ilk veya son cümlesinde özetlenir.",
+              "'Kısacası, oysa, asıl önemli olan, bana göre' ifadeleri ana fikrin habercisidir.",
+              "Önce soru kökünü oku, sonra seçenekleri gözden geçir, en son metne odaklan!"
+            ],
+            "questions": [
+              {
+                "id": "yks-t1",
+                "type": "multiple_choice",
+                "prompt": "'Yazmak, içimizdeki karmaşayı düzene sokmanın en zarif yoludur. Kağıda dökülmeyen her düşünce bir gün unutulmaya mahkumdur.' Bu parçada yazarın asıl anlatmak istediği nedir?",
+                "difficulty": "orta",
+                "explanation": "Yazar yazmanın hem zihinsel düzeni sağladığını hem de düşünceleri kalıcı kıldığını vurgulamaktadır.",
+                "options": [
+                  {
+                    "id": "t1",
+                    "text": "Yazı, düşünceleri somutlaştırarak kalıcı kılar ve zihni düzenler",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "t2",
+                    "text": "Sadece yetenekli insanlar yazı yazabilir",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "t3",
+                    "text": "Unutulan düşünceler önemsizdir",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "t4",
+                    "text": "Konuşmak yazmaktan daha etkilidir",
+                    "isCorrect": false
+                  }
+                ]
+              },
+              {
+                "id": "yks-t2",
+                "type": "matching",
+                "prompt": "Anlatım tekniklerini tanımlarıyla eşleştirin:",
+                "difficulty": "kolay",
+                "explanation": "Öyküleme olay anlatır, betimleme kelimelerle resim çizer, tartışma okuyucunun fikrini değiştirmeye çalışır.",
+                "pairs": [
+                  {
+                    "id": "p1",
+                    "left": "Öyküleme",
+                    "right": "Zaman ve olay akışı (film şeridi gibi)"
+                  },
+                  {
+                    "id": "p2",
+                    "left": "Betimleme",
+                    "right": "Sıfatlarla niteleme (fotoğraf karesi gibi)"
+                  },
+                  {
+                    "id": "p3",
+                    "left": "Tartışmacı Anlatım",
+                    "right": "Karşıt fikirleri çürütüp kendi görüşünü savunma"
+                  }
+                ]
+              },
+              {
+                "id": "yks-t3",
+                "type": "true_false",
+                "prompt": "Paragraf çözerken önce soru kökünü okumak gerekir mi?",
+                "statement": "Paragraf sorularında önce metni değil, soru kökünü okumak zamandan kazandırır ve hedefe odaklanmayı sağlar.",
+                "correctAnswer": true,
+                "explanation": "Kesinlikle doğru! Önce soru kökünü okuyarak paragrafta ne aradığınızı bilirsiniz."
+              },
+              {
+                "id": "yks-t4",
+                "type": "multiple_choice",
+                "prompt": "'Sanatçı, çağına tanıklık eden değil; geleceğe ayna tutan bir öncüdür.' Bu cümleden çıkarılabilecek EN KAPSAMLI yargı hangisidir?",
+                "difficulty": "orta",
+                "explanation": "Cümle sanatçının sadece gününü kaydetmeyip topluma ve geleceğe yol göstermesi gerektiğini vurgular.",
+                "options": [
+                  {
+                    "id": "s1",
+                    "text": "Gerçek sanatçı, eserleriyle geleceğe yön veren ve ışık tutan kişidir",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "s2",
+                    "text": "Sanat geçmişi unutturmalıdır",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "s3",
+                    "text": "Sanatçı sadece kendi dönemini yansıtmalıdır",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "s4",
+                    "text": "Toplumsal sorunlar sanatın konusu olamaz",
+                    "isCorrect": false
+                  }
+                ]
+              },
+              {
+                "id": "yks-t5",
+                "type": "multiple_choice",
+                "prompt": "Paragrafta akışı bozan cümleyi bulurken hangi kurala dikkat edilmelidir?",
+                "difficulty": "zor",
+                "explanation": "Akışı bozan cümle, konunun farklı bir yönüne değinen veya bir önceki cümlenin mantıksal devamı olmayan cümledir.",
+                "options": [
+                  {
+                    "id": "ak1",
+                    "text": "Konunun dışına çıkan veya farklı bir boyutuna aniden atlayan cümle akışı bozar",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "ak2",
+                    "text": "En uzun cümle her zaman akışı bozar",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "ak3",
+                    "text": "Soru cümlesi içeren her ifade akışı bozar",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "ak4",
+                    "text": "Paragrafın son cümlesi her zaman akışı bozar",
+                    "isCorrect": false
+                  }
                 ]
               }
             ]
           },
           {
-            id: 'yks-u1-chest',
-            unitId: 'yks-u1',
-            title: 'Sayılar Sandığı 🎁',
-            description: 'Matematik temellerini sağlamlaştırdığın için ödül sandığı!',
-            xpReward: 50,
-            gemReward: 25,
-            type: 'chest',
-            questions: []
+            "id": "yks-u2-l2",
+            "unitId": "yks-u2",
+            "title": "Dil Bilgisi: Ses Olayları & Yazım Kuralları",
+            "description": "Ünlü düşmesi, ünsüz benzeşmesi ve büyük harflerin doğru yazımı.",
+            "xpReward": 25,
+            "gemReward": 8,
+            "type": "lesson",
+            "summaryNotes": [
+              "Fıstıkçı Şahap: Sert ünsüzlerden sonra c, d, g ➔ ç, t, k olur (Ünsüz Benzeşmesi)",
+              "Büyük harflerin yazımı: Kurum, kuruluş ve kurul adlarının her kelimesi büyük harfle başlar ve gelen ekler kesme işaretiyle ayrılmaz!",
+              "'Ki' bağlacı ayrı yazılır; '-ki' sıfat veya ilgi zamiri eki bitişik yazılır (ler takısı testi)."
+            ],
+            "questions": [
+              {
+                "id": "yks-db1",
+                "type": "multiple_choice",
+                "prompt": "Aşağıdaki cümlelerin hangisinde altı çizili sözcükte hem 'ünlü düşmesi' hem de 'ünsüz yumuşaması' vardır?",
+                "difficulty": "zor",
+                "hint": "Kayıp + etmek ➔ Kaybetmek",
+                "explanation": "'Kaybetti' sözcüğünde kayıp + etti birleşirken ı harfi düşer (ünlü düşmesi) ve p harfi b'ye yumuşar (ünsüz değişimi).",
+                "options": [
+                  {
+                    "id": "db1",
+                    "text": "Cüzdanını dün akşam kaybetmiş",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "db2",
+                    "text": "Sabahtan beri burnu kanıyordu",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "db3",
+                    "text": "Çiçeği vazoya bıraktı",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "db4",
+                    "text": "Yolculuk sabırla bitti",
+                    "isCorrect": false
+                  }
+                ]
+              },
+              {
+                "id": "yks-db2",
+                "type": "matching",
+                "prompt": "Yazım kurallarını doğru örnekleriyle eşleştirin:",
+                "difficulty": "orta",
+                "explanation": "TDK yazım kuralları kurumlara gelen eklerin kesmeyle ayrılmayacağını belirtir.",
+                "pairs": [
+                  {
+                    "id": "yp1",
+                    "left": "Türk Dil Kurumuna",
+                    "right": "Kurum adlarına gelen ek ayrılmaz (Doğru)"
+                  },
+                  {
+                    "id": "yp2",
+                    "left": "TBMM'ye",
+                    "right": "Kısaltmalara gelen ekler kesmeyle ayrılır"
+                  },
+                  {
+                    "id": "yp3",
+                    "left": "Birkaç / Birçok",
+                    "right": "Belgisiz sözcükler bitişik yazılır"
+                  }
+                ]
+              },
+              {
+                "id": "yks-db3",
+                "type": "true_false",
+                "prompt": "Şey sözcüğü her zaman ayrı mı yazılır?",
+                "statement": "'Şey' sözcüğü her zaman kendinden önceki sözcükten ayrı yazılır (her şey, bir şey).",
+                "correctAnswer": true,
+                "explanation": "Kesinlikle doğru! 'Şey' daima ayrı yazılır: hiçbir şey, her şey, bir şey."
+              },
+              {
+                "id": "yks-db4",
+                "type": "multiple_choice",
+                "prompt": "Aşağıdaki cümlelerin hangisinde bir yazım yanlışı vardır?",
+                "difficulty": "orta",
+                "explanation": "'Hiç bir' ayrı yazılmaz, 'hiçbir' bitişik yazılır.",
+                "options": [
+                  {
+                    "id": "yz1",
+                    "text": "Toplantıya hiç bir yetkili katılmadı.",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "yz2",
+                    "text": "Her şey beklediğimizden daha güzel oldu.",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "yz3",
+                    "text": "O da bizimle sinemaya gelecekmiş.",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "yz4",
+                    "text": "23 Nisan 1920'de Meclis açıldı.",
+                    "isCorrect": false
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "yks-u3",
+        "number": 3,
+        "title": "TYT Fen: Fizik & Biyoloji Banko Netler",
+        "description": "Kuvvet-hareket, eylemsizlik ve hücre organelleri püf noktaları",
+        "color": "#ff9600",
+        "lessons": [
+          {
+            "id": "yks-u3-l1",
+            "unitId": "yks-u3",
+            "title": "Fizik: Newton Hareket Yasaları",
+            "description": "Eylemsizlik prensibi, F = m.a ve etki-tepki kanunları.",
+            "xpReward": 25,
+            "gemReward": 8,
+            "type": "lesson",
+            "summaryNotes": [
+              "1. Yasa (Eylemsizlik): Net kuvvet sıfırsa duran durur, hareketli sabit hızla gider.",
+              "2. Yasa (Temel Yasa): F_net = m × a (Kuvvet = Kütle × İvme)",
+              "3. Yasa (Etki-Tepki): Etki ve tepki kuvvetleri eşit büyüklükte, zıt yönde ve FARKLI cisimler üzerindedir!"
+            ],
+            "questions": [
+              {
+                "id": "yks-f1",
+                "type": "multiple_choice",
+                "prompt": "Sürtünmesiz yatay düzlemde sabit 20 m/s hızla gitmekte olan bir cisme etki eden net kuvvet kaç Newton'dur?",
+                "difficulty": "kolay",
+                "explanation": "Hız sabit ise ivme sıfırdır (a = 0). F_net = m × a formülünden F_net = 0 N olur.",
+                "options": [
+                  {
+                    "id": "f1",
+                    "text": "0 N",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "f2",
+                    "text": "20 N",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "f3",
+                    "text": "10 N",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "f4",
+                    "text": "9.8 N",
+                    "isCorrect": false
+                  }
+                ]
+              },
+              {
+                "id": "yks-f2",
+                "type": "matching",
+                "prompt": "Organelleri hücredeki temel görevleriyle eşleştirin:",
+                "difficulty": "orta",
+                "explanation": "Mitokondri enerji, kloroplast fotosentez, ribozom protein sentezi yapar.",
+                "pairs": [
+                  {
+                    "id": "b1",
+                    "left": "Mitokondri",
+                    "right": "Oksijenli Solunum & ATP Üretimi"
+                  },
+                  {
+                    "id": "b2",
+                    "left": "Ribozom",
+                    "right": "Protein Sentezi (Tüm Canlılarda Ortak)"
+                  },
+                  {
+                    "id": "b3",
+                    "left": "Kloroplast",
+                    "right": "Fotosentez ile Besin ve Oksijen Üretimi"
+                  }
+                ]
+              },
+              {
+                "id": "yks-f3",
+                "type": "multiple_choice",
+                "prompt": "Kütlesi 4 kg olan bir cisme 20 N net yatay kuvvet uygulanırsa cismin ivmesi kaç m/s² olur?",
+                "difficulty": "kolay",
+                "explanation": "F = m × a formülünden 20 = 4 × a ➔ a = 5 m/s² bulunur.",
+                "options": [
+                  {
+                    "id": "iv1",
+                    "text": "5 m/s²",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "iv2",
+                    "text": "80 m/s²",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "iv3",
+                    "text": "4 m/s²",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "iv4",
+                    "text": "16 m/s²",
+                    "isCorrect": false
+                  }
+                ]
+              },
+              {
+                "id": "yks-f4",
+                "type": "true_false",
+                "prompt": "Etki ve tepki kuvvetleri birbirini sıfırlar mı?",
+                "statement": "Etki ve tepki kuvvetleri eşit büyüklükte ve zıt yönde oldukları için birbirini dengeler ve bileşkesi sıfırdır.",
+                "correctAnswer": false,
+                "explanation": "Yanlış! Etki ve tepki kuvvetleri FARKLI iki cisme etki eder; bu yüzden asla birbirini dengelemez veya sıfırlamaz!"
+              }
+            ]
           },
           {
-            id: 'yks-u1-boss',
-            unitId: 'yks-u1',
-            title: 'Ünite Sonu Şampiyonluk Sınavı',
-            description: 'Tüm ünite kazanımlarını ölçen zorlu TYT meydan okuması!',
-            xpReward: 40,
-            gemReward: 15,
-            type: 'boss',
-            questions: [
-              {
-                id: 'yks-boss-1',
-                type: 'multiple_choice',
-                prompt: 'a, b ve c ardışık çift tam sayılardır (a < b < c). Buna göre [(c - a) × (c - b)] / (b - a) işleminin sonucu kaçtır?',
-                difficulty: 'zor',
-                explanation: 'Ardışık çift sayılar arasında 2 fark vardır. a = 2, b = 4, c = 6 seçebiliriz. c - a = 4, c - b = 2, b - a = 2. (4 × 2) / 2 = 4 bulunur!',
-                options: [
-                  { id: 'b1', text: '4', isCorrect: true },
-                  { id: 'b2', text: '2', isCorrect: false },
-                  { id: 'b3', text: '8', isCorrect: false },
-                  { id: 'b4', text: '1', isCorrect: false }
-                ]
-              },
-              {
-                id: 'yks-boss-2',
-                type: 'true_false',
-                prompt: 'Aralarında asal iki sayının EBOB\'u daima 1\'dir.',
-                statement: 'Aralarında asal a ve b sayıları için EBOB(a, b) = 1\'dir.',
-                correctAnswer: true,
-                explanation: 'Doğru! Aralarında asal sayıların 1 dışında pozitif ortak böleni yoktur.'
-              }
-            ]
-          }
-        ]
-      },
-      {
-        id: 'yks-u2',
-        number: 2,
-        title: 'TYT Türkçe: Paragrafta Hız & Taktikler',
-        description: 'ÖSYM yeni nesil paragraf analizi, ana düşünce ve akış bozma',
-        color: '#1cb0f6',
-        lessons: [
-          {
-            id: 'yks-u2-l1',
-            unitId: 'yks-u2',
-            title: 'Ana Düşünceyi Nokta Atışı Yakalama',
-            description: 'Vurgulanan asıl düşünceyi anahtar kelimelerle 30 saniyede tespit etme.',
-            xpReward: 20,
-            gemReward: 5,
-            type: 'lesson',
-            questions: [
-              {
-                id: 'yks-t1',
-                type: 'multiple_choice',
-                prompt: '"Yazmak, içimizdeki karmaşayı düzene sokmanın en zarif yoludur. Kağıda dökülmeyen her düşünce bir gün unutulmaya mahkumdur." Bu parçada yazarın asıl anlatmak istediği nedir?',
-                difficulty: 'orta',
-                explanation: 'Yazar yazmanın hem zihinsel düzeni sağladığını hem de düşünceleri kalıcı kıldığını vurgulamaktadır.',
-                options: [
-                  { id: 't1', text: 'Yazı, düşünceleri somutlaştırarak kalıcı kılar ve zihni düzenler', isCorrect: true },
-                  { id: 't2', text: 'Sadece yetenekli insanlar yazı yazabilir', isCorrect: false },
-                  { id: 't3', text: 'Unutulan düşünceler önemsizdir', isCorrect: false },
-                  { id: 't4', text: 'Konuşmak yazmaktan daha etkilidir', isCorrect: false }
-                ]
-              },
-              {
-                id: 'yks-t2',
-                type: 'matching',
-                prompt: 'Anlatım tekniklerini tanımlarıyla eşleştirin:',
-                difficulty: 'kolay',
-                explanation: 'Öyküleme olay anlatır, betimleme kelimelerle resim çizer, tartışma okuyucunun fikrini değiştirmeye çalışır.',
-                pairs: [
-                  { id: 'p1', left: 'Öyküleme', right: 'Zaman ve olay akışı (film şeridi gibi)' },
-                  { id: 'p2', left: 'Betimleme', right: 'Sıfatlarla niteleme (fotoğraf karesi gibi)' },
-                  { id: 'p3', left: 'Tartışmacı Anlatım', right: 'Karşıt fikirleri çürütüp kendi görüşünü savunma' }
-                ]
-              },
-              {
-                id: 'yks-t3',
-                type: 'true_false',
-                prompt: 'Paragraf çözerken önce soru kökünü okumak gerekir mi?',
-                statement: 'Paragraf sorularında önce metni değil, soru kökünü okumak zamandan kazandırır ve hedefe odaklanmayı sağlar.',
-                correctAnswer: true,
-                explanation: 'Kesinlikle doğru! Önce soru kökünü okuyarak paragrafta ne aradığınızı bilirsiniz.'
-              }
-            ]
-          }
-        ]
-      },
-      {
-        id: 'yks-u3',
-        number: 3,
-        title: 'TYT Fen: Fizik & Biyoloji Banko Netler',
-        description: 'Kuvvet-hareket, eylemsizlik ve hücre organelleri püf noktaları',
-        color: '#ff9600',
-        lessons: [
-          {
-            id: 'yks-u3-l1',
-            unitId: 'yks-u3',
-            title: 'Fizik: Newton Hareket Yasaları',
-            description: 'Eylemsizlik prensibi, F = m.a ve etki-tepki kanunları.',
-            xpReward: 25,
-            gemReward: 8,
-            type: 'lesson',
-            questions: [
-              {
-                id: 'yks-f1',
-                type: 'multiple_choice',
-                prompt: 'Sürtünmesiz yatay düzlemde sabit 20 m/s hızla gitmekte olan bir cisme etki eden net kuvvet kaç Newton\'dur?',
-                difficulty: 'kolay',
-                explanation: 'Hız sabit ise ivme sıfırdır (a = 0). F_net = m × a formülünden F_net = 0 N olur.',
-                options: [
-                  { id: 'f1', text: '0 N', isCorrect: true },
-                  { id: 'f2', text: '20 N', isCorrect: false },
-                  { id: 'f3', text: '10 N', isCorrect: false },
-                  { id: 'f4', text: '9.8 N', isCorrect: false }
-                ]
-              },
-              {
-                id: 'yks-f2',
-                type: 'matching',
-                prompt: 'Organelleri hücredeki temel görevleriyle eşleştirin:',
-                difficulty: 'orta',
-                explanation: 'Mitokondri enerji, kloroplast fotosentez, ribozom protein sentezi yapar.',
-                pairs: [
-                  { id: 'b1', left: 'Mitokondri', right: 'Oksijenli Solunum & ATP Üretimi' },
-                  { id: 'b2', left: 'Ribozom', right: 'Protein Sentezi (Tüm Canlılarda Ortak)' },
-                  { id: 'b3', left: 'Kloroplast', right: 'Fotosentez ile Besin ve Oksijen Üretimi' }
-                ]
-              }
-            ]
-          }
-        ]
-      },
-      {
-        id: 'yks-u4',
-        number: 4,
-        title: 'AYT Matematik: Fonksiyonlar & Parabol',
-        description: 'Fonksiyon grafikleri, bileşke, ters fonksiyon ve parabol tepe noktası',
-        color: '#af72ff',
-        lessons: [
-          {
-            id: 'yks-u4-l1',
-            unitId: 'yks-u4',
-            title: 'Fonksiyonlarda Değer Bulma & Bileşke',
-            description: 'f(x) fonksiyonlarında işlem ve (fog)(x) bileşke fonksiyon kuralları.',
-            xpReward: 25,
-            gemReward: 8,
-            type: 'lesson',
-            summaryNotes: [
-              '(f ∘ g)(x) = f(g(x)) demektir; önce içteki g(x) hesaplanır!',
-              'f(x) = ax + b doğrusal fonksiyonun tersi f⁻¹(x) = (x - b) / a olur.',
-              'Birebir ve örten fonksiyonların daima tersi vardır.'
+            "id": "yks-u3-l2",
+            "unitId": "yks-u3",
+            "title": "Kimya: Periyodik Tablo & Asit-Bazlar",
+            "description": "Periyot-grup bulma, elektronegatiflik ve pH kavramı.",
+            "xpReward": 25,
+            "gemReward": 8,
+            "type": "lesson",
+            "summaryNotes": [
+              "Aynı grupta yukarıdan aşağıya inildikçe atom yarıçapı artar, iyonlaşma enerjisi azalır.",
+              "pH < 7 ise asit, pH = 7 nötr, pH > 7 ise bazdır.",
+              "Turnusol kağıdını asitler kırmızıya, bazlar maviye çevirir."
             ],
-            questions: [
+            "questions": [
               {
-                id: 'yks-fnc-1',
-                type: 'multiple_choice',
-                prompt: 'f(x) = 3x - 5 olduğuna göre, f(4) değeri kaçtır?',
-                difficulty: 'kolay',
-                explanation: 'x yerine 4 yazılır: f(4) = 3(4) - 5 = 12 - 5 = 7 bulunur.',
-                options: [
-                  { id: 'fn1', text: '7', isCorrect: true },
-                  { id: 'fn2', text: '9', isCorrect: false },
-                  { id: 'fn3', text: '11', isCorrect: false },
-                  { id: 'fn4', text: '5', isCorrect: false }
+                "id": "yks-k1",
+                "type": "multiple_choice",
+                "prompt": "Atom numarası 17 olan Klor (Cl) elementinin periyodik tablodaki yeri nedir?",
+                "difficulty": "orta",
+                "explanation": "Katman dizilimi: 2 - 8 - 7 şeklindedir. 3 katman olduğu için 3. Periyot, son katmanda 7 elektron olduğu için 7A grubudur.",
+                "options": [
+                  {
+                    "id": "k1",
+                    "text": "3. Periyot, 7A Grubu (Halojen)",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "k2",
+                    "text": "2. Periyot, 7A Grubu",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "k3",
+                    "text": "3. Periyot, 8A Grubu",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "k4",
+                    "text": "4. Periyot, 1A Grubu",
+                    "isCorrect": false
+                  }
                 ]
               },
               {
-                id: 'yks-fnc-2',
-                type: 'multiple_choice',
-                prompt: 'f(x) = 2x + 1 ve g(x) = x² - 3 olduğuna göre, (f ∘ g)(2) ifadesinin sonucu kaçtır?',
-                difficulty: 'orta',
-                explanation: '(f ∘ g)(2) = f(g(2)). Önce g(2) = 2² - 3 = 4 - 3 = 1 bulunur. Sonra f(1) = 2(1) + 1 = 3 bulunur!',
-                options: [
-                  { id: 'fg1', text: '3', isCorrect: true },
-                  { id: 'fg2', text: '5', isCorrect: false },
-                  { id: 'fg3', text: '7', isCorrect: false },
-                  { id: 'fg4', text: '1', isCorrect: false }
+                "id": "yks-k2",
+                "type": "matching",
+                "prompt": "Kimyasal çözeltileri pH değerleriyle eşleştirin:",
+                "difficulty": "kolay",
+                "explanation": "Limon suyu asidik, saf su nötr, sabunlu su baziktir.",
+                "pairs": [
+                  {
+                    "id": "kp1",
+                    "left": "Limon Suyu / Mide Asidi",
+                    "right": "pH < 7 (Kuvvetli Asit)"
+                  },
+                  {
+                    "id": "kp2",
+                    "left": "Saf Su",
+                    "right": "pH = 7 (Nötr)"
+                  },
+                  {
+                    "id": "kp3",
+                    "left": "Çamaşır Suyu / Sabun",
+                    "right": "pH > 7 (Kuvvetli Baz)"
+                  }
                 ]
               },
               {
-                id: 'yks-fnc-3',
-                type: 'multiple_choice',
-                prompt: 'f(x) = x² - 6x + 14 parabolünün Tepe Noktasının ordinatı (k değeri) kaçtır?',
-                difficulty: 'zor',
-                hint: 'Tepe noktası T(r, k) formülü: r = -b / (2a) ve k = f(r).',
-                explanation: 'r = -(-6) / (2 × 1) = 6 / 2 = 3. Şimdi fonksiyonda x = 3 yazalım: k = f(3) = 3² - 6(3) + 14 = 9 - 18 + 14 = 5 bulunur!',
-                options: [
-                  { id: 'tp1', text: '5', isCorrect: true },
-                  { id: 'tp2', text: '3', isCorrect: false },
-                  { id: 'tp3', text: '7', isCorrect: false },
-                  { id: 'tp4', text: '14', isCorrect: false }
-                ]
+                "id": "yks-k3",
+                "type": "true_false",
+                "prompt": "Soygazlar kararlı oldukları için bileşik oluşturmaya yatkın değil midir?",
+                "statement": "8A grubu soygazlarının değerlik katmanları tam dolu olduğu için oda koşullarında kararlıdırlar.",
+                "correctAnswer": true,
+                "explanation": "Doğru! Helyum, Neon, Argon gibi soygazlar kararlı elektron dizilimine sahiptir."
               }
             ]
           }
         ]
       },
       {
-        id: 'yks-u5',
-        number: 5,
-        title: 'TYT - AYT Geometri: Üçgenler & Açılar',
-        description: 'Özel üçgenler (3-4-5, 30-60-90), Öklid bağıntıları ve Pisagor teoremi',
-        color: '#ffc800',
-        lessons: [
+        "id": "yks-u4",
+        "number": 4,
+        "title": "AYT Matematik: Fonksiyonlar & Parabol",
+        "description": "Fonksiyon grafikleri, bileşke, ters fonksiyon ve parabol tepe noktası",
+        "color": "#af72ff",
+        "lessons": [
           {
-            id: 'yks-u5-l1',
-            unitId: 'yks-u5',
-            title: 'Pisagor & Özel Dik Üçgenler',
-            description: 'Hipotenüs bağıntısı ve kenarlarına göre özel dik üçgenler.',
-            xpReward: 25,
-            gemReward: 8,
-            type: 'lesson',
-            summaryNotes: [
-              'Pisagor Teoremi: a² + b² = c² (c: hipotenüs)',
-              'Özel kenarlı dik üçgenler: (3-4-5), (5-12-13), (8-15-17), (7-24-25)',
-              '30-60-90 üçgeninde: 30° nin karşısı a ise 90° nin karşısı 2a, 60° nin karşısı a√3 olur.'
+            "id": "yks-u4-l1",
+            "unitId": "yks-u4",
+            "title": "Fonksiyonlarda Değer Bulma & Bileşke",
+            "description": "f(x) fonksiyonlarında işlem ve (fog)(x) bileşke fonksiyon kuralları.",
+            "xpReward": 25,
+            "gemReward": 8,
+            "type": "lesson",
+            "summaryNotes": [
+              "(f ∘ g)(x) = f(g(x)) demektir; önce içteki g(x) hesaplanır!",
+              "f(x) = ax + b doğrusal fonksiyonun tersi f⁻¹(x) = (x - b) / a olur.",
+              "Birebir ve örten fonksiyonların daima tersi vardır."
             ],
-            questions: [
+            "questions": [
               {
-                id: 'geo-q1',
-                type: 'multiple_choice',
-                prompt: 'Dik kenar uzunlukları 6 cm ve 8 cm olan dik üçgenin hipotenüs uzunluğu kaç cm\'dir?',
-                difficulty: 'kolay',
-                explanation: '3-4-5 üçgeninin 2 katı: 6 - 8 - 10 üçgenidir! Dolayısıyla hipotenüs 10 cm bulunur.',
-                options: [
-                  { id: 'g1', text: '10 cm', isCorrect: true },
-                  { id: 'g2', text: '12 cm', isCorrect: false },
-                  { id: 'g3', text: '14 cm', isCorrect: false },
-                  { id: 'g4', text: '9 cm', isCorrect: false }
+                "id": "yks-fnc-1",
+                "type": "multiple_choice",
+                "prompt": "f(x) = 3x - 5 olduğuna göre, f(4) değeri kaçtır?",
+                "difficulty": "kolay",
+                "explanation": "x yerine 4 yazılır: f(4) = 3(4) - 5 = 12 - 5 = 7 bulunur.",
+                "options": [
+                  {
+                    "id": "fn1",
+                    "text": "7",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "fn2",
+                    "text": "9",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "fn3",
+                    "text": "11",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "fn4",
+                    "text": "5",
+                    "isCorrect": false
+                  }
                 ]
               },
               {
-                id: 'geo-q2',
-                type: 'matching',
-                prompt: 'Özel dik üçgen kenar oranlarını doğru eşleştirin:',
-                difficulty: 'orta',
-                explanation: '3-4-5, 5-12-13 ve 8-15-17 ÖSYM\'nin en sık sorduğu Pisagor üçgenleridir.',
-                pairs: [
-                  { id: 'gp1', left: 'Dik kenarlar: 5 ve 12', right: 'Hipotenüs: 13' },
-                  { id: 'gp2', left: 'Dik kenarlar: 8 ve 15', right: 'Hipotenüs: 17' },
-                  { id: 'gp3', left: 'Dik kenarlar: 7 ve 24', right: 'Hipotenüs: 25' }
+                "id": "yks-fnc-2",
+                "type": "multiple_choice",
+                "prompt": "f(x) = 2x + 1 ve g(x) = x² - 3 olduğuna göre, (f ∘ g)(2) ifadesinin sonucu kaçtır?",
+                "difficulty": "orta",
+                "explanation": "(f ∘ g)(2) = f(g(2)). Önce g(2) = 2² - 3 = 4 - 3 = 1 bulunur. Sonra f(1) = 2(1) + 1 = 3 bulunur!",
+                "options": [
+                  {
+                    "id": "fg1",
+                    "text": "3",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "fg2",
+                    "text": "5",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "fg3",
+                    "text": "7",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "fg4",
+                    "text": "1",
+                    "isCorrect": false
+                  }
                 ]
               },
               {
-                id: 'geo-q3',
-                type: 'multiple_choice',
-                prompt: 'Bir dik üçgende hipotenüse ait yükseklik h, hipotenüste ayırdığı parçalar p ve k olsun. h = 6 cm ve p = 4 cm olduğuna göre k uzunluğu kaç cm\'dir? (Öklid Bağıntısı)',
-                difficulty: 'zor',
-                hint: 'Öklid yüksekliğin karesi bağıntısı: h² = p × k.',
-                explanation: 'Öklid teoremi: h² = p × k ➔ 6² = 4 × k ➔ 36 = 4k ➔ k = 9 cm bulunur!',
-                options: [
-                  { id: 'ok1', text: '9 cm', isCorrect: true },
-                  { id: 'ok2', text: '6 cm', isCorrect: false },
-                  { id: 'ok3', text: '8 cm', isCorrect: false },
-                  { id: 'ok4', text: '12 cm', isCorrect: false }
+                "id": "yks-fnc-3",
+                "type": "multiple_choice",
+                "prompt": "f(x) = x² - 6x + 14 parabolünün Tepe Noktasının ordinatı (k değeri) kaçtır?",
+                "difficulty": "zor",
+                "hint": "Tepe noktası T(r, k) formülü: r = -b / (2a) ve k = f(r).",
+                "explanation": "r = -(-6) / (2 × 1) = 6 / 2 = 3. Şimdi fonksiyonda x = 3 yazalım: k = f(3) = 3² - 6(3) + 14 = 9 - 18 + 14 = 5 bulunur!",
+                "options": [
+                  {
+                    "id": "tp1",
+                    "text": "5",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "tp2",
+                    "text": "3",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "tp3",
+                    "text": "7",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "tp4",
+                    "text": "14",
+                    "isCorrect": false
+                  }
+                ]
+              },
+              {
+                "id": "yks-fnc-4",
+                "type": "true_false",
+                "prompt": "f(x) = ax² + bx + c parabolünde a > 0 ise kollar yukarıya mı bakar?",
+                "statement": "İkinci dereceden parabol fonksiyonlarında başkatsayı a > 0 olduğunda parabolün kolları yukarı doğrudur ve tepe noktası yerel minimumdur.",
+                "correctAnswer": true,
+                "explanation": "Doğrudur! a > 0 ise kollar yukarı, a < 0 ise kollar aşağı doğrudur."
+              }
+            ]
+          },
+          {
+            "id": "yks-u4-l2",
+            "unitId": "yks-u4",
+            "title": "Trigonometri: Birim Çember & Özdeşlikler",
+            "description": "sin²x + cos²x = 1 kuralı, tan-cot değerleri ve esas ölçü.",
+            "xpReward": 30,
+            "gemReward": 10,
+            "type": "lesson",
+            "summaryNotes": [
+              "Temel Özdeşlik: sin²(x) + cos²(x) = 1",
+              "tan(x) = sin(x) / cos(x) ve tan(x) × cot(x) = 1",
+              "Birim çemberde yatay eksen cos, dikey eksen sin eksenidir."
+            ],
+            "questions": [
+              {
+                "id": "yks-trig-1",
+                "type": "multiple_choice",
+                "prompt": "sin(x) = 3/5 ve x dar açı (0 < x < 90°) olduğuna göre cos(x) değeri kaçtır?",
+                "difficulty": "kolay",
+                "explanation": "3-4-5 dik üçgeninden: karşı kenar 3, hipotenüs 5 ise komşu kenar 4 olur. cos(x) = komşu / hipotenüs = 4/5.",
+                "options": [
+                  {
+                    "id": "tr1",
+                    "text": "4/5",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "tr2",
+                    "text": "3/4",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "tr3",
+                    "text": "5/4",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "tr4",
+                    "text": "1/2",
+                    "isCorrect": false
+                  }
+                ]
+              },
+              {
+                "id": "yks-trig-2",
+                "type": "matching",
+                "prompt": "Özel açıların sinüs ve kosinüs değerlerini eşleştirin:",
+                "difficulty": "orta",
+                "explanation": "30, 45 ve 90 derece trigonometrik değerler.",
+                "pairs": [
+                  {
+                    "id": "tp1",
+                    "left": "sin(30°)",
+                    "right": "1/2"
+                  },
+                  {
+                    "id": "tp2",
+                    "left": "sin(90°)",
+                    "right": "1"
+                  },
+                  {
+                    "id": "tp3",
+                    "left": "cos(0°)",
+                    "right": "1"
+                  },
+                  {
+                    "id": "tp4",
+                    "left": "tan(45°)",
+                    "right": "1"
+                  }
+                ]
+              },
+              {
+                "id": "yks-trig-3",
+                "type": "true_false",
+                "prompt": "Her reel x sayısı için sin(x) değeri -1 ile +1 aralığında mıdır?",
+                "statement": "Sinüs fonksiyonu tüm reel sayılar kümesinde [-1, 1] aralığında değerler alır.",
+                "correctAnswer": true,
+                "explanation": "Doğrudur! Birim çember yarıçapı 1 olduğu için sin ve cos asla 1'i aşamaz ve -1'in altına inemez."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "yks-u5",
+        "number": 5,
+        "title": "TYT - AYT Geometri: Üçgenler & Açılar",
+        "description": "Özel üçgenler (3-4-5, 30-60-90), Öklid bağıntıları ve Pisagor teoremi",
+        "color": "#ffc800",
+        "lessons": [
+          {
+            "id": "yks-u5-l1",
+            "unitId": "yks-u5",
+            "title": "Pisagor & Özel Dik Üçgenler",
+            "description": "Hipotenüs bağıntısı ve kenarlarına göre özel dik üçgenler.",
+            "xpReward": 25,
+            "gemReward": 8,
+            "type": "lesson",
+            "summaryNotes": [
+              "Pisagor Teoremi: a² + b² = c² (c: hipotenüs)",
+              "Özel kenarlı dik üçgenler: (3-4-5), (5-12-13), (8-15-17), (7-24-25)",
+              "30-60-90 üçgeninde: 30° nin karşısı a ise 90° nin karşısı 2a, 60° nin karşısı a√3 olur."
+            ],
+            "questions": [
+              {
+                "id": "geo-q1",
+                "type": "multiple_choice",
+                "prompt": "Dik kenar uzunlukları 6 cm ve 8 cm olan dik üçgenin hipotenüs uzunluğu kaç cm'dir?",
+                "difficulty": "kolay",
+                "explanation": "3-4-5 üçgeninin 2 katı: 6 - 8 - 10 üçgenidir! Dolayısıyla hipotenüs 10 cm bulunur.",
+                "options": [
+                  {
+                    "id": "g1",
+                    "text": "10 cm",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "g2",
+                    "text": "12 cm",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "g3",
+                    "text": "14 cm",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "g4",
+                    "text": "9 cm",
+                    "isCorrect": false
+                  }
+                ]
+              },
+              {
+                "id": "geo-q2",
+                "type": "matching",
+                "prompt": "Özel dik üçgen kenar oranlarını doğru eşleştirin:",
+                "difficulty": "orta",
+                "explanation": "3-4-5, 5-12-13 ve 8-15-17 ÖSYM'nin en sık sorduğu Pisagor üçgenleridir.",
+                "pairs": [
+                  {
+                    "id": "gp1",
+                    "left": "Dik kenarlar: 5 ve 12",
+                    "right": "Hipotenüs: 13"
+                  },
+                  {
+                    "id": "gp2",
+                    "left": "Dik kenarlar: 8 ve 15",
+                    "right": "Hipotenüs: 17"
+                  },
+                  {
+                    "id": "gp3",
+                    "left": "Dik kenarlar: 7 ve 24",
+                    "right": "Hipotenüs: 25"
+                  }
+                ]
+              },
+              {
+                "id": "geo-q3",
+                "type": "multiple_choice",
+                "prompt": "Bir dik üçgende hipotenüse ait yükseklik h, hipotenüste ayırdığı parçalar p ve k olsun. h = 6 cm ve p = 4 cm olduğuna göre k uzunluğu kaç cm'dir? (Öklid Bağıntısı)",
+                "difficulty": "zor",
+                "hint": "Öklid yüksekliğin karesi bağıntısı: h² = p × k.",
+                "explanation": "Öklid teoremi: h² = p × k ➔ 6² = 4 × k ➔ 36 = 4k ➔ k = 9 cm bulunur!",
+                "options": [
+                  {
+                    "id": "ok1",
+                    "text": "9 cm",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "ok2",
+                    "text": "6 cm",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "ok3",
+                    "text": "8 cm",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "ok4",
+                    "text": "12 cm",
+                    "isCorrect": false
+                  }
+                ]
+              },
+              {
+                "id": "geo-q4",
+                "type": "true_false",
+                "prompt": "Bir üçgenin iç açıları toplamı 180 derece midir?",
+                "statement": "Öklid geometrisinde tüm düzlemsel üçgenlerin iç açıları toplamı 180° dir.",
+                "correctAnswer": true,
+                "explanation": "Doğrudur! Dış açılar toplamı ise her çokgende olduğu gibi 360° dir."
+              }
+            ]
+          },
+          {
+            "id": "yks-u5-l2",
+            "unitId": "yks-u5",
+            "title": "Çemberde Açılar & Dairede Alan",
+            "description": "Merkez açı, çevre açı özellikleri ve daire dilimi alanı formülleri.",
+            "xpReward": 30,
+            "gemReward": 10,
+            "type": "lesson",
+            "summaryNotes": [
+              "Merkez açı gördüğü yayın ölçüsüne eşittir: α = gördüğü yay.",
+              "Çevre açı gördüğü yayın YARISINA eşittir: β = yay / 2.",
+              "Çapı gören çevre açı daima 90 derecedir!"
+            ],
+            "questions": [
+              {
+                "id": "geo-c1",
+                "type": "multiple_choice",
+                "prompt": "Bir çemberde aynı yayı gören çevre açının ölçüsü 40° olduğuna göre, merkez açının ölçüsü kaç derecedir?",
+                "difficulty": "kolay",
+                "explanation": "Çevre açı 40° ise gördüğü yay 80° dir. Merkez açı gördüğü yaya eşit olduğundan 80° olur.",
+                "options": [
+                  {
+                    "id": "c1",
+                    "text": "80°",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "c2",
+                    "text": "40°",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "c3",
+                    "text": "20°",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "c4",
+                    "text": "160°",
+                    "isCorrect": false
+                  }
+                ]
+              },
+              {
+                "id": "geo-c2",
+                "type": "multiple_choice",
+                "prompt": "Yarıçapı r = 6 cm olan bir dairenin alanı kaç cm² dir? (π = 3 alınız)",
+                "difficulty": "kolay",
+                "explanation": "Daire alanı = π × r² = 3 × 6² = 3 × 36 = 108 cm².",
+                "options": [
+                  {
+                    "id": "da1",
+                    "text": "108 cm²",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "da2",
+                    "text": "36 cm²",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "da3",
+                    "text": "72 cm²",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "da4",
+                    "text": "216 cm²",
+                    "isCorrect": false
+                  }
+                ]
+              },
+              {
+                "id": "geo-c3",
+                "type": "true_false",
+                "prompt": "Çapı gören çevre açı daima dik açı (90°) mıdır?",
+                "statement": "Çemberde çapı gören çevre açının ölçüsü daima 90 derecedir.",
+                "correctAnswer": true,
+                "explanation": "Doğru! Çünkü çap çemberi 180° lik iki eşit yaya böler, çevre açı da yarısı olduğu için 180 / 2 = 90° olur."
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "kodlama",
+    "name": "Kodlama & Yazılım",
+    "subTitle": "Python, JavaScript, Algoritmalar & Yapay Zeka",
+    "icon": "💻",
+    "badge": "Geleceğin Mesleği",
+    "color": "#af72ff",
+    "accentColor": "#9047ff",
+    "units": [
+      {
+        "id": "kod-u1",
+        "number": 1,
+        "title": "Python Temelleri & Söz Dizimi",
+        "description": "Değişkenler, dinamik tipleme, string metodları ve operatörler",
+        "color": "#af72ff",
+        "lessons": [
+          {
+            "id": "kod-u1-l1",
+            "unitId": "kod-u1",
+            "title": "Değişkenler ve Ekrana Yazdırma",
+            "description": "Python syntax yapısı ve temel konsol çıktıları.",
+            "xpReward": 20,
+            "gemReward": 5,
+            "type": "lesson",
+            "summaryNotes": [
+              "print('Metin'): Ekrana metin yazar.",
+              "Değişken tanımlarken tip belirtmeye gerek yoktur (Dinamik tip).",
+              "str: Metin, int: Tam sayı, float: Ondalıklı sayı, bool: True/False"
+            ],
+            "questions": [
+              {
+                "id": "code-q1",
+                "type": "code_fill",
+                "prompt": "Python'da ekrana 'Merhaba AkademiGO!' yazdırmak için eksik fonksiyonu tamamlayın:",
+                "codeSnippet": "___('Merhaba AkademiGO!')",
+                "blankId": "print",
+                "options": [
+                  "print",
+                  "console.log",
+                  "echo",
+                  "display"
+                ],
+                "correctAnswer": "print",
+                "explanation": "Python'da standart çıktı vermek için yerleşik print() fonksiyonu kullanılır."
+              },
+              {
+                "id": "code-q2",
+                "type": "multiple_choice",
+                "prompt": "x = '15' ve y = 5 olduğunda type(x) ve type(y) sırasıyla nedir?",
+                "difficulty": "kolay",
+                "explanation": "Tırnak içerisindeki değerler string (str), tırnaksız tam sayılar integer (int) veri tipindedir.",
+                "options": [
+                  {
+                    "id": "c1",
+                    "text": "str ve int",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "c2",
+                    "text": "int ve str",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "c3",
+                    "text": "int ve float",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "c4",
+                    "text": "str ve float",
+                    "isCorrect": false
+                  }
+                ]
+              },
+              {
+                "id": "code-q3",
+                "type": "matching",
+                "prompt": "Python veri tiplerini örnekleriyle eşleştirin:",
+                "difficulty": "kolay",
+                "explanation": "int: tam sayı, float: ondalıklı, bool: mantıksal, list: sıralı koleksiyon.",
+                "pairs": [
+                  {
+                    "id": "cp1",
+                    "left": "42",
+                    "right": "int (Tam sayı)"
+                  },
+                  {
+                    "id": "cp2",
+                    "left": "3.14",
+                    "right": "float (Ondalıklı)"
+                  },
+                  {
+                    "id": "cp3",
+                    "left": "True",
+                    "right": "bool (Mantıksal)"
+                  },
+                  {
+                    "id": "cp4",
+                    "left": "['elma', 'armut']",
+                    "right": "list (Liste)"
+                  }
+                ]
+              },
+              {
+                "id": "code-q4",
+                "type": "true_false",
+                "prompt": "Python'da değişken adları bir rakam ile başlayabilir mi?",
+                "statement": "Python değişken adları (örneğin 1sayi = 10) rakamla başlayabilir.",
+                "correctAnswer": false,
+                "explanation": "Doğru! Değişken adları harf veya alt çizgi (_) ile başlamalıdır, rakamla başlayamaz!"
+              }
+            ]
+          },
+          {
+            "id": "kod-u1-l2",
+            "unitId": "kod-u1",
+            "title": "Döngüler & Koşullar (if/else)",
+            "description": "Karar yapıları ve for/while döngüleri ile program akışını yönetme.",
+            "xpReward": 25,
+            "gemReward": 8,
+            "type": "lesson",
+            "summaryNotes": [
+              "if koşul: ... elif koşul: ... else: yapısı kullanılır.",
+              "range(başlangıç, bitiş, adım) sayı dizisi üretir (bitiş değeri dahil edilmez).",
+              "break döngüyü sonlandırır, continue o anki adımı atlar."
+            ],
+            "questions": [
+              {
+                "id": "code-q5",
+                "type": "code_fill",
+                "prompt": "Bir sayının 10'dan büyük olup olmadığını kontrol etmek için eksik anahtar kelimeyi seçin:",
+                "codeSnippet": "sayi = 15\n___ sayi > 10:\n    print('Büyük')",
+                "blankId": "if",
+                "options": [
+                  "if",
+                  "while",
+                  "check",
+                  "when"
+                ],
+                "correctAnswer": "if",
+                "explanation": "Koşullu ifadeler için 'if' anahtar sözcüğü kullanılır."
+              },
+              {
+                "id": "code-q6",
+                "type": "multiple_choice",
+                "prompt": "for i in range(3): print(i) kodunun çıktısı ne olur?",
+                "difficulty": "orta",
+                "explanation": "range(3), 0'dan başlayarak 3'e kadar (3 hariç) 0, 1, 2 değerlerini üretir.",
+                "options": [
+                  {
+                    "id": "r1",
+                    "text": "0 1 2",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "r2",
+                    "text": "1 2 3",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "r3",
+                    "text": "0 1 2 3",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "r4",
+                    "text": "3",
+                    "isCorrect": false
+                  }
+                ]
+              },
+              {
+                "id": "code-q6b",
+                "type": "multiple_choice",
+                "prompt": "Python'da 'x = 10' ve 'y = 3' iken x // y işleminin (tamsayı bölmesi) sonucu nedir?",
+                "difficulty": "kolay",
+                "explanation": "// operatörü taban (tamsayı) bölmesi yapar: 10 // 3 = 3.",
+                "options": [
+                  {
+                    "id": "op1",
+                    "text": "3",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "op2",
+                    "text": "3.333",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "op3",
+                    "text": "1",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "op4",
+                    "text": "4",
+                    "isCorrect": false
+                  }
+                ]
+              },
+              {
+                "id": "code-q6c",
+                "type": "true_false",
+                "prompt": "Python'da girintileme (indentation) zorunlu mudur?",
+                "statement": "Python kod bloklarını süslü parantez {} yerine 4 boşluk girinti (indentation) ile belirler.",
+                "correctAnswer": true,
+                "explanation": "Doğrudur! Girintileme sözdizimsel bir kuraldır ve hata almamak için şarttır."
+              }
+            ]
+          },
+          {
+            "id": "kod-u1-chest",
+            "unitId": "kod-u1",
+            "title": "Geliştirici Sandığı 🎁",
+            "description": "İlk kodlama adımlarını başarıyla tamamladın!",
+            "xpReward": 50,
+            "gemReward": 30,
+            "type": "chest",
+            "questions": []
+          }
+        ]
+      },
+      {
+        "id": "kod-u2",
+        "number": 2,
+        "title": "Veri Yapıları & Algoritmalar",
+        "description": "Listeler, Sözlükler (Dictionary), Kümeler ve Big O Karmaşıklığı",
+        "color": "#1cb0f6",
+        "lessons": [
+          {
+            "id": "kod-u2-l1",
+            "unitId": "kod-u2",
+            "title": "Sözlükler (Key-Value) & List Metodları",
+            "description": "Verileri anahtar-değer çiftleriyle saklama ve hızlı erişim.",
+            "xpReward": 30,
+            "gemReward": 10,
+            "type": "lesson",
+            "summaryNotes": [
+              "list.append(x) sona ekler, list.pop() sondan siler.",
+              "dict['anahtar'] = deger şeklinde veri eklenir veya güncellenir.",
+              "set (küme) tekrarlayan elemanları otomatik olarak temizler."
+            ],
+            "questions": [
+              {
+                "id": "code-q7",
+                "type": "multiple_choice",
+                "prompt": "ogrenci = {'ad': 'Ali', 'puan': 95} sözlüğünde Ali'nin puanını ekrana yazdırmak için hangi kod kullanılır?",
+                "difficulty": "kolay",
+                "explanation": "Sözlüklerde bir değere erişmek için anahtar ismi köşeli parantez içinde verilir: ogrenci['puan'] ➔ 95.",
+                "options": [
+                  {
+                    "id": "d1",
+                    "text": "ogrenci['puan']",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "d2",
+                    "text": "ogrenci[1]",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "d3",
+                    "text": "ogrenci.puan()",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "d4",
+                    "text": "ogrenci.get_index(95)",
+                    "isCorrect": false
+                  }
+                ]
+              },
+              {
+                "id": "code-q8",
+                "type": "matching",
+                "prompt": "Zaman karmaşıklıklarını (Big-O) örnek operasyonlarla eşleştirin:",
+                "difficulty": "orta",
+                "explanation": "O(1) anında erişim, O(n) diziyi tek tur tarama, O(log n) ikili arama (Binary Search).",
+                "pairs": [
+                  {
+                    "id": "b1",
+                    "left": "O(1) - Sabit Zaman",
+                    "right": "Dizi indeksine doğrudan erişim"
+                  },
+                  {
+                    "id": "b2",
+                    "left": "O(n) - Doğrusal Zaman",
+                    "right": "Dizideki tüm elemanları for ile gezme"
+                  },
+                  {
+                    "id": "b3",
+                    "left": "O(log n) - Logaritmik Zaman",
+                    "right": "Sıralı dizide İkili Arama (Binary Search)"
+                  }
+                ]
+              },
+              {
+                "id": "code-q9",
+                "type": "multiple_choice",
+                "prompt": "Python'da sayilar = [1, 2, 2, 3, 4, 4] listesindeki tekrarları tek satırda silmek için ne yapılır?",
+                "difficulty": "orta",
+                "explanation": "set() fonksiyonu tüm yinelenen elemanları eler: list(set(sayilar)) benzersiz elemanları verir.",
+                "options": [
+                  {
+                    "id": "st1",
+                    "text": "list(set(sayilar))",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "st2",
+                    "text": "sayilar.unique()",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "st3",
+                    "text": "sayilar.filter()",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "st4",
+                    "text": "clean(sayilar)",
+                    "isCorrect": false
+                  }
+                ]
+              },
+              {
+                "id": "code-q10",
+                "type": "true_false",
+                "prompt": "Stack (Yığıt) veri yapısı LIFO (Last In First Out - Son Giren İlk Çıkar) prensibiyle mi çalışır?",
+                "statement": "Stack veri yapısında en son eklenen eleman ilk olarak çıkarılır (LIFO).",
+                "correctAnswer": true,
+                "explanation": "Doğrudur! Tıpkı üst üste dizilmiş tabaklar gibi en son konan tabak en önce alınır."
+              }
+            ]
+          },
+          {
+            "id": "kod-u2-l2",
+            "unitId": "kod-u2",
+            "title": "Sıralama Algoritmaları & Binary Search",
+            "description": "İkili arama mantığı, Bubble Sort ve Merge Sort kıyaslaması.",
+            "xpReward": 35,
+            "gemReward": 12,
+            "type": "lesson",
+            "summaryNotes": [
+              "Binary Search (İkili Arama) çalışabilmesi için dizinin mutlaka SIRALI olması şarttır!",
+              "Binary Search karmaşıklığı O(log n)'dir.",
+              "Merge Sort ve Quick Sort ortalama O(n log n) hızında çalışır."
+            ],
+            "questions": [
+              {
+                "id": "code-alg1",
+                "type": "multiple_choice",
+                "prompt": "İkili Arama (Binary Search) algoritmasının çalışabilmesi için arama yapılacak dizide hangi şart zorunludur?",
+                "difficulty": "kolay",
+                "explanation": "Binary Search her adımda diziyi ortadan ikiye bölerek arama yapar; bu nedenle dizinin kesinlikle küçükten büyüğe sıralı olması gerekir.",
+                "options": [
+                  {
+                    "id": "al1",
+                    "text": "Dizinin mutlaka sıralı olması gerekir",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "al2",
+                    "text": "Tüm sayıların pozitif olması gerekir",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "al3",
+                    "text": "Dizinin eleman sayısının çift olması gerekir",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "al4",
+                    "text": "Dizide string bulunmaması gerekir",
+                    "isCorrect": false
+                  }
+                ]
+              },
+              {
+                "id": "code-alg2",
+                "type": "matching",
+                "prompt": "Sıralama algoritmalarını en kötü durum (Worst Case) zaman karmaşıklıklarıyla eşleştirin:",
+                "difficulty": "zor",
+                "explanation": "Bubble Sort O(n²), Merge Sort garantili O(n log n).",
+                "pairs": [
+                  {
+                    "id": "sp1",
+                    "left": "Bubble Sort / Insertion Sort",
+                    "right": "O(n²) - Karesel Karmaşıklık"
+                  },
+                  {
+                    "id": "sp2",
+                    "left": "Merge Sort",
+                    "right": "O(n log n) - Parçala ve Fethet"
+                  },
+                  {
+                    "id": "sp3",
+                    "left": "Doğrusal Arama (Linear Search)",
+                    "right": "O(n) - Tek tek kontrol"
+                  }
+                ]
+              },
+              {
+                "id": "code-alg3",
+                "type": "true_false",
+                "prompt": "1024 elemanlı sıralı bir dizide Binary Search en fazla 10 adımda sonuca ulaşır mı?",
+                "statement": "2¹⁰ = 1024 olduğu için 1024 elemanlı sıralı bir dizide Binary Search en çok 10 karşılaştırmada aranan elemanı bulur veya olmadığını kanıtlar.",
+                "correctAnswer": true,
+                "explanation": "Harika! log₂(1024) = 10 olduğu için tam olarak en fazla 10 adım sürer."
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "kpss",
+    "name": "KPSS (GY - GK)",
+    "subTitle": "2025 - 2026 Kamu Personeli Seçme Sınavı",
+    "icon": "🏛️",
+    "badge": "Kariyer & Kamu",
+    "color": "#ff9600",
+    "accentColor": "#e08300",
+    "units": [
+      {
+        "id": "kpss-u1",
+        "number": 1,
+        "title": "T.C. İnkılap Tarihi: Milli Mücadele",
+        "description": "Kongreler, cepheler, Lozan Barış Antlaşması ve ilkeler",
+        "color": "#ff9600",
+        "lessons": [
+          {
+            "id": "kpss-u1-l1",
+            "unitId": "kpss-u1",
+            "title": "Milli Mücadele Hazırlık Dönemi",
+            "description": "Amasya Genelgesi, Erzurum ve Sivas Kongreleri kararları.",
+            "xpReward": 20,
+            "gemReward": 5,
+            "type": "lesson",
+            "summaryNotes": [
+              "Amasya Genelgesi: Kurtuluş Savaşı'nın gerekçe, amaç ve yöntemi ilk kez belirtildi.",
+              "Erzurum Kongresi: Manda ve himaye ilk kez reddedildi (Toplanış bölgesel, kararlar ulusal).",
+              "Sivas Kongresi: Tüm cemiyetler 'Anadolu ve Rumeli Müdafaa-i Hukuk' çatısında birleştirildi."
+            ],
+            "questions": [
+              {
+                "id": "kpss-q1",
+                "type": "multiple_choice",
+                "prompt": "'Milletin bağımsızlığını yine milletin azim ve kararı kurtaracaktır.' ilkesi ilk kez nerede ilan edilmiştir?",
+                "difficulty": "kolay",
+                "explanation": "Amasya Genelgesi (22 Haziran 1919), Kurtuluş Savaşı'nın gerekçesini, amacını ve yöntemini belirten ihtilal beyannamesidir.",
+                "options": [
+                  {
+                    "id": "kp1",
+                    "text": "Amasya Genelgesi",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "kp2",
+                    "text": "Erzurum Kongresi",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "kp3",
+                    "text": "Sivas Kongresi",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "kp4",
+                    "text": "Havza Genelgesi",
+                    "isCorrect": false
+                  }
+                ]
+              },
+              {
+                "id": "kpss-q2",
+                "type": "matching",
+                "prompt": "Kongre ve genelgeleri öne çıkan özellikleriyle eşleştirin:",
+                "difficulty": "orta",
+                "explanation": "Havza ilk tepki mitingleri, Erzurum manda ve himayenin ilk reddi, Sivas tüm cemiyetlerin birleştiği yerdir.",
+                "pairs": [
+                  {
+                    "id": "mp1",
+                    "left": "Havza Genelgesi",
+                    "right": "İşgallere karşı ilk kitlesel miting çağrısı"
+                  },
+                  {
+                    "id": "mp2",
+                    "left": "Erzurum Kongresi",
+                    "right": "Manda ve himayenin ilk kez reddi"
+                  },
+                  {
+                    "id": "mp3",
+                    "left": "Sivas Kongresi",
+                    "right": "Tüm milli cemiyetlerin tek çatı altında birleşmesi"
+                  }
+                ]
+              },
+              {
+                "id": "kpss-q3",
+                "type": "true_false",
+                "prompt": "Erzurum Kongresi toplanış bakımından bölgesel, aldığı kararlar bakımından ulusaldır.",
+                "statement": "Erzurum Kongresi toplanışı bölgesel, kararları ulusal niteliktedir.",
+                "correctAnswer": true,
+                "explanation": "Doğru! Doğu illerinin savunması için toplanmış ancak Misak-ı Milli sınırlarını çizerek tüm vatanı ilgilendiren kararlar almıştır."
+              },
+              {
+                "id": "kpss-q3b",
+                "type": "multiple_choice",
+                "prompt": "Mustafa Kemal Paşa'nın 'Siz orada yalnız düşmanı değil, milletin makus talihini de yendiniz.' telgrafını hangi zaferden sonra çekmiştir?",
+                "difficulty": "orta",
+                "explanation": "İsmet İnönü komutasındaki düzenli ordunun kazandığı II. İnönü Zaferi sonrası çekilmiştir.",
+                "options": [
+                  {
+                    "id": "in1",
+                    "text": "II. İnönü Muharebesi",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "in2",
+                    "text": "I. İnönü Muharebesi",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "in3",
+                    "text": "Sakarya Meydan Muharebesi",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "in4",
+                    "text": "Büyük Taarruz",
+                    "isCorrect": false
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "kpss-u1-l2",
+            "unitId": "kpss-u1",
+            "title": "Cepheler & Mudanya - Lozan",
+            "description": "Doğu, Güney, Batı cepheleri ve Türkiye'nin tapu senedi Lozan.",
+            "xpReward": 25,
+            "gemReward": 8,
+            "type": "lesson",
+            "summaryNotes": [
+              "Doğu Cephesi: Gümrü Antlaşması ile kapandı (TBMM'yi tanıyan ilk devlet Ermenistan).",
+              "Güney Cephesi: 1921 Ankara Antlaşması ile kapandı (Fransa çekildi).",
+              "Batı Cephesi: Mudanya Ateşkesi ile silahlı mücadele sona erdi."
+            ],
+            "questions": [
+              {
+                "id": "kpss-cp1",
+                "type": "multiple_choice",
+                "prompt": "Kurtuluş Savaşı'nda Doğu Cephesi hangi antlaşma ile kapanmış ve TBMM uluslararası alanda ilk diplomatik zaferini kazanmıştır?",
+                "difficulty": "kolay",
+                "explanation": "Kazım Karabekir komutasındaki Doğu Cephesi, 3 Aralık 1920 Gümrü Antlaşması ile başarıyla kapanmıştır.",
+                "options": [
+                  {
+                    "id": "gm1",
+                    "text": "Gümrü Antlaşması",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "gm2",
+                    "text": "Moskova Antlaşması",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "gm3",
+                    "text": "Kars Antlaşması",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "gm4",
+                    "text": "Bükreş Antlaşması",
+                    "isCorrect": false
+                  }
+                ]
+              },
+              {
+                "id": "kpss-cp2",
+                "type": "matching",
+                "prompt": "Milli Mücadele kahramanlarını savaştıkları şehirlerle eşleştirin:",
+                "difficulty": "orta",
+                "explanation": "Sütçü İmam Maraş, Şahin Bey Antep, Ali Saip Bey Urfa savunmasında semboldür.",
+                "pairs": [
+                  {
+                    "id": "kp1",
+                    "left": "Sütçü İmam",
+                    "right": "Kahramanmaraş"
+                  },
+                  {
+                    "id": "kp2",
+                    "left": "Şahin Bey",
+                    "right": "Gaziantep"
+                  },
+                  {
+                    "id": "kp3",
+                    "left": "Ali Saip Ursavaş",
+                    "right": "Şanlıurfa"
+                  }
+                ]
+              },
+              {
+                "id": "kpss-cp3",
+                "type": "true_false",
+                "prompt": "Lozan Barış Antlaşması'nda kapitülasyonlar tamamen kaldırılmış mıdır?",
+                "statement": "Lozan Antlaşması ile adli, mali ve ekonomik kapitülasyonlar kayıtsız şartsız kaldırılmıştır.",
+                "correctAnswer": true,
+                "explanation": "Doğrudur! Kapitülasyonların kaldırılması genç Türkiye Cumhuriyeti'nin ekonomik bağımsızlığını sağlamıştır."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "kpss-u2",
+        "number": 2,
+        "title": "2025 - 2026 Güncel Bilgiler & Genel Kültür",
+        "description": "Türkiye'nin uzay misyonu, uluslararası kuruluşlar ve kültür mirası",
+        "color": "#ff4b4b",
+        "lessons": [
+          {
+            "id": "kpss-u2-l1",
+            "unitId": "kpss-u2",
+            "title": "Uzay, Bilim & UNESCO Kültür Mirası",
+            "description": "Sınavda çıkması en muhtemel güncel olaylar.",
+            "xpReward": 25,
+            "gemReward": 8,
+            "type": "lesson",
+            "summaryNotes": [
+              "Alper Gezeravcı: Ax-3 misyonu ile ilk Türk astronot (13 deney gerçekleştirdi).",
+              "Gordion Antik Kenti (Ankara): UNESCO Dünya Mirası 20. varlığımız.",
+              "Anadolu Ahşap Direkli Camileri: UNESCO Dünya Mirası 21. varlığımız."
+            ],
+            "questions": [
+              {
+                "id": "kpss-g1",
+                "type": "multiple_choice",
+                "prompt": "Türkiye'nin ilk astronotu olarak Uluslararası Uzay İstasyonu'na (ISS) giderek Ax-3 misyonunda 13 farklı bilimsel deney gerçekleştiren isim kimdir?",
+                "difficulty": "kolay",
+                "explanation": "Alper Gezeravcı, Ocak 2024'te Ax-3 misyonu ile uzaya çıkan ilk Türk astronotumuz olmuştur.",
+                "options": [
+                  {
+                    "id": "g1",
+                    "text": "Alper Gezeravcı",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "g2",
+                    "text": "Tuva Cihangir Atasever",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "g3",
+                    "text": "Aziz Sancar",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "g4",
+                    "text": "Selçuk Bayraktar",
+                    "isCorrect": false
+                  }
+                ]
+              },
+              {
+                "id": "kpss-g2",
+                "type": "matching",
+                "prompt": "UNESCO Somut Olmayan Kültürel Miras unsurlarımızı eşleştirin:",
+                "difficulty": "orta",
+                "explanation": "İftar geleneği ve tezhip sanatı son dönemde UNESCO listesine dahil edilmiştir.",
+                "pairs": [
+                  {
+                    "id": "u1",
+                    "left": "Geleneksel Ahşap Çatı ve Direkli Camiler",
+                    "right": "UNESCO Dünya Mirası Asıl Listesi (2023)"
+                  },
+                  {
+                    "id": "u2",
+                    "left": "İftar ve Sosyokültürel Gelenekleri",
+                    "right": "UNESCO Somut Olmayan Kültür Mirası"
+                  },
+                  {
+                    "id": "u3",
+                    "left": "Gordion Antik Kenti (Ankara)",
+                    "right": "UNESCO Dünya Miras Listesi (20. Mirasımız)"
+                  }
+                ]
+              },
+              {
+                "id": "kpss-g3",
+                "type": "multiple_choice",
+                "prompt": "2024 Avrupa Futbol Şampiyonası (EURO 2024) hangi ülkede düzenlenmiştir?",
+                "difficulty": "kolay",
+                "explanation": "EURO 2024, Almanya'nın ev sahipliğinde gerçekleşmiş ve A Milli Takımımız çeyrek finale yükselmiştir.",
+                "options": [
+                  {
+                    "id": "eu1",
+                    "text": "Almanya",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "eu2",
+                    "text": "Fransa",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "eu3",
+                    "text": "İtalya",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "eu4",
+                    "text": "İngiltere",
+                    "isCorrect": false
+                  }
+                ]
+              },
+              {
+                "id": "kpss-g4",
+                "type": "true_false",
+                "prompt": "Gordion Antik Kenti Türkiye'nin UNESCO Dünya Miras Listesi'ndeki 20. mirası mıdır?",
+                "statement": "Ankara'nın Polatlı ilçesinde bulunan Frig uygarlığının başkenti Gordion Antik Kenti, Türkiye'nin UNESCO Dünya Mirası Listesi'ndeki 20. varlığıdır.",
+                "correctAnswer": true,
+                "explanation": "Kesinlikle doğru! Eylül 2023'te 20. mirasımız olarak tescil edilmiştir."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "kpss-u3",
+        "number": 3,
+        "title": "KPSS Vatandaşlık & 1982 Anayasası",
+        "description": "Devlet organları, TBMM yapısı, Cumhurbaşkanlığı ve yargı denetimi",
+        "color": "#ff9600",
+        "lessons": [
+          {
+            "id": "kpss-u3-l1",
+            "unitId": "kpss-u3",
+            "title": "Yasama & TBMM Seçimleri",
+            "description": "Milletvekili sayısı, seçim dönemleri ve kanun yapma süreci.",
+            "xpReward": 25,
+            "gemReward": 8,
+            "type": "lesson",
+            "summaryNotes": [
+              "TBMM üye sayısı: 600 milletvekilidir.",
+              "Milletvekili seçilme yaşı: 18 yaştır.",
+              "Genel seçimler 5 yılda bir Cumhurbaşkanı seçimi ile aynı gün yapılır.",
+              "Anayasa Mahkemesi 15 üyeden oluşur."
+            ],
+            "questions": [
+              {
+                "id": "kpss-v1",
+                "type": "multiple_choice",
+                "prompt": "1982 Anayasası'na göre Türkiye Büyük Millet Meclisi (TBMM) kaç milletvekilinden oluşur?",
+                "difficulty": "kolay",
+                "explanation": "2017 anayasa değişikliği ile TBMM milletvekili sayısı 550'den 600'e çıkarılmıştır.",
+                "options": [
+                  {
+                    "id": "v1",
+                    "text": "600 Milletvekili",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "v2",
+                    "text": "550 Milletvekili",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "v3",
+                    "text": "450 Milletvekili",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "v4",
+                    "text": "650 Milletvekili",
+                    "isCorrect": false
+                  }
+                ]
+              },
+              {
+                "id": "kpss-v2",
+                "type": "multiple_choice",
+                "prompt": "1982 Anayasası'na göre Anayasa Mahkemesi (AYM) toplam kaç üyeden oluşur?",
+                "difficulty": "orta",
+                "explanation": "Anayasa Mahkemesi 15 üyeden oluşur (12 üye Cumhurbaşkanı, 3 üye TBMM tarafından seçilir).",
+                "options": [
+                  {
+                    "id": "ay1",
+                    "text": "15 üye",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "ay2",
+                    "text": "12 üye",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "ay3",
+                    "text": "17 üye",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "ay4",
+                    "text": "11 üye",
+                    "isCorrect": false
+                  }
+                ]
+              },
+              {
+                "id": "kpss-v3",
+                "type": "true_false",
+                "prompt": "Cumhurbaşkanı kararnamesi ile temel haklar sınırlandırılabilir mi?",
+                "statement": "Anayasada münhasıran kanunla düzenlenmesi öngörülen konularda Cumhurbaşkanlığı kararnamesi çıkarılamaz.",
+                "correctAnswer": true,
+                "explanation": "Doğrudur! Anayasa madde 104 gereği kanunla açıkça düzenlenen konularda CB kararnamesi çıkarılamaz."
+              },
+              {
+                "id": "kpss-v4",
+                "type": "multiple_choice",
+                "prompt": "1982 Anayasası'na göre milletvekili seçilme yaşı kaçtır?",
+                "difficulty": "kolay",
+                "explanation": "2017 değişikliği ile milletvekili seçilme yaşı 25'ten 18'e indirilmiştir.",
+                "options": [
+                  {
+                    "id": "ys1",
+                    "text": "18 yaş",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "ys2",
+                    "text": "21 yaş",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "ys3",
+                    "text": "25 yaş",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "ys4",
+                    "text": "30 yaş",
+                    "isCorrect": false
+                  }
                 ]
               }
             ]
@@ -408,586 +2056,659 @@ export const COURSES: Course[] = [
       }
     ]
   },
-
-  // ==========================================
-  // 2. KODLAMA & YAZILIM
-  // ==========================================
   {
-    id: 'kodlama',
-    name: 'Kodlama & Yazılım',
-    subTitle: 'Python, JavaScript, Algoritmalar & Yapay Zeka',
-    icon: '💻',
-    badge: 'Geleceğin Mesleği',
-    color: '#af72ff',
-    accentColor: '#9047ff',
-    units: [
+    "id": "lgs",
+    "name": "LGS (8. Sınıf)",
+    "subTitle": "Yeni Nesil Beceri Temelli Sorular",
+    "icon": "📚",
+    "badge": "Yeni Nesil",
+    "color": "#ff4b4b",
+    "accentColor": "#d33131",
+    "units": [
       {
-        id: 'kod-u1',
-        number: 1,
-        title: 'Python Temelleri & Söz Dizimi',
-        description: 'Değişkenler, dinamik tipleme, string metodları ve operatörler',
-        color: '#af72ff',
-        lessons: [
+        "id": "lgs-u1",
+        "number": 1,
+        "title": "Matematik: Çarpanlar ve Katlar",
+        "description": "EBOB-EKOK problemleri ve yeni nesil soru mantığı",
+        "color": "#ff4b4b",
+        "lessons": [
           {
-            id: 'kod-u1-l1',
-            unitId: 'kod-u1',
-            title: 'Değişkenler ve Ekrana Yazdırma',
-            description: 'Python syntax yapısı ve temel konsol çıktıları.',
-            xpReward: 20,
-            gemReward: 5,
-            type: 'lesson',
-            summaryNotes: [
-              'print("Metin"): Ekrana metin yazar.',
-              'Değişken tanımlarken tip belirtmeye gerek yoktur (Dinamik tip).',
-              'str: Metin, int: Tam sayı, float: Ondalıklı sayı, bool: True/False'
+            "id": "lgs-u1-l1",
+            "unitId": "lgs-u1",
+            "title": "EBOB & EKOK Mantığı",
+            "description": "Parçadan bütüne (EKOK) ve bütünden parçaya (EBOB) modellemesi.",
+            "xpReward": 20,
+            "gemReward": 5,
+            "type": "lesson",
+            "summaryNotes": [
+              "Büyük parçaları küçük eşit parçalara bölüyorsan ➔ EBOB",
+              "Küçük parçaları birleştirip büyük bir bütün yapıyorsan ➔ EKOK",
+              "Aralarında asal iki sayının EBOB'u 1, EKOK'u ise çarpımlarıdır!"
             ],
-            questions: [
+            "questions": [
               {
-                id: 'code-q1',
-                type: 'code_fill',
-                prompt: 'Python\'da ekrana "Merhaba AkademiGO!" yazdırmak için eksik fonksiyonu tamamlayın:',
-                codeSnippet: '___("Merhaba AkademiGO!")',
-                blankId: 'print',
-                options: ['print', 'console.log', 'echo', 'display'],
-                correctAnswer: 'print',
-                explanation: 'Python\'da standart çıktı vermek için yerleşik print() fonksiyonu kullanılır.'
-              },
-              {
-                id: 'code-q2',
-                type: 'multiple_choice',
-                prompt: 'x = "15" ve y = 5 olduğunda type(x) ve type(y) sırasıyla nedir?',
-                difficulty: 'kolay',
-                explanation: 'Tırnak içerisindeki değerler string (str), tırnaksız tam sayılar integer (int) veri tipindedir.',
-                options: [
-                  { id: 'c1', text: 'str ve int', isCorrect: true },
-                  { id: 'c2', text: 'int ve str', isCorrect: false },
-                  { id: 'c3', text: 'int ve float', isCorrect: false },
-                  { id: 'c4', text: 'str ve float', isCorrect: false }
+                "id": "lgs-q1",
+                "type": "multiple_choice",
+                "prompt": "Kenar uzunlukları 12 cm ve 18 cm olan dikdörtgen levhalar yan yana dizilerek en küçük boyutlu bir KARE yapılmak isteniyor. Bu karenin bir kenarı kaç cm olmalıdır?",
+                "difficulty": "orta",
+                "hint": "Küçük parçaları birleştirip büyük bir bütün oluştururken EKOK kullanılır.",
+                "explanation": "12 ve 18 sayılarının EKOK'u: EKOK(12, 18) = 36 cm bulunur. Karenin bir kenarı 36 cm olmalıdır.",
+                "options": [
+                  {
+                    "id": "l1",
+                    "text": "36 cm",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "l2",
+                    "text": "72 cm",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "l3",
+                    "text": "24 cm",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "l4",
+                    "text": "6 cm",
+                    "isCorrect": false
+                  }
                 ]
               },
               {
-                id: 'code-q3',
-                type: 'matching',
-                prompt: 'Python veri tiplerini örnekleriyle eşleştirin:',
-                difficulty: 'kolay',
-                explanation: 'int: tam sayı, float: ondalıklı, bool: mantıksal, list: sıralı koleksiyon.',
-                pairs: [
-                  { id: 'cp1', left: '42', right: 'int (Tam sayı)' },
-                  { id: 'cp2', left: '3.14', right: 'float (Ondalıklı)' },
-                  { id: 'cp3', left: 'True', right: 'bool (Mantıksal)' },
-                  { id: 'cp4', left: '["elma", "armut"]', right: 'list (Liste)' }
+                "id": "lgs-q2",
+                "type": "matching",
+                "prompt": "Problem türlerini çözüm yöntemleriyle eşleştirin:",
+                "difficulty": "kolay",
+                "explanation": "Büyük çuvalları poşetlere bölmek EBOB, nöbet günlerinin çakışması EKOK gerektirir.",
+                "pairs": [
+                  {
+                    "id": "lp1",
+                    "left": "Büyük çuvallardaki pirinçleri eşit poşetlere bölme",
+                    "right": "EBOB (Bütünden parçaya)"
+                  },
+                  {
+                    "id": "lp2",
+                    "left": "Farklı aralıklarla çalan iki zilin tekrar birlikte çalması",
+                    "right": "EKOK (Parçadan bütüne)"
+                  },
+                  {
+                    "id": "lp3",
+                    "left": "Tarlanın etrafına eşit aralıklarla fidan dikme",
+                    "right": "EBOB (Bölme / Parçalama)"
+                  }
                 ]
               },
               {
-                id: 'code-q4',
-                type: 'true_false',
-                prompt: 'Python\'da değişken adları bir rakam ile başlayabilir mi?',
-                statement: 'Python değişken adları (örneğin 1sayi = 10) rakamla başlayabilir.',
-                correctAnswer: false,
-                explanation: 'Doğru! Değişken adları harf veya alt çizgi (_) ile başlamalıdır, rakamla başlayamaz!'
+                "id": "lgs-q3",
+                "type": "multiple_choice",
+                "prompt": "48 kg pirinç ve 60 kg bulgur birbirine karıştırılmadan ve hiç artmayacak şekilde eşit hacimli poşetlere konulacaktır. Bir poşet en fazla kaç kg olabilir?",
+                "difficulty": "kolay",
+                "explanation": "En fazla poşet ağırlığı için EBOB(48, 60) alınır. EBOB(48, 60) = 12 kg.",
+                "options": [
+                  {
+                    "id": "eb1",
+                    "text": "12 kg",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "eb2",
+                    "text": "6 kg",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "eb3",
+                    "text": "24 kg",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "eb4",
+                    "text": "15 kg",
+                    "isCorrect": false
+                  }
+                ]
+              },
+              {
+                "id": "lgs-q4",
+                "type": "true_false",
+                "prompt": "1 sayısı tüm pozitif tam sayılarla aralarında asal mıdır?",
+                "statement": "1 sayısı kendisi dışındaki tüm pozitif tam sayılarla aralarında asaldır.",
+                "correctAnswer": true,
+                "explanation": "Doğrudur! Ortak bölenleri yalnızca 1 olduğu için 1 her sayıyla aralarında asaldır."
               }
             ]
           },
           {
-            id: 'kod-u1-l2',
-            unitId: 'kod-u1',
-            title: 'Döngüler & Koşullar (if/else)',
-            description: 'Karar yapıları ve for/while döngüleri ile program akışını yönetme.',
-            xpReward: 25,
-            gemReward: 8,
-            type: 'lesson',
-            questions: [
+            "id": "lgs-u1-l2",
+            "unitId": "lgs-u1",
+            "title": "Üslü İfadeler & Bilimsel Gösterim",
+            "description": "Üs kuralları, negatif kuvvet ve 1 ≤ |a| < 10 bilimsel gösterim kuralı.",
+            "xpReward": 25,
+            "gemReward": 8,
+            "type": "lesson",
+            "summaryNotes": [
+              "Tabanlar aynıysa çarparken üsler toplanır: a^x × a^y = a^(x+y)",
+              "Üssün üssü çarpılır: (a^x)^y = a^(x×y)",
+              "Bilimsel gösterim: 1 ≤ |a| < 10 olmak üzere a × 10^n şeklinde yazılır."
+            ],
+            "questions": [
               {
-                id: 'code-q5',
-                type: 'code_fill',
-                prompt: 'Bir sayının 10\'dan büyük olup olmadığını kontrol etmek için eksik anahtar kelimeyi seçin:',
-                codeSnippet: 'sayi = 15\n___ sayi > 10:\n    print("Büyük")',
-                blankId: 'if',
-                options: ['if', 'while', 'check', 'when'],
-                correctAnswer: 'if',
-                explanation: 'Koşullu ifadeler için "if" anahtar sözcüğü kullanılır.'
+                "id": "lgs-us1",
+                "type": "multiple_choice",
+                "prompt": "2¹⁰ sayısının yarısı kaçtır?",
+                "difficulty": "orta",
+                "hint": "Bir sayıyı ikiye bölmek, tabanı 2 olan üslü ifadeyi 2¹'e bölmektir.",
+                "explanation": "2¹⁰ / 2¹ = 2^(10 - 1) = 2⁹ bulunur!",
+                "options": [
+                  {
+                    "id": "us1",
+                    "text": "2⁹",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "us2",
+                    "text": "2⁵",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "us3",
+                    "text": "1¹⁰",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "us4",
+                    "text": "2⁸",
+                    "isCorrect": false
+                  }
+                ]
               },
               {
-                id: 'code-q6',
-                type: 'multiple_choice',
-                prompt: 'for i in range(3): print(i) kodunun çıktısı ne olur?',
-                difficulty: 'orta',
-                explanation: 'range(3), 0\'dan başlayarak 3\'e kadar (3 hariç) 0, 1, 2 değerlerini üretir.',
-                options: [
-                  { id: 'r1', text: '0 1 2', isCorrect: true },
-                  { id: 'r2', text: '1 2 3', isCorrect: false },
-                  { id: 'r3', text: '0 1 2 3', isCorrect: false },
-                  { id: 'r4', text: '3', isCorrect: false }
+                "id": "lgs-us2",
+                "type": "multiple_choice",
+                "prompt": "0,000045 sayısının bilimsel gösterimi aşağıdakilerden hangisidir?",
+                "difficulty": "orta",
+                "explanation": "Bilimsel gösterimde katsayı 1 ile 10 arasında olmalıdır. Virgül 5 basamak sağa kaydırılır: 4,5 × 10⁻⁵.",
+                "options": [
+                  {
+                    "id": "bg1",
+                    "text": "4,5 × 10⁻⁵",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "bg2",
+                    "text": "45 × 10⁻⁶",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "bg3",
+                    "text": "0,45 × 10⁻⁴",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "bg4",
+                    "text": "4,5 × 10⁵",
+                    "isCorrect": false
+                  }
+                ]
+              },
+              {
+                "id": "lgs-us3",
+                "type": "true_false",
+                "prompt": "Herhangi bir sayının sıfırıncı kuvveti daima 1 midir (sıfır hariç)?",
+                "statement": "Sıfır hariç tüm reel sayıların sıfırıncı kuvveti 1'e eşittir: a⁰ = 1 (a ≠ 0).",
+                "correctAnswer": true,
+                "explanation": "Doğru! 0⁰ belirsizdir, diğer tüm sayıların 0. kuvveti 1'dir."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "lgs-u2",
+        "number": 2,
+        "title": "LGS Fen Bilimleri: Mevsimler & DNA",
+        "description": "Eksen eğikliği, güneş ışınlarının geliş açısı ve DNA replikasyonu",
+        "color": "#58cc02",
+        "lessons": [
+          {
+            "id": "lgs-u2-l1",
+            "unitId": "lgs-u2",
+            "title": "Mevsimlerin Oluşumu & Eksen Eğikliği",
+            "description": "21 Haziran, 21 Aralık gün dönümleri ve gece-gündüz süreleri.",
+            "xpReward": 25,
+            "gemReward": 8,
+            "type": "lesson",
+            "summaryNotes": [
+              "Mevsimlerin oluşmasının 2 temel sebebi vardır: Dünyanın Güneş etrafında dolanması ve 23° 27' eksen eğikliği.",
+              "Güneş ışınları dik açıyla (90°) gelirse birim yüzeye düşen enerji fazla olur, sıcaklık artar (Yaz).",
+              "21 Haziran'da Kuzey Yarım Küre'de en uzun gündüz yaşanır."
+            ],
+            "questions": [
+              {
+                "id": "lgs-fen-1",
+                "type": "multiple_choice",
+                "prompt": "Dünya'da mevsimlerin oluşmasının temel sebebi aşağıdakilerden hangisidir?",
+                "difficulty": "kolay",
+                "explanation": "Mevsimlerin oluşumu eksen eğikliği ve Dünya'nın Güneş etrafındaki dolanma hareketinden kaynaklanır.",
+                "options": [
+                  {
+                    "id": "m1",
+                    "text": "Dünya'nın eksen eğikliği ve Güneş etrafında dolanması",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "m2",
+                    "text": "Dünya'nın Güneş'e olan mesafesinin değişmesi",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "m3",
+                    "text": "Dünya'nın kendi ekseni etrafında dönmesi",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "m4",
+                    "text": "Ay'ın evreleri",
+                    "isCorrect": false
+                  }
+                ]
+              },
+              {
+                "id": "lgs-fen-2",
+                "type": "multiple_choice",
+                "prompt": "DNA molekülünde Adenin (A) nükleotidinin karşısına her zaman hangi nükleotid gelir?",
+                "difficulty": "kolay",
+                "explanation": "DNA çift sarmalında Adenin (A) daima Timin (T) ile, Guanin (G) ise daima Sitozin (C/S) ile eşleşir.",
+                "options": [
+                  {
+                    "id": "dna1",
+                    "text": "Timin (T)",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "dna2",
+                    "text": "Guanin (G)",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "dna3",
+                    "text": "Sitozin (S)",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "dna4",
+                    "text": "Urasil (U)",
+                    "isCorrect": false
+                  }
+                ]
+              },
+              {
+                "id": "lgs-fen-3",
+                "type": "true_false",
+                "prompt": "21 Mart ve 23 Eylül tarihlerinde tüm Dünya'da gece ve gündüz süreleri eşit (12 saat) midir?",
+                "statement": "Ekinoks tarihlerinde (21 Mart - 23 Eylül) Güneş ışınları Ekvator'a dik gelir ve Dünya genelinde gece-gündüz süreleri eşittir.",
+                "correctAnswer": true,
+                "explanation": "Harika! Ekinoks dönemlerinde gece ve gündüz 12'şer saat olarak eşitlenir."
+              },
+              {
+                "id": "lgs-fen-4",
+                "type": "multiple_choice",
+                "prompt": "Kalıtım birimlerinin basitten karmaşığa (küçükten büyüğe) doğru sıralanışı hangisidir?",
+                "difficulty": "orta",
+                "explanation": "KeDiGeNi kodlaması: Kromozom > DNA > Gen > Nükleotid. Küçükten büyüğe: Nükleotid < Gen < DNA < Kromozom.",
+                "options": [
+                  {
+                    "id": "kd1",
+                    "text": "Nükleotid < Gen < DNA < Kromozom",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "kd2",
+                    "text": "Kromozom < DNA < Gen < Nükleotid",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "kd3",
+                    "text": "Gen < Nükleotid < DNA < Kromozom",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "kd4",
+                    "text": "Nükleotid < DNA < Gen < Kromozom",
+                    "isCorrect": false
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "dil",
+    "name": "İngilizce (A1 - B2)",
+    "subTitle": "Konuşma, Gramer & YDS/YÖKDİL Kelimeleri",
+    "icon": "🌍",
+    "badge": "Küresel Dil",
+    "color": "#1cb0f6",
+    "accentColor": "#1899d6",
+    "units": [
+      {
+        "id": "dil-u1",
+        "number": 1,
+        "title": "Günlük Konuşma & Tanışma (A1)",
+        "description": "Temel selamlaşmalar, kendini tanıtma ve yaygın kalıplar",
+        "color": "#1cb0f6",
+        "lessons": [
+          {
+            "id": "dil-u1-l1",
+            "unitId": "dil-u1",
+            "title": "Selamlaşma & İfadeler",
+            "description": "Hello, How are you?, Nice to meet you kalıpları.",
+            "xpReward": 20,
+            "gemReward": 5,
+            "type": "lesson",
+            "summaryNotes": [
+              "'How are you doing?' = Nasılsın? / Nasıl gidiyor?",
+              "'Nice to meet you' = Tanıştığıma memnun oldum (Karşılığı: 'Nice to meet you too')",
+              "'Where are you from?' = Nerelisin? (Cevap: 'I am from Turkey')"
+            ],
+            "questions": [
+              {
+                "id": "dil-q1",
+                "type": "multiple_choice",
+                "prompt": "'Nice to meet you' diyen birine en kibar ve doğal karşılık ne olur?",
+                "difficulty": "kolay",
+                "explanation": "'Nice to meet you' (Tanıştığıma memnun oldum) ifadesine 'Nice to meet you too' (Ben de memnun oldum) şeklinde yanıt verilir.",
+                "options": [
+                  {
+                    "id": "d1",
+                    "text": "Nice to meet you too!",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "d2",
+                    "text": "I am 20 years old.",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "d3",
+                    "text": "Yes, I do.",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "d4",
+                    "text": "Goodbye tomorrow.",
+                    "isCorrect": false
+                  }
+                ]
+              },
+              {
+                "id": "dil-q2",
+                "type": "matching",
+                "prompt": "İngilizce kelimeleri Türkçe karşılıklarıyla eşleştirin:",
+                "difficulty": "kolay",
+                "explanation": "Günlük yaygın fiiller ve isimler.",
+                "pairs": [
+                  {
+                    "id": "dp1",
+                    "left": "Learn",
+                    "right": "Öğrenmek"
+                  },
+                  {
+                    "id": "dp2",
+                    "left": "Knowledge",
+                    "right": "Bilgi"
+                  },
+                  {
+                    "id": "dp3",
+                    "left": "Challenge",
+                    "right": "Meydan Okuma"
+                  },
+                  {
+                    "id": "dp4",
+                    "left": "Goal",
+                    "right": "Hedef"
+                  }
+                ]
+              },
+              {
+                "id": "dil-q3",
+                "type": "code_fill",
+                "prompt": "Cümleyi uygun yardımcı fiil ile tamamlayın: 'She ___ studying for the exam right now.'",
+                "codeSnippet": "She ___ studying for the exam right now.",
+                "blankId": "is",
+                "options": [
+                  "is",
+                  "are",
+                  "am",
+                  "be"
+                ],
+                "correctAnswer": "is",
+                "explanation": "Present Continuous Tense yapısında 'he/she/it' özneleri 'is' yardımcı fiilini alır."
+              },
+              {
+                "id": "dil-q4",
+                "type": "multiple_choice",
+                "prompt": "'What time is it?' sorusuna saat 09:30 iken nasıl cevap verilir?",
+                "difficulty": "kolay",
+                "explanation": "İngilizce'de buçuklar 'half past' kalıbıyla söylenir: 'It is half past nine.'",
+                "options": [
+                  {
+                    "id": "tm1",
+                    "text": "It is half past nine.",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "tm2",
+                    "text": "It is quarter to nine.",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "tm3",
+                    "text": "It is nine o'clock.",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "tm4",
+                    "text": "It is ten past nine.",
+                    "isCorrect": false
+                  }
                 ]
               }
             ]
           },
           {
-            id: 'kod-u1-chest',
-            unitId: 'kod-u1',
-            title: 'Geliştirici Sandığı 🎁',
-            description: 'İlk kodlama adımlarını başarıyla tamamladın!',
-            xpReward: 50,
-            gemReward: 30,
-            type: 'chest',
-            questions: []
-          }
-        ]
-      },
-      {
-        id: 'kod-u2',
-        number: 2,
-        title: 'Veri Yapıları & Algoritmalar',
-        description: 'Listeler, Sözlükler (Dictionary), Kümeler ve Big O Karmaşıklığı',
-        color: '#1cb0f6',
-        lessons: [
-          {
-            id: 'kod-u2-l1',
-            unitId: 'kod-u2',
-            title: 'Sözlükler (Key-Value) & List Metodları',
-            description: 'Verileri anahtar-değer çiftleriyle saklama ve hızlı erişim.',
-            xpReward: 30,
-            gemReward: 10,
-            type: 'lesson',
-            questions: [
-              {
-                id: 'code-q7',
-                type: 'multiple_choice',
-                prompt: 'ogrenci = {"ad": "Ali", "puan": 95} sözlüğünde Ali\'nin puanını ekrana yazdırmak için hangi kod kullanılır?',
-                difficulty: 'kolay',
-                explanation: 'Sözlüklerde bir değere erişmek için anahtar ismi köşeli parantez içinde verilir: ogrenci["puan"] ➔ 95.',
-                options: [
-                  { id: 'd1', text: 'ogrenci["puan"]', isCorrect: true },
-                  { id: 'd2', text: 'ogrenci[1]', isCorrect: false },
-                  { id: 'd3', text: 'ogrenci.puan()', isCorrect: false },
-                  { id: 'd4', text: 'ogrenci.get_index(95)', isCorrect: false }
-                ]
-              },
-              {
-                id: 'code-q8',
-                type: 'matching',
-                prompt: 'Zaman karmaşıklıklarını (Big-O) örnek operasyonlarla eşleştirin:',
-                difficulty: 'orta',
-                explanation: 'O(1) anında erişim, O(n) diziyi tek tur tarama, O(log n) ikili arama (Binary Search).',
-                pairs: [
-                  { id: 'b1', left: 'O(1) - Sabit Zaman', right: 'Dizi indeksine doğrudan erişim' },
-                  { id: 'b2', left: 'O(n) - Doğrusal Zaman', right: 'Dizideki tüm elemanları for ile gezme' },
-                  { id: 'b3', left: 'O(log n) - Logaritmik Zaman', right: 'Sıralı dizide İkili Arama (Binary Search)' }
-                ]
-              }
-            ]
-          }
-        ]
-      }
-    ]
-  },
-
-  // ==========================================
-  // 3. KPSS (GY - GK)
-  // ==========================================
-  {
-    id: 'kpss',
-    name: 'KPSS (GY - GK)',
-    subTitle: '2025 - 2026 Kamu Personeli Seçme Sınavı',
-    icon: '🏛️',
-    badge: 'Kariyer & Kamu',
-    color: '#ff9600',
-    accentColor: '#e08300',
-    units: [
-      {
-        id: 'kpss-u1',
-        number: 1,
-        title: 'T.C. İnkılap Tarihi: Milli Mücadele',
-        description: 'Kongreler, cepheler, Lozan Barış Antlaşması ve ilkeler',
-        color: '#ff9600',
-        lessons: [
-          {
-            id: 'kpss-u1-l1',
-            unitId: 'kpss-u1',
-            title: 'Milli Mücadele Hazırlık Dönemi',
-            description: 'Amasya Genelgesi, Erzurum ve Sivas Kongreleri kararları.',
-            xpReward: 20,
-            gemReward: 5,
-            type: 'lesson',
-            questions: [
-              {
-                id: 'kpss-q1',
-                type: 'multiple_choice',
-                prompt: '"Milletin bağımsızlığını yine milletin azim ve kararı kurtaracaktır." ilkesi ilk kez nerede ilan edilmiştir?',
-                difficulty: 'kolay',
-                explanation: 'Amasya Genelgesi (22 Haziran 1919), Kurtuluş Savaşı\'nın gerekçesini, amacını ve yöntemini belirten ihtilal beyannamesidir.',
-                options: [
-                  { id: 'kp1', text: 'Amasya Genelgesi', isCorrect: true },
-                  { id: 'kp2', text: 'Erzurum Kongresi', isCorrect: false },
-                  { id: 'kp3', text: 'Sivas Kongresi', isCorrect: false },
-                  { id: 'kp4', text: 'Havza Genelgesi', isCorrect: false }
-                ]
-              },
-              {
-                id: 'kpss-q2',
-                type: 'matching',
-                prompt: 'Kongre ve genelgeleri öne çıkan özellikleriyle eşleştirin:',
-                difficulty: 'orta',
-                explanation: 'Havza ilk tepki mitingleri, Erzurum manda ve himayenin ilk reddi, Sivas tüm cemiyetlerin birleştiği yerdir.',
-                pairs: [
-                  { id: 'mp1', left: 'Havza Genelgesi', right: 'İşgallere karşı ilk kitlesel miting çağrısı' },
-                  { id: 'mp2', left: 'Erzurum Kongresi', right: 'Manda ve himayenin ilk kez reddi' },
-                  { id: 'mp3', left: 'Sivas Kongresi', right: 'Tüm milli cemiyetlerin tek çatı altında birleşmesi' }
-                ]
-              },
-              {
-                id: 'kpss-q3',
-                type: 'true_false',
-                prompt: 'Erzurum Kongresi toplanış bakımından bölgesel, aldığı kararlar bakımından ulusaldır.',
-                statement: 'Erzurum Kongresi toplanışı bölgesel, kararları ulusal niteliktedir.',
-                correctAnswer: true,
-                explanation: 'Doğru! Doğu illerinin savunması için toplanmış ancak Misak-ı Milli sınırlarını çizerek tüm vatanı ilgilendiren kararlar almıştır.'
-              }
-            ]
-          }
-        ]
-      },
-      {
-        id: 'kpss-u2',
-        number: 2,
-        title: '2025 - 2026 Güncel Bilgiler & Genel Kültür',
-        description: 'Türkiye\'nin uzay misyonu, uluslararası kuruluşlar ve kültür mirası',
-        color: '#ff4b4b',
-        lessons: [
-          {
-            id: 'kpss-u2-l1',
-            unitId: 'kpss-u2',
-            title: 'Uzay, Bilim & UNESCO Kültür Mirası',
-            description: 'Sınavda çıkması en muhtemel güncel olaylar.',
-            xpReward: 25,
-            gemReward: 8,
-            type: 'lesson',
-            questions: [
-              {
-                id: 'kpss-g1',
-                type: 'multiple_choice',
-                prompt: 'Türkiye\'nin ilk astronotu olarak Uluslararası Uzay İstasyonu\'na (ISS) giderek Ax-3 misyonunda 13 farklı bilimsel deney gerçekleştiren isim kimdir?',
-                difficulty: 'kolay',
-                explanation: 'Alper Gezeravcı, Ocak 2024\'te Ax-3 misyonu ile uzaya çıkan ilk Türk astronotumuz olmuştur.',
-                options: [
-                  { id: 'g1', text: 'Alper Gezeravcı', isCorrect: true },
-                  { id: 'g2', text: 'Tuva Cihangir Atasever', isCorrect: false },
-                  { id: 'g3', text: 'Aziz Sancar', isCorrect: false },
-                  { id: 'g4', text: 'Selçuk Bayraktar', isCorrect: false }
-                ]
-              },
-              {
-                id: 'kpss-g2',
-                type: 'matching',
-                prompt: 'UNESCO Somut Olmayan Kültürel Miras unsurlarımızı eşleştirin:',
-                difficulty: 'orta',
-                explanation: 'İftar geleneği ve tezhip sanatı son dönemde UNESCO listesine dahil edilmiştir.',
-                pairs: [
-                  { id: 'u1', left: 'Geleneksel Ahşap Çatı ve Direkli Camiler', right: 'UNESCO Dünya Mirası Asıl Listesi (2023)' },
-                  { id: 'u2', left: 'İftar ve Sosyokültürel Gelenekleri', right: 'UNESCO Somut Olmayan Kültür Mirası' },
-                  { id: 'u3', left: 'Gordion Antik Kenti (Ankara)', right: 'UNESCO Dünya Miras Listesi (20. Mirasımız)' }
-                ]
-              }
-            ]
-          }
-        ]
-      },
-      {
-        id: 'kpss-u3',
-        number: 3,
-        title: 'KPSS Vatandaşlık & 1982 Anayasası',
-        description: 'Devlet organları, TBMM yapısı, Cumhurbaşkanlığı ve yargı denetimi',
-        color: '#ff9600',
-        lessons: [
-          {
-            id: 'kpss-u3-l1',
-            unitId: 'kpss-u3',
-            title: 'Yasama & TBMM Seçimleri',
-            description: 'Milletvekili sayısı, seçim dönemleri ve kanun yapma süreci.',
-            xpReward: 25,
-            gemReward: 8,
-            type: 'lesson',
-            summaryNotes: [
-              'TBMM üye sayısı: 600 milletvekilidir.',
-              'Milletvekili seçilme yaşı: 18 yaştır.',
-              'Genel seçimler 5 yılda bir Cumhurbaşkanı seçimi ile aynı gün yapılır.',
-              'Anayasa Mahkemesi 15 üyeden oluşur.'
+            "id": "dil-u1-l2",
+            "unitId": "dil-u1",
+            "title": "Geniş Zaman & Şimdiki Zaman (Simple Present)",
+            "description": "Günlük rutinler, sıklık zarfları (always, often, never) ve -s takısı.",
+            "xpReward": 25,
+            "gemReward": 8,
+            "type": "lesson",
+            "summaryNotes": [
+              "He / She / It öznelerinde olumlu cümlede fiile -s, -es, -ies gelir (He plays, she watches).",
+              "Soru ve olumsuzda Does / Doesn't gelir ve fiil yalın kalır: 'He doesn't like coffee.'",
+              "Always (%100), Usually (%80), Often (%60), Sometimes (%50), Never (%0)."
             ],
-            questions: [
+            "questions": [
               {
-                id: 'kpss-v1',
-                type: 'multiple_choice',
-                prompt: '1982 Anayasası\'na göre Türkiye Büyük Millet Meclisi (TBMM) kaç milletvekilinden oluşur?',
-                difficulty: 'kolay',
-                explanation: '2017 anayasa değişikliği ile TBMM milletvekili sayısı 550\'den 600\'e çıkarılmıştır.',
-                options: [
-                  { id: 'v1', text: '600 Milletvekili', isCorrect: true },
-                  { id: 'v2', text: '550 Milletvekili', isCorrect: false },
-                  { id: 'v3', text: '450 Milletvekili', isCorrect: false },
-                  { id: 'v4', text: '650 Milletvekili', isCorrect: false }
+                "id": "dil-gr1",
+                "type": "multiple_choice",
+                "prompt": "'He ___ to the gym three times a week.' Boşluğa hangi fiil çekimi gelmelidir?",
+                "difficulty": "kolay",
+                "explanation": "'He' öznesi geniş zamanda -s takısı alır: 'He goes'.",
+                "options": [
+                  {
+                    "id": "g1",
+                    "text": "goes",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "g2",
+                    "text": "go",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "g3",
+                    "text": "going",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "g4",
+                    "text": "is go",
+                    "isCorrect": false
+                  }
                 ]
               },
               {
-                id: 'kpss-v2',
-                type: 'multiple_choice',
-                prompt: '1982 Anayasası\'na göre Anayasa Mahkemesi (AYM) toplam kaç üyeden oluşur?',
-                difficulty: 'orta',
-                explanation: 'Anayasa Mahkemesi 15 üyeden oluşur (12 üye Cumhurbaşkanı, 3 üye TBMM tarafından seçilir).',
-                options: [
-                  { id: 'ay1', text: '15 üye', isCorrect: true },
-                  { id: 'ay2', text: '12 üye', isCorrect: false },
-                  { id: 'ay3', text: '17 üye', isCorrect: false },
-                  { id: 'ay4', text: '11 üye', isCorrect: false }
+                "id": "dil-gr2",
+                "type": "matching",
+                "prompt": "Sıklık zarflarını Türkçe anlamlarıyla eşleştirin:",
+                "difficulty": "kolay",
+                "explanation": "İngilizce sıklık belirten zarflar.",
+                "pairs": [
+                  {
+                    "id": "fp1",
+                    "left": "Always",
+                    "right": "Daima / Her zaman"
+                  },
+                  {
+                    "id": "fp2",
+                    "left": "Rarely / Seldom",
+                    "right": "Nadiren"
+                  },
+                  {
+                    "id": "fp3",
+                    "left": "Never",
+                    "right": "Asla / Hiçbir zaman"
+                  }
                 ]
               },
               {
-                id: 'kpss-v3',
-                type: 'true_false',
-                prompt: 'Cumhurbaşkanı kararnamesi ile temel haklar sınırlandırılabilir mi?',
-                statement: 'Anayasada münhasıran kanunla düzenlenmesi öngörülen konularda Cumhurbaşkanlığı kararnamesi çıkarılamaz.',
-                correctAnswer: true,
-                explanation: 'Doğrudur! Anayasa madde 104 gereği kanunla açıkça düzenlenen konularda CB kararnamesi çıkarılamaz.'
-              }
-            ]
-          }
-        ]
-      }
-    ]
-  },
-
-  // ==========================================
-  // 4. LGS (8. SINIF)
-  // ==========================================
-  {
-    id: 'lgs',
-    name: 'LGS (8. Sınıf)',
-    subTitle: 'Yeni Nesil Beceri Temelli Sorular',
-    icon: '📚',
-    badge: 'Yeni Nesil',
-    color: '#ff4b4b',
-    accentColor: '#d33131',
-    units: [
-      {
-        id: 'lgs-u1',
-        number: 1,
-        title: 'Matematik: Çarpanlar ve Katlar',
-        description: 'EBOB-EKOK problemleri ve yeni nesil soru mantığı',
-        color: '#ff4b4b',
-        lessons: [
-          {
-            id: 'lgs-u1-l1',
-            unitId: 'lgs-u1',
-            title: 'EBOB & EKOK Mantığı',
-            description: 'Parçadan bütüne (EKOK) ve bütünden parçaya (EBOB) modellemesi.',
-            xpReward: 20,
-            gemReward: 5,
-            type: 'lesson',
-            questions: [
-              {
-                id: 'lgs-q1',
-                type: 'multiple_choice',
-                prompt: 'Kenar uzunlukları 12 cm ve 18 cm olan dikdörtgen levhalar yan yana dizilerek en küçük boyutlu bir KARE yapılmak isteniyor. Bu karenin bir kenarı kaç cm olmalıdır?',
-                difficulty: 'orta',
-                hint: 'Küçük parçaları birleştirip büyük bir bütün oluştururken EKOK kullanılır.',
-                explanation: '12 ve 18 sayılarının EKOK\'u: EKOK(12, 18) = 36 cm bulunur. Karenin bir kenarı 36 cm olmalıdır.',
-                options: [
-                  { id: 'l1', text: '36 cm', isCorrect: true },
-                  { id: 'l2', text: '72 cm', isCorrect: false },
-                  { id: 'l3', text: '24 cm', isCorrect: false },
-                  { id: 'l4', text: '6 cm', isCorrect: false }
-                ]
-              },
-              {
-                id: 'lgs-q2',
-                type: 'matching',
-                prompt: 'Problem türlerini çözüm yöntemleriyle eşleştirin:',
-                difficulty: 'kolay',
-                explanation: 'Büyük çuvalları poşetlere bölmek EBOB, nöbet günlerinin çakışması EKOK gerektirir.',
-                pairs: [
-                  { id: 'lp1', left: 'Büyük çuvallardaki pirinçleri eşit poşetlere bölme', right: 'EBOB (Bütünden parçaya)' },
-                  { id: 'lp2', left: 'Farklı aralıklarla çalan iki zilin tekrar birlikte çalması', right: 'EKOK (Parçadan bütüne)' },
-                  { id: 'lp3', left: 'Tarlanın etrafına eşit aralıklarla fidan dikme', right: 'EBOB (Bölme / Parçalama)' }
-                ]
+                "id": "dil-gr3",
+                "type": "true_false",
+                "prompt": "'She doesn't likes apples' cümlesi gramer olarak doğru mudur?",
+                "statement": "'She doesn't likes apples' cümlesinde 'doesn't' sonrası fiil -s takısı alır.",
+                "correctAnswer": false,
+                "explanation": "Yanlış! Olumsuz ve soru cümlelerinde 'does' kullanıldığında ana fiil daima yalın (base form) kullanılır: 'She doesn't like apples'."
               }
             ]
           }
         ]
       },
       {
-        id: 'lgs-u2',
-        number: 2,
-        title: 'LGS Fen Bilimleri: Mevsimler & DNA',
-        description: 'Eksen eğikliği, güneş ışınlarının geliş açısı ve DNA replikasyonu',
-        color: '#58cc02',
-        lessons: [
+        "id": "dil-u2",
+        "number": 2,
+        "title": "YDS & YÖKDİL Akademik Kelimeler & Phrasal Verbs",
+        "description": "Sık çıkan bağlaçlar, akademik sıfatlar ve phrasal verb kalıpları",
+        "color": "#1899d6",
+        "lessons": [
           {
-            id: 'lgs-u2-l1',
-            unitId: 'lgs-u2',
-            title: 'Mevsimlerin Oluşumu & Eksen Eğikliği',
-            description: '21 Haziran, 21 Aralık gün dönümleri ve gece-gündüz süreleri.',
-            xpReward: 25,
-            gemReward: 8,
-            type: 'lesson',
-            summaryNotes: [
-              'Mevsimlerin oluşmasının 2 temel sebebi vardır: Dünyanın Güneş etrafında dolanması ve 23° 27\' eksen eğikliği.',
-              'Güneş ışınları dik açıyla (90°) gelirse birim yüzeye düşen enerji fazla olur, sıcaklık artar (Yaz).',
-              '21 Haziran\'da Kuzey Yarım Küre\'de en uzun gündüz yaşanır.'
+            "id": "dil-u2-l1",
+            "unitId": "dil-u2",
+            "title": "Akademik Sıfatlar & Fiiller",
+            "description": "Significant, Essential, Considerably ve Carry out kalıpları.",
+            "xpReward": 25,
+            "gemReward": 8,
+            "type": "lesson",
+            "summaryNotes": [
+              "Carry out = Perform / Do (Uygulamak, gerçekleştirmek)",
+              "Significant = Important / Notable (Önemli, kayda değer)",
+              "Although / Even though = Zıtlık bağlaçları (-e rağmen)"
             ],
-            questions: [
+            "questions": [
               {
-                id: 'lgs-fen-1',
-                type: 'multiple_choice',
-                prompt: 'Dünya\'da mevsimlerin oluşmasının temel sebebi aşağıdakilerden hangisidir?',
-                difficulty: 'kolay',
-                explanation: 'Mevsimlerin oluşumu eksen eğikliği ve Dünya\'nın Güneş etrafındaki dolanma hareketinden kaynaklanır.',
-                options: [
-                  { id: 'm1', text: 'Dünya\'nın eksen eğikliği ve Güneş etrafında dolanması', isCorrect: true },
-                  { id: 'm2', text: 'Dünya\'nın Güneş\'e olan mesafesinin değişmesi', isCorrect: false },
-                  { id: 'm3', text: 'Dünya\'nın kendi ekseni etrafında dönmesi', isCorrect: false },
-                  { id: 'm4', text: 'Ay\'ın evreleri', isCorrect: false }
+                "id": "dil-yds-1",
+                "type": "multiple_choice",
+                "prompt": "The scientists decided to ___ a series of experiments to test the new medicine. (Boşluğa en uygun phrasal verb hangisidir?)",
+                "difficulty": "orta",
+                "explanation": "'Carry out' deneyi yürütmek / gerçekleştirmek anlamına gelir.",
+                "options": [
+                  {
+                    "id": "y1",
+                    "text": "carry out",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "y2",
+                    "text": "give up",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "y3",
+                    "text": "look down",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "y4",
+                    "text": "run out",
+                    "isCorrect": false
+                  }
                 ]
               },
               {
-                id: 'lgs-fen-2',
-                type: 'multiple_choice',
-                prompt: 'DNA molekülünde Adenin (A) nükleotidinin karşısına her zaman hangi nükleotid gelir?',
-                difficulty: 'kolay',
-                explanation: 'DNA çift sarmalında Adenin (A) daima Timin (T) ile, Guanin (G) ise daima Sitozin (C/S) ile eşleşir.',
-                options: [
-                  { id: 'dna1', text: 'Timin (T)', isCorrect: true },
-                  { id: 'dna2', text: 'Guanin (G)', isCorrect: false },
-                  { id: 'dna3', text: 'Sitozin (S)', isCorrect: false },
-                  { id: 'dna4', text: 'Urasil (U)', isCorrect: false }
+                "id": "dil-yds-2",
+                "type": "matching",
+                "prompt": "YDS akademik kelimeleri Türkçe anlamlarıyla eşleştirin:",
+                "difficulty": "zor",
+                "explanation": "Sınavda en yüksek frekansta çıkan akademik kelimeler.",
+                "pairs": [
+                  {
+                    "id": "yp1",
+                    "left": "Substantial",
+                    "right": "Büyük, önemli ölçüde"
+                  },
+                  {
+                    "id": "yp2",
+                    "left": "Deteriorate",
+                    "right": "Kötüleşmek, bozulmak"
+                  },
+                  {
+                    "id": "yp3",
+                    "left": "Compulsory",
+                    "right": "Zorunlu, mecburi"
+                  }
                 ]
               },
               {
-                id: 'lgs-fen-3',
-                type: 'true_false',
-                prompt: '21 Mart ve 23 Eylül tarihlerinde tüm Dünya\'da gece ve gündüz süreleri eşit (12 saat) midir?',
-                statement: 'Ekinoks tarihlerinde (21 Mart - 23 Eylül) Güneş ışınları Ekvator\'a dik gelir ve Dünya genelinde gece-gündüz süreleri eşittir.',
-                correctAnswer: true,
-                explanation: 'Harika! Ekinoks dönemlerinde gece ve gündüz 12\'şer saat olarak eşitlenir.'
-              }
-            ]
-          }
-        ]
-      }
-    ]
-  },
-
-  // ==========================================
-  // 5. YABANCI DİL (İNGİLİZCE)
-  // ==========================================
-  {
-    id: 'dil',
-    name: 'İngilizce (A1 - B2)',
-    subTitle: 'Konuşma, Gramer & YDS/YÖKDİL Kelimeleri',
-    icon: '🌍',
-    badge: 'Küresel Dil',
-    color: '#1cb0f6',
-    accentColor: '#1899d6',
-    units: [
-      {
-        id: 'dil-u1',
-        number: 1,
-        title: 'Günlük Konuşma & Tanışma (A1)',
-        description: 'Temel selamlaşmalar, kendini tanıtma ve yaygın kalıplar',
-        color: '#1cb0f6',
-        lessons: [
-          {
-            id: 'dil-u1-l1',
-            unitId: 'dil-u1',
-            title: 'Selamlaşma & İfadeler',
-            description: 'Hello, How are you?, Nice to meet you kalıpları.',
-            xpReward: 20,
-            gemReward: 5,
-            type: 'lesson',
-            questions: [
-              {
-                id: 'dil-q1',
-                type: 'multiple_choice',
-                prompt: '"Nice to meet you" diyen birine en kibar ve doğal karşılık ne olur?',
-                difficulty: 'kolay',
-                explanation: '"Nice to meet you" (Tanıştığıma memnun oldum) ifadesine "Nice to meet you too" (Ben de memnun oldum) şeklinde yanıt verilir.',
-                options: [
-                  { id: 'd1', text: 'Nice to meet you too!', isCorrect: true },
-                  { id: 'd2', text: 'I am 20 years old.', isCorrect: false },
-                  { id: 'd3', text: 'Yes, I do.', isCorrect: false },
-                  { id: 'd4', text: 'Goodbye tomorrow.', isCorrect: false }
+                "id": "dil-yds-3",
+                "type": "multiple_choice",
+                "prompt": "The economic report indicates a ___ increase in inflation over the past quarter.",
+                "difficulty": "orta",
+                "explanation": "'Significant' (önemli, belirgin) artış sıfat tamlaması olarak sınavda en çok sorulan kelimelerdendir.",
+                "options": [
+                  {
+                    "id": "yd1",
+                    "text": "significant",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "yd2",
+                    "text": "useless",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "yd3",
+                    "text": "shallow",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "yd4",
+                    "text": "hostile",
+                    "isCorrect": false
+                  }
                 ]
               },
               {
-                id: 'dil-q2',
-                type: 'matching',
-                prompt: 'İngilizce kelimeleri Türkçe karşılıklarıyla eşleştirin:',
-                difficulty: 'kolay',
-                explanation: 'Günlük yaygın fiiller ve isimler.',
-                pairs: [
-                  { id: 'dp1', left: 'Learn', right: 'Öğrenmek' },
-                  { id: 'dp2', left: 'Knowledge', right: 'Bilgi' },
-                  { id: 'dp3', left: 'Challenge', right: 'Meydan Okuma' },
-                  { id: 'dp4', left: 'Goal', right: 'Hedef' }
-                ]
-              },
-              {
-                id: 'dil-q3',
-                type: 'code_fill',
-                prompt: 'Cümleyi uygun yardımcı fiil ile tamamlayın: "She ___ studying for the exam right now."',
-                codeSnippet: 'She ___ studying for the exam right now.',
-                blankId: 'is',
-                options: ['is', 'are', 'am', 'be'],
-                correctAnswer: 'is',
-                explanation: 'Present Continuous Tense yapısında "he/she/it" özneleri "is" yardımcı fiilini alır.'
-              }
-            ]
-          }
-        ]
-      },
-      {
-        id: 'dil-u2',
-        number: 2,
-        title: 'YDS & YÖKDİL Akademik Kelimeler & Phrasal Verbs',
-        description: 'Sık çıkan bağlaçlar, akademik sıfatlar ve phrasal verb kalıpları',
-        color: '#1899d6',
-        lessons: [
-          {
-            id: 'dil-u2-l1',
-            unitId: 'dil-u2',
-            title: 'Akademik Sıfatlar & Fiiller',
-            description: 'Significant, Essential, Considerably ve Carry out kalıpları.',
-            xpReward: 25,
-            gemReward: 8,
-            type: 'lesson',
-            summaryNotes: [
-              'Carry out = Perform / Do (Uygulamak, gerçekleştirmek)',
-              'Significant = Important / Notable (Önemli, kayda değer)',
-              'Although / Even though = Zıtlık bağlaçları (-e rağmen)'
-            ],
-            questions: [
-              {
-                id: 'dil-yds-1',
-                type: 'multiple_choice',
-                prompt: 'The scientists decided to ___ a series of experiments to test the new medicine. (Boşluğa en uygun phrasal verb hangisidir?)',
-                difficulty: 'orta',
-                explanation: '"Carry out" deneyi yürütmek / gerçekleştirmek anlamına gelir.',
-                options: [
-                  { id: 'y1', text: 'carry out', isCorrect: true },
-                  { id: 'y2', text: 'give up', isCorrect: false },
-                  { id: 'y3', text: 'look down', isCorrect: false },
-                  { id: 'y4', text: 'run out', isCorrect: false }
-                ]
-              },
-              {
-                id: 'dil-yds-2',
-                type: 'matching',
-                prompt: 'YDS akademik kelimeleri Türkçe anlamlarıyla eşleştirin:',
-                difficulty: 'zor',
-                explanation: 'Sınavda en yüksek frekansta çıkan akademik kelimeler.',
-                pairs: [
-                  { id: 'yp1', left: 'Substantial', right: 'Büyük, önemli ölçüde' },
-                  { id: 'yp2', left: 'Deteriorate', right: 'Kötüleşmek, bozulmak' },
-                  { id: 'yp3', left: 'Compulsory', right: 'Zorunlu, mecburi' }
-                ]
+                "id": "dil-yds-4",
+                "type": "true_false",
+                "prompt": "'In spite of' bağlacından sonra tam cümle (özne + yüklem) mi gelir?",
+                "statement": "'In spite of' ve 'Despite' bağlaçlarından sonra cümle değil, bir isim (noun) veya isim fiil (V-ing) gelir.",
+                "correctAnswer": true,
+                "explanation": "Doğrudur! 'Although / Even though' tam cümle alırken, 'In spite of / Despite' isim öbeği alır (Despite the rain)."
               }
             ]
           }

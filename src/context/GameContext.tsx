@@ -128,7 +128,9 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const saved = localStorage.getItem('akademi_user_stats');
       if (saved) {
         const parsed = JSON.parse(saved);
-        return { ...DEFAULT_STATS, ...parsed };
+        // Automatically migrate old default avatar to Haribo Ayıcık
+        const avatar = (parsed.avatar === 'owl' || !parsed.avatar) ? 'haribo' : parsed.avatar;
+        return { ...DEFAULT_STATS, ...parsed, avatar };
       }
       return DEFAULT_STATS;
     } catch {

@@ -17,8 +17,9 @@ import { AiCoach } from './components/AiCoach';
 import { ErrorNotebook } from './components/ErrorNotebook';
 import { SpeechPractice } from './components/SpeechPractice';
 import { ExamCountdown } from './components/ExamCountdown';
+import { ReelsQuestions } from './components/ReelsQuestions';
 import { RightSidebar } from './components/RightSidebar';
-import { Map, Swords, Bot, FileText, Menu, X, BookMarked, Mic, Clock, Gamepad2, Code2, Tv, Trophy, Target, ShoppingBag, User } from 'lucide-react';
+import { Map, Flame, Swords, Bot, FileText, Menu, X, BookMarked, Mic, Clock, Gamepad2, Code2, Tv, Trophy, Target, ShoppingBag, User } from 'lucide-react';
 import { sound } from './utils/audio';
 
 const MainLayout: React.FC = () => {
@@ -38,6 +39,7 @@ const MainLayout: React.FC = () => {
 
   const mobilePrimaryTabs = [
     { id: 'learn', label: 'Öğren', icon: Map },
+    { id: 'reels', label: 'Kaydır 🔥', icon: Flame },
     { id: 'duel', label: 'Düello', icon: Swords },
     { id: 'aicoach', label: 'Bibo AI', icon: Bot },
     { id: 'exams', label: 'Deneme', icon: FileText },
@@ -45,6 +47,7 @@ const MainLayout: React.FC = () => {
 
   const allDrawerItems = [
     { id: 'learn', label: 'Öğren / Harita', icon: Map, color: 'text-green-500 bg-green-50' },
+    { id: 'reels', label: 'Soru Kaydır (Reels 🔥)', icon: Flame, color: 'text-orange-500 bg-orange-50' },
     { id: 'duel', label: '1v1 Düello', icon: Swords, color: 'text-red-500 bg-red-50' },
     { id: 'aicoach', label: 'Bibo AI Koç', icon: Bot, color: 'text-emerald-500 bg-emerald-50' },
     { id: 'exams', label: 'Deneme Sınavları', icon: FileText, color: 'text-teal-500 bg-teal-50' },
@@ -80,6 +83,7 @@ const MainLayout: React.FC = () => {
         {/* Central Content Area (100% full width on mobile) */}
         <main className="flex-1 flex justify-center min-w-0 px-2 sm:px-4 pb-28 md:pb-8 w-full overflow-x-hidden">
           {currentTab === 'learn' && <LearnPath />}
+          {currentTab === 'reels' && <ReelsQuestions />}
           {currentTab === 'duel' && <QuizDuel />}
           {currentTab === 'aicoach' && <AiCoach />}
           {currentTab === 'errors' && <ErrorNotebook />}

@@ -18,6 +18,7 @@ import { ErrorNotebook } from './components/ErrorNotebook';
 import { SpeechPractice } from './components/SpeechPractice';
 import { ExamCountdown } from './components/ExamCountdown';
 import { ReelsQuestions } from './components/ReelsQuestions';
+import { KahootArena } from './components/KahootArena';
 import { RightSidebar } from './components/RightSidebar';
 import { HariboAvatar } from './components/HariboAvatar';
 import { Map, Flame, Swords, Bot, FileText, Menu, X, BookMarked, Mic, Clock, Gamepad2, Code2, Tv, Trophy, Target, ShoppingBag, User } from 'lucide-react';
@@ -40,14 +41,15 @@ const MainLayout: React.FC = () => {
 
   const mobilePrimaryTabs = [
     { id: 'learn', label: 'Öğren', icon: Map },
+    { id: 'kahoot', label: 'Kahoot 🏆', icon: Trophy },
     { id: 'reels', label: 'Kaydır 🔥', icon: Flame },
     { id: 'duel', label: 'Düello', icon: Swords },
-    { id: 'aicoach', label: 'Haribo AI', icon: Bot },
-    { id: 'exams', label: 'Deneme', icon: FileText },
+    { id: 'profile', label: 'Profil', icon: User },
   ];
 
   const allDrawerItems = [
     { id: 'learn', label: 'Öğren / Harita', icon: Map, color: 'text-green-500 bg-green-50' },
+    { id: 'kahoot', label: 'Kahoot Canlı Arena 🏆', icon: Trophy, color: 'text-purple-500 bg-purple-50' },
     { id: 'reels', label: 'Soru Kaydır (Reels 🔥)', icon: Flame, color: 'text-orange-500 bg-orange-50' },
     { id: 'duel', label: '1v1 Düello', icon: Swords, color: 'text-red-500 bg-red-50' },
     { id: 'aicoach', label: 'Haribo AI Koç', icon: Bot, color: 'text-amber-500 bg-amber-50' },
@@ -84,6 +86,7 @@ const MainLayout: React.FC = () => {
         {/* Central Content Area (100% full width on mobile) */}
         <main className="flex-1 flex justify-center min-w-0 px-2 sm:px-4 pb-28 md:pb-8 w-full overflow-x-hidden">
           {currentTab === 'learn' && <LearnPath />}
+          {currentTab === 'kahoot' && <KahootArena />}
           {currentTab === 'reels' && <ReelsQuestions />}
           {currentTab === 'duel' && <QuizDuel />}
           {currentTab === 'aicoach' && <AiCoach />}

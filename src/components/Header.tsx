@@ -5,6 +5,7 @@ import { Flame, Gem, Heart, Volume2, VolumeX, ChevronDown, Check, Sparkles } fro
 import { CourseCategory } from '../types';
 import { LuckyWheelModal } from './LuckyWheelModal';
 import { HariboAvatar } from './HariboAvatar';
+import { AuthModal } from './AuthModal';
 import { sound } from '../utils/audio';
 
 export const Header: React.FC = () => {
@@ -12,6 +13,7 @@ export const Header: React.FC = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [showHeartModal, setShowHeartModal] = useState(false);
   const [showLuckyWheel, setShowLuckyWheel] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
 
   const currentCourse = COURSES.find(c => c.id === selectedCourseId) || COURSES[0];
   const userAvatarEmoji = AVATAR_MAP[stats.avatar]?.emoji || '🍯';
@@ -72,10 +74,22 @@ export const Header: React.FC = () => {
         <div className="flex items-center gap-2 sm:gap-4">
           
           {/* User Level & Avatar Pill */}
-          <div className="hidden sm:flex items-center gap-1.5 bg-amber-50 dark:bg-amber-950/50 border-2 border-amber-200 dark:border-amber-700/60 px-2.5 py-1 rounded-xl text-amber-900 dark:text-amber-300 font-black text-xs shadow-sm">
-            {stats.avatar === 'haribo' ? <HariboAvatar size="xs" /> : <span className="text-base">{userAvatarEmoji}</span>}
-            <span>Lvl {userLevel}</span>
-          </div>
+          <button
+            onClick={() => {
+              sound.playClick();
+              setShowAuthModal(true);
+            }}
+            className="flex items-center gap-1.5 bg-amber-50 dark:bg-amber-950/50 border-2 border-amber-200 dark:border-amber-700/60 px-2 sm:px-2.5 py-1 rounded-xl text-amber-900 dark:text-amber-300 font-black text-xs shadow-sm hover:border-amber-400 transition-all active:scale-95"
+            title="Öğrenci Profili & Giriş"
+          >
+            {stats.avatar === 'haribo' ? (
+              <HariboAvatar size="xs" costume={stats.selectedCostume} />
+            ) : (
+              <span className="text-base">{userAvatarEmoji}</span>
+            )}
+            <span className="truncate max-w-[65px] hidden sm:inline">{stats.username || 'Sen'}</span>
+            <span className="text-[10px] opacity-75 font-mono">L{userLevel}</span>
+          </button>
 
           {/* Streak (Ateş / Seri) */}
           <div className="flex items-center gap-1 font-black text-orange-500 group cursor-default text-xs sm:text-base">
@@ -158,6 +172,11 @@ export const Header: React.FC = () => {
       {/* Lucky Wheel Modal */}
       {showLuckyWheel && (
         <LuckyWheelModal onClose={() => setShowLuckyWheel(false)} />
+      )}
+
+      {/* Auth & Identity Modal */}
+      {showAuthModal && (
+        <AuthModal onClose={() => setShowAuthModal(false)} />
       )}
     </header>
   );

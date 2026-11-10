@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { CourseCategory, Lesson, UserStats, LeaderboardUser, StudyNote, AppTheme, UserAvatar, MistakeItem } from '../types';
+import { CourseCategory, Lesson, UserStats, LeaderboardUser, StudyNote, AppTheme, UserAvatar, MistakeItem, HariboCostume } from '../types';
+import { HARIBO_COSTUMES } from '../data/costumesData';
 import { sound } from '../utils/audio';
 import confetti from 'canvas-confetti';
 
@@ -31,6 +32,12 @@ interface GameContextType {
   addMistake: (mistake: MistakeItem) => void;
   removeMistake: (id: string) => void;
   clearAllMistakes: () => void;
+  updateUsername: (newUsername: string) => { success: boolean; finalUsername: string; error?: string };
+  loginUser: (provider: 'google' | 'email', email?: string, username?: string) => void;
+  logoutUser: () => void;
+  buyCostume: (costumeId: HariboCostume) => boolean;
+  selectCostume: (costumeId: HariboCostume) => void;
+  addXpAndGems: (xp: number, gems: number) => void;
 }
 
 const DEFAULT_MISTAKES: MistakeItem[] = [
@@ -55,6 +62,13 @@ const DEFAULT_MISTAKES: MistakeItem[] = [
 ];
 
 const DEFAULT_STATS: UserStats = {
+  username: 'Ali',
+  uniqueTag: '#2026',
+  email: undefined,
+  isLoggedIn: false,
+  authProvider: 'guest',
+  selectedCostume: 'classic',
+  unlockedCostumes: ['classic'],
   xp: 260,
   gems: 280,
   hearts: 5,
@@ -390,6 +404,110 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }));
   };
 
+  // Unique Username & Profile Nickname Management
+  const updateUsername = (rawName: string) => {
+    const trimmed = rawName.trim();
+    if (!trimmed || trimmed.length < 2) {
+      return { success: false, finalUsername: stats.username, error: 'Kullanıcı adı en az 2 karakter olmalıdır.' };
+    }
+    
+    // Check if name is taken in mock database / leaderboard
+    const takenNames = ['admin', 'zeynep', 'barış', 'mert', 'selin', 'kaan', 'elif', 'öğretmen', 'kurucu'];
+    const lower = trimmed.toLowerCase();
+    let finalName = trimmed;
+    let tag = stats.uniqueTag;
+
+    if (takenNames.includes(lower)) {
+      // Generate a unique derivative as requested by the user
+      const suffixes = ['_34', '_Haribo', '_Altın', '_Pro', '_Derece', '_2026'];
+      const randomSuffix = suffixes[Math.floor(Math.random() * suffixes.length)];
+      finalName = `${trimmed}${randomSuffix}`;
+      tag = '#' + Math.floor(1000 + Math.random() * 9000);
+    } else {
+      tag = '#' + Math.floor(1000 + Math.random() * 9000);
+    }
+
+    sound.playClick();
+    setStats(prev => ({
+      ...prev,
+      username: finalName,
+      uniqueTag: tag
+    }));
+
+    return { success: true, finalUsername: finalName };
+  };
+
+  // Google / Email Authentication Simulation
+  const loginUser = (provider: 'google' | 'email', email?: string, username?: string) => {
+    sound.playVictory();
+    confetti({ particleCount: 50, spread: 70 });
+    const name = username || (provider === 'google' ? 'Ali Yılmaz' : 'Ali');
+    const userEmail = email || (provider === 'google' ? 'ali.yilmaz@gmail.com' : 'ali@ogrenci.com');
+
+    setStats(prev => ({
+      ...prev,
+      isLoggedIn: true,
+      authProvider: provider,
+      username: name,
+      email: userEmail,
+      uniqueTag: '#DOĞRULANDI'
+    }));
+  };
+
+  const logoutUser = () => {
+    sound.playClick();
+    setStats(prev => ({
+      ...prev,
+      isLoggedIn: false,
+      authProvider: 'guest',
+      email: undefined,
+      uniqueTag: '#2026'
+    }));
+  };
+
+  // Haribo Costume Purchase & Equip
+  const buyCostume = (costumeId: HariboCostume) => {
+    const costume = HARIBO_COSTUMES.find(c => c.id === costumeId);
+    if (!costume) return false;
+
+    if (stats.unlockedCostumes.includes(costumeId)) {
+      selectCostume(costumeId);
+      return true;
+    }
+
+    if (stats.gems < costume.priceGems || stats.xp < costume.requiredXp) {
+      sound.playWrong();
+      return false;
+    }
+
+    sound.playVictory();
+    confetti({ particleCount: 70, spread: 80 });
+    setStats(prev => ({
+      ...prev,
+      gems: prev.gems - costume.priceGems,
+      unlockedCostumes: [...prev.unlockedCostumes, costumeId],
+      selectedCostume: costumeId
+    }));
+    return true;
+  };
+
+  const selectCostume = (costumeId: HariboCostume) => {
+    if (!stats.unlockedCostumes.includes(costumeId)) return;
+    sound.playClick();
+    setStats(prev => ({
+      ...prev,
+      selectedCostume: costumeId
+    }));
+  };
+
+  const addXpAndGems = (xp: number, gems: number) => {
+    setStats(prev => ({
+      ...prev,
+      xp: prev.xp + xp,
+      gems: prev.gems + gems
+    }));
+  };
+
   // User Level & XP calculation
   const userLevel = Math.floor(stats.xp / 100) + 1;
   const levelProgress = stats.xp % 100;
@@ -436,7 +554,13 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
         updateElo,
         addMistake,
         removeMistake,
-        clearAllMistakes
+        clearAllMistakes,
+        updateUsername,
+        loginUser,
+        logoutUser,
+        buyCostume,
+        selectCostume,
+        addXpAndGems
       }}
     >
       {children}

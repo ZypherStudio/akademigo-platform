@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { sound } from '../utils/audio';
+import { HariboCostume } from '../types';
 
 export type MascotMood = 'idle' | 'happy' | 'thinking' | 'sad' | 'excited' | 'cheering';
 
@@ -10,6 +11,8 @@ interface MascotProps {
   interactive?: boolean;
   onMascotClick?: () => void;
   className?: string;
+  costume?: HariboCostume;
+  dance?: boolean;
 }
 
 const HARIBO_QUOTES = [
@@ -28,7 +31,9 @@ export const Mascot: React.FC<MascotProps> = ({
   size = 'md',
   interactive = true,
   onMascotClick,
-  className = ''
+  className = '',
+  costume = 'classic',
+  dance = false
 }) => {
   const [currentSpeech, setCurrentSpeech] = useState<string>(speech || HARIBO_QUOTES[0]);
   const [isBlinking, setIsBlinking] = useState(false);
@@ -72,6 +77,15 @@ export const Mascot: React.FC<MascotProps> = ({
 
   const activeMood = isHovered && mood === 'idle' ? 'happy' : mood;
 
+  const animationClass = 
+    dance || costume === 'party' || activeMood === 'cheering'
+      ? 'animate-dance'
+      : wiggle
+      ? 'animate-wiggle'
+      : activeMood === 'excited' || activeMood === 'happy'
+      ? 'animate-bounceSubtle'
+      : 'animate-float';
+
   return (
     <div className={`relative inline-flex flex-col items-center select-none ${className}`}>
       
@@ -93,13 +107,7 @@ export const Mascot: React.FC<MascotProps> = ({
         onClick={handleClick}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
-        className={`${sizeClasses[size]} relative cursor-pointer transition-transform duration-300 hover:scale-110 active:scale-95 ${
-          wiggle ? 'animate-wiggle' : ''
-        } ${
-          activeMood === 'excited' || activeMood === 'happy' || activeMood === 'cheering'
-            ? 'animate-bounceSubtle'
-            : 'animate-float'
-        }`}
+        className={`${sizeClasses[size]} relative cursor-pointer transition-transform duration-300 hover:scale-110 active:scale-95 ${animationClass}`}
         title="Haribo Sarı Ayıcık - Senin Özel Maskotun (Tıkla ve konuş!)"
       >
         <svg viewBox="0 0 200 220" className="w-full h-full filter drop-shadow-xl overflow-visible">
@@ -232,6 +240,62 @@ export const Mascot: React.FC<MascotProps> = ({
               <circle cx="118" cy="67" r="3.5" fill="#ffffff" />
               <circle cx="124" cy="73" r="1.6" fill="#ffffff" />
             </>
+          )}
+
+          {/* ================= SPECIAL COSTUME ACCESSORIES ================= */}
+          {costume === 'king' && (
+            <g transform="translate(100, 32)">
+              <polygon points="-24,6 -26,-15 -14,-4 0,-18 14,-4 26,-15 24,6" fill="#f59e0b" stroke="#b45309" strokeWidth="1.8" />
+              <circle cx="0" cy="-4" r="3.5" fill="#ef4444" />
+              <circle cx="-14" cy="0" r="2.8" fill="#3b82f6" />
+              <circle cx="14" cy="0" r="2.8" fill="#3b82f6" />
+              <circle cx="-26" cy="-15" r="2.2" fill="#fef08a" />
+              <circle cx="0" cy="-18" r="2.8" fill="#fef08a" />
+              <circle cx="26" cy="-15" r="2.2" fill="#fef08a" />
+            </g>
+          )}
+
+          {costume === 'cyber' && (
+            <g transform="translate(100, 70)">
+              <path d="M -44 -10 L 44 -10 Q 48 8 40 16 L -40 16 Q -48 8 -44 -10 Z" fill="#06b6d4" stroke="#0891b2" strokeWidth="2" opacity="0.95" />
+              <line x1="-36" y1="3" x2="36" y2="3" stroke="#ffffff" strokeWidth="3" strokeLinecap="round" />
+              <circle cx="-42" cy="3" r="4.5" fill="#6366f1" />
+              <circle cx="42" cy="3" r="4.5" fill="#6366f1" />
+              <line x1="42" y1="3" x2="56" y2="-18" stroke="#6366f1" strokeWidth="3.5" strokeLinecap="round" />
+              <circle cx="56" cy="-18" r="3.5" fill="#ec4899" />
+            </g>
+          )}
+
+          {costume === 'party' && (
+            <g transform="translate(100, 70)">
+              <polygon points="-20,-12 -15,-2 -4,-2 -12,6 -9,16 -20,10 -31,16 -28,6 -36,-2 -25,-2" fill="#ec4899" stroke="#be185d" strokeWidth="1.5" />
+              <polygon points="20,-12 25,-2 36,-2 28,6 31,16 20,10 9,16 12,6 4,-2 15,-2" fill="#8b5cf6" stroke="#6d28d9" strokeWidth="1.5" />
+              <line x1="-8" y1="2" x2="8" y2="2" stroke="#f43f5e" strokeWidth="3" />
+              <g transform="translate(-32, -42) rotate(-15)">
+                <polygon points="0,0 -12,28 12,28" fill="#f43f5e" stroke="#e11d48" strokeWidth="1" />
+                <circle cx="0" cy="0" r="4" fill="#fef08a" />
+                <line x1="-8" y1="16" x2="8" y2="16" stroke="#fef08a" strokeWidth="3" strokeLinecap="round" />
+              </g>
+            </g>
+          )}
+
+          {costume === 'graduate' && (
+            <g transform="translate(100, 32)">
+              <polygon points="0,-18 -36,-4 0,10 36,-4" fill="#18181b" stroke="#3f3f46" strokeWidth="1.5" />
+              <polygon points="-16,0 16,0 12,10 -12,10" fill="#27272a" />
+              <circle cx="0" cy="-4" r="3" fill="#f59e0b" />
+              <path d="M 0 -4 Q 20 4 25 18" fill="none" stroke="#f59e0b" strokeWidth="2.5" />
+              <rect x="22" y="18" width="6" height="9" fill="#f59e0b" rx="1.5" />
+            </g>
+          )}
+
+          {costume === 'astronaut' && (
+            <g transform="translate(100, 78)">
+              <circle cx="0" cy="0" r="62" fill="none" stroke="#0284c7" strokeWidth="3.5" opacity="0.9" />
+              <ellipse cx="-22" cy="-24" rx="16" ry="7" fill="#ffffff" opacity="0.55" transform="rotate(-30 -22 -24)" />
+              <path d="M -42 18 Q -34 36 -14 36" fill="none" stroke="#0ea5e9" strokeWidth="3" strokeLinecap="round" />
+              <circle cx="-14" cy="36" r="4" fill="#0284c7" />
+            </g>
           )}
 
           {/* SIGNATURE HARIBO RED BOWTIE ON CHIN */}

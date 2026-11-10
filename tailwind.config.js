@@ -44,12 +44,19 @@ export default {
           '0%': { transform: 'scale(0.8)' },
           '50%': { transform: 'scale(1.1)' },
           '100%': { transform: 'scale(1)' },
+        },
+        dance: {
+          '0%, 100%': { transform: 'translateY(0) rotate(0deg) scale(1)' },
+          '25%': { transform: 'translateY(-8px) rotate(-7deg) scale(1.08)' },
+          '50%': { transform: 'translateY(0) rotate(5deg) scale(0.96)' },
+          '75%': { transform: 'translateY(-6px) rotate(8deg) scale(1.06)' },
         }
       },
       animation: {
         bounceSubtle: 'bounceSubtle 2s infinite ease-in-out',
         wiggle: 'wiggle 0.5s ease-in-out infinite',
         pop: 'pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+        dance: 'dance 0.75s infinite ease-in-out',
       }
     },
   },

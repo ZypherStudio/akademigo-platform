@@ -4,6 +4,52 @@ export type AppTheme = 'duo' | 'dark' | 'cyber' | 'gold' | 'ocean';
 
 export type UserAvatar = 'haribo' | 'owl' | 'fox' | 'robot' | 'astronaut' | 'wizard' | 'coder_cat';
 
+export type HariboCostume = 'classic' | 'king' | 'cyber' | 'party' | 'graduate' | 'astronaut';
+
+export interface HariboCostumeInfo {
+  id: HariboCostume;
+  name: string;
+  title: string;
+  description: string;
+  priceGems: number;
+  requiredXp: number;
+  badge: string;
+  icon: string;
+  bgGradient: string;
+}
+
+export type KahootCategory = 'matematik' | 'geometri' | 'kpss' | 'kodlama' | 'yds' | 'lgs' | 'karma';
+
+export interface KahootOption {
+  text: string;
+  isCorrect: boolean;
+  shape: 'triangle' | 'diamond' | 'circle' | 'square';
+  color: string;
+}
+
+export interface KahootQuestion {
+  id: string;
+  prompt: string;
+  category: string;
+  options: string[]; // 4 options
+  correctIndex: number;
+  timeLimit: number; // in seconds, default 15
+  explanation: string;
+  funFact?: string;
+}
+
+export interface KahootPlayer {
+  id: string;
+  name: string;
+  costume: HariboCostume;
+  score: number;
+  streak: number;
+  lastAnswerTime?: number;
+  lastAnswerCorrect?: boolean;
+  isCurrentUser?: boolean;
+  isHost?: boolean;
+}
+
 export interface Course {
   id: CourseCategory;
   name: string;
@@ -91,6 +137,13 @@ export interface MistakeItem {
 }
 
 export interface UserStats {
+  username: string;
+  uniqueTag: string;
+  email?: string;
+  isLoggedIn: boolean;
+  authProvider?: 'google' | 'email' | 'guest';
+  selectedCostume: HariboCostume;
+  unlockedCostumes: HariboCostume[];
   xp: number;
   gems: number;
   hearts: number;

@@ -22,6 +22,7 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({ onNavigate }) => {
         <Mascot
           size="md"
           mood="idle"
+          costume={stats.selectedCostume}
           speech="Günde 5 soru çöz, şampiyonlar ligine tırman! 🍯✨"
         />
         <span className="text-[10px] font-black uppercase text-amber-500 dark:text-amber-400 mt-2">
@@ -75,7 +76,7 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({ onNavigate }) => {
         <div className="bg-blue-50/60 dark:bg-blue-950/40 rounded-2xl p-3 border border-blue-100 dark:border-blue-800 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
             <span className="font-black text-blue-600 dark:text-blue-300 text-sm">#{userRank}</span>
-            <HariboAvatar size="xs" />
+            <HariboAvatar size="xs" costume={stats.selectedCostume} />
             <div>
               <div className="text-xs font-black text-gray-800 dark:text-gray-100">Sen</div>
               <div className="text-[10px] font-bold text-blue-600 dark:text-blue-400">Terfi Hattındasın</div>

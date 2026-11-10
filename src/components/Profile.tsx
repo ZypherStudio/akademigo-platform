@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { useGame, AVATAR_MAP } from '../context/GameContext';
-import { AppTheme, UserAvatar, HariboCostume } from '../types';
+import { AppTheme, UserAvatar, KnowzaCostume } from '../types';
 import { HARIBO_COSTUMES } from '../data/costumesData';
 import { 
   Flame, Gem, Trophy, Award, Palette, User, Shield, Check, Sparkles, 
   BookOpen, Clock, Heart, Edit3, Save, LogIn, Mail, ShieldCheck 
 } from 'lucide-react';
-import { HariboAvatar } from './HariboAvatar';
+import { KnowzaAvatar } from './KnowzaAvatar';
 import { AuthModal } from './AuthModal';
 import { sound } from '../utils/audio';
 
@@ -117,7 +117,7 @@ export const Profile: React.FC = () => {
           <div className="relative">
             <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-3xl bg-white/20 backdrop-blur-md border-4 border-white/40 flex items-center justify-center text-6xl shadow-inner select-none p-2 animate-bounceSubtle">
               {stats.avatar === 'haribo' ? (
-                <HariboAvatar size="xl" costume={stats.selectedCostume} animate="dance" />
+                <KnowzaAvatar size="xl" costume={stats.selectedCostume} animate="dance" />
               ) : (
                 currentAvatarInfo.emoji
               )}
@@ -329,11 +329,11 @@ export const Profile: React.FC = () => {
       {activeTab === 'avatar' && (
         <div className="space-y-6 animate-fade">
           
-          {/* Haribo Costume Wardrobe Section */}
+          {/* Knowza Costume Wardrobe Section */}
           <div className="bg-white dark:bg-[#1a2c35] rounded-3xl p-6 border-2 border-gray-200 dark:border-[#2b3d45] shadow-sm space-y-4">
             <div>
               <h3 className="font-black text-lg text-gray-800 dark:text-gray-100">
-                Haribo Ayıcık Kostüm Dolabın
+                Knowza Ayıcık Kostüm Dolabın
               </h3>
               <p className="text-xs text-gray-500 dark:text-gray-400 font-medium">
                 Sahip olduğun özel kostümlerden birini seç, Kahoot ve düellolarda bu kostümle dans et!
@@ -361,7 +361,7 @@ export const Profile: React.FC = () => {
                     }`}
                   >
                     <div className="p-1 mb-1">
-                      <HariboAvatar size="lg" costume={costume.id} animate={isSelected ? 'dance' : false} />
+                      <KnowzaAvatar size="lg" costume={costume.id} animate={isSelected ? 'dance' : false} />
                     </div>
                     <span className="font-black text-xs text-gray-800 dark:text-gray-100">{costume.name}</span>
                     <span className="text-[10px] text-gray-400 mt-0.5">{costume.title}</span>
@@ -496,7 +496,7 @@ export const Profile: React.FC = () => {
                 Hesap & Bulut Senkronizasyonu
               </h3>
               <p className="text-xs text-gray-500 dark:text-gray-400 font-medium">
-                Puanlarını, lig dereceni ve kazandığın Haribo kostümlerini kalıcı olarak koru.
+                Puanlarını, lig dereceni ve kazandığın Knowza kostümlerini kalıcı olarak koru.
               </p>
             </div>
 

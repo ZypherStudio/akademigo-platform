@@ -2,7 +2,20 @@ import React from 'react';
 import { Home, BarChart2, Award, User } from 'lucide-react';
 import { sound } from '../utils/audio';
 
-export type KnowzaTab = 'home' | 'stats' | 'badges' | 'profile' | 'kahoot' | 'duel' | 'reels' | 'aicoach';
+export type KnowzaTab =
+  | 'home'
+  | 'stats'
+  | 'badges'
+  | 'profile'
+  | 'kahoot'
+  | 'duel'
+  | 'reels'
+  | 'aicoach'
+  | 'exams'
+  | 'countdown'
+  | 'errors'
+  | 'codelab'
+  | 'learn';
 
 interface KnowzaBottomNavProps {
   currentTab: KnowzaTab;

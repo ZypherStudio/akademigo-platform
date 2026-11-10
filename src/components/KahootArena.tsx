@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useGame } from '../context/GameContext';
 import { KAHOOT_QUIZ_SETS, MOCK_BOT_PLAYERS, KahootQuizSet } from '../data/kahootData';
 import { KahootQuestion, KahootPlayer, KahootCategory } from '../types';
-import { HariboAvatar } from './HariboAvatar';
+import { KnowzaAvatar } from './KnowzaAvatar';
 import { sound } from '../utils/audio';
 import confetti from 'canvas-confetti';
 import { 
@@ -404,7 +404,7 @@ export const KahootArena: React.FC = () => {
                   }`}
                 >
                   <div className="p-1">
-                    <HariboAvatar size="lg" costume={p.costume} animate="dance" />
+                    <KnowzaAvatar size="lg" costume={p.costume} animate="dance" />
                   </div>
                   <span className="font-black text-xs text-gray-800 dark:text-gray-100 mt-1 truncate max-w-[90px]">
                     {p.name}
@@ -528,12 +528,12 @@ export const KahootArena: React.FC = () => {
             </div>
           )}
 
-          {/* Haribo Ayıcık Explanation Card */}
+          {/* Knowza Ayıcık Explanation Card */}
           <div className="bg-amber-50 dark:bg-amber-950/40 border-2 border-amber-300 dark:border-amber-700/80 rounded-3xl p-5 flex items-start gap-4">
-            <HariboAvatar size="lg" costume={stats.selectedCostume} animate="dance" />
+            <KnowzaAvatar size="lg" costume={stats.selectedCostume} animate="dance" />
             <div className="flex-1">
               <div className="text-xs font-black text-amber-900 dark:text-amber-200">
-                Haribo Altın Ayıcık Çözüm Notu
+                Knowza 3D Maskot Çözüm Notu
               </div>
               <p className="text-xs sm:text-sm text-amber-800 dark:text-amber-300 font-semibold mt-1 leading-relaxed">
                 {currentQuestion.explanation}
@@ -570,7 +570,7 @@ export const KahootArena: React.FC = () => {
                     <span className="font-black text-sm w-6 text-center text-gray-500">
                       #{idx + 1}
                     </span>
-                    <HariboAvatar size="sm" costume={p.costume} animate={idx === 0 ? 'dance' : false} />
+                    <KnowzaAvatar size="sm" costume={p.costume} animate={idx === 0 ? 'dance' : false} />
                     <div>
                       <div className="font-black text-xs sm:text-sm text-gray-800 dark:text-gray-100 flex items-center gap-2">
                         <span>{p.name}</span>
@@ -625,7 +625,7 @@ export const KahootArena: React.FC = () => {
             
             {/* 2nd Place (Silver) */}
             <div className="flex flex-col items-center">
-              <HariboAvatar size="lg" costume={players[1]?.costume || 'classic'} animate="dance" />
+              <KnowzaAvatar size="lg" costume={players[1]?.costume || 'classic'} animate="dance" />
               <span className="font-black text-xs text-gray-800 dark:text-gray-100 mt-2 truncate max-w-[80px]">
                 {players[1]?.name || 'Zeynep'}
               </span>
@@ -640,7 +640,7 @@ export const KahootArena: React.FC = () => {
             <div className="flex flex-col items-center -translate-y-4">
               <div className="relative">
                 <span className="absolute -top-6 left-1/2 -translate-x-1/2 text-3xl animate-bounce">👑</span>
-                <HariboAvatar size="xl" costume={players[0]?.costume || 'king'} animate="dance" />
+                <KnowzaAvatar size="xl" costume={players[0]?.costume || 'king'} animate="dance" />
               </div>
               <span className="font-black text-sm text-amber-600 dark:text-amber-400 mt-2 truncate max-w-[100px]">
                 {players[0]?.name || 'Sen'}
@@ -654,7 +654,7 @@ export const KahootArena: React.FC = () => {
 
             {/* 3rd Place (Bronze) */}
             <div className="flex flex-col items-center">
-              <HariboAvatar size="lg" costume={players[2]?.costume || 'classic'} animate="dance" />
+              <KnowzaAvatar size="lg" costume={players[2]?.costume || 'classic'} animate="dance" />
               <span className="font-black text-xs text-gray-800 dark:text-gray-100 mt-2 truncate max-w-[80px]">
                 {players[2]?.name || 'Barış'}
               </span>

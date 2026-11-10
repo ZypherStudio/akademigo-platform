@@ -4,7 +4,7 @@ import { COURSES } from '../data/coursesData';
 import { Flame, Gem, Heart, Volume2, VolumeX, ChevronDown, Check, Sparkles } from 'lucide-react';
 import { CourseCategory } from '../types';
 import { LuckyWheelModal } from './LuckyWheelModal';
-import { HariboAvatar } from './HariboAvatar';
+import { KnowzaAvatar } from './KnowzaAvatar';
 import { AuthModal } from './AuthModal';
 import { sound } from '../utils/audio';
 
@@ -83,7 +83,7 @@ export const Header: React.FC = () => {
             title="Öğrenci Profili & Giriş"
           >
             {stats.avatar === 'haribo' ? (
-              <HariboAvatar size="xs" costume={stats.selectedCostume} />
+              <KnowzaAvatar size="xs" costume={stats.selectedCostume} />
             ) : (
               <span className="text-base">{userAvatarEmoji}</span>
             )}

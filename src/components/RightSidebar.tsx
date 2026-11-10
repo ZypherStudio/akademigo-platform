@@ -3,7 +3,7 @@ import { useGame } from '../context/GameContext';
 import { Trophy, Target, ArrowRight, Gamepad2, Code2, Sparkles } from 'lucide-react';
 import { NavTab } from './Sidebar';
 import { Mascot } from './Mascot';
-import { HariboAvatar } from './HariboAvatar';
+import { KnowzaAvatar } from './KnowzaAvatar';
 
 interface RightSidebarProps {
   onNavigate: (tab: NavTab) => void;
@@ -17,7 +17,7 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({ onNavigate }) => {
   return (
     <aside className="hidden xl:block w-80 space-y-5 p-4 select-none">
       
-      {/* Custom Animated Mascot "Haribo Ayıcık" Card */}
+      {/* Custom Animated Mascot "Knowza Ayıcık" Card */}
       <div className="bg-white dark:bg-[#1a2c35] rounded-3xl p-5 border-2 border-gray-200 dark:border-[#2b3d45] shadow-sm flex flex-col items-center text-center transition-colors duration-300">
         <Mascot
           size="md"
@@ -26,7 +26,7 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({ onNavigate }) => {
           speech="Günde 5 soru çöz, şampiyonlar ligine tırman! 🍯✨"
         />
         <span className="text-[10px] font-black uppercase text-amber-500 dark:text-amber-400 mt-2">
-          Haribo Altın Ayıcık'a tıkla, taktik al!
+          Knowza 3D Maskot'a tıkla, taktik al!
         </span>
       </div>
 
@@ -76,7 +76,7 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({ onNavigate }) => {
         <div className="bg-blue-50/60 dark:bg-blue-950/40 rounded-2xl p-3 border border-blue-100 dark:border-blue-800 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
             <span className="font-black text-blue-600 dark:text-blue-300 text-sm">#{userRank}</span>
-            <HariboAvatar size="xs" costume={stats.selectedCostume} />
+            <KnowzaAvatar size="xs" costume={stats.selectedCostume} />
             <div>
               <div className="text-xs font-black text-gray-800 dark:text-gray-100">Sen</div>
               <div className="text-[10px] font-bold text-blue-600 dark:text-blue-400">Terfi Hattındasın</div>

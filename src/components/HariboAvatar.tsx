@@ -47,3 +47,6 @@ export const HariboAvatar: React.FC<HariboAvatarProps> = ({
     </div>
   );
 };
+
+export const KnowzaAvatar = HariboAvatar;
+

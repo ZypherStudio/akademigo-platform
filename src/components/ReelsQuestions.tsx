@@ -5,7 +5,7 @@ import { sound } from '../utils/audio';
 import { speakText, stopSpeech } from '../utils/speech';
 import confetti from 'canvas-confetti';
 import { Mascot } from './Mascot';
-import { HariboAvatar } from './HariboAvatar';
+import { KnowzaAvatar } from './KnowzaAvatar';
 
 interface ReelQuestion {
   id: string;
@@ -199,11 +199,11 @@ export const ReelsQuestions: React.FC = () => {
 
   const handleShare = () => {
     sound.playClick();
-    const shareText = `🔥 AkademiGO Soru Kaydır'da ${combo > 0 ? combo : 5} soru üst üste doğru yaptım! 🍯✨\n"${currentQ.prompt.slice(0, 70)}..."\nSen bu soruyu 10 saniyede çözebilir misin? Meydan okuyorum!\n🚀 Hemen oyna: ${window.location.origin}`;
+    const shareText = `🔥 Knowza Soru Kaydır'da ${combo > 0 ? combo : 5} soru üst üste doğru yaptım! 🍯✨\n"${currentQ.prompt.slice(0, 70)}..."\nSen bu soruyu 10 saniyede çözebilir misin? Meydan okuyorum!\n🚀 Hemen oyna: ${window.location.origin}`;
     
     if (navigator.share) {
       navigator.share({
-        title: 'AkademiGO - Soru Meydan Okuması',
+        title: 'Knowza - Soru Meydan Okuması',
         text: shareText,
         url: window.location.origin
       }).catch(() => {});
@@ -325,16 +325,16 @@ export const ReelsQuestions: React.FC = () => {
           </div>
         </div>
 
-        {/* Feedback & Haribo Bear Tactical Advice */}
+        {/* Feedback & Knowza Bear Tactical Advice */}
         {isAnswered && (
           <div className="mt-5 space-y-3 animate-pop">
             
             {/* Mascot Tactical Tip Box */}
             <div className="bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-950/40 dark:to-orange-950/40 border-2 border-amber-300 dark:border-amber-700 rounded-2xl p-3.5 flex items-start gap-3">
-              <HariboAvatar size="md" animate={true} />
+              <KnowzaAvatar size="md" animate={true} />
               <div className="flex-1">
                 <div className="text-xs font-black text-amber-900 dark:text-amber-200 flex items-center gap-1.5">
-                  <span>Haribo Altın Ayıcık Taktik Notu</span>
+                  <span>Knowza 3D Maskot Taktik Notu</span>
                   {isCorrectAnswer ? (
                     <span className="text-[10px] bg-green-500 text-white px-2 py-0.2 rounded-full font-black">HARİKASIN! +15 XP</span>
                   ) : (

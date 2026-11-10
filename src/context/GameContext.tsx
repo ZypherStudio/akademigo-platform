@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { CourseCategory, Lesson, UserStats, LeaderboardUser, StudyNote, AppTheme, UserAvatar, MistakeItem, HariboCostume } from '../types';
+import { CourseCategory, Lesson, UserStats, LeaderboardUser, StudyNote, AppTheme, UserAvatar, MistakeItem, KnowzaCostume } from '../types';
 import { HARIBO_COSTUMES } from '../data/costumesData';
 import { sound } from '../utils/audio';
 import confetti from 'canvas-confetti';
@@ -35,8 +35,8 @@ interface GameContextType {
   updateUsername: (newUsername: string) => { success: boolean; finalUsername: string; error?: string };
   loginUser: (provider: 'google' | 'email', email?: string, username?: string) => void;
   logoutUser: () => void;
-  buyCostume: (costumeId: HariboCostume) => boolean;
-  selectCostume: (costumeId: HariboCostume) => void;
+  buyCostume: (costumeId: KnowzaCostume) => boolean;
+  selectCostume: (costumeId: KnowzaCostume) => void;
   addXpAndGems: (xp: number, gems: number) => void;
 }
 
@@ -125,7 +125,7 @@ const DEFAULT_NOTES: StudyNote[] = [
 ];
 
 export const AVATAR_MAP: Record<UserAvatar, { emoji: string; name: string }> = {
-  haribo: { emoji: '🍯', name: 'Haribo Altın Ayıcık (Özel Maskot)' },
+  haribo: { emoji: '🍯', name: 'Knowza 3D Maskot (Özel Maskot)' },
   owl: { emoji: '🦉', name: 'Bilge Baykuş' },
   fox: { emoji: '🦊', name: 'Zeki Tilki' },
   robot: { emoji: '🤖', name: 'AI Robot' },
@@ -142,7 +142,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const saved = localStorage.getItem('akademi_user_stats');
       if (saved) {
         const parsed = JSON.parse(saved);
-        // Automatically migrate old default avatar to Haribo Ayıcık
+        // Automatically migrate old default avatar to Knowza Ayıcık
         const avatar = (parsed.avatar === 'owl' || !parsed.avatar) ? 'haribo' : parsed.avatar;
         return { ...DEFAULT_STATS, ...parsed, avatar };
       }
@@ -419,7 +419,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     if (takenNames.includes(lower)) {
       // Generate a unique derivative as requested by the user
-      const suffixes = ['_34', '_Haribo', '_Altın', '_Pro', '_Derece', '_2026'];
+      const suffixes = ['_34', '_Knowza', '_Altın', '_Pro', '_Derece', '_2026'];
       const randomSuffix = suffixes[Math.floor(Math.random() * suffixes.length)];
       finalName = `${trimmed}${randomSuffix}`;
       tag = '#' + Math.floor(1000 + Math.random() * 9000);
@@ -465,8 +465,8 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }));
   };
 
-  // Haribo Costume Purchase & Equip
-  const buyCostume = (costumeId: HariboCostume) => {
+  // Knowza Costume Purchase & Equip
+  const buyCostume = (costumeId: KnowzaCostume) => {
     const costume = HARIBO_COSTUMES.find(c => c.id === costumeId);
     if (!costume) return false;
 
@@ -491,7 +491,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return true;
   };
 
-  const selectCostume = (costumeId: HariboCostume) => {
+  const selectCostume = (costumeId: KnowzaCostume) => {
     if (!stats.unlockedCostumes.includes(costumeId)) return;
     sound.playClick();
     setStats(prev => ({

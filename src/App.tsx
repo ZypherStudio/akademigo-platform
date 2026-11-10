@@ -8,6 +8,12 @@ import { KnowzaProfile } from './components/KnowzaProfile';
 import { KnowzaBottomNav, KnowzaTab } from './components/KnowzaBottomNav';
 import { KnowzaQuizModal } from './components/KnowzaQuizModal';
 import { KnowzaLevelUpModal } from './components/KnowzaLevelUpModal';
+import { LessonModal } from './components/LessonModal';
+import { ExamSimulator } from './components/ExamSimulator';
+import { ExamCountdown } from './components/ExamCountdown';
+import { ErrorNotebook } from './components/ErrorNotebook';
+import { CodeLab } from './components/CodeLab';
+import { LearnPath } from './components/LearnPath';
 import { KahootArena } from './components/KahootArena';
 import { QuizDuel } from './components/QuizDuel';
 import { ReelsQuestions } from './components/ReelsQuestions';
@@ -17,7 +23,7 @@ import { ArrowLeft, Smartphone, Monitor } from 'lucide-react';
 import { soundSystem } from './utils/audio';
 
 const KnowzaAppContent: React.FC = () => {
-  const { stats } = useGame();
+  const { stats, activeLesson, closeLesson } = useGame();
   const [currentTab, setCurrentTab] = useState<KnowzaTab>('home');
   const [hasStarted, setHasStarted] = useState<boolean>(() => {
     return localStorage.getItem('knowza_has_started') === 'true';
@@ -198,6 +204,106 @@ const KnowzaAppContent: React.FC = () => {
               </div>
             </div>
           )}
+
+          {/* Deneme Sınavları Simülatörü */}
+          {currentTab === 'exams' && (
+            <div className="flex-1 flex flex-col">
+              <div className="sticky top-0 z-30 bg-emerald-900/90 backdrop-blur-md px-4 py-3 flex items-center justify-between text-white border-b border-emerald-800">
+                <button
+                  onClick={() => setCurrentTab('home')}
+                  className="flex items-center gap-1.5 text-xs font-bold bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded-full transition"
+                >
+                  <ArrowLeft className="w-4 h-4" />
+                  <span>Ana Sayfa</span>
+                </button>
+                <span className="text-sm font-black tracking-wide">ÖSYM Deneme Simülatörü 📝</span>
+                <div className="w-12" />
+              </div>
+              <div className="flex-1 pb-24">
+                <ExamSimulator />
+              </div>
+            </div>
+          )}
+
+          {/* Sınav Sayacı */}
+          {currentTab === 'countdown' && (
+            <div className="flex-1 flex flex-col">
+              <div className="sticky top-0 z-30 bg-indigo-900/90 backdrop-blur-md px-4 py-3 flex items-center justify-between text-white border-b border-indigo-800">
+                <button
+                  onClick={() => setCurrentTab('home')}
+                  className="flex items-center gap-1.5 text-xs font-bold bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded-full transition"
+                >
+                  <ArrowLeft className="w-4 h-4" />
+                  <span>Ana Sayfa</span>
+                </button>
+                <span className="text-sm font-black tracking-wide">Sınav Sayacı ⏱️</span>
+                <div className="w-12" />
+              </div>
+              <div className="flex-1 pb-24">
+                <ExamCountdown />
+              </div>
+            </div>
+          )}
+
+          {/* Hata Defteri */}
+          {currentTab === 'errors' && (
+            <div className="flex-1 flex flex-col">
+              <div className="sticky top-0 z-30 bg-rose-950/90 backdrop-blur-md px-4 py-3 flex items-center justify-between text-white border-b border-rose-900">
+                <button
+                  onClick={() => setCurrentTab('home')}
+                  className="flex items-center gap-1.5 text-xs font-bold bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded-full transition"
+                >
+                  <ArrowLeft className="w-4 h-4" />
+                  <span>Ana Sayfa</span>
+                </button>
+                <span className="text-sm font-black tracking-wide">Hata Defterim 📖</span>
+                <div className="w-12" />
+              </div>
+              <div className="flex-1 pb-24">
+                <ErrorNotebook />
+              </div>
+            </div>
+          )}
+
+          {/* Kod Lab */}
+          {currentTab === 'codelab' && (
+            <div className="flex-1 flex flex-col">
+              <div className="sticky top-0 z-30 bg-slate-900/90 backdrop-blur-md px-4 py-3 flex items-center justify-between text-white border-b border-slate-800">
+                <button
+                  onClick={() => setCurrentTab('home')}
+                  className="flex items-center gap-1.5 text-xs font-bold bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded-full transition"
+                >
+                  <ArrowLeft className="w-4 h-4" />
+                  <span>Ana Sayfa</span>
+                </button>
+                <span className="text-sm font-black tracking-wide">Python Kod Lab 💻</span>
+                <div className="w-12" />
+              </div>
+              <div className="flex-1 pb-24">
+                <CodeLab />
+              </div>
+            </div>
+          )}
+
+          {/* Öğrenme Haritası (LearnPath) */}
+          {currentTab === 'learn' && (
+            <div className="flex-1 flex flex-col">
+              <div className="sticky top-0 z-30 bg-[#FFFDF7]/95 backdrop-blur-md px-4 py-3 flex items-center justify-between border-b border-amber-100">
+                <button
+                  onClick={() => setCurrentTab('home')}
+                  className="flex items-center gap-1.5 text-xs font-bold bg-amber-100 hover:bg-amber-200 text-amber-900 px-3 py-1.5 rounded-full transition"
+                >
+                  <ArrowLeft className="w-4 h-4" />
+                  <span>Ana Sayfa</span>
+                </button>
+                <span className="text-sm font-black text-slate-900">Öğrenme Haritası 🗺️</span>
+                <div className="w-12" />
+              </div>
+              <div className="flex-1 pb-24">
+                <LearnPath />
+              </div>
+            </div>
+          )}
         </main>
 
         {/* 4-Tab Bottom Navigation matching Screens 2, 5, 6, 8 */}
@@ -208,7 +314,15 @@ const KnowzaAppContent: React.FC = () => {
           }}
         />
 
-        {/* Interactive Lesson / Quiz Modal (Screen 3 & 4) */}
+        {/* Real Interactive Lesson Solver (Runs when ANY lesson is tapped!) */}
+        {activeLesson && (
+          <LessonModal
+            lesson={activeLesson}
+            onClose={closeLesson}
+          />
+        )}
+
+        {/* Interactive Lesson / Quiz Modal (Screen 3 & 4 sample test) */}
         {activeQuizSubject && (
           <KnowzaQuizModal
             subject={activeQuizSubject}

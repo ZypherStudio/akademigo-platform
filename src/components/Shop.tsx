@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useGame } from '../context/GameContext';
 import { HARIBO_COSTUMES } from '../data/costumesData';
-import { HariboCostume } from '../types';
-import { HariboAvatar } from './HariboAvatar';
+import { KnowzaCostume } from '../types';
+import { KnowzaAvatar } from './KnowzaAvatar';
 import { ShoppingBag, Sparkles, Check, Lock, Zap } from 'lucide-react';
 import { sound } from '../utils/audio';
 
@@ -92,9 +92,9 @@ export const Shop: React.FC = () => {
       <div className="bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 rounded-3xl p-6 text-white text-center shadow-xl relative overflow-hidden">
         <div className="inline-flex items-center gap-1.5 bg-black/20 px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider mb-2">
           <Sparkles className="w-3.5 h-3.5 text-amber-300" />
-          AkademiGO Prestij Mağazası
+          Knowza Prestij Mağazası
         </div>
-        <h2 className="text-2xl sm:text-3xl font-black">Haribo Kostüm & Güç Merkezi</h2>
+        <h2 className="text-2xl sm:text-3xl font-black">Knowza Kostüm & Güç Merkezi</h2>
         <p className="text-white/80 text-xs sm:text-sm font-semibold max-w-md mx-auto mt-1">
           Yüksek puanlarla efsanevi ayıcık kostümlerini kuşan, Kahoot ve düellolarda farkını göster!
         </p>
@@ -131,7 +131,7 @@ export const Shop: React.FC = () => {
               : 'text-gray-500 hover:text-gray-800 dark:hover:text-gray-200'
           }`}
         >
-          <span>👑 Haribo Kostüm Dolabı ({HARIBO_COSTUMES.length})</span>
+          <span>👑 Knowza Kostüm Dolabı ({HARIBO_COSTUMES.length})</span>
         </button>
         <button
           onClick={() => {
@@ -199,7 +199,7 @@ export const Shop: React.FC = () => {
                     {/* Costume Animated Preview */}
                     <div className="flex items-center gap-4 mb-3">
                       <div className="p-2.5 rounded-2xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-700/60 flex items-center justify-center">
-                        <HariboAvatar size="xl" costume={costume.id} animate="dance" />
+                        <KnowzaAvatar size="xl" costume={costume.id} animate="dance" />
                       </div>
                       <div>
                         <h4 className="font-black text-base text-gray-800 dark:text-gray-100">

@@ -3,14 +3,14 @@ import { useGame } from '../context/GameContext';
 import { Bot, Send, Sparkles, Volume2, VolumeX, Lightbulb, RotateCcw, BookOpen, Check } from 'lucide-react';
 import { sound } from '../utils/audio';
 import { Mascot } from './Mascot';
-import { HariboAvatar } from './HariboAvatar';
+import { KnowzaAvatar } from './KnowzaAvatar';
 import { AiChatMessage } from '../types';
 
 const INITIAL_MESSAGES: AiChatMessage[] = [
   {
     id: 'msg-1',
     sender: 'bibo',
-    text: 'Merhaba! Ben senin sevimli çalışma koçun Haribo Altın Ayıcık 🍯✨! TYT, KPSS, LGS veya Kodlama ile ilgili aklına takılan her soruyu, formülü veya sınav stratejisini bana sorabilirsin!',
+    text: 'Merhaba! Ben senin sevimli çalışma koçun Knowza 3D Maskot 🍯✨! TYT, KPSS, LGS veya Kodlama ile ilgili aklına takılan her soruyu, formülü veya sınav stratejisini bana sorabilirsin!',
     timestamp: 'Şimdi',
     cardTip: '💡 İpucu: Aşağıdaki hızlı soru butonlarına basarak hemen pratik başlatabilirsin!'
   }
@@ -89,7 +89,7 @@ export const AiCoach: React.FC = () => {
         tip = '💻 KodLab sekmesinde canlı Python editörümüz seni bekliyor.';
       } else {
         replyText = `Bu konuda harika bir noktaya değindin! Sınav hazırlığında en önemli şey istikrar ve doğru stratejidir. Günlük serini (streak) bozmadan her gün en az 1 ders çözmek seni hedefine ulaştıracaktır. Başka merak ettiğin bir konu var mı?`;
-        tip = '🍯 Haribo Altın Ayıcık her zaman yanında!';
+        tip = '🍯 Knowza 3D Maskot her zaman yanında!';
       }
 
       const biboMsg: AiChatMessage = {
@@ -112,14 +112,14 @@ export const AiCoach: React.FC = () => {
       <div className="bg-gradient-to-r from-amber-500 via-orange-600 to-amber-700 rounded-3xl p-5 text-white shadow-lg flex items-center justify-between">
         <div className="flex items-center gap-4">
           <div className="w-14 h-14 rounded-2xl bg-white/20 border-2 border-white/40 flex items-center justify-center select-none animate-bounceSubtle p-2">
-            <HariboAvatar size="lg" animate={true} />
+            <KnowzaAvatar size="lg" animate={true} />
           </div>
           <div>
             <div className="inline-flex items-center gap-1.5 bg-black/20 px-3 py-0.5 rounded-full text-xs font-black uppercase tracking-wider mb-1">
               <Sparkles className="w-3 h-3 text-amber-300" />
               Özel Maskot & Yapay Zeka Koç
             </div>
-            <h2 className="text-xl sm:text-2xl font-black">Haribo Altın Ayıcık AI</h2>
+            <h2 className="text-xl sm:text-2xl font-black">Knowza 3D Maskot AI</h2>
             <p className="text-white/80 text-xs font-semibold">
               Kişisel tatlı koçun, sınav rehberin ve soru çözücün.
             </p>
@@ -168,7 +168,7 @@ export const AiCoach: React.FC = () => {
             <div className={`w-9 h-9 rounded-xl flex items-center justify-center text-lg flex-shrink-0 select-none p-1 ${
               msg.sender === 'user' ? 'bg-blue-100 border border-blue-300' : 'bg-amber-100 border border-amber-300'
             }`}>
-              {msg.sender === 'user' ? '👤' : <HariboAvatar size="sm" />}
+              {msg.sender === 'user' ? '👤' : <KnowzaAvatar size="sm" />}
             </div>
 
             {/* Bubble */}
@@ -196,10 +196,10 @@ export const AiCoach: React.FC = () => {
         {isTyping && (
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-xl bg-amber-100 border border-amber-300 flex items-center justify-center p-1">
-              <HariboAvatar size="sm" animate={true} />
+              <KnowzaAvatar size="sm" animate={true} />
             </div>
             <div className="bg-gray-100 dark:bg-[#202f36] px-4 py-3 rounded-2xl rounded-tl-none text-xs font-black text-gray-500 dark:text-gray-400 flex items-center gap-1.5 animate-pulse">
-              <span>Haribo Sarı Ayıcık düşünüyor</span>
+              <span>Knowza 3D Ayıcık düşünüyor</span>
               <span className="animate-bounce">.</span>
               <span className="animate-bounce delay-100">.</span>
               <span className="animate-bounce delay-200">.</span>
@@ -220,7 +220,7 @@ export const AiCoach: React.FC = () => {
       >
         <input
           type="text"
-          placeholder="Haribo Ayıcık'a soru sor, formül iste veya çalışma taktiği danış..."
+          placeholder="Knowza Ayıcık'a soru sor, formül iste veya çalışma taktiği danış..."
           value={inputText}
           onChange={(e) => setInputText(e.target.value)}
           className="flex-1 px-3 py-2 text-xs sm:text-sm font-bold text-gray-800 dark:text-gray-100 bg-transparent focus:outline-none placeholder-gray-400 dark:placeholder-gray-500"

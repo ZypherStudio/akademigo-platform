@@ -60,20 +60,24 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose }) => {
 
         {/* Header Mascot */}
         <div className="flex flex-col items-center text-center mb-5">
-          <div className="p-2 bg-amber-50 dark:bg-amber-950/40 rounded-3xl border-2 border-amber-200 dark:border-amber-700 mb-2">
-            <HariboAvatar size="xl" costume={stats.selectedCostume} animate="dance" />
+          <div className="w-20 h-20 rounded-full p-1 bg-gradient-to-tr from-[#FFB800] via-[#FFE2A3] to-[#FFB800] shadow-md mb-2 overflow-hidden flex items-center justify-center">
+            <img
+              src="/assets/knowza_icon.png"
+              alt="Knowza Maskot"
+              className="w-full h-full object-cover rounded-full"
+            />
           </div>
-          <div className="inline-flex items-center gap-1.5 bg-green-100 dark:bg-green-950/50 text-green-800 dark:text-green-300 text-[11px] font-black px-3 py-0.5 rounded-full uppercase tracking-wider mb-1">
-            <ShieldCheck className="w-3.5 h-3.5 text-green-600" />
+          <div className="inline-flex items-center gap-1.5 bg-amber-100 dark:bg-amber-950/50 text-amber-900 dark:text-amber-200 text-[11px] font-black px-3 py-0.5 rounded-full uppercase tracking-wider mb-1">
+            <ShieldCheck className="w-3.5 h-3.5 text-[#FFB800]" />
             Öğrenci Giriş & Kimlik Kapısı
           </div>
           <h2 className="text-2xl font-black text-gray-800 dark:text-gray-100">
-            {stats.isLoggedIn ? 'Öğrenci Profilin' : 'AkademiGO Hesabın'}
+            {stats.isLoggedIn ? 'Öğrenci Profilin' : 'Knowza Hesabın'}
           </h2>
           <p className="text-xs text-gray-500 dark:text-gray-400 font-semibold max-w-xs mt-0.5">
             {stats.isLoggedIn 
               ? `${stats.email} ile giriş yapıldı. İlerlemen buluta kaydediliyor.`
-              : 'Hesap açmadan istediğin testi çözebilirsin! Giriş yaparak puanlarını ve Haribo kostümlerini koru.'}
+              : 'Hesap açmadan istediğin testi çözebilirsin! Giriş yaparak puanlarını ve kazandığın rozetleri koru.'}
           </p>
         </div>
 

@@ -145,7 +145,7 @@ export const LearnPath: React.FC = () => {
         <Mascot
           size="md"
           mood="idle"
-          speech="Hazır mısın? Haribo Sarı Ayıcık ile hedefine adım adım koşuyoruz! İstediğin konudan başla 🍯✨"
+          speech="Hazır mısın? Knowza 3D Ayıcık ile hedefine adım adım koşuyoruz! İstediğin konudan başla 🍯✨"
         />
       </div>
 

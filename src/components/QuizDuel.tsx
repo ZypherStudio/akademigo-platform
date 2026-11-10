@@ -4,7 +4,7 @@ import { Swords, Trophy, Shield, Zap, Timer, Flame, CheckCircle2, XCircle, Rotat
 import { sound } from '../utils/audio';
 import confetti from 'canvas-confetti';
 import { Mascot } from './Mascot';
-import { HariboAvatar } from './HariboAvatar';
+import { KnowzaAvatar } from './KnowzaAvatar';
 
 interface DuelQuestion {
   id: number;
@@ -162,7 +162,7 @@ export const QuizDuel: React.FC = () => {
 
   const handleCopyRoomLink = () => {
     sound.playClick();
-    const text = `⚔️ AkademiGO'da seninle 1v1 Bilgi Düellosuna girmek istiyorum! 🍯✨\nOda Kodum: *${roomCode}*\nHemen gir ve kapışalım: ${window.location.origin}`;
+    const text = `⚔️ Knowza'da seninle 1v1 Bilgi Düellosuna girmek istiyorum! 🍯✨\nOda Kodum: *${roomCode}*\nHemen gir ve kapışalım: ${window.location.origin}`;
     navigator.clipboard.writeText(text);
     setRoomCopied(true);
     setTimeout(() => setRoomCopied(false), 2500);
@@ -453,7 +453,7 @@ export const QuizDuel: React.FC = () => {
             {/* Player */}
             <div className="flex items-center gap-2 sm:gap-3 min-w-0">
               <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-blue-600/30 border border-blue-400 flex items-center justify-center text-xl sm:text-2xl flex-shrink-0 p-1">
-                {stats.avatar === 'haribo' ? <HariboAvatar size="sm" /> : (AVATAR_MAP[stats.avatar]?.emoji || '⚔️')}
+                {stats.avatar === 'haribo' ? <KnowzaAvatar size="sm" /> : (AVATAR_MAP[stats.avatar]?.emoji || '⚔️')}
               </div>
               <div className="min-w-0">
                 <div className="text-[10px] sm:text-xs font-black text-blue-400 truncate">SEN ({stats.eloRating})</div>

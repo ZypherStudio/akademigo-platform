@@ -5,6 +5,7 @@ export type AppTheme = 'duo' | 'dark' | 'cyber' | 'gold' | 'ocean';
 export type UserAvatar = 'haribo' | 'owl' | 'fox' | 'robot' | 'astronaut' | 'wizard' | 'coder_cat';
 
 export type HariboCostume = 'classic' | 'king' | 'cyber' | 'party' | 'graduate' | 'astronaut';
+export type KnowzaCostume = HariboCostume;
 
 export interface HariboCostumeInfo {
   id: HariboCostume;
@@ -17,6 +18,7 @@ export interface HariboCostumeInfo {
   icon: string;
   bgGradient: string;
 }
+export type KnowzaCostumeInfo = HariboCostumeInfo;
 
 export type KahootCategory = 'matematik' | 'geometri' | 'kpss' | 'kodlama' | 'yds' | 'lgs' | 'karma';
 

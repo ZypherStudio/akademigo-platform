@@ -66,19 +66,20 @@ export const KnowzaProfile: React.FC<KnowzaProfileProps> = ({
       <div className="max-w-md mx-auto px-5 pt-4 space-y-6">
         {/* User Card matching Screen 8 */}
         <div className="flex flex-col items-center text-center pt-2">
-          {/* Avatar with gold badge */}
+          {/* Avatar with gold badge - Clean and Unclipped */}
           <div className="relative w-24 h-24 mb-3">
-            <img
-              src="/assets/knowza_profile_avatar.png"
-              alt="Knowza Avatar"
-              className="w-full h-full object-contain filter drop-shadow-md rounded-full"
-              onError={(e) => {
-                (e.target as HTMLImageElement).src = '/assets/knowza_icon.png';
-              }}
-            />
+            <div className="w-full h-full rounded-full p-1 bg-gradient-to-tr from-[#FFB800] via-[#FFE2A3] to-[#FFB800] shadow-md">
+              <div className="w-full h-full rounded-full overflow-hidden bg-[#FFF8E7] flex items-center justify-center">
+                <img
+                  src="/assets/knowza_icon.png"
+                  alt="Knowza Avatar"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            </div>
             {/* Verified badge */}
-            <div className="absolute bottom-0 right-1 w-6 h-6 rounded-full bg-[#FFB800] border-2 border-white flex items-center justify-center shadow-sm">
-              <Check className="w-3.5 h-3.5 text-slate-900 stroke-[3]" />
+            <div className="absolute -bottom-1 -right-1 w-7 h-7 rounded-full bg-[#FFB800] border-2 border-white flex items-center justify-center shadow-md">
+              <Check className="w-4 h-4 text-slate-900 stroke-[3]" />
             </div>
           </div>
 

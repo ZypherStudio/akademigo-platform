@@ -29,7 +29,7 @@ export const KnowzaHome: React.FC<KnowzaHomeProps> = ({
   ];
 
   return (
-    <div className="flex-1 max-w-md mx-auto px-4 py-4 space-y-5 pb-28 select-none">
+    <div className="flex-1 max-w-md mx-auto px-4 py-4 space-y-5 pb-36 select-none">
       
       {/* Top Header Bar */}
       <div className="flex items-center justify-between pt-1">
@@ -232,7 +232,9 @@ export const KnowzaHome: React.FC<KnowzaHomeProps> = ({
               <h5 className="font-black text-sm sm:text-base leading-tight">1v1 Düello ⚔️</h5>
               <p className="text-[10px] text-white/80 font-bold mt-0.5">ELO Puanı Kazan</p>
             </div>
-            <span className="text-xl self-end">👑 1420 ELO</span>
+            <span className="text-xs font-black self-end bg-black/20 px-2 py-1 rounded-lg">
+              👑 {stats.eloRating || 1240} ELO
+            </span>
           </button>
         </div>
       </div>

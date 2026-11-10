@@ -49,8 +49,8 @@ const KnowzaAppContent: React.FC = () => {
   // If user has not started yet, show Screen 1: Splash / Onboarding
   if (!hasStarted) {
     return (
-      <div className="min-h-screen bg-[#FFFDF7] flex justify-center items-center">
-        <div className="w-full max-w-md min-h-screen sm:min-h-[840px] sm:my-6 sm:rounded-[40px] sm:shadow-2xl sm:border border-amber-200/50 bg-[#FFFDF7] overflow-hidden flex flex-col justify-between">
+      <div className="h-[100dvh] w-full bg-[#FFFDF7] flex justify-center items-center overflow-hidden">
+        <div className="w-full max-w-md h-full md:h-auto md:max-h-[860px] md:my-6 md:rounded-[40px] md:shadow-2xl md:border md:border-amber-200/50 bg-[#FFFDF7] overflow-hidden flex flex-col justify-between">
           <KnowzaSplash
             onStart={handleStartFromSplash}
             onLogin={handleOpenLogin}
@@ -69,7 +69,7 @@ const KnowzaAppContent: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#FFFDF7] flex justify-center items-start text-slate-900 select-none antialiased relative">
+    <div className="min-h-[100dvh] w-full bg-[#FFFDF7] flex justify-center items-start text-slate-900 select-none antialiased relative overflow-x-hidden">
       {/* Desktop Responsive Test Mode Toggle (Only visible on wide desktop screens) */}
       <div className="hidden lg:flex fixed top-4 right-4 z-50 items-center gap-1.5 bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-full border border-amber-200/80 shadow-md text-xs font-bold text-slate-700">
         <button
@@ -96,8 +96,8 @@ const KnowzaAppContent: React.FC = () => {
 
       {/* Main App Container */}
       <div
-        className={`w-full min-h-screen relative bg-[#FFFDF7] sm:shadow-2xl sm:border sm:border-amber-100 flex flex-col transition-all duration-300 ${
-          isExpandedWebMode ? 'max-w-2xl sm:my-4 sm:rounded-[36px]' : 'max-w-md'
+        className={`w-full min-h-[100dvh] relative bg-[#FFFDF7] md:shadow-2xl md:border md:border-amber-100 flex flex-col transition-all duration-300 overflow-x-hidden ${
+          isExpandedWebMode ? 'max-w-2xl md:my-4 md:rounded-[36px]' : 'max-w-md md:my-4 md:rounded-[36px]'
         }`}
       >
         {/* Main Tab Views */}

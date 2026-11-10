@@ -26,6 +26,7 @@ import {
 } from 'lucide-react';
 import { sound } from '../utils/audio';
 import { KnowzaTab } from './KnowzaBottomNav';
+import { KnowzaAvatar } from './KnowzaAvatar';
 
 interface KnowzaHomeProps {
   onStartQuiz: (subject: string) => void;
@@ -72,20 +73,16 @@ export const KnowzaHome: React.FC<KnowzaHomeProps> = ({
         {/* User Profile Pill */}
         <div
           onClick={() => onNavigateTab('profile')}
-          className="flex items-center gap-3 cursor-pointer group active:scale-95 transition-all"
+          className="flex items-center gap-2.5 cursor-pointer group active:scale-95 transition-all"
         >
-          <div className="w-12 h-12 rounded-full border-2 border-[#FFB800] p-0.5 shadow-sm bg-white overflow-hidden flex items-center justify-center">
-            <img
-              src="/assets/knowza_avatar_circle.png"
-              alt="Knowza Profil"
-              className="w-full h-full object-contain"
-            />
+          <div className="flex-shrink-0">
+            <KnowzaAvatar size="md" costume={stats.selectedCostume} />
           </div>
-          <div>
-            <span className="text-[11px] font-bold text-[#8C7A5E] block leading-none">Merhaba!</span>
-            <h2 className="text-lg font-black text-[#2A1E00] flex items-center gap-1.5 leading-snug">
-              <span>{stats.username || 'Alp'}</span>
-              <span className="text-sm">👑</span>
+          <div className="min-w-0 max-w-[90px] sm:max-w-[120px]">
+            <span className="text-[10px] font-bold text-[#8C7A5E] block leading-none truncate">Merhaba!</span>
+            <h2 className="text-base sm:text-lg font-black text-[#2A1E00] flex items-center gap-1 leading-snug truncate">
+              <span className="truncate">{stats.username || 'Alp'}</span>
+              <span className="text-xs">👑</span>
             </h2>
           </div>
         </div>

@@ -12,9 +12,11 @@ import {
   LogOut,
   Sparkles,
   Check,
-  Edit3
+  Edit3,
+  Download
 } from 'lucide-react';
 import { soundSystem } from '../utils/audio';
+import { KnowzaAvatar } from './KnowzaAvatar';
 
 interface KnowzaProfileProps {
   onBack?: () => void;
@@ -68,13 +70,9 @@ export const KnowzaProfile: React.FC<KnowzaProfileProps> = ({
       <div className="max-w-md mx-auto px-5 pt-4 space-y-6">
         {/* User Card matching Screen 8 */}
         <div className="flex flex-col items-center text-center pt-2">
-          {/* Avatar with gold badge - Clean and Unclipped */}
-          <div className="relative w-24 h-24 mb-3 filter drop-shadow-md">
-            <img
-              src="/assets/knowza_avatar_circle.png"
-              alt="Knowza Avatar"
-              className="w-full h-full object-contain"
-            />
+          {/* Avatar with dynamic costume badge from Shop */}
+          <div className="relative mb-3 filter drop-shadow-md">
+            <KnowzaAvatar size="2xl" costume={stats.selectedCostume} animate="dance" />
             {/* Verified badge */}
             <div className="absolute -bottom-1 -right-1 w-7 h-7 rounded-full bg-[#FFB800] border-2 border-white flex items-center justify-center shadow-md">
               <Check className="w-4 h-4 text-slate-900 stroke-[3]" />
@@ -216,6 +214,26 @@ export const KnowzaProfile: React.FC<KnowzaProfileProps> = ({
             </div>
             <ChevronRight className="w-5 h-5 text-slate-400" />
           </button>
+
+          {/* Logo İndir (Download Official Knowza Logo) */}
+          <a
+            href="/assets/knowza_logo_hd.png"
+            download="Knowza_Official_3D_Logo.png"
+            className="w-full flex items-center justify-between p-3.5 hover:bg-amber-50/60 rounded-2xl transition text-left group border border-amber-200/50 bg-amber-50/30"
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl bg-amber-200 text-amber-900 flex items-center justify-center group-hover:scale-110 transition">
+                <Download className="w-5 h-5" />
+              </div>
+              <div>
+                <span className="text-sm font-black text-slate-900 block">Knowza 3D Logo İndir</span>
+                <span className="text-[11px] font-bold text-amber-700">Orijinal 3D Yüksek Çözünürlük PNG</span>
+              </div>
+            </div>
+            <span className="text-xs font-black bg-amber-400 text-slate-950 px-2.5 py-1 rounded-xl shadow-xs">
+              İndir 📥
+            </span>
+          </a>
         </div>
 
         {/* Logout or Account Action */}

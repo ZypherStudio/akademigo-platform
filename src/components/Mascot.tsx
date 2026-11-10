@@ -14,11 +14,12 @@ interface MascotProps {
 
 const HARIBO_QUOTES = [
   "Haribo Ayıcığıyla dersler artık jelibon gibi tatlı! 🐻🍯",
-  "Her gün 5 soru çözmek, beynini şampiyon yapar! 🧠✨",
+  "Günde 5 soru çöz, şampiyonlar ligine tırman! 🏆✨",
   "Hata yapmaktan korkma, tatlı bir tekrarla hemen öğrenirsin! 🍬",
   "Bugün harika bir odaklanma günündesin! Hadi başlayalım! 🚀",
-  "Mola vermeyi ve biraz su içmeyi unutma! 💧",
-  "Zor seviye sorular seni dereceye taşır, pes etmek yok! 🏆"
+  "Zor seviye sorular seni dereceye taşır, pes etmek yok! 🧠💪",
+  "Bal küpü canların biterse merak etme, mola verip tazeleyebilirsin! 🍯",
+  "YKS ve sınavları jelibon gibi ezip geçeceğiz! 🐾"
 ];
 
 export const Mascot: React.FC<MascotProps> = ({
@@ -32,6 +33,7 @@ export const Mascot: React.FC<MascotProps> = ({
   const [currentSpeech, setCurrentSpeech] = useState<string>(speech || HARIBO_QUOTES[0]);
   const [isBlinking, setIsBlinking] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
+  const [wiggle, setWiggle] = useState(false);
 
   useEffect(() => {
     if (speech) {
@@ -44,13 +46,16 @@ export const Mascot: React.FC<MascotProps> = ({
     const blinkInterval = setInterval(() => {
       setIsBlinking(true);
       setTimeout(() => setIsBlinking(false), 180);
-    }, 3500);
+    }, 3800);
     return () => clearInterval(blinkInterval);
   }, []);
 
   const handleClick = () => {
     if (!interactive) return;
     sound.playClick();
+    setWiggle(true);
+    setTimeout(() => setWiggle(false), 600);
+
     const randomQuote = HARIBO_QUOTES[Math.floor(Math.random() * HARIBO_QUOTES.length)];
     setCurrentSpeech(randomQuote);
     if (onMascotClick) {
@@ -62,7 +67,7 @@ export const Mascot: React.FC<MascotProps> = ({
     sm: 'w-16 h-16',
     md: 'w-24 h-24 sm:w-28 sm:h-28',
     lg: 'w-36 h-36 sm:w-44 sm:h-44',
-    xl: 'w-52 h-52 sm:w-60 sm:h-60'
+    xl: 'w-48 h-48 sm:w-56 sm:h-56'
   };
 
   const activeMood = isHovered && mood === 'idle' ? 'happy' : mood;
@@ -74,190 +79,206 @@ export const Mascot: React.FC<MascotProps> = ({
       {currentSpeech && (
         <div 
           onClick={handleClick}
-          className="mb-2 max-w-[260px] sm:max-w-sm bg-white dark:bg-gray-800 border-2 border-amber-300 dark:border-amber-500 text-gray-800 dark:text-gray-100 font-extrabold text-xs sm:text-sm px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-2xl shadow-lg relative animate-pop cursor-pointer hover:border-amber-400 hover:scale-105 transition-all text-center leading-snug"
+          className="mb-2 max-w-[260px] sm:max-w-sm bg-white dark:bg-[#1a2c35] border-2 border-amber-400 dark:border-amber-500 text-gray-800 dark:text-gray-100 font-black text-xs sm:text-sm px-3.5 py-2 sm:px-4 sm:py-2.5 rounded-2xl shadow-xl relative animate-pop cursor-pointer hover:border-amber-500 hover:scale-105 transition-all text-center leading-snug"
         >
           {currentSpeech}
           {/* Bubble tail pointing downwards */}
-          <div className="absolute left-1/2 -bottom-2 -translate-x-1/2 w-0 h-0 border-x-8 border-x-transparent border-t-8 border-t-white dark:border-t-gray-800" />
-          <div className="absolute left-1/2 -bottom-2.5 -translate-x-1/2 w-0 h-0 border-x-8 border-x-transparent border-t-8 border-t-amber-300 dark:border-t-amber-500 -z-10" />
+          <div className="absolute left-1/2 -bottom-2 -translate-x-1/2 w-0 h-0 border-x-8 border-x-transparent border-t-8 border-t-white dark:border-t-[#1a2c35]" />
+          <div className="absolute left-1/2 -bottom-2.5 -translate-x-1/2 w-0 h-0 border-x-8 border-x-transparent border-t-8 border-t-amber-400 dark:border-t-amber-500 -z-10" />
         </div>
       )}
 
-      {/* SVG Custom Mascot: "HARİBO AYICIK" (Gummy Bear of Wisdom) */}
+      {/* CUTE 3D HARIBO TEDDY BEAR MASCOT */}
       <div 
         onClick={handleClick}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
         className={`${sizeClasses[size]} relative cursor-pointer transition-transform duration-300 hover:scale-110 active:scale-95 ${
+          wiggle ? 'animate-wiggle' : ''
+        } ${
           activeMood === 'excited' || activeMood === 'happy' || activeMood === 'cheering'
-            ? 'animate-bounce'
-            : 'animate-bounceSubtle'
+            ? 'animate-bounceSubtle'
+            : 'animate-float'
         }`}
         title="Haribo Ayıcık - Senin Sevimli Çalışma Koçun (Tıkla ve konuş!)"
       >
-        <svg viewBox="0 0 200 220" className="w-full h-full drop-shadow-xl overflow-visible">
+        <svg viewBox="0 0 200 220" className="w-full h-full filter drop-shadow-xl overflow-visible">
           <defs>
-            {/* Gummy Gold Honey Gradient */}
-            <linearGradient id="gummyBearGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#fde047" />
-              <stop offset="35%" stopColor="#f59e0b" />
-              <stop offset="100%" stopColor="#d97706" />
+            {/* Bear Fur Gradients with solid fallbacks */}
+            <radialGradient id="bearFurGrad" cx="40%" cy="35%" r="65%">
+              <stop offset="0%" stopColor="#d9824c" />
+              <stop offset="50%" stopColor="#b46332" />
+              <stop offset="100%" stopColor="#87411c" />
+            </radialGradient>
+
+            <linearGradient id="bearEarInner" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stopColor="#fed7aa" />
+              <stop offset="100%" stopColor="#fba66c" />
             </linearGradient>
 
-            {/* Inner Ear & Snout Gradient */}
-            <linearGradient id="gummyInnerGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stopColor="#fef08a" />
-              <stop offset="100%" stopColor="#fcd34d" />
+            <linearGradient id="bearSnoutGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stopColor="#fef3c7" />
+              <stop offset="100%" stopColor="#fde047" />
             </linearGradient>
 
-            {/* Belly Gloss Gradient */}
-            <linearGradient id="gummyGlossGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stopColor="#ffffff" stopOpacity="0.6" />
-              <stop offset="100%" stopColor="#ffffff" stopOpacity="0.05" />
-            </linearGradient>
+            <radialGradient id="bearBellyGrad" cx="50%" cy="40%" r="60%">
+              <stop offset="0%" stopColor="#fde68a" />
+              <stop offset="100%" stopColor="#f59e0b" />
+            </radialGradient>
 
-            {/* Bowtie Red Gradient */}
-            <linearGradient id="bowtieGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#ff4b4b" />
-              <stop offset="100%" stopColor="#dc2626" />
+            <linearGradient id="honeyPotGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#f59e0b" />
+              <stop offset="50%" stopColor="#d97706" />
+              <stop offset="100%" stopColor="#b45309" />
             </linearGradient>
           </defs>
 
-          {/* Bear Feet */}
-          <ellipse cx="70" cy="195" rx="20" ry="14" fill="#d97706" />
-          <ellipse cx="130" cy="195" rx="20" ry="14" fill="#d97706" />
-          <ellipse cx="70" cy="194" rx="14" ry="9" fill="#fcd34d" />
-          <ellipse cx="130" cy="194" rx="14" ry="9" fill="#fcd34d" />
+          {/* Bear Feet with cute pads */}
+          <ellipse cx="68" cy="196" rx="22" ry="15" fill="#87411c" />
+          <ellipse cx="68" cy="194" rx="20" ry="13" fill="#b46332" />
+          <circle cx="68" cy="194" r="8" fill="#fed7aa" />
+          <circle cx="58" cy="189" r="3" fill="#fed7aa" />
+          <circle cx="68" cy="186" r="3.2" fill="#fed7aa" />
+          <circle cx="78" cy="189" r="3" fill="#fed7aa" />
 
-          {/* Left & Right Round Bear Ears */}
-          <circle cx="56" cy="48" r="22" fill="#d97706" />
-          <circle cx="56" cy="48" r="18" fill="url(#gummyBearGrad)" />
-          <circle cx="56" cy="48" r="11" fill="url(#gummyInnerGrad)" />
+          <ellipse cx="132" cy="196" rx="22" ry="15" fill="#87411c" />
+          <ellipse cx="132" cy="194" rx="20" ry="13" fill="#b46332" />
+          <circle cx="132" cy="194" r="8" fill="#fed7aa" />
+          <circle cx="122" cy="189" r="3" fill="#fed7aa" />
+          <circle cx="132" cy="186" r="3.2" fill="#fed7aa" />
+          <circle cx="142" cy="189" r="3" fill="#fed7aa" />
 
-          <circle cx="144" cy="48" r="22" fill="#d97706" />
-          <circle cx="144" cy="48" r="18" fill="url(#gummyBearGrad)" />
-          <circle cx="144" cy="48" r="11" fill="url(#gummyInnerGrad)" />
+          {/* Left Round Bear Ear */}
+          <circle cx="52" cy="48" r="24" fill="#87411c" />
+          <circle cx="52" cy="48" r="22" fill="url(#bearFurGrad)" />
+          <circle cx="52" cy="48" r="13" fill="url(#bearEarInner)" />
+
+          {/* Right Round Bear Ear */}
+          <circle cx="148" cy="48" r="24" fill="#87411c" />
+          <circle cx="148" cy="48" r="22" fill="url(#bearFurGrad)" />
+          <circle cx="148" cy="48" r="13" fill="url(#bearEarInner)" />
 
           {/* Bear Body */}
-          <ellipse cx="100" cy="140" rx="52" ry="58" fill="url(#gummyBearGrad)" />
+          <ellipse cx="100" cy="142" rx="54" ry="58" fill="#87411c" />
+          <ellipse cx="100" cy="140" rx="52" ry="56" fill="url(#bearFurGrad)" />
 
-          {/* Gummy Belly Highlight */}
-          <ellipse cx="100" cy="142" rx="36" ry="40" fill="url(#gummyInnerGrad)" />
-          <ellipse cx="94" cy="130" rx="22" ry="26" fill="url(#gummyGlossGrad)" />
+          {/* Belly Patch */}
+          <ellipse cx="100" cy="142" rx="34" ry="38" fill="url(#bearBellyGrad)" />
 
-          {/* Paws */}
+          {/* Arms / Paws */}
           {activeMood === 'happy' || activeMood === 'cheering' || activeMood === 'excited' ? (
-            /* Waving Happy Paws (Raised) */
+            /* Waving Arms Up in Joy */
             <>
-              <ellipse cx="44" cy="95" rx="16" ry="22" fill="url(#gummyBearGrad)" transform="rotate(-30 44 95)" />
-              <ellipse cx="156" cy="95" rx="16" ry="22" fill="url(#gummyBearGrad)" transform="rotate(30 156 95)" />
-              {/* Paw pads */}
-              <circle cx="42" cy="88" r="6" fill="#fcd34d" />
-              <circle cx="158" cy="88" r="6" fill="#fcd34d" />
+              <ellipse cx="40" cy="98" rx="16" ry="24" fill="#87411c" transform="rotate(-32 40 98)" />
+              <ellipse cx="40" cy="98" rx="14" ry="22" fill="url(#bearFurGrad)" transform="rotate(-32 40 98)" />
+              <circle cx="36" cy="88" r="7" fill="#fed7aa" />
+
+              <ellipse cx="160" cy="98" rx="16" ry="24" fill="#87411c" transform="rotate(32 160 98)" />
+              <ellipse cx="160" cy="98" rx="14" ry="22" fill="url(#bearFurGrad)" transform="rotate(32 160 98)" />
+              <circle cx="164" cy="88" r="7" fill="#fed7aa" />
             </>
           ) : (
-            /* Resting Paws on Belly */
+            /* Cute Paws Holding Honey Pot or Resting */
             <>
-              <ellipse cx="56" cy="130" rx="16" ry="18" fill="url(#gummyBearGrad)" />
-              <ellipse cx="144" cy="130" rx="16" ry="18" fill="url(#gummyBearGrad)" />
-              <circle cx="56" cy="130" r="7" fill="#fcd34d" />
-              <circle cx="144" cy="130" r="7" fill="#fcd34d" />
+              <ellipse cx="54" cy="132" rx="16" ry="20" fill="#87411c" transform="rotate(15 54 132)" />
+              <ellipse cx="54" cy="132" rx="14" ry="18" fill="url(#bearFurGrad)" transform="rotate(15 54 132)" />
+              <circle cx="56" cy="134" r="7" fill="#fed7aa" />
+
+              <ellipse cx="146" cy="132" rx="16" ry="20" fill="#87411c" transform="rotate(-15 146 132)" />
+              <ellipse cx="146" cy="132" rx="14" ry="18" fill="url(#bearFurGrad)" transform="rotate(-15 146 132)" />
+              <circle cx="144" cy="134" r="7" fill="#fed7aa" />
             </>
           )}
 
           {/* Bear Head (Cute Round Shape) */}
-          <circle cx="100" cy="78" r="48" fill="url(#gummyBearGrad)" />
+          <circle cx="100" cy="80" r="50" fill="#87411c" />
+          <circle cx="100" cy="78" r="48" fill="url(#bearFurGrad)" />
 
-          {/* Gummy Gloss Sheen on Forehead */}
-          <ellipse cx="86" cy="54" rx="16" ry="8" fill="url(#gummyGlossGrad)" transform="rotate(-15 86 54)" />
+          {/* Forehead Light Shimmer */}
+          <ellipse cx="85" cy="52" rx="16" ry="8" fill="#ffffff" opacity="0.22" transform="rotate(-15 85 52)" />
 
           {/* Snout / Muzzle */}
-          <ellipse cx="100" cy="88" rx="22" ry="17" fill="url(#gummyInnerGrad)" />
+          <ellipse cx="100" cy="92" rx="25" ry="19" fill="#fde68a" />
+          <ellipse cx="100" cy="91" rx="24" ry="18" fill="url(#bearSnoutGrad)" />
 
-          {/* Cute Black Bear Nose */}
-          <path d="M 94 81 Q 100 86 106 81 Q 100 90 94 81 Z" fill="#1c1917" />
-          <circle cx="98" cy="82" r="1.5" fill="#ffffff" />
+          {/* Glossy Black Bear Nose */}
+          <path d="M 93 84 Q 100 89 107 84 Q 100 95 93 84 Z" fill="#1c1917" />
+          <ellipse cx="98" cy="85" rx="2.5" ry="1.5" fill="#ffffff" />
 
-          {/* Mouth */}
+          {/* Mouth & Cute Smile */}
           {activeMood === 'happy' || activeMood === 'cheering' || activeMood === 'excited' ? (
-            /* Open Smiling Mouth */
-            <path d="M 92 88 Q 100 98 108 88" stroke="#1c1917" strokeWidth="3" fill="#ef4444" strokeLinecap="round" />
+            /* Big Joyful Open Smile with Tongue */
+            <g>
+              <path d="M 91 93 Q 100 105 109 93" fill="#881337" stroke="#1c1917" strokeWidth="2.5" strokeLinecap="round" />
+              <path d="M 94 98 Q 100 105 106 98" fill="#fb7185" />
+            </g>
           ) : activeMood === 'sad' ? (
-            /* Sad Drooping Mouth */
-            <path d="M 93 94 Q 100 88 107 94" stroke="#1c1917" strokeWidth="2.5" fill="none" strokeLinecap="round" />
+            /* Sad Mouth */
+            <path d="M 93 98 Q 100 92 107 98" stroke="#1c1917" strokeWidth="2.5" fill="none" strokeLinecap="round" />
           ) : (
-            /* Gentle Smile */
-            <path d="M 94 88 Q 100 94 106 88" stroke="#1c1917" strokeWidth="2.5" fill="none" strokeLinecap="round" />
+            /* Sweet Bear Smile */
+            <g>
+              <path d="M 100 90 L 100 94" stroke="#1c1917" strokeWidth="2" strokeLinecap="round" />
+              <path d="M 93 94 Q 100 99 107 94" stroke="#1c1917" strokeWidth="2.5" fill="none" strokeLinecap="round" />
+            </g>
           )}
 
-          {/* Eyes */}
+          {/* Rosy Glowing Cheeks */}
+          <ellipse cx="64" cy="86" rx="8" ry="5.5" fill="#f87171" opacity="0.65" />
+          <ellipse cx="136" cy="86" rx="8" ry="5.5" fill="#f87171" opacity="0.65" />
+
+          {/* Cartoon Sparkly Bear Eyes */}
           {isBlinking ? (
-            /* Blinking Eyes */
+            /* Blinking Curved Lines */
             <>
-              <line x1="74" y1="68" x2="88" y2="68" stroke="#1c1917" strokeWidth="3.5" strokeLinecap="round" />
-              <line x1="112" y1="68" x2="126" y2="68" stroke="#1c1917" strokeWidth="3.5" strokeLinecap="round" />
+              <path d="M 72 70 Q 79 75 86 70" stroke="#1c1917" strokeWidth="3.5" strokeLinecap="round" fill="none" />
+              <path d="M 114 70 Q 121 75 128 70" stroke="#1c1917" strokeWidth="3.5" strokeLinecap="round" fill="none" />
             </>
           ) : activeMood === 'happy' || activeMood === 'cheering' ? (
-            /* Joyful Curved Eyes (^_^) */
+            /* Joyful (^_^) Eyes */
             <>
-              <path d="M 74 72 Q 81 60 88 72" stroke="#1c1917" strokeWidth="4" fill="none" strokeLinecap="round" />
-              <path d="M 112 72 Q 119 60 126 72" stroke="#1c1917" strokeWidth="4" fill="none" strokeLinecap="round" />
-              {/* Rosy Cheeks */}
-              <circle cx="68" cy="84" r="7" fill="#f87171" opacity="0.65" />
-              <circle cx="132" cy="84" r="7" fill="#f87171" opacity="0.65" />
-            </>
-          ) : activeMood === 'sad' ? (
-            /* Sad Eyes + Tear */
-            <>
-              <circle cx="81" cy="70" r="7" fill="#1c1917" />
-              <circle cx="79" cy="67" r="2.5" fill="#ffffff" />
-              <circle cx="119" cy="70" r="7" fill="#1c1917" />
-              <circle cx="117" cy="67" r="2.5" fill="#ffffff" />
-              <ellipse cx="128" cy="85" rx="3" ry="5" fill="#60a5fa" />
+              <path d="M 72 72 Q 79 62 86 72" stroke="#1c1917" strokeWidth="4" strokeLinecap="round" fill="none" />
+              <path d="M 114 72 Q 121 62 128 72" stroke="#1c1917" strokeWidth="4" strokeLinecap="round" fill="none" />
             </>
           ) : activeMood === 'thinking' ? (
-            /* Looking Up Thinking */
+            /* Looking Up Curiously */
             <>
-              <circle cx="81" cy="64" r="7" fill="#1c1917" />
-              <circle cx="79" cy="61" r="2.5" fill="#ffffff" />
-              <circle cx="119" cy="64" r="7" fill="#1c1917" />
-              <circle cx="117" cy="61" r="2.5" fill="#ffffff" />
-              <circle cx="100" cy="18" r="6" fill="#facc15" />
+              <circle cx="79" cy="66" r="8" fill="#1c1917" />
+              <circle cx="76" cy="63" r="3.2" fill="#ffffff" />
+              <circle cx="81" cy="68" r="1.5" fill="#ffffff" />
+
+              <circle cx="121" cy="66" r="8" fill="#1c1917" />
+              <circle cx="118" cy="63" r="3.2" fill="#ffffff" />
+              <circle cx="123" cy="68" r="1.5" fill="#ffffff" />
             </>
           ) : (
-            /* Sparkly Shiny Eyes */
+            /* Big Adorable Disney-Style Sparkly Eyes */
             <>
-              <circle cx="81" cy="68" r="7" fill="#1c1917" />
-              <circle cx="79" cy="65" r="2.8" fill="#ffffff" />
-              <circle cx="83" cy="71" r="1.2" fill="#ffffff" />
+              <circle cx="79" cy="70" r="8.5" fill="#1c1917" />
+              <circle cx="76" cy="67" r="3.5" fill="#ffffff" />
+              <circle cx="82" cy="73" r="1.6" fill="#ffffff" />
 
-              <circle cx="119" cy="68" r="7" fill="#1c1917" />
-              <circle cx="117" cy="65" r="2.8" fill="#ffffff" />
-              <circle cx="121" cy="71" r="1.2" fill="#ffffff" />
-
-              {/* Sweet Rosy Cheeks */}
-              <circle cx="68" cy="82" r="6" fill="#f87171" opacity="0.45" />
-              <circle cx="132" cy="82" r="6" fill="#f87171" opacity="0.45" />
+              <circle cx="121" cy="70" r="8.5" fill="#1c1917" />
+              <circle cx="118" cy="67" r="3.5" fill="#ffffff" />
+              <circle cx="124" cy="73" r="1.6" fill="#ffffff" />
             </>
           )}
 
-          {/* Haribo Red Bowtie or Scholar Cap */}
-          <g transform="translate(100, 114)">
-            <polygon points="-16,-7 -16,7 0,0" fill="url(#bowtieGrad)" />
-            <polygon points="16,-7 16,7 0,0" fill="url(#bowtieGrad)" />
-            <circle cx="0" cy="0" r="4.5" fill="#b91c1c" />
+          {/* Graduation Cap or Honey Pot Badge */}
+          <g transform="translate(132, 122) scale(0.7)">
+            <ellipse cx="20" cy="30" rx="18" ry="16" fill="url(#honeyPotGrad)" />
+            <ellipse cx="20" cy="18" rx="16" ry="6" fill="#fef08a" />
+            <path d="M 10 20 Q 20 26 30 20 L 32 32 Q 20 40 8 32 Z" fill="#d97706" />
+            <text x="20" y="32" fontSize="13" textAnchor="middle" fill="#fff" fontWeight="bold">🍯</text>
           </g>
 
-          {/* Sparkles if Excited */}
-          {(activeMood === 'excited' || activeMood === 'cheering') && (
-            <>
-              <text x="20" y="45" fontSize="20" className="animate-ping">✨</text>
-              <text x="165" y="45" fontSize="20" className="animate-ping">⭐</text>
-              <text x="100" y="20" fontSize="16" className="animate-bounce">🍬</text>
-            </>
-          )}
         </svg>
       </div>
+
+      {/* Mascot Hint Subtitle */}
+      <span className="text-[10px] font-black uppercase text-amber-600 dark:text-amber-400 mt-1 tracking-wider">
+        Haribo Ayıcık'a Tıkla, Taktik Al! 🐻
+      </span>
 
     </div>
   );

@@ -3,11 +3,14 @@ import { useGame, AVATAR_MAP } from '../context/GameContext';
 import { COURSES } from '../data/coursesData';
 import { Flame, Gem, Heart, Volume2, VolumeX, ChevronDown, Check, Sparkles } from 'lucide-react';
 import { CourseCategory } from '../types';
+import { LuckyWheelModal } from './LuckyWheelModal';
+import { sound } from '../utils/audio';
 
 export const Header: React.FC = () => {
   const { stats, selectedCourseId, setSelectedCourseId, soundMuted, toggleSound, refillHearts, userLevel } = useGame();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [showHeartModal, setShowHeartModal] = useState(false);
+  const [showLuckyWheel, setShowLuckyWheel] = useState(false);
 
   const currentCourse = COURSES.find(c => c.id === selectedCourseId) || COURSES[0];
   const userAvatarEmoji = AVATAR_MAP[stats.avatar]?.emoji || '🐻';
@@ -125,6 +128,19 @@ export const Header: React.FC = () => {
             )}
           </div>
 
+          {/* Daily Lucky Wheel Button */}
+          <button
+            onClick={() => {
+              sound.playClick();
+              setShowLuckyWheel(true);
+            }}
+            title="Günlük Şans Çarkı (Ödül Kazan!)"
+            className="flex items-center gap-1 bg-amber-400 hover:bg-amber-500 text-amber-950 font-black text-xs px-2.5 py-1.5 rounded-xl border-b-2 border-amber-600 active:border-b-0 active:translate-y-0.5 transition-all shadow-sm animate-bounceSubtle"
+          >
+            <span className="text-sm">🎡</span>
+            <span className="hidden sm:inline">Şans Çarkı</span>
+          </button>
+
           {/* Sound Mute Toggle */}
           <button
             onClick={toggleSound}
@@ -137,6 +153,11 @@ export const Header: React.FC = () => {
         </div>
 
       </div>
+
+      {/* Lucky Wheel Modal */}
+      {showLuckyWheel && (
+        <LuckyWheelModal onClose={() => setShowLuckyWheel(false)} />
+      )}
     </header>
   );
 };

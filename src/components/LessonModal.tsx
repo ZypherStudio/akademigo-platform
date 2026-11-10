@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useGame } from '../context/GameContext';
 import { Lesson, Question, MatchingPair } from '../types';
-import { X, Heart, CheckCircle2, XCircle, Lightbulb, Sparkles, Award } from 'lucide-react';
+import { X, Heart, CheckCircle2, XCircle, Lightbulb, Sparkles, Award, Volume2 } from 'lucide-react';
 import { sound } from '../utils/audio';
+import { speakText, stopSpeech } from '../utils/speech';
 import { Mascot } from './Mascot';
 
 interface LessonModalProps {
@@ -32,6 +33,7 @@ export const LessonModal: React.FC<LessonModalProps> = ({ lesson, onClose }) => 
   const progressPercent = Math.round(((currentIndex) / lesson.questions.length) * 100);
 
   useEffect(() => {
+    stopSpeech();
     setSelectedAnswer(null);
     setStatus('idle');
     setShowHint(false);
@@ -261,10 +263,22 @@ export const LessonModal: React.FC<LessonModalProps> = ({ lesson, onClose }) => 
               </div>
             )}
 
-            {/* Question Prompt */}
-            <h3 className="text-xl sm:text-2xl font-black text-gray-800 dark:text-gray-100 leading-snug">
-              {currentQ.prompt}
-            </h3>
+            {/* Question Prompt with Audio Speak Button */}
+            <div className="flex items-start justify-between gap-3">
+              <h3 className="text-xl sm:text-2xl font-black text-gray-800 dark:text-gray-100 leading-snug flex-1">
+                {currentQ.prompt}
+              </h3>
+              <button
+                onClick={() => {
+                  sound.playClick();
+                  speakText(currentQ.prompt, lesson.unitId.includes('dil') ? 'en-US' : 'tr-TR');
+                }}
+                className="p-2 sm:p-2.5 rounded-2xl bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/50 border border-blue-200 dark:border-blue-800 transition-all active:scale-90 flex-shrink-0"
+                title="Soruyu Sesli Oku"
+              >
+                <Volume2 className="w-5 h-5 stroke-[2.5]" />
+              </button>
+            </div>
 
             {/* 1. Multiple Choice Options */}
             {currentQ.type === 'multiple_choice' && (

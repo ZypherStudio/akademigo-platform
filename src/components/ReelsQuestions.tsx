@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useGame } from '../context/GameContext';
 import { Flame, Share2, ArrowUp, Zap, Sparkles, CheckCircle2, XCircle, Trophy, RotateCcw, Volume2, Timer } from 'lucide-react';
 import { sound } from '../utils/audio';
+import { speakText, stopSpeech } from '../utils/speech';
 import confetti from 'canvas-confetti';
 import { Mascot } from './Mascot';
 
@@ -266,10 +267,22 @@ export const ReelsQuestions: React.FC = () => {
             </span>
           </div>
 
-          {/* Question Prompt */}
-          <h2 className="text-base sm:text-lg font-black text-gray-800 dark:text-gray-100 leading-snug tracking-tight mb-5 min-h-[60px] flex items-center">
-            {currentQ.prompt}
-          </h2>
+          {/* Question Prompt with Audio Button */}
+          <div className="flex items-start justify-between gap-2.5 mb-5 min-h-[60px]">
+            <h2 className="text-base sm:text-lg font-black text-gray-800 dark:text-gray-100 leading-snug tracking-tight flex-1">
+              {currentQ.prompt}
+            </h2>
+            <button
+              onClick={() => {
+                sound.playClick();
+                speakText(currentQ.prompt, currentQ.category.includes('İngilizce') ? 'en-US' : 'tr-TR');
+              }}
+              className="p-2 rounded-xl bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/40 border border-blue-200 dark:border-blue-800 transition-all active:scale-90 flex-shrink-0"
+              title="Soruyu Sesli Oku"
+            >
+              <Volume2 className="w-4 h-4 stroke-[2.5]" />
+            </button>
+          </div>
 
           {/* Options Grid */}
           <div className="space-y-2.5">

@@ -18,7 +18,11 @@ import {
   CheckCircle2,
   Layers,
   GraduationCap,
-  X
+  X,
+  Gem,
+  Music,
+  VolumeX,
+  ShoppingBag
 } from 'lucide-react';
 import { sound } from '../utils/audio';
 import { KnowzaTab } from './KnowzaBottomNav';
@@ -38,6 +42,7 @@ export const KnowzaHome: React.FC<KnowzaHomeProps> = ({
 }) => {
   const { stats, selectedCourseId, setSelectedCourseId, startLesson } = useGame();
   const [showAllCategoriesModal, setShowAllCategoriesModal] = useState(false);
+  const [isMusicPlaying, setIsMusicPlaying] = useState(() => sound.getBgmEnabled());
 
   // Available categories with metadata
   const categories: { id: CourseCategory; name: string; icon: string; badge: string; color: string }[] = [
@@ -85,13 +90,42 @@ export const KnowzaHome: React.FC<KnowzaHomeProps> = ({
           </div>
         </div>
 
-        {/* Right Action Icons: Streak & Settings */}
-        <div className="flex items-center gap-2">
+        {/* Right Action Icons: Gems/Shop, Streak, Music & Settings */}
+        <div className="flex items-center gap-1.5 sm:gap-2">
+          {/* Gems & Direct Shop Pill */}
+          <button
+            onClick={() => {
+              sound.playClick();
+              onNavigateTab('shop');
+            }}
+            className="flex items-center gap-1 bg-[#EBF5FF] border border-[#BCE1FE] px-2.5 py-1.5 rounded-2xl text-[#1C8BD6] font-black text-xs shadow-xs hover:scale-105 active:scale-95 transition"
+            title="Knowza Mağaza & Elmaslar"
+          >
+            <Gem className="w-3.5 h-3.5 fill-[#1CB0F6] text-[#1CB0F6]" />
+            <span>{stats.gems || 280}</span>
+          </button>
+
           {/* Daily Streak Pill */}
-          <div className="flex items-center gap-1.5 bg-[#FFF2D6] border border-[#FFE2A3] px-3 py-1.5 rounded-2xl text-[#D96B00] font-black text-xs shadow-sm">
-            <Flame className="w-4 h-4 fill-[#FF8A00] text-[#FF8A00] animate-bounceSubtle" />
-            <span>{stats.streak || 6} gün</span>
+          <div className="flex items-center gap-1 bg-[#FFF2D6] border border-[#FFE2A3] px-2.5 py-1.5 rounded-2xl text-[#D96B00] font-black text-xs shadow-xs">
+            <Flame className="w-3.5 h-3.5 fill-[#FF8A00] text-[#FF8A00] animate-bounceSubtle" />
+            <span>{stats.streak || 6}g</span>
           </div>
+
+          {/* Music Toggle */}
+          <button
+            onClick={() => {
+              const bgmOn = sound.toggleBgm();
+              setIsMusicPlaying(bgmOn);
+            }}
+            className={`w-9 h-9 rounded-2xl border flex items-center justify-center transition-all active:scale-90 shadow-xs ${
+              isMusicPlaying
+                ? 'bg-amber-100 border-amber-300 text-amber-900 shadow-sm animate-pulse'
+                : 'bg-white border-[#F2E8D5] text-[#A0988A] hover:text-[#70685A]'
+            }`}
+            title={isMusicPlaying ? 'Müziği Duraklat' : 'Çalışma Müziğini Başlat 🎵'}
+          >
+            {isMusicPlaying ? <Music className="w-4 h-4 text-amber-600" /> : <VolumeX className="w-4 h-4" />}
+          </button>
 
           {/* Settings Button */}
           <button
@@ -99,7 +133,8 @@ export const KnowzaHome: React.FC<KnowzaHomeProps> = ({
               sound.playClick();
               onOpenSettings();
             }}
-            className="w-9 h-9 rounded-2xl bg-white border border-[#F2E8D5] flex items-center justify-center text-[#70685A] hover:text-[#2A1E00] hover:bg-[#FFF9EC] shadow-sm active:scale-90 transition-all"
+            className="w-9 h-9 rounded-2xl bg-white border border-[#F2E8D5] flex items-center justify-center text-[#70685A] hover:text-[#2A1E00] hover:bg-[#FFF9EC] shadow-xs active:scale-90 transition-all"
+            title="Ayarlar & Profil"
           >
             <Settings className="w-4 h-4" />
           </button>
@@ -381,6 +416,35 @@ export const KnowzaHome: React.FC<KnowzaHomeProps> = ({
           <Code2 className="w-5 h-5 text-purple-600 mb-1" />
           <span className="text-[11px] font-bold text-slate-800">Kod Lab</span>
         </button>
+      </div>
+
+      {/* Knowza Mağaza & PRO VIP Pass Banner */}
+      <div
+        onClick={() => {
+          sound.playClick();
+          onNavigateTab('shop');
+        }}
+        className="bg-gradient-to-r from-[#2B1B06] via-[#3D2608] to-[#1C1204] rounded-3xl p-4 text-white shadow-lg border border-amber-500/40 flex items-center justify-between cursor-pointer active:scale-98 transition group relative overflow-hidden"
+      >
+        <div className="space-y-1 relative z-10">
+          <div className="inline-flex items-center gap-1.5 bg-amber-400 text-slate-900 text-[10px] font-black px-2.5 py-0.5 rounded-full uppercase tracking-wider shadow-xs">
+            <span>VIP MAĞAZA</span>
+            <span>💎</span>
+          </div>
+          <h4 className="text-base font-black text-amber-200 group-hover:text-amber-100 transition">
+            Knowza Mağaza & PRO Pass
+          </h4>
+          <p className="text-xs text-amber-100/70 font-semibold">
+            Sınırsız can, 2X XP, ödüllü reklam ve 3D kostümler!
+          </p>
+        </div>
+        <div className="w-14 h-14 relative z-10 flex-shrink-0 group-hover:scale-110 transition filter drop-shadow-md">
+          <img
+            src="/assets/knowza_avatar_circle.png"
+            alt="Knowza Mağaza"
+            className="w-full h-full object-contain"
+          />
+        </div>
       </div>
 
       {/* Full Categories & All Tests Modal ("Tümünü Gör") */}

@@ -27,6 +27,8 @@ export const KnowzaProfile: React.FC<KnowzaProfileProps> = ({
 }) => {
   const { stats, updateUsername, logoutUser } = useGame();
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
+  const [bgmOn, setBgmOn] = useState(() => soundSystem.getBgmEnabled());
+  const [sfxOn, setSfxOn] = useState(() => soundSystem.getSfxEnabled());
   const [isEditingName, setIsEditingName] = useState(false);
   const [nameInput, setNameInput] = useState(stats.username || 'Alp');
   const [activeModal, setActiveModal] = useState<string | null>(null);
@@ -67,16 +69,12 @@ export const KnowzaProfile: React.FC<KnowzaProfileProps> = ({
         {/* User Card matching Screen 8 */}
         <div className="flex flex-col items-center text-center pt-2">
           {/* Avatar with gold badge - Clean and Unclipped */}
-          <div className="relative w-24 h-24 mb-3">
-            <div className="w-full h-full rounded-full p-1 bg-gradient-to-tr from-[#FFB800] via-[#FFE2A3] to-[#FFB800] shadow-md">
-              <div className="w-full h-full rounded-full overflow-hidden bg-[#FFF8E7] flex items-center justify-center">
-                <img
-                  src="/assets/knowza_avatar_circle.png"
-                  alt="Knowza Avatar"
-                  className="w-full h-full object-contain"
-                />
-              </div>
-            </div>
+          <div className="relative w-24 h-24 mb-3 filter drop-shadow-md">
+            <img
+              src="/assets/knowza_avatar_circle.png"
+              alt="Knowza Avatar"
+              className="w-full h-full object-contain"
+            />
             {/* Verified badge */}
             <div className="absolute -bottom-1 -right-1 w-7 h-7 rounded-full bg-[#FFB800] border-2 border-white flex items-center justify-center shadow-md">
               <Check className="w-4 h-4 text-slate-900 stroke-[3]" />
@@ -243,7 +241,7 @@ export const KnowzaProfile: React.FC<KnowzaProfileProps> = ({
         )}
       </div>
 
-      {/* Info Modal */}
+      {/* Info & Settings Modal */}
       {activeModal && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-fade-in"
@@ -253,27 +251,97 @@ export const KnowzaProfile: React.FC<KnowzaProfileProps> = ({
             className="w-full max-w-sm bg-white rounded-3xl p-6 shadow-2xl border border-amber-100 text-slate-800"
             onClick={(e) => e.stopPropagation()}
           >
-            <h4 className="text-lg font-bold mb-2">
-              {activeModal === 'profileInfo' && 'Profil Bilgileri'}
-              {activeModal === 'languages' && 'Dil Tercihleri'}
-              {activeModal === 'settings' && 'Ayarlar'}
-              {activeModal === 'help' && 'Yardım & Destek'}
+            <h4 className="text-lg font-black text-slate-900 mb-3">
+              {activeModal === 'profileInfo' && 'Profil Bilgileri 👤'}
+              {activeModal === 'languages' && 'Dil Tercihleri 🌍'}
+              {activeModal === 'settings' && 'Uygulama & Ses Ayarları ⚙️'}
+              {activeModal === 'help' && 'Yardım & Destek 💬'}
             </h4>
-            <p className="text-sm text-slate-600 mb-5">
-              {activeModal === 'profileInfo' &&
-                `Kullanıcı adınız: ${stats.username || 'Alp'}. Günlük seri: ${stats.streak} gün. Seviye: ${currentLevel}.`}
-              {activeModal === 'languages' &&
-                'Knowza üzerinde Türkçe, İngilizce, Almanca ve Fransızca dilleri arasında pratik yapabilirsiniz.'}
-              {activeModal === 'settings' &&
-                'Uygulama sürümü: Knowza v2.0 (Play Store Edition). Tüm verileriniz bulutta güvenle saklanır.'}
-              {activeModal === 'help' &&
-                'Herhangi bir sorun için destek@knowza.app üzerinden bizimle 7/24 iletişime geçebilirsiniz.'}
-            </p>
+
+            {activeModal === 'settings' ? (
+              <div className="space-y-4 mb-5">
+                {/* Background Music Toggle */}
+                <div className="flex items-center justify-between p-3 bg-amber-50/70 rounded-2xl border border-amber-200/60">
+                  <div>
+                    <span className="font-extrabold text-sm text-slate-900 block">Arka Plan Müziği 🎵</span>
+                    <span className="text-[11px] font-semibold text-slate-500">Sakinleştirici odaklanma melodisi</span>
+                  </div>
+                  <button
+                    onClick={() => {
+                      const newState = soundSystem.toggleBgm();
+                      setBgmOn(newState);
+                    }}
+                    className={`w-12 h-7 rounded-full transition-colors relative p-1 ${
+                      bgmOn ? 'bg-[#FFB800]' : 'bg-slate-300'
+                    }`}
+                  >
+                    <div
+                      className={`w-5 h-5 rounded-full bg-white shadow-sm transition-transform ${
+                        bgmOn ? 'translate-x-5' : 'translate-x-0'
+                      }`}
+                    />
+                  </button>
+                </div>
+
+                {/* Sound Effects (SFX) Toggle */}
+                <div className="flex items-center justify-between p-3 bg-slate-50 rounded-2xl border border-slate-200/60">
+                  <div>
+                    <span className="font-extrabold text-sm text-slate-900 block">Ses Efektleri 🔔</span>
+                    <span className="text-[11px] font-semibold text-slate-500">Doğru, yanlış ve kutlama sesleri</span>
+                  </div>
+                  <button
+                    onClick={() => {
+                      const newState = soundSystem.toggleSfx();
+                      setSfxOn(newState);
+                    }}
+                    className={`w-12 h-7 rounded-full transition-colors relative p-1 ${
+                      sfxOn ? 'bg-[#FFB800]' : 'bg-slate-300'
+                    }`}
+                  >
+                    <div
+                      className={`w-5 h-5 rounded-full bg-white shadow-sm transition-transform ${
+                        sfxOn ? 'translate-x-5' : 'translate-x-0'
+                      }`}
+                    />
+                  </button>
+                </div>
+
+                {/* Daily Notifications Toggle */}
+                <div className="flex items-center justify-between p-3 bg-slate-50 rounded-2xl border border-slate-200/60">
+                  <div>
+                    <span className="font-extrabold text-sm text-slate-900 block">Günlük Hatırlatıcı ⏰</span>
+                    <span className="text-[11px] font-semibold text-slate-500">Serini koruman için günde 1 bildirim</span>
+                  </div>
+                  <button
+                    onClick={() => setNotificationsEnabled(!notificationsEnabled)}
+                    className={`w-12 h-7 rounded-full transition-colors relative p-1 ${
+                      notificationsEnabled ? 'bg-[#FFB800]' : 'bg-slate-300'
+                    }`}
+                  >
+                    <div
+                      className={`w-5 h-5 rounded-full bg-white shadow-sm transition-transform ${
+                        notificationsEnabled ? 'translate-x-5' : 'translate-x-0'
+                      }`}
+                    />
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <p className="text-sm text-slate-600 mb-5 leading-relaxed">
+                {activeModal === 'profileInfo' &&
+                  `Kullanıcı adınız: ${stats.username || 'Alp'}. Günlük seri: ${stats.streak} gün. Seviye: ${currentLevel}. Toplam XP: ${stats.xp}.`}
+                {activeModal === 'languages' &&
+                  'Knowza üzerinde Türkçe, İngilizce, Almanca ve Fransızca dilleri arasında pratik yapabilirsiniz.'}
+                {activeModal === 'help' &&
+                  'Herhangi bir sorun için destek@knowza.app üzerinden bizimle 7/24 iletişime geçebilirsiniz.'}
+              </p>
+            )}
+
             <button
               onClick={() => setActiveModal(null)}
-              className="w-full py-3 rounded-2xl bg-[#FFB800] text-slate-900 font-extrabold text-sm shadow-sm"
+              className="w-full py-3 rounded-2xl bg-[#FFB800] text-slate-900 font-extrabold text-sm shadow-sm active:scale-95 transition"
             >
-              Kapat
+              Tamam
             </button>
           </div>
         </div>

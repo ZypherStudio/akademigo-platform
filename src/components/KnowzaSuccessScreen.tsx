@@ -13,6 +13,10 @@ export const KnowzaSuccessScreen: React.FC<KnowzaSuccessScreenProps> = ({
   onNext,
   onHome
 }) => {
+  React.useEffect(() => {
+    sound.playTestComplete();
+  }, []);
+
   return (
     <div className="fixed inset-0 z-50 bg-gradient-to-b from-[#1C160F] via-[#241A0E] to-[#140F09] flex flex-col justify-between items-center px-6 py-8 select-none animate-fade text-white">
       

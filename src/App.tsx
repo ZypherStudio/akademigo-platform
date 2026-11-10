@@ -19,6 +19,7 @@ import { QuizDuel } from './components/QuizDuel';
 import { ReelsQuestions } from './components/ReelsQuestions';
 import { AiCoach } from './components/AiCoach';
 import { AuthModal } from './components/AuthModal';
+import { Shop } from './components/Shop';
 import { ArrowLeft, Smartphone, Monitor } from 'lucide-react';
 import { soundSystem } from './utils/audio';
 
@@ -112,6 +113,25 @@ const KnowzaAppContent: React.FC = () => {
 
           {currentTab === 'stats' && (
             <KnowzaStats onBack={() => setCurrentTab('home')} />
+          )}
+
+          {currentTab === 'shop' && (
+            <div className="flex-1 flex flex-col">
+              <div className="sticky top-0 z-30 bg-[#FFFDF7]/95 backdrop-blur-md px-4 py-3 flex items-center justify-between border-b border-amber-100/50">
+                <button
+                  onClick={() => setCurrentTab('home')}
+                  className="flex items-center gap-1.5 text-xs font-bold bg-amber-100/60 hover:bg-amber-200/60 text-slate-800 px-3 py-1.5 rounded-full transition"
+                >
+                  <ArrowLeft className="w-4 h-4" />
+                  <span>Ana Sayfa</span>
+                </button>
+                <span className="text-base font-extrabold text-slate-900">Knowza Mağaza 🛍️</span>
+                <div className="w-16" />
+              </div>
+              <div className="flex-1 pb-24">
+                <Shop />
+              </div>
+            </div>
           )}
 
           {currentTab === 'badges' && (

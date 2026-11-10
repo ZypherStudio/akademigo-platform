@@ -49,6 +49,146 @@ const DUEL_QUESTIONS: DuelQuestion[] = [
     options: ['Gümrü Antlaşması', 'Lozan Barış', 'Mudanya Mütarekesi', 'Ankara Antlaşması'],
     correctAnswer: 'Gümrü Antlaşması',
     category: 'Tarih'
+  },
+  {
+    id: 6,
+    prompt: 'En küçük ve tek çift asal sayı kaçtır?',
+    options: ['1', '2', '3', '0'],
+    correctAnswer: '2',
+    category: 'Matematik'
+  },
+  {
+    id: 7,
+    prompt: 'Hücrenin enerji santrali olarak bilinen organel hangisidir?',
+    options: ['Mitokondri', 'Ribozom', 'Golgi', 'Koful'],
+    correctAnswer: 'Mitokondri',
+    category: 'Biyoloji'
+  },
+  {
+    id: 8,
+    prompt: '2024 Paris Olimpiyatları\'nda dünya çapında viral olan efsanevi Türk atıcı kimdir?',
+    options: ['Yusuf Dikeç', 'Mete Gazoz', 'Servet Tazegül', 'Rıza Kayaalp'],
+    correctAnswer: 'Yusuf Dikeç',
+    category: 'Güncel Bilgi'
+  },
+  {
+    id: 9,
+    prompt: 'Python\'da bir sözlüğün anahtarlarını listeleyen metod hangisidir?',
+    options: ['.keys()', '.values()', '.items()', '.get()'],
+    correctAnswer: '.keys()',
+    category: 'Kodlama'
+  },
+  {
+    id: 10,
+    prompt: 'Türkiye Cumhuriyeti\'nin ilk Başbakanı kimdir?',
+    options: ['İsmet İnönü', 'Fevzi Çakmak', 'Kazım Karabekir', 'Celal Bayar'],
+    correctAnswer: 'İsmet İnönü',
+    category: 'Tarih'
+  },
+  {
+    id: 11,
+    prompt: 'Bir dik üçgende dik kenarlar 6 ve 8 cm ise hipotenüs kaç cm\'dir?',
+    options: ['10', '12', '14', '16'],
+    correctAnswer: '10',
+    category: 'Geometri'
+  },
+  {
+    id: 12,
+    prompt: '"Break a leg!" İngilizce deyimi ne anlama gelir?',
+    options: ['Şansın bol olsun!', 'Bacağını kır!', 'Hemen dur!', 'Sakin ol!'],
+    correctAnswer: 'Şansın bol olsun!',
+    category: 'İngilizce'
+  },
+  {
+    id: 13,
+    prompt: 'UNESCO Dünya Mirası listesine 2023 yılında giren Gordion Antik Kenti hangi ilimizdedir?',
+    options: ['Ankara', 'Konya', 'Eskişehir', 'Nevşehir'],
+    correctAnswer: 'Ankara',
+    category: 'KPSS Genel Kültür'
+  },
+  {
+    id: 14,
+    prompt: 'Maddenin 4. hali olarak kabul edilen plazmaya günlük hayattan örnek hangisidir?',
+    options: ['Yıldırım & Şimşek', 'Buz küpü', 'Su buharı', 'Kaya parçası'],
+    correctAnswer: 'Yıldırım & Şimşek',
+    category: 'Fizik'
+  },
+  {
+    id: 15,
+    prompt: 'x² - 16 = 0 denkleminin pozitif kökü kaçtır?',
+    options: ['4', '2', '8', '16'],
+    correctAnswer: '4',
+    category: 'Matematik'
+  },
+  {
+    id: 16,
+    prompt: 'Türkçe yazım kurallarına göre hangi sözcük daima ayrı yazılır?',
+    options: ['Şey', 'Biraz', 'Birkaç', 'Birtakım'],
+    correctAnswer: 'Şey',
+    category: 'Türkçe'
+  },
+  {
+    id: 17,
+    prompt: '1 Megabayt (MB) kaç Kilobayttır (KB)?',
+    options: ['1024 KB', '1000 KB', '512 KB', '2048 KB'],
+    correctAnswer: '1024 KB',
+    category: 'Bilgisayar'
+  },
+  {
+    id: 18,
+    prompt: 'Ünlü "Mona Lisa" ve "Son Akşam Yemeği" tablolarının ressamı kimdir?',
+    options: ['Leonardo da Vinci', 'Pablo Picasso', 'Vincent van Gogh', 'Michelangelo'],
+    correctAnswer: 'Leonardo da Vinci',
+    category: 'Sanat & Kültür'
+  },
+  {
+    id: 19,
+    prompt: 'Dünyanın en derin noktası olan Mariana Çukuru hangi okyanustadır?',
+    options: ['Büyük Okyanus (Pasifik)', 'Atlas Okyanusu', 'Hint Okyanusu', 'Arktik Okyanus'],
+    correctAnswer: 'Büyük Okyanus (Pasifik)',
+    category: 'Coğrafya'
+  },
+  {
+    id: 20,
+    prompt: 'DNA molekülünde Guanin bazının karşısına hangi baz eşleşir?',
+    options: ['Sitozin', 'Adenin', 'Timin', 'Urasil'],
+    correctAnswer: 'Sitozin',
+    category: 'Biyoloji'
+  },
+  {
+    id: 21,
+    prompt: 'Lozan Barış Antlaşması hangi yılda imzalanmıştır?',
+    options: ['1923', '1920', '1922', '1924'],
+    correctAnswer: '1923',
+    category: 'Tarih'
+  },
+  {
+    id: 22,
+    prompt: 'Periyodik tabloda sembolü "Au" olan değerli element hangisidir?',
+    options: ['Altın', 'Gümüş', 'Bakır', 'Demir'],
+    correctAnswer: 'Altın',
+    category: 'Kimya'
+  },
+  {
+    id: 23,
+    prompt: 'x + y = 10 ve x - y = 4 ise x sayısı kaçtır?',
+    options: ['7', '6', '8', '5'],
+    correctAnswer: '7',
+    category: 'Matematik'
+  },
+  {
+    id: 24,
+    prompt: 'JavaScript\'te değeri sonradan değiştirilemeyen sabit tanımlamak için ne kullanılır?',
+    options: ['const', 'let', 'var', 'static'],
+    correctAnswer: 'const',
+    category: 'Kodlama'
+  },
+  {
+    id: 25,
+    prompt: '"Carry out" İngilizce phrasal verb\'ünün en yakın eş anlamlısı nedir?',
+    options: ['Execute / Perform', 'Cancel', 'Delay', 'Forget'],
+    correctAnswer: 'Execute / Perform',
+    category: 'İngilizce'
   }
 ];
 
@@ -63,6 +203,7 @@ export const QuizDuel: React.FC = () => {
   const { stats, updateElo } = useGame();
   const [phase, setPhase] = useState<'lobby' | 'matchmaking' | 'room_lobby' | 'battle' | 'result'>('lobby');
   const [opponent, setOpponent] = useState(BOT_OPPONENTS[0]);
+  const [activeQuestions, setActiveQuestions] = useState<DuelQuestion[]>(() => DUEL_QUESTIONS.slice(0, 5));
   const [currentRound, setCurrentRound] = useState(0);
   const [userScore, setUserScore] = useState(0);
   const [opponentScore, setOpponentScore] = useState(0);
@@ -87,7 +228,7 @@ export const QuizDuel: React.FC = () => {
   };
 
   const currentTier = getEloTier(stats.eloRating);
-  const q = DUEL_QUESTIONS[currentRound];
+  const q = activeQuestions[currentRound] || DUEL_QUESTIONS[0];
 
   // Round countdown timer
   useEffect(() => {
@@ -110,6 +251,8 @@ export const QuizDuel: React.FC = () => {
     setPhase('matchmaking');
     const randomBot = BOT_OPPONENTS[Math.floor(Math.random() * BOT_OPPONENTS.length)];
     setOpponent(randomBot);
+    const shuffled = [...DUEL_QUESTIONS].sort(() => 0.5 - Math.random()).slice(0, 5);
+    setActiveQuestions(shuffled);
 
     setTimeout(() => {
       sound.playVictory();
@@ -140,6 +283,8 @@ export const QuizDuel: React.FC = () => {
 
   const handleStartRoomBattle = (opponentName?: string) => {
     sound.playVictory();
+    const shuffled = [...DUEL_QUESTIONS].sort(() => 0.5 - Math.random()).slice(0, 5);
+    setActiveQuestions(shuffled);
     setOpponent({
       name: opponentName || 'Arkadaşın (Oda: ' + roomCode + ')',
       avatar: '🧑‍🎓',
@@ -190,7 +335,7 @@ export const QuizDuel: React.FC = () => {
 
     // Advance to next round or finish
     setTimeout(() => {
-      if (currentRound + 1 < DUEL_QUESTIONS.length) {
+      if (currentRound + 1 < activeQuestions.length) {
         setCurrentRound(r => r + 1);
         setSelectedOption(null);
         setRoundTimeLeft(10);
@@ -205,7 +350,7 @@ export const QuizDuel: React.FC = () => {
     setRoundStatus('revealed');
     sound.playWrong();
     setTimeout(() => {
-      if (currentRound + 1 < DUEL_QUESTIONS.length) {
+      if (currentRound + 1 < activeQuestions.length) {
         setCurrentRound(r => r + 1);
         setSelectedOption(null);
         setRoundTimeLeft(10);
@@ -224,8 +369,8 @@ export const QuizDuel: React.FC = () => {
     updateElo(delta, won);
 
     if (won) {
-      sound.playVictory();
-      confetti({ particleCount: 100, spread: 80 });
+      sound.playTestComplete();
+      confetti({ particleCount: 120, spread: 80 });
     } else {
       sound.playWrong();
     }
@@ -477,7 +622,7 @@ export const QuizDuel: React.FC = () => {
           <div className="bg-white dark:bg-[#1a2c35] rounded-3xl p-6 border-2 border-gray-200 dark:border-[#2b3d45] shadow-sm space-y-6 transition-colors duration-300">
             <div className="flex items-center justify-between pb-3 border-b border-gray-100 dark:border-[#2b3d45]">
               <span className="text-xs font-black uppercase text-amber-600 bg-amber-50 dark:bg-amber-950/40 px-3 py-1 rounded-lg">
-                Raunt {currentRound + 1} / {DUEL_QUESTIONS.length} • {q.category}
+                Raunt {currentRound + 1} / {activeQuestions.length} • {q.category}
               </span>
 
               {/* Countdown Clock */}

@@ -117,6 +117,7 @@ export const LessonModal: React.FC<LessonModalProps> = ({ lesson, onClose }) => 
       const total = lesson.questions.length;
       const accuracy = Math.round(Math.max(0, (total - mistakesCount) / total) * 100);
       completeLesson(lesson.id, lesson.xpReward, lesson.gemReward, accuracy);
+      sound.playTestComplete();
       setIsCompleted(true);
     }
   };

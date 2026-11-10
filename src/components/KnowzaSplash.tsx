@@ -16,10 +16,10 @@ export const KnowzaSplash: React.FC<KnowzaSplashProps> = ({ onStart, onLogin }) 
 
       {/* Header Logo */}
       <div className="pt-2 sm:pt-6 flex flex-col items-center text-center relative z-10 animate-pop">
-        <div className="w-40 sm:w-52 filter drop-shadow-sm">
+        <div className="w-44 sm:w-56 filter drop-shadow-md">
           <img 
-            src="/assets/knowza_logo.png" 
-            alt="Knowza Logo" 
+            src="/assets/knowza_logo_hd.png" 
+            alt="Knowza 3D Logo" 
             className="w-full h-auto object-contain"
           />
         </div>

@@ -82,7 +82,7 @@ export const Header: React.FC = () => {
             className="flex items-center gap-1.5 bg-amber-50 dark:bg-amber-950/50 border-2 border-amber-200 dark:border-amber-700/60 px-2 sm:px-2.5 py-1 rounded-xl text-amber-900 dark:text-amber-300 font-black text-xs shadow-sm hover:border-amber-400 transition-all active:scale-95"
             title="Öğrenci Profili & Giriş"
           >
-            {stats.avatar === 'haribo' ? (
+            {stats.avatar === 'haribo' || stats.avatar === 'owl' || !stats.avatar ? (
               <KnowzaAvatar size="xs" costume={stats.selectedCostume} />
             ) : (
               <span className="text-base">{userAvatarEmoji}</span>

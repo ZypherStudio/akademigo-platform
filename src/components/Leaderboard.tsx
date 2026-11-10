@@ -1,7 +1,7 @@
 import React from 'react';
 import { useGame } from '../context/GameContext';
 import { Trophy, Medal, Sparkles, TrendingUp } from 'lucide-react';
-import { HariboAvatar } from './HariboAvatar';
+import { KnowzaAvatar } from './KnowzaAvatar';
 
 export const Leaderboard: React.FC = () => {
   const { leaderboard, stats } = useGame();
@@ -60,8 +60,8 @@ export const Leaderboard: React.FC = () => {
 
                 {/* Avatar */}
                 <div className="w-11 h-11 rounded-2xl bg-gray-100 dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 flex items-center justify-center text-2xl select-none p-1">
-                  {user.isCurrentUser && stats.avatar === 'haribo' ? (
-                    <HariboAvatar size="sm" costume={stats.selectedCostume} />
+                  {user.isCurrentUser && (stats.avatar === 'haribo' || stats.avatar === 'owl' || !stats.avatar) ? (
+                    <KnowzaAvatar size="sm" costume={stats.selectedCostume} />
                   ) : (
                     user.avatar
                   )}

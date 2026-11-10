@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useGame, AVATAR_MAP } from '../context/GameContext';
 import { AppTheme, UserAvatar, KnowzaCostume } from '../types';
-import { HARIBO_COSTUMES } from '../data/costumesData';
+import { KNOWZA_COSTUMES } from '../data/costumesData';
 import { 
   Flame, Gem, Trophy, Award, Palette, User, Shield, Check, Sparkles, 
   BookOpen, Clock, Heart, Edit3, Save, LogIn, Mail, ShieldCheck 
@@ -116,7 +116,7 @@ export const Profile: React.FC = () => {
           {/* Avatar with Level Badge */}
           <div className="relative">
             <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-3xl bg-white/20 backdrop-blur-md border-4 border-white/40 flex items-center justify-center text-6xl shadow-inner select-none p-2 animate-bounceSubtle">
-              {stats.avatar === 'haribo' ? (
+              {stats.avatar === 'haribo' || stats.avatar === 'owl' || !stats.avatar ? (
                 <KnowzaAvatar size="xl" costume={stats.selectedCostume} animate="dance" />
               ) : (
                 currentAvatarInfo.emoji
@@ -341,7 +341,7 @@ export const Profile: React.FC = () => {
             </div>
 
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-              {HARIBO_COSTUMES.map(costume => {
+              {KNOWZA_COSTUMES.map(costume => {
                 const isUnlocked = stats.unlockedCostumes.includes(costume.id);
                 const isSelected = stats.selectedCostume === costume.id;
 

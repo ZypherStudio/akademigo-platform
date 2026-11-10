@@ -144,6 +144,7 @@ export interface UserStats {
   email?: string;
   isLoggedIn: boolean;
   authProvider?: 'google' | 'email' | 'guest';
+  isPro?: boolean;
   selectedCostume: HariboCostume;
   unlockedCostumes: HariboCostume[];
   xp: number;
@@ -207,7 +208,7 @@ export interface StudyNote {
 
 export interface AiChatMessage {
   id: string;
-  sender: 'user' | 'bibo';
+  sender: 'user' | 'knowza' | 'bibo';
   text: string;
   timestamp: string;
   cardTip?: string;

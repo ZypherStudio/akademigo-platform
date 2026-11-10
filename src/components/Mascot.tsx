@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { sound } from '../utils/audio';
-import { HariboCostume } from '../types';
+import { KnowzaCostume } from '../types';
 
 export type MascotMood = 'idle' | 'happy' | 'thinking' | 'sad' | 'excited' | 'cheering';
 
@@ -11,7 +11,7 @@ interface MascotProps {
   interactive?: boolean;
   onMascotClick?: () => void;
   className?: string;
-  costume?: HariboCostume;
+  costume?: KnowzaCostume;
   dance?: boolean;
 }
 

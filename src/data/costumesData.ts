@@ -1,20 +1,20 @@
-import { HariboCostume, HariboCostumeInfo } from '../types';
+import { KnowzaCostume, KnowzaCostumeInfo } from '../types';
 
-export const HARIBO_COSTUMES: HariboCostumeInfo[] = [
+export const KNOWZA_COSTUMES: KnowzaCostumeInfo[] = [
   {
     id: 'classic',
-    name: 'Klasik Altın Ayıcık',
-    title: 'Orijinal Maskot',
-    description: 'AkademiGO\'nun simgesi, kırmızı papyonlu efsanevi sarı altın jelibon ayıcık.',
+    name: 'Klasik Knowza',
+    title: 'Orijinal 3D Maskot',
+    description: 'Knowza\'nın simgesi, mezuniyet kepli ve "K" kapüşonlu 3D sarı ayıcık.',
     priceGems: 0,
     requiredXp: 0,
     badge: 'VARSAYILAN 💛',
-    icon: '🎀',
+    icon: '🎓',
     bgGradient: 'from-amber-400 to-yellow-500'
   },
   {
     id: 'king',
-    name: 'Kral Haribo',
+    name: 'Kral Knowza',
     title: 'Tahtın Sahibi',
     description: 'Kırmızı yakut işlemeli altın taç. YKS ve KPSS\'de zirveye oynayanlara layık!',
     priceGems: 300,
@@ -25,7 +25,7 @@ export const HARIBO_COSTUMES: HariboCostumeInfo[] = [
   },
   {
     id: 'cyber',
-    name: 'Siberpunk Haribo',
+    name: 'Siberpunk Knowza',
     title: 'Geleceğin Kodcusu',
     description: 'Neon camgöbeği vizör gözlük ve fütüristik kulaklık. Kodlama odasının hakimi!',
     priceGems: 450,
@@ -36,7 +36,7 @@ export const HARIBO_COSTUMES: HariboCostumeInfo[] = [
   },
   {
     id: 'party',
-    name: 'Dansçı Parti Haribo',
+    name: 'Dansçı Parti Knowza',
     title: 'Disko Yıldızı',
     description: 'Yıldız gözlükler ve parti şapkası! Her soruda dans eden sınırsız enerji kaynağı.',
     priceGems: 600,
@@ -47,7 +47,7 @@ export const HARIBO_COSTUMES: HariboCostumeInfo[] = [
   },
   {
     id: 'graduate',
-    name: 'Mezun Haribo',
+    name: 'Mezun Knowza',
     title: 'Akademi Birincisi',
     description: 'Altın püsküllü mezuniyet kepi ve cübbesi. Hedefindeki üniversiteyi kazananlara özel!',
     priceGems: 350,
@@ -58,7 +58,7 @@ export const HARIBO_COSTUMES: HariboCostumeInfo[] = [
   },
   {
     id: 'astronaut',
-    name: 'Kozmik Astronot Haribo',
+    name: 'Kozmik Astronot Knowza',
     title: 'Uzay Kaşifi',
     description: 'Yüksek irtifa uzay kaskı ve telsiz sistemi. Bilginle sınırları aş!',
     priceGems: 800,
@@ -68,3 +68,5 @@ export const HARIBO_COSTUMES: HariboCostumeInfo[] = [
     bgGradient: 'from-indigo-600 to-violet-800'
   }
 ];
+
+export const HARIBO_COSTUMES = KNOWZA_COSTUMES;

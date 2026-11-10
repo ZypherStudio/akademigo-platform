@@ -69,11 +69,11 @@ export const KnowzaHome: React.FC<KnowzaHomeProps> = ({
           onClick={() => onNavigateTab('profile')}
           className="flex items-center gap-3 cursor-pointer group active:scale-95 transition-all"
         >
-          <div className="w-12 h-12 rounded-full border-2 border-[#FFB800] p-0.5 shadow-sm bg-white overflow-hidden">
+          <div className="w-12 h-12 rounded-full border-2 border-[#FFB800] p-0.5 shadow-sm bg-white overflow-hidden flex items-center justify-center">
             <img
-              src="/assets/knowza_icon.png"
+              src="/assets/knowza_avatar_circle.png"
               alt="Knowza Profil"
-              className="w-full h-full object-cover rounded-full"
+              className="w-full h-full object-contain"
             />
           </div>
           <div>

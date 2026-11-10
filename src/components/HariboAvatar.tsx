@@ -34,12 +34,12 @@ export const HariboAvatar: React.FC<HariboAvatarProps> = ({
 
   return (
     <div
-      className={`relative inline-flex items-center justify-center flex-shrink-0 select-none rounded-2xl overflow-hidden bg-gradient-to-b from-[#FFE29A] to-[#FFB800] p-0.5 shadow-sm border border-amber-300/60 ${sizeMap[size]} ${animationClass} ${className}`}
+      className={`relative inline-flex items-center justify-center flex-shrink-0 select-none rounded-2xl overflow-hidden p-0.5 ${sizeMap[size]} ${animationClass} ${className}`}
     >
       <img
-        src="/assets/knowza_icon.png"
+        src="/assets/knowza_avatar_circle.png"
         alt="Knowza Maskot"
-        className="w-full h-full object-cover rounded-[14px]"
+        className="w-full h-full object-contain filter drop-shadow-sm"
         onError={(e) => {
           (e.target as HTMLImageElement).src = '/assets/knowza_profile_avatar.png';
         }}

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useGame } from '../context/GameContext';
 import { X, Sparkles, Check, Mail, Lock, User, ShieldCheck, ArrowRight } from 'lucide-react';
-import { HariboAvatar } from './HariboAvatar';
+import { KnowzaAvatar } from './KnowzaAvatar';
 import { sound } from '../utils/audio';
 
 interface AuthModalProps {
@@ -60,11 +60,11 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose }) => {
 
         {/* Header Mascot */}
         <div className="flex flex-col items-center text-center mb-5">
-          <div className="w-20 h-20 rounded-full p-1 bg-gradient-to-tr from-[#FFB800] via-[#FFE2A3] to-[#FFB800] shadow-md mb-2 overflow-hidden flex items-center justify-center">
+          <div className="w-20 h-20 rounded-full p-1 bg-gradient-to-tr from-[#FFB800] via-[#FFE2A3] to-[#FFB800] shadow-md mb-2 overflow-hidden flex items-center justify-center bg-[#FFF8E7]">
             <img
-              src="/assets/knowza_icon.png"
+              src="/assets/knowza_avatar_circle.png"
               alt="Knowza Maskot"
-              className="w-full h-full object-cover rounded-full"
+              className="w-full h-full object-contain rounded-full"
             />
           </div>
           <div className="inline-flex items-center gap-1.5 bg-amber-100 dark:bg-amber-950/50 text-amber-900 dark:text-amber-200 text-[11px] font-black px-3 py-0.5 rounded-full uppercase tracking-wider mb-1">

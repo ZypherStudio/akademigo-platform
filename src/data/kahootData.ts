@@ -27,7 +27,7 @@ export const KAHOOT_QUIZ_SETS: KahootQuizSet[] = [
         correctIndex: 0,
         timeLimit: 15,
         explanation: '3a + 5b tek ise biri tek, diğeri çifttir. Biri çift olduğu için çarpım kesinlikle ÇİFT olur!',
-        funFact: 'Haribo Ayıcık Taktik Notu: Çarpanlardan biri bile çiftse sonuç asla tek olamaz!'
+        funFact: 'Knowza Ayıcık Taktik Notu: Çarpanlardan biri bile çiftse sonuç asla tek olamaz!'
       },
       {
         id: 'km-2',
@@ -247,7 +247,7 @@ export const KAHOOT_QUIZ_SETS: KahootQuizSet[] = [
         correctIndex: 0,
         timeLimit: 15,
         explanation: '2 hariç tüm çift sayılar 2\'ye bölünebildiği için asal olamaz. 2 tek çift asaldır!',
-        funFact: 'Haribo Ayıcık Altın Kuralı: 2 en küçük ve tek çift asal sayıdır!'
+        funFact: 'Knowza Ayıcık Altın Kuralı: 2 en küçük ve tek çift asal sayıdır!'
       }
     ]
   }

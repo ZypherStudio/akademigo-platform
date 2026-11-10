@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { CourseCategory, Lesson, UserStats, LeaderboardUser, StudyNote, AppTheme, UserAvatar, MistakeItem, KnowzaCostume } from '../types';
-import { HARIBO_COSTUMES } from '../data/costumesData';
+import { KNOWZA_COSTUMES } from '../data/costumesData';
 import { sound } from '../utils/audio';
 import confetti from 'canvas-confetti';
 
@@ -38,6 +38,7 @@ interface GameContextType {
   buyCostume: (costumeId: KnowzaCostume) => boolean;
   selectCostume: (costumeId: KnowzaCostume) => void;
   addXpAndGems: (xp: number, gems: number) => void;
+  upgradeToPro: () => void;
 }
 
 const DEFAULT_MISTAKES: MistakeItem[] = [
@@ -467,7 +468,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   // Knowza Costume Purchase & Equip
   const buyCostume = (costumeId: KnowzaCostume) => {
-    const costume = HARIBO_COSTUMES.find(c => c.id === costumeId);
+    const costume = KNOWZA_COSTUMES.find(c => c.id === costumeId);
     if (!costume) return false;
 
     if (stats.unlockedCostumes.includes(costumeId)) {
@@ -505,6 +506,18 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
       ...prev,
       xp: prev.xp + xp,
       gems: prev.gems + gems
+    }));
+  };
+
+  const upgradeToPro = () => {
+    sound.playVictory();
+    confetti({ particleCount: 120, spread: 80 });
+    setStats(prev => ({
+      ...prev,
+      isPro: true,
+      hearts: 5,
+      maxHearts: 5,
+      gems: prev.gems + 500
     }));
   };
 
@@ -560,7 +573,8 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
         logoutUser,
         buyCostume,
         selectCostume,
-        addXpAndGems
+        addXpAndGems,
+        upgradeToPro
       }}
     >
       {children}

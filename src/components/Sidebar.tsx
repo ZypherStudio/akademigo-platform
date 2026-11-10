@@ -15,7 +15,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentTab, onSelectTab }) => 
     { id: 'kahoot', label: 'KAHOOT ARENA 🏆', icon: Trophy, color: 'text-purple-500' },
     { id: 'reels', label: 'SORU KAYDIR 🔥', icon: Flame, color: 'text-orange-500' },
     { id: 'duel', label: '1v1 DÜELLO', icon: Swords, color: 'text-red-500' },
-    { id: 'aicoach', label: 'HARİBO AI KOÇ', icon: Bot, color: 'text-amber-500' },
+    { id: 'aicoach', label: 'KNOWZA AI KOÇ', icon: Bot, color: 'text-amber-500' },
     { id: 'errors', label: 'HATA DEFTERİ', icon: BookMarked, color: 'text-rose-500' },
     { id: 'speech', label: 'SESLİ PRATİK', icon: Mic, color: 'text-cyan-500' },
     { id: 'countdown', label: 'SINAV SAYACI', icon: Clock, color: 'text-violet-500' },
@@ -37,11 +37,11 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentTab, onSelectTab }) => 
         <div className="hidden md:flex items-center gap-3 px-3 py-2 mb-2">
           <KnowzaAvatar size="md" animate={true} />
           <div>
-            <h1 className="text-2xl font-black tracking-tight text-[#58cc02] leading-none">
-              Akademi<span className="text-[#1cb0f6]">GO</span>
+            <h1 className="text-2xl font-black tracking-tight text-[#FFB800] leading-none">
+              Know<span className="text-[#1cb0f6]">za</span>
             </h1>
             <span className="text-[10px] font-black uppercase text-amber-500 dark:text-amber-400 tracking-wider font-mono">
-              Knowza Altın Maskot 🍯
+              3D AI Eğitim 🎓
             </span>
           </div>
         </div>

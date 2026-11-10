@@ -179,7 +179,7 @@ export const LearnPath: React.FC = () => {
               </div>
 
               {/* Zigzag Lesson Path with proper vertical spacing (preventing badge & title overlap) */}
-              <div className="flex flex-col items-center space-y-20 sm:space-y-24 my-8 relative">
+              <div className="flex flex-col items-center space-y-28 sm:space-y-32 my-10 relative">
                 {unit.lessons.map((lesson, lessonIndex) => {
                   const completed = isLessonCompleted(lesson.id);
                   const chestOpened = isChestOpened(lesson.id);
@@ -198,11 +198,11 @@ export const LearnPath: React.FC = () => {
                       key={lesson.id}
                       className={`relative flex flex-col items-center group transition-transform duration-300 ${getOffsetClass(lessonIndex)}`}
                     >
-                      {/* Active "BAŞLA" floating bubble - comfortably positioned above */}
+                      {/* Active "BAŞLA" floating bubble with Knowza mascot peek */}
                       {isCurrentActive && (
-                        <div className="absolute -top-12 z-20 animate-bounce bg-white dark:bg-[#1a2c35] text-gray-800 dark:text-gray-100 font-black text-xs px-3.5 py-1.5 rounded-xl shadow-xl border-2 border-amber-400 dark:border-amber-500 flex items-center gap-1.5 whitespace-nowrap pointer-events-none">
+                        <div className="absolute -top-14 z-20 animate-bounce bg-white dark:bg-[#1a2c35] text-gray-800 dark:text-gray-100 font-black text-xs px-3.5 py-1.5 rounded-xl shadow-xl border-2 border-amber-400 dark:border-amber-500 flex items-center gap-1.5 whitespace-nowrap pointer-events-none">
                           <Play className="w-3.5 h-3.5 fill-[#58cc02] text-[#58cc02]" />
-                          BAŞLA!
+                          <span>BAŞLA!</span>
                           <div className="absolute left-1/2 -bottom-2 -translate-x-1/2 w-0 h-0 border-x-8 border-x-transparent border-t-8 border-t-white dark:border-t-[#1a2c35]" />
                         </div>
                       )}

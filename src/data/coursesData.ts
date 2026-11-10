@@ -1234,8 +1234,8 @@ export const COURSES: Course[] = [
               {
                 "id": "code-q1",
                 "type": "code_fill",
-                "prompt": "Python'da ekrana 'Merhaba AkademiGO!' yazdırmak için eksik fonksiyonu tamamlayın:",
-                "codeSnippet": "___('Merhaba AkademiGO!')",
+                "prompt": "Python'da ekrana 'Merhaba Knowza!' yazdırmak için eksik fonksiyonu tamamlayın:",
+                "codeSnippet": "___('Merhaba Knowza!')",
                 "blankId": "print",
                 "options": [
                   "print",

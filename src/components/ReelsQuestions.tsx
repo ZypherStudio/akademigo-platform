@@ -16,7 +16,7 @@ interface ReelQuestion {
   options: string[];
   correctIndex: number;
   explanation: string;
-  hariboTip: string;
+  knowzaTip: string;
 }
 
 const REEL_QUESTIONS: ReelQuestion[] = [
@@ -34,7 +34,7 @@ const REEL_QUESTIONS: ReelQuestion[] = [
     ],
     correctIndex: 0,
     explanation: '3a ve 5b sayılarından biri tek, biri çifttir. Dolayısıyla en az biri çift olduğu için çarpımları kesinlikle ÇİFT olur!',
-    hariboTip: 'Toplama tek ise biri Tek, diğeri Çift olmak zorundadır! Çarpımda bir çift varsa sonuç daima çifttir! 🍯✨'
+    knowzaTip: 'Toplama tek ise biri Tek, diğeri Çift olmak zorundadır! Çarpımda bir çift varsa sonuç daima çifttir! 🍯✨'
   },
   {
     id: 'rq-2',
@@ -50,7 +50,7 @@ const REEL_QUESTIONS: ReelQuestion[] = [
     ],
     correctIndex: 0,
     explanation: 'Alper Gezeravcı, Ocak 2024\'te Ax-3 misyonuyla uzaya çıkan ilk Türk astronottur.',
-    hariboTip: 'Ocak 2024 Ax-3 misyonunu asla unutma, KPSS\'de kesin çıkar! 🛰️'
+    knowzaTip: 'Ocak 2024 Ax-3 misyonunu asla unutma, KPSS\'de kesin çıkar! 🛰️'
   },
   {
     id: 'rq-3',
@@ -66,7 +66,7 @@ const REEL_QUESTIONS: ReelQuestion[] = [
     ],
     correctIndex: 0,
     explanation: 'set() veri yapısı küme mantığıyla tüm tekrarlayan elemanları anında eler.',
-    hariboTip: 'Python mülakatlarının 1 numaralı hilesi set() dönüşümüdür! 🐱'
+    knowzaTip: 'Python mülakatlarının 1 numaralı hilesi set() dönüşümüdür! 🐱'
   },
   {
     id: 'rq-4',
@@ -82,7 +82,7 @@ const REEL_QUESTIONS: ReelQuestion[] = [
     ],
     correctIndex: 0,
     explanation: '3-4-5 üçgeninin 3 katı: 9 - 12 - 15 özel dik üçgenidir!',
-    hariboTip: 'Pisagor formülüyle vakit kaybetme! 3-4-5\'in 3 katını hemen gör ve 15\'i işaretle! ⚡📐'
+    knowzaTip: 'Pisagor formülüyle vakit kaybetme! 3-4-5\'in 3 katını hemen gör ve 15\'i işaretle! ⚡📐'
   },
   {
     id: 'rq-5',
@@ -98,7 +98,7 @@ const REEL_QUESTIONS: ReelQuestion[] = [
     ],
     correctIndex: 0,
     explanation: '"Carry out" bir planı, deneyi veya reformu yürütmek/uygulamak demektir.',
-    hariboTip: 'YDS ve YÖKDİL\'in en sevdiği phrasal verb: Carry out = Execute / Perform! 🎯'
+    knowzaTip: 'YDS ve YÖKDİL\'in en sevdiği phrasal verb: Carry out = Execute / Perform! 🎯'
   },
   {
     id: 'rq-6',
@@ -114,7 +114,7 @@ const REEL_QUESTIONS: ReelQuestion[] = [
     ],
     correctIndex: 0,
     explanation: 'Büyükten küçüğe KeDiGeNi kodlaması kullanılır. Küçükten büyüğe ise Nükleotid < Gen < DNA < Kromozom şeklindedir.',
-    hariboTip: 'Ke-Di-Ge-Ni taktiğini aklında tut: Kromozom > DNA > Gen > Nükleotid! 🧬✨'
+    knowzaTip: 'Ke-Di-Ge-Ni taktiğini aklında tut: Kromozom > DNA > Gen > Nükleotid! 🧬✨'
   },
   {
     id: 'rq-7',
@@ -130,7 +130,7 @@ const REEL_QUESTIONS: ReelQuestion[] = [
     ],
     correctIndex: 0,
     explanation: '"Şey" sözcüğü her zaman kendinden önceki sözcükten ayrı yazılır: "Her şey", "Bir şey".',
-    hariboTip: 'Şey sözcüğü o kadar yalnızdır ki kimseyle birleşmez, hep ayrı yazılır! 🍯'
+    knowzaTip: 'Şey sözcüğü o kadar yalnızdır ki kimseyle birleşmez, hep ayrı yazılır! 🍯'
   }
 ];
 
@@ -342,7 +342,7 @@ export const ReelsQuestions: React.FC = () => {
                   )}
                 </div>
                 <p className="text-xs text-amber-800 dark:text-amber-300 font-semibold mt-1 leading-snug">
-                  {currentQ.hariboTip}
+                  {currentQ.knowzaTip}
                 </p>
                 <div className="text-[11px] text-gray-600 dark:text-gray-400 mt-1.5 pt-1.5 border-t border-amber-200 dark:border-amber-800">
                   <span className="font-bold">Açıklama:</span> {currentQ.explanation}

@@ -71,9 +71,9 @@ export const KnowzaProfile: React.FC<KnowzaProfileProps> = ({
             <div className="w-full h-full rounded-full p-1 bg-gradient-to-tr from-[#FFB800] via-[#FFE2A3] to-[#FFB800] shadow-md">
               <div className="w-full h-full rounded-full overflow-hidden bg-[#FFF8E7] flex items-center justify-center">
                 <img
-                  src="/assets/knowza_icon.png"
+                  src="/assets/knowza_avatar_circle.png"
                   alt="Knowza Avatar"
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-contain"
                 />
               </div>
             </div>

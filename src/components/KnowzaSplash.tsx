@@ -64,13 +64,13 @@ export const KnowzaSplash: React.FC<KnowzaSplashProps> = ({ onStart, onLogin }) 
           </button>
 
           <a
-            href="/assets/knowza_logo_hd.png"
-            download="Knowza_Logo_3D_Official.png"
+            href="/assets/knowza_profile_gold_1024.png"
+            download="Knowza_Gmail_Profil_Foto_1024.png"
             className="inline-flex items-center gap-1 text-[11px] font-bold text-amber-700/80 hover:text-amber-900 transition bg-amber-100/60 hover:bg-amber-100 px-2.5 py-1 rounded-full"
-            title="Orijinal 3D Logoyu İndir"
+            title="Gmail & Sosyal Medya Profil Fotosu (1024x1024 HD)"
           >
             <Download className="w-3 h-3" />
-            <span>Logo İndir</span>
+            <span>Profil Fotosu İndir</span>
           </a>
         </div>
       </div>

@@ -214,26 +214,94 @@ export const KnowzaProfile: React.FC<KnowzaProfileProps> = ({
             </div>
             <ChevronRight className="w-5 h-5 text-slate-400" />
           </button>
+        </div>
 
-          {/* Logo İndir (Download Official Knowza Logo) */}
-          <a
-            href="/assets/knowza_logo_hd.png"
-            download="Knowza_Official_3D_Logo.png"
-            className="w-full flex items-center justify-between p-3.5 hover:bg-amber-50/60 rounded-2xl transition text-left group border border-amber-200/50 bg-amber-50/30"
-          >
-            <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-xl bg-amber-200 text-amber-900 flex items-center justify-center group-hover:scale-110 transition">
-                <Download className="w-5 h-5" />
+        {/* ÖZEL KNOWZA PROFİL FOTOĞRAFLARI & LOGO İNDİRME MERKEZİ (Gmail / Sosyal Medya) */}
+        <div className="bg-gradient-to-br from-amber-500 via-[#FFB800] to-amber-600 rounded-3xl p-5 text-slate-900 shadow-xl border-2 border-amber-300/80 relative overflow-hidden">
+          {/* Background Decorative Rings */}
+          <div className="absolute -right-8 -bottom-8 w-40 h-40 rounded-full bg-white/10 pointer-events-none" />
+          <div className="absolute -right-2 -top-10 w-28 h-28 rounded-full bg-white/10 pointer-events-none" />
+
+          <div className="relative z-10 space-y-4">
+            <div className="flex items-center justify-between">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-slate-900 text-amber-300 text-[10px] font-black rounded-full uppercase tracking-wider shadow-sm">
+                <Sparkles className="w-3.5 h-3.5" />
+                Resmi Gmail & Profil Paketi
+              </span>
+              <span className="text-[10px] font-black bg-white/80 text-amber-900 px-2 py-0.5 rounded-full">
+                1024x1024 HD
+              </span>
+            </div>
+
+            <div className="flex items-center gap-4">
+              {/* Live Profile Photo Thumbnail Preview (Circle safe) */}
+              <div className="relative w-20 h-20 rounded-2xl overflow-hidden border-2 border-white shadow-lg flex-shrink-0 group cursor-pointer bg-amber-100"
+                onClick={() => setActiveModal('previewAvatar')}
+                title="Büyük boyutta önizle"
+              >
+                <img
+                  src="/assets/knowza_profile_gold_1024.png"
+                  alt="Knowza Profil Önizleme"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                />
+                <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 flex items-center justify-center text-white text-[10px] font-black transition-opacity">
+                  Önizle
+                </div>
               </div>
+
               <div>
-                <span className="text-sm font-black text-slate-900 block">Knowza 3D Logo İndir</span>
-                <span className="text-[11px] font-bold text-amber-700">Orijinal 3D Yüksek Çözünürlük PNG</span>
+                <h4 className="text-base font-black text-slate-950 leading-tight">
+                  Gmail & Sosyal Medya Profil Fotosu
+                </h4>
+                <p className="text-xs font-bold text-amber-950/80 mt-1 leading-snug">
+                  Arka planlı, 3D mezuniyet kepli maskot ve Knowza logolu yüksek çözünürlüklü avatar!
+                </p>
+                <span className="inline-block mt-1 text-[11px] font-bold text-slate-900/90 bg-amber-300/80 px-2 py-0.5 rounded-md">
+                  ✓ Daire kesimlere tam uyumlu (Hiçbir yer kesilmez)
+                </span>
               </div>
             </div>
-            <span className="text-xs font-black bg-amber-400 text-slate-950 px-2.5 py-1 rounded-xl shadow-xs">
-              İndir 📥
-            </span>
-          </a>
+
+            {/* Download Action Buttons */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
+              <a
+                href="/assets/knowza_profile_gold_1024.png"
+                download="Knowza_Gmail_Profil_Foto_1024.png"
+                className="py-2.5 px-3 bg-white hover:bg-amber-50 active:scale-98 text-slate-900 font-black text-xs rounded-xl shadow-md flex items-center justify-center gap-2 transition"
+              >
+                <Download className="w-4 h-4 text-amber-600" />
+                <span>Altın Profil Fotosu (HD)</span>
+              </a>
+
+              <a
+                href="/assets/knowza_profile_dark_1024.png"
+                download="Knowza_Karanlik_VIP_Profil_1024.png"
+                className="py-2.5 px-3 bg-slate-900 hover:bg-slate-800 active:scale-98 text-amber-300 font-black text-xs rounded-xl shadow-md flex items-center justify-center gap-2 transition"
+              >
+                <Download className="w-4 h-4 text-amber-400" />
+                <span>Karanlık VIP Profil (HD)</span>
+              </a>
+            </div>
+
+            <div className="pt-1 border-t border-white/20 flex items-center justify-between text-[11px] font-bold text-slate-900/80">
+              <a
+                href="/assets/knowza_logo_hd.png"
+                download="Knowza_3D_Logo_HD.png"
+                className="hover:underline flex items-center gap-1"
+              >
+                <Download className="w-3.5 h-3.5" />
+                <span>Tek Başına 3D Logo İndir (PNG)</span>
+              </a>
+              <a
+                href="/assets/knowza_logo.svg"
+                download="Knowza_Vector_Logo.svg"
+                className="hover:underline flex items-center gap-1"
+              >
+                <Download className="w-3.5 h-3.5" />
+                <span>Vektörel SVG Logo</span>
+              </a>
+            </div>
+          </div>
         </div>
 
         {/* Logout or Account Action */}
@@ -274,9 +342,61 @@ export const KnowzaProfile: React.FC<KnowzaProfileProps> = ({
               {activeModal === 'languages' && 'Dil Tercihleri 🌍'}
               {activeModal === 'settings' && 'Uygulama & Ses Ayarları ⚙️'}
               {activeModal === 'help' && 'Yardım & Destek 💬'}
+              {activeModal === 'previewAvatar' && 'Gmail & Profil Fotosu Önizleme 📸'}
             </h4>
 
-            {activeModal === 'settings' ? (
+            {activeModal === 'previewAvatar' ? (
+              <div className="space-y-4 mb-5 text-center">
+                <div className="flex justify-center items-center gap-4">
+                  {/* Square Preview */}
+                  <div className="flex flex-col items-center gap-1">
+                    <span className="text-[10px] font-bold text-slate-500 uppercase">Kare (YouTube/Web)</span>
+                    <div className="w-28 h-28 rounded-2xl overflow-hidden shadow-lg border-2 border-amber-300">
+                      <img
+                        src="/assets/knowza_profile_gold_1024.png"
+                        alt="Kare Önizleme"
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Circular Crop Preview (Gmail / WhatsApp) */}
+                  <div className="flex flex-col items-center gap-1">
+                    <span className="text-[10px] font-bold text-slate-500 uppercase">Daire (Gmail/WhatsApp)</span>
+                    <div className="w-28 h-28 rounded-full overflow-hidden shadow-lg border-2 border-amber-400">
+                      <img
+                        src="/assets/knowza_profile_gold_1024.png"
+                        alt="Daire Önizleme"
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <p className="text-xs font-bold text-slate-600 bg-amber-50 p-2.5 rounded-xl border border-amber-200/60 leading-snug">
+                  🎉 Kep, kulaklar, 3D maskot ve Knowza logosu daire içine tam oturur, Gmail veya Google profilinize yüklediğinizde hiçbir kısmı kesilmez!
+                </p>
+
+                <div className="space-y-2 pt-1">
+                  <a
+                    href="/assets/knowza_profile_gold_1024.png"
+                    download="Knowza_Altin_Profil_Foto_1024.png"
+                    className="w-full py-2.5 bg-gradient-to-r from-amber-400 to-[#FFB800] text-slate-900 font-black text-xs rounded-xl shadow-md flex items-center justify-center gap-2"
+                  >
+                    <Download className="w-4 h-4" />
+                    <span>Altın Profil Fotosunu İndir (1024x1024)</span>
+                  </a>
+                  <a
+                    href="/assets/knowza_profile_dark_1024.png"
+                    download="Knowza_Karanlik_VIP_Profil_1024.png"
+                    className="w-full py-2.5 bg-slate-900 text-amber-300 font-black text-xs rounded-xl shadow-md flex items-center justify-center gap-2"
+                  >
+                    <Download className="w-4 h-4" />
+                    <span>Karanlık VIP Profil Fotosunu İndir</span>
+                  </a>
+                </div>
+              </div>
+            ) : activeModal === 'settings' ? (
               <div className="space-y-4 mb-5">
                 {/* Background Music Toggle */}
                 <div className="flex items-center justify-between p-3 bg-amber-50/70 rounded-2xl border border-amber-200/60">

@@ -17,13 +17,13 @@ import {
 } from 'lucide-react';
 import { sound } from '../utils/audio';
 import { AiChatMessage } from '../types';
-import { sendChatMessageToClaude, ClaudeMessage, getClaudeApiKey } from '../utils/claudeService';
+import { askGeminiCoach } from '../utils/geminiService';
 
 const INITIAL_MESSAGES: AiChatMessage[] = [
   {
     id: 'msg-1',
     sender: 'knowza',
-    text: 'Merhaba! Ben senin yapay zeka çalışma koçun Knowza 3D Ayıcık 🎓✨! TYT, KPSS, LGS, YDS veya Python kodlama ile ilgili aklına takılan her soruyu bana sorabilir veya sesli konuşabilirsin!',
+    text: 'Merhaba! Ben senin yapay zeka çalışma koçun Knowza 3D Ayıcık 🎓✨! Google Gemini altyapısıyla çalışıyorum. TYT, KPSS, LGS, Kodlama veya İngilizce ile ilgili her türlü sorunu bana sorabilirsin!',
     timestamp: 'Şimdi',
     cardTip: '💡 İpucu: Mikrofon butonuna basarak sesli soru sorabilir ya da hızlı butonları deneyebilirsin!'
   }
@@ -155,66 +155,26 @@ export const AiCoach: React.FC = () => {
     setIsTyping(true);
     setMascotMood('thinking');
 
-    // Build context for Claude API
-    const history: ClaudeMessage[] = messages.slice(-5).map((m) => ({
-      role: m.sender === 'user' ? 'user' : 'assistant',
-      content: m.text
+    // Build context for Google Gemini
+    const history = messages.slice(-5).map((m) => ({
+      role: (m.sender === 'user' ? 'user' : 'model') as 'user' | 'model',
+      parts: [{ text: m.text }]
     }));
-    history.push({ role: 'user', content: text });
 
-    const claudeResult = await sendChatMessageToClaude(history);
+    const geminiResult = await askGeminiCoach(text, history);
     setIsTyping(false);
     sound.playVictory();
-
-    let replyText = '';
-    let tip = '';
-
-    if (claudeResult.success && claudeResult.text) {
-      replyText = claudeResult.text;
-      tip = '⚡ Anthropic Claude 3.5 AI yanıtı';
-    } else {
-      // Fallback smart tutor if API key has network/auth issue
-      const lower = text.toLowerCase();
-      if (lower.includes('matematik') || lower.includes('temel')) {
-        replyText =
-          'Matematik temeli atarken ilk kural formül ezberlemek değil, "sayıların mantığını" kavramaktır. Öncelikle Tek-Çift sayılar ve Temel İşlem Önceliğini pekiştir, ardından her gün 15 adet yeni nesil problem çöz. Günde 15 soru 1 ayda 450 soru demektir!';
-        tip = '💡 Taktik: Gauss Toplam Formülü: [n × (n + 1)] / 2 hayat kurtarır!';
-      } else if (lower.includes('soru sor') || lower.includes('test et')) {
-        replyText =
-          'Hemen bir soru soruyorum: "a ve b pozitif tam sayılardır. 4a + 7b toplamı TEK sayı olduğuna göre, b sayısı hakkında kesinlikle ne söylenebilir?" (İpucu: 4a terimi daima çift midir?)';
-        tip = '🎯 Cevabını bekliyorum!';
-      } else if (lower.includes('program') || lower.includes('çalışma')) {
-        replyText =
-          'İşte senin için 2 saatlik Şampiyonluk Çalışma Planı:\n1. 25 Dk: TYT Matematik Soru Çözümü (15 Soru)\n2. 5 Dk Mola (Su iç & nefes al)\n3. 25 Dk: Paragraf Taktikleri & Hızlı Okuma (12 Soru)\n4. 5 Dk Mola\n5. 50 Dk Derin Odak: Kodlama veya KPSS Güncel Bilgiler';
-        tip = '⚡ İstikrarlı çalışmak zekadan daha üstündür!';
-      } else if (lower.includes('paragraf') || lower.includes('hız')) {
-        replyText =
-          'Paragrafı hızlandırmanın 1 numaralı kuralı "Önce Soru Kökünü Okumak"tır! Soru kökündeki olumsuz ifadelerin altını mutlaka çiz. Ardından ilk ve son 2 cümleye odaklanarak ana fikri yakala.';
-        tip = '📖 Günde 20 paragraf çözmeyi günlük serin haline getir.';
-      } else if (lower.includes('python') || lower.includes('kod')) {
-        replyText =
-          'Python\'da fonksiyonlar "def fonksiyon_adi(parametre):" şeklinde tanımlanır. Döngüler ise "for i in range(sayi):" kalıbıyla belirli sayıda işlemi otomatik tekrar eder. Kod Lab sekmemizde bunu hemen canlı deneyebilirsin!';
-        tip = '💻 Kod Lab sekmesinde interaktif Python konsolun seni bekliyor.';
-      } else {
-        replyText = `Harika bir soru! Sınav hazırlığında ve yeni beceriler öğrenirken en önemli şey sürekliliktir. Knowza ile her gün düzenli pratik yaparak hedefine ulaşabilirsin.`;
-        tip = '🎓 Knowza AI Koç her zaman yanında!';
-      }
-
-      if (claudeResult.error) {
-        tip += ` (API: ${claudeResult.error.slice(0, 35)}...)`;
-      }
-    }
 
     const aiMsg: AiChatMessage = {
       id: 'knowza-' + Date.now(),
       sender: 'knowza',
-      text: replyText,
+      text: geminiResult.text,
       timestamp: 'Şimdi',
-      cardTip: tip
+      cardTip: '⚡ Google Gemini AI yanıtı'
     };
 
     setMessages((prev) => [...prev, aiMsg]);
-    speakText(replyText);
+    speakText(geminiResult.text);
   };
 
   // Determine which 3D mascot asset to render based on active mood
@@ -232,7 +192,7 @@ export const AiCoach: React.FC = () => {
         <div className="space-y-1 relative z-10">
           <div className="inline-flex items-center gap-1.5 bg-[#FFB800] text-slate-900 text-[10px] font-black px-2.5 py-0.5 rounded-full uppercase tracking-wider">
             <Sparkles className="w-3 h-3" />
-            Canlı Sesli AI Koç
+            Google Gemini AI Koç
           </div>
           <h2 className="text-lg font-black text-slate-900">Knowza 3D Koç</h2>
           <div className="flex items-center gap-1.5 text-xs font-bold text-amber-900">

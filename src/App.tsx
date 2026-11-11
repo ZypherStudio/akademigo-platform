@@ -69,7 +69,7 @@ const KnowzaAppContent: React.FC = () => {
   }
 
   return (
-    <div className="min-h-[100dvh] w-full bg-[#FFFDF7] flex justify-center items-start text-slate-900 select-none antialiased relative overflow-x-hidden">
+    <div className="min-h-[100dvh] w-full bg-[#FFFDF7] flex justify-center items-start text-slate-900 select-none antialiased relative">
       {/* Desktop Responsive Test Mode Toggle (Only visible on wide desktop screens) */}
       <div className="hidden lg:flex fixed top-4 right-4 z-50 items-center gap-1.5 bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-full border border-amber-200/80 shadow-md text-xs font-bold text-slate-700">
         <button
@@ -96,7 +96,7 @@ const KnowzaAppContent: React.FC = () => {
 
       {/* Main App Container */}
       <div
-        className={`w-full min-h-[100dvh] relative bg-[#FFFDF7] md:shadow-2xl md:border md:border-amber-100 flex flex-col transition-all duration-300 overflow-x-hidden ${
+        className={`w-full min-h-[100dvh] relative bg-[#FFFDF7] md:shadow-2xl md:border md:border-amber-100 flex flex-col transition-all duration-300 ${
           isExpandedWebMode ? 'max-w-2xl md:my-4 md:rounded-[36px]' : 'max-w-md md:my-4 md:rounded-[36px]'
         }`}
       >

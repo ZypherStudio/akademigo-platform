@@ -67,7 +67,7 @@ export const KnowzaHome: React.FC<KnowzaHomeProps> = ({
   };
 
   return (
-    <div className="flex-1 max-w-md mx-auto px-4 py-4 space-y-5 pb-36 select-none animate-fade">
+    <div className="flex-1 w-full px-4 py-4 space-y-5 pb-36 select-none animate-fade overflow-x-hidden">
       {/* Top Header Bar */}
       <div className="flex items-center justify-between pt-1">
         {/* User Profile Pill */}
@@ -181,7 +181,7 @@ export const KnowzaHome: React.FC<KnowzaHomeProps> = ({
         </div>
 
         {/* Category Horizontal Scroll Pills with clean screen edge padding */}
-        <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-none -mx-4 px-4">
+        <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-none -mx-4 px-4 pr-4">
           {categories.map((cat) => {
             const isSelected = selectedCourseId === cat.id;
             return (

@@ -80,8 +80,8 @@ export const Shop: React.FC = () => {
       return;
     }
 
-    if (stats.xp < costume.requiredXp) {
-      showToast(`🔒 Bu kostüm için Seviye / ${costume.requiredXp} XP gereklidir!`);
+    if (stats.currentLevel < Math.ceil(costume.requiredXp / 100)) {
+      showToast(`🔒 Bu kostüm için Seviye ${Math.ceil(costume.requiredXp / 100)} gereklidir!`);
       return;
     }
 

@@ -51,8 +51,9 @@ export const KnowzaBadges: React.FC<KnowzaBadgesProps> = ({ onBack, onNavigateTo
 
   const completedCount = stats.completedLessons?.length || 0;
   const currentStreak = stats.streak || 0;
-  const currentLevel = Math.max(1, Math.floor((stats.xp || 0) / 100) + 1);
+  const currentLevel = stats.currentLevel || 1;
   const totalQuestions = stats.totalQuestionsAnswered || 0;
+  const achievementBadges = stats.achievementBadges || [];
 
   const badges: BadgeItem[] = [
     {
@@ -64,9 +65,9 @@ export const KnowzaBadges: React.FC<KnowzaBadgesProps> = ({ onBack, onNavigateTo
       gradient: 'from-emerald-400 via-teal-500 to-emerald-600',
       borderGlow: 'border-emerald-300 shadow-emerald-500/20',
       accentColor: '#10B981',
-      unlocked: completedCount >= 1,
-      unlockedDate: completedCount >= 1 ? 'Tamamlandı' : undefined,
-      progress: { current: Math.min(1, completedCount), total: 1 },
+      unlocked: completedCount >= 1 || achievementBadges.includes('first_lesson'),
+      unlockedDate: completedCount >= 1 || achievementBadges.includes('first_lesson') ? 'Kazanıldı' : undefined,
+      progress: { current: Math.min(1, completedCount || achievementBadges.includes('first_lesson') ? 1 : 0), total: 1 },
       tier: 1
     },
     {
@@ -78,9 +79,9 @@ export const KnowzaBadges: React.FC<KnowzaBadgesProps> = ({ onBack, onNavigateTo
       gradient: 'from-amber-400 via-orange-500 to-amber-600',
       borderGlow: 'border-orange-300 shadow-orange-500/20',
       accentColor: '#F59E0B',
-      unlocked: currentStreak >= 7,
-      unlockedDate: currentStreak >= 7 ? 'Kazanıldı' : undefined,
-      progress: { current: Math.min(7, currentStreak), total: 7 },
+      unlocked: currentStreak >= 7 || achievementBadges.includes('streak_master'),
+      unlockedDate: currentStreak >= 7 || achievementBadges.includes('streak_master') ? 'Kazanıldı' : undefined,
+      progress: { current: Math.min(7, currentStreak || (achievementBadges.includes('streak_master') ? 7 : 0)), total: 7 },
       tier: 2
     },
     {
@@ -92,9 +93,9 @@ export const KnowzaBadges: React.FC<KnowzaBadgesProps> = ({ onBack, onNavigateTo
       gradient: 'from-yellow-300 via-amber-400 to-yellow-500',
       borderGlow: 'border-yellow-200 shadow-yellow-500/30',
       accentColor: '#EAB308',
-      unlocked: currentLevel >= 5,
-      unlockedDate: currentLevel >= 5 ? 'Kazanıldı' : undefined,
-      progress: { current: Math.min(5, currentLevel), total: 5 },
+      unlocked: currentLevel >= 5 || achievementBadges.includes('level_5'),
+      unlockedDate: currentLevel >= 5 || achievementBadges.includes('level_5') ? 'Kazanıldı' : undefined,
+      progress: { current: Math.min(5, currentLevel || (achievementBadges.includes('level_5') ? 5 : 0)), total: 5 },
       tier: 1
     },
     {
@@ -132,8 +133,8 @@ export const KnowzaBadges: React.FC<KnowzaBadgesProps> = ({ onBack, onNavigateTo
       gradient: 'from-amber-300 via-yellow-500 to-amber-700',
       borderGlow: 'border-amber-300 shadow-amber-500/40',
       accentColor: '#D97706',
-      unlocked: (stats.xp || 0) >= 1000,
-      progress: { current: Math.min(1000, stats.xp || 0), total: 1000 },
+      unlocked: (stats.xp || 0) >= 1000 || achievementBadges.includes('knowza_legend'),
+      progress: { current: Math.min(1000, stats.xp || 0 || (achievementBadges.includes('knowza_legend') ? 1000 : 0)), total: 1000 },
       tier: 3
     },
     {
@@ -158,8 +159,8 @@ export const KnowzaBadges: React.FC<KnowzaBadgesProps> = ({ onBack, onNavigateTo
       gradient: 'from-rose-500 via-red-600 to-rose-700',
       borderGlow: 'border-rose-300 shadow-rose-500/20',
       accentColor: '#EF4444',
-      unlocked: false,
-      progress: { current: 4, total: 5 },
+      unlocked: achievementBadges.includes('duel_master'),
+      progress: { current: achievementBadges.includes('duel_master') ? 5 : (stats.duelWins || 0), total: 5 },
       tier: 2
     },
     {
@@ -171,8 +172,8 @@ export const KnowzaBadges: React.FC<KnowzaBadgesProps> = ({ onBack, onNavigateTo
       gradient: 'from-fuchsia-500 via-purple-600 to-indigo-700',
       borderGlow: 'border-fuchsia-300 shadow-fuchsia-500/30',
       accentColor: '#A855F7',
-      unlocked: false,
-      progress: { current: 12, total: 13 },
+      unlocked: achievementBadges.includes('grand_master'),
+      progress: { current: achievementBadges.includes('grand_master') ? 13 : (currentLevel >= 13 ? 13 : 12), total: 13 },
       tier: 3
     },
     {
@@ -184,21 +185,64 @@ export const KnowzaBadges: React.FC<KnowzaBadgesProps> = ({ onBack, onNavigateTo
       gradient: 'from-yellow-400 via-orange-500 to-red-500',
       borderGlow: 'border-yellow-300 shadow-yellow-500/30',
       accentColor: '#F59E0B',
-      unlocked: false,
-      progress: { current: 7, total: 10 },
+      unlocked: achievementBadges.includes('speed_demon'),
+      progress: { current: achievementBadges.includes('speed_demon') ? 10 : 0, total: 10 },
+      tier: 2
+    },
+    {
+      id: 'perfect_lesson',
+      title: 'Kusursuz Çözüm',
+      desc: 'Bir dersteki tüm soruları hiç yanlış yapmadan %100 doğrulukla tamamla.',
+      category: 'Sınav',
+      icon: Target,
+      gradient: 'from-amber-400 via-yellow-500 to-amber-600',
+      borderGlow: 'border-yellow-300 shadow-yellow-500/30',
+      accentColor: '#EAB308',
+      unlocked: achievementBadges.includes('perfect_lesson'),
+      unlockedDate: achievementBadges.includes('perfect_lesson') ? 'Kazanıldı' : undefined,
+      progress: { current: achievementBadges.includes('perfect_lesson') ? 1 : 0, total: 1 },
+      tier: 2
+    },
+    {
+      id: 'first_chest',
+      title: 'Hazine Avcısı',
+      desc: 'Bölüm sonundaki ilk ödül sandığını başarıyla açarak ödülleri topla.',
+      category: 'Başlangıç',
+      icon: Award,
+      gradient: 'from-purple-400 via-pink-500 to-rose-600',
+      borderGlow: 'border-pink-300 shadow-pink-500/20',
+      accentColor: '#EC4899',
+      unlocked: (stats.openedChests || []).length > 0 || achievementBadges.includes('first_chest'),
+      unlockedDate: (stats.openedChests || []).length > 0 || achievementBadges.includes('first_chest') ? 'Kazanıldı' : undefined,
+      progress: { current: Math.min(1, (stats.openedChests || []).length || (achievementBadges.includes('first_chest') ? 1 : 0)), total: 1 },
+      tier: 1
+    },
+    {
+      id: 'first_costume',
+      title: 'Stil Sahibi Maskot',
+      desc: '3D Maskotun için mağazadan yeni ve havalı bir kostüm kuşan.',
+      category: 'Uzmanlık',
+      icon: Crown,
+      gradient: 'from-amber-400 via-orange-500 to-yellow-600',
+      borderGlow: 'border-amber-300 shadow-amber-500/30',
+      accentColor: '#F59E0B',
+      unlocked: (stats.unlockedCostumes || []).length > 1 || achievementBadges.includes('first_costume'),
+      unlockedDate: (stats.unlockedCostumes || []).length > 1 || achievementBadges.includes('first_costume') ? 'Kazanıldı' : undefined,
+      progress: { current: Math.min(1, (stats.unlockedCostumes || []).length > 1 ? 1 : 0), total: 1 },
       tier: 2
     },
     {
       id: 'night_owl',
       title: 'Gece Kaşifi',
-      desc: 'Gece 22:00 ile 04:00 saatleri arasında odaklanıp 3 test tamamla.',
+      desc: 'Gece 22:00 ile 04:00 saatleri arasında odaklanıp bir ders tamamla.',
       category: 'Seri',
       icon: Moon,
       gradient: 'from-indigo-600 via-slate-800 to-slate-950',
       borderGlow: 'border-indigo-400 shadow-indigo-500/30',
       accentColor: '#6366F1',
-      unlocked: true,
-      unlockedDate: '2 gün önce',
+      unlocked: achievementBadges.includes('night_owl'),
+      unlockedDate: achievementBadges.includes('night_owl') ? 'Kazanıldı' : undefined,
+      progress: { current: achievementBadges.includes('night_owl') ? 1 : 0, total: 1 },
       tier: 1
     },
     {
@@ -210,8 +254,8 @@ export const KnowzaBadges: React.FC<KnowzaBadgesProps> = ({ onBack, onNavigateTo
       gradient: 'from-cyan-500 via-blue-600 to-slate-900',
       borderGlow: 'border-cyan-400 shadow-cyan-500/20',
       accentColor: '#06B6D4',
-      unlocked: false,
-      progress: { current: 2, total: 4 },
+      unlocked: (stats.xp || 0) >= 500 || achievementBadges.includes('rocket_rank'),
+      progress: { current: (stats.xp || 0) >= 500 || achievementBadges.includes('rocket_rank') ? 4 : 2, total: 4 },
       tier: 2
     },
     {
@@ -223,8 +267,8 @@ export const KnowzaBadges: React.FC<KnowzaBadgesProps> = ({ onBack, onNavigateTo
       gradient: 'from-emerald-500 via-green-600 to-teal-700',
       borderGlow: 'border-emerald-300 shadow-emerald-500/20',
       accentColor: '#10B981',
-      unlocked: false,
-      progress: { current: 3, total: 5 },
+      unlocked: achievementBadges.includes('target_master'),
+      progress: { current: achievementBadges.includes('target_master') ? 5 : (stats.errorList?.length || 0), total: 5 },
       tier: 1
     },
     {

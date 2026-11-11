@@ -282,10 +282,26 @@ export const COURSES: Course[] = [
                 "difficulty": "orta",
                 "explanation": "Ortanca sayı 85 / 5 = 17'dir. Sayılar: 13, 15, 17, 19, 21. En büyüğü 21'dir.",
                 "options": [
-                  { "id": "co1", "text": "21", "isCorrect": true },
-                  { "id": "co2", "text": "19", "isCorrect": false },
-                  { "id": "co3", "text": "23", "isCorrect": false },
-                  { "id": "co4", "text": "25", "isCorrect": false }
+                  {
+                    "id": "co1",
+                    "text": "21",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "co2",
+                    "text": "19",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "co3",
+                    "text": "23",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "co4",
+                    "text": "25",
+                    "isCorrect": false
+                  }
                 ]
               },
               {
@@ -303,10 +319,26 @@ export const COURSES: Course[] = [
                 "difficulty": "kolay",
                 "explanation": "(2x + 1) daima tek sayıdır. Tek bir sayı ile y çarpımı tek ise, y de kesinlikle TEK sayıdır.",
                 "options": [
-                  { "id": "cy1", "text": "y daima tek sayıdır", "isCorrect": true },
-                  { "id": "cy2", "text": "y daima çift sayıdır", "isCorrect": false },
-                  { "id": "cy3", "text": "y pozitiftir", "isCorrect": false },
-                  { "id": "cy4", "text": "x tektir", "isCorrect": false }
+                  {
+                    "id": "cy1",
+                    "text": "y daima tek sayıdır",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "cy2",
+                    "text": "y daima çift sayıdır",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "cy3",
+                    "text": "y pozitiftir",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "cy4",
+                    "text": "x tektir",
+                    "isCorrect": false
+                  }
                 ]
               }
             ]
@@ -1233,6 +1265,287 @@ export const COURSES: Course[] = [
             ]
           }
         ]
+      },
+      {
+        "id": "yks-u6",
+        "number": 6,
+        "title": "AYT Matematik: Fonksiyonlar & Parabol",
+        "description": "Bileşke, ters fonksiyon, ikinci dereceden denklemler ve parabol tepe noktası.",
+        "color": "#eab308",
+        "lessons": [
+          {
+            "id": "yks-u6-l1",
+            "unitId": "yks-u6",
+            "title": "Fonksiyon Türleri, Bileşke & Ters Fonksiyon",
+            "description": "Bileşke fonksiyon kuralları, görüntü kümesi ve ters fonksiyon bulma yöntemleri.",
+            "xpReward": 25,
+            "gemReward": 6,
+            "type": "lesson",
+            "summaryNotes": [
+              "(f o g)(x) = f(g(x)) olarak hesaplanır.",
+              "f(x) = (ax + b) / (cx + d) ise f⁻¹(x) = (-dx + b) / (cx - a) olur.",
+              "f(x) tek fonksiyon ise f(-x) = -f(x), çift fonksiyon ise f(-x) = f(x) olur."
+            ],
+            "questions": [
+              {
+                "id": "yks-q46",
+                "type": "multiple_choice",
+                "prompt": "f(x) = 3x - 5 ve (g o f)(x) = 6x - 7 olduğuna göre g(1) değeri kaçtır?",
+                "difficulty": "orta",
+                "hint": "f(x) = 1 yapan x değerini bulup (g o f) bileşkesinde yerine yaz.",
+                "options": [
+                  {
+                    "id": "opt-1",
+                    "text": "5",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "opt-2",
+                    "text": "3",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "opt-3",
+                    "text": "7",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "opt-4",
+                    "text": "-1",
+                    "isCorrect": false
+                  }
+                ],
+                "explanation": "f(x) = 3x - 5 = 1 => 3x = 6 => x = 2. x = 2 için (g o f)(2) = g(f(2)) = g(1) = 6(2) - 7 = 5."
+              },
+              {
+                "id": "yks-q47",
+                "type": "multiple_choice",
+                "prompt": "f(x) = (2x + 3) / (x - 4) fonksiyonunun tersi f⁻¹(x) aşağıdakilerden hangisidir?",
+                "difficulty": "orta",
+                "hint": "ax + b / cx + d formunda a ve d hem yer hem işaret değiştirir.",
+                "options": [
+                  {
+                    "id": "opt-1",
+                    "text": "(4x + 3) / (x - 2)",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "opt-2",
+                    "text": "(4x - 3) / (x + 2)",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "opt-3",
+                    "text": "(2x - 4) / (x + 3)",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "opt-4",
+                    "text": "(-4x + 3) / (x - 2)",
+                    "isCorrect": false
+                  }
+                ],
+                "explanation": "f(x) = (ax+b)/(cx+d) tersi (-dx+b)/(cx-a) dır. a=2, d=-4 olduğundan tersi (4x+3)/(x-2) olur."
+              },
+              {
+                "id": "yks-q48",
+                "type": "multiple_choice",
+                "prompt": "f(x) tek fonksiyon, g(x) çift fonksiyondur. Buna göre h(x) = f(x) · g(x) fonksiyonu için hangisi doğrudur?",
+                "difficulty": "kolay",
+                "hint": "h(-x) = f(-x) · g(-x) ifadesini incele.",
+                "options": [
+                  {
+                    "id": "opt-1",
+                    "text": "Tek fonksiyondur",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "opt-2",
+                    "text": "Çift fonksiyondur",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "opt-3",
+                    "text": "Sabit fonksiyondur",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "opt-4",
+                    "text": "Birim fonksiyondur",
+                    "isCorrect": false
+                  }
+                ],
+                "explanation": "h(-x) = f(-x) · g(-x) = (-f(x)) · g(x) = -h(x) olduğundan h(x) tek fonksiyondur."
+              },
+              {
+                "id": "yks-q49",
+                "type": "multiple_choice",
+                "prompt": "f(x) = |x - 2| + 3 fonksiyonunun görüntü kümesi aşağıdakilerden hangisidir?",
+                "difficulty": "orta",
+                "hint": "Mutlak değerli ifadenin en küçük değeri 0 dır.",
+                "options": [
+                  {
+                    "id": "opt-1",
+                    "text": "[3, ∞)",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "opt-2",
+                    "text": "[2, ∞)",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "opt-3",
+                    "text": "(-∞, 3]",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "opt-4",
+                    "text": "R (Tüm Gerçel Sayılar)",
+                    "isCorrect": false
+                  }
+                ],
+                "explanation": "|x - 2| ≥ 0 olduğundan f(x) ≥ 0 + 3 => f(x) ≥ 3 olur. Görüntü kümesi [3, ∞) aralığıdır."
+              }
+            ]
+          },
+          {
+            "id": "yks-u6-l2",
+            "unitId": "yks-u6",
+            "title": "İkinci Dereceden Denklemler & Parabol",
+            "description": "Kök-katsayı bağıntıları, diskriminant analizi ve tepe noktası hesabı.",
+            "xpReward": 30,
+            "gemReward": 8,
+            "type": "lesson",
+            "summaryNotes": [
+              "ax² + bx + c = 0 için x₁ + x₂ = -b/a ve x₁ · x₂ = c/a dır.",
+              "Çakışık iki kök için Δ = b² - 4ac = 0 olmalıdır.",
+              "Parabolün tepe noktası T(r, k) için r = -b / (2a) ve k = f(r) dir."
+            ],
+            "questions": [
+              {
+                "id": "yks-q50",
+                "type": "multiple_choice",
+                "prompt": "x² - (m + 2)x + 16 = 0 denkleminin çakışık iki gerçel kökü olduğuna göre m pozitif değeri kaçtır?",
+                "difficulty": "orta",
+                "hint": "Çakışık iki kök için diskriminant (Δ) sıfır olmalıdır.",
+                "options": [
+                  {
+                    "id": "opt-1",
+                    "text": "6",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "opt-2",
+                    "text": "4",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "opt-3",
+                    "text": "8",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "opt-4",
+                    "text": "10",
+                    "isCorrect": false
+                  }
+                ],
+                "explanation": "Δ = b² - 4ac = (m+2)² - 4(1)(16) = 0 => (m+2)² = 64 => m + 2 = 8 => m = 6."
+              },
+              {
+                "id": "yks-q51",
+                "type": "multiple_choice",
+                "prompt": "x² - 5x + 3 = 0 denkleminin kökleri x₁ ve x₂ olduğuna göre (1/x₁) + (1/x₂) toplamı kaçtır?",
+                "difficulty": "orta",
+                "hint": "Paydaları eşitleyerek kökler toplamı ve çarpımını kullan.",
+                "options": [
+                  {
+                    "id": "opt-1",
+                    "text": "5/3",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "opt-2",
+                    "text": "3/5",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "opt-3",
+                    "text": "-5/3",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "opt-4",
+                    "text": "5",
+                    "isCorrect": false
+                  }
+                ],
+                "explanation": "(1/x₁) + (1/x₂) = (x₁ + x₂) / (x₁ · x₂). x₁ + x₂ = 5 ve x₁ · x₂ = 3 olduğundan sonuç 5/3 tür."
+              },
+              {
+                "id": "yks-q52",
+                "type": "multiple_choice",
+                "prompt": "f(x) = x² - 6x + 11 parabolünün tepe noktasının koordinatları T(r, k) aşağıdakilerden hangisidir?",
+                "difficulty": "orta",
+                "hint": "r = -b / (2a) formülünü uygulayıp k = f(r) değerini bul.",
+                "options": [
+                  {
+                    "id": "opt-1",
+                    "text": "(3, 2)",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "opt-2",
+                    "text": "(-3, 2)",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "opt-3",
+                    "text": "(3, -2)",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "opt-4",
+                    "text": "(6, 11)",
+                    "isCorrect": false
+                  }
+                ],
+                "explanation": "r = -(-6) / (2·1) = 3. k = f(3) = 3² - 6(3) + 11 = 9 - 18 + 11 = 2. T(3, 2)."
+              },
+              {
+                "id": "yks-q53",
+                "type": "multiple_choice",
+                "prompt": "f(x) = -2x² + 8x + 1 fonksiyonunun alabileceği EN BÜYÜK değer kaçtır?",
+                "difficulty": "orta",
+                "hint": "Kolları aşağı doğru olan parabolün en büyük değeri tepe noktasının ordinatıdır.",
+                "options": [
+                  {
+                    "id": "opt-1",
+                    "text": "9",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "opt-2",
+                    "text": "7",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "opt-3",
+                    "text": "11",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "opt-4",
+                    "text": "5",
+                    "isCorrect": false
+                  }
+                ],
+                "explanation": "a = -2 < 0 olduğundan en büyük değer tepe noktasındadır. r = -8 / (2·(-2)) = 2. f(2) = -2(4) + 8(2) + 1 = -8 + 16 + 1 = 9."
+              }
+            ]
+          }
+        ]
       }
     ]
   },
@@ -1462,10 +1775,26 @@ export const COURSES: Course[] = [
                 "difficulty": "kolay",
                 "explanation": "// operatörü tam bölme yapar (taban bölme). 7 // 2 = 3 sonucunu verir.",
                 "options": [
-                  { "id": "kc1", "text": "3", "isCorrect": true },
-                  { "id": "kc2", "text": "3.5", "isCorrect": false },
-                  { "id": "kc3", "text": "4", "isCorrect": false },
-                  { "id": "kc4", "text": "1", "isCorrect": false }
+                  {
+                    "id": "kc1",
+                    "text": "3",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "kc2",
+                    "text": "3.5",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "kc3",
+                    "text": "4",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "kc4",
+                    "text": "1",
+                    "isCorrect": false
+                  }
                 ]
               },
               {
@@ -1483,10 +1812,26 @@ export const COURSES: Course[] = [
                 "difficulty": "kolay",
                 "explanation": "'Knowza' kelimesi 6 karakterden oluşur, bu yüzden len fonksiyonu 6 döner.",
                 "options": [
-                  { "id": "kl1", "text": "6", "isCorrect": true },
-                  { "id": "kl2", "text": "5", "isCorrect": false },
-                  { "id": "kl3", "text": "7", "isCorrect": false },
-                  { "id": "kl4", "text": "None", "isCorrect": false }
+                  {
+                    "id": "kl1",
+                    "text": "6",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "kl2",
+                    "text": "5",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "kl3",
+                    "text": "7",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "kl4",
+                    "text": "None",
+                    "isCorrect": false
+                  }
                 ]
               }
             ]
@@ -1685,7 +2030,7 @@ export const COURSES: Course[] = [
           }
         ]
       },
-{
+      {
         "id": "kod-u3",
         "number": 3,
         "title": "Python Fonksiyonlar & Modüller (*args, **kwargs)",
@@ -1715,10 +2060,26 @@ export const COURSES: Course[] = [
                 "hint": "*args tek yıldızlı değişkenler demet (tuple) oluşturur.",
                 "explanation": "*args yapısı gelen tüm argümanları bir 'tuple' (demet) veri tipinde toplar.",
                 "options": [
-                  { "id": "fn1_a", "text": "tuple (Demet)", "isCorrect": true },
-                  { "id": "fn1_b", "text": "list (Liste)", "isCorrect": false },
-                  { "id": "fn1_c", "text": "dict (Sözlük)", "isCorrect": false },
-                  { "id": "fn1_d", "text": "set (Küme)", "isCorrect": false }
+                  {
+                    "id": "fn1_a",
+                    "text": "tuple (Demet)",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "fn1_b",
+                    "text": "list (Liste)",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "fn1_c",
+                    "text": "dict (Sözlük)",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "fn1_d",
+                    "text": "set (Küme)",
+                    "isCorrect": false
+                  }
                 ]
               },
               {
@@ -1728,9 +2089,21 @@ export const COURSES: Course[] = [
                 "difficulty": "kolay",
                 "explanation": "def tanımlar, return döner, lambda tek satırlıktır, yield jeneratördür.",
                 "pairs": [
-                  { "id": "fp1", "left": "def", "right": "Fonksiyon tanımlama" },
-                  { "id": "fp2", "left": "return", "right": "Fonksiyondan değer döndürme ve sonlandırma" },
-                  { "id": "fp3", "left": "lambda", "right": "İsimsiz, tek satırlık pratik fonksiyon" }
+                  {
+                    "id": "fp1",
+                    "left": "def",
+                    "right": "Fonksiyon tanımlama"
+                  },
+                  {
+                    "id": "fp2",
+                    "left": "return",
+                    "right": "Fonksiyondan değer döndürme ve sonlandırma"
+                  },
+                  {
+                    "id": "fp3",
+                    "left": "lambda",
+                    "right": "İsimsiz, tek satırlık pratik fonksiyon"
+                  }
                 ]
               },
               {
@@ -1740,10 +2113,26 @@ export const COURSES: Course[] = [
                 "difficulty": "kolay",
                 "explanation": "lambda fonksiyonu 6'nın karesini (6 ** 2 = 36) hesaplar ve ekrana yazdırır.",
                 "options": [
-                  { "id": "lm1", "text": "36", "isCorrect": true },
-                  { "id": "lm2", "text": "12", "isCorrect": false },
-                  { "id": "lm3", "text": "6", "isCorrect": false },
-                  { "id": "lm4", "text": "SyntaxError", "isCorrect": false }
+                  {
+                    "id": "lm1",
+                    "text": "36",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "lm2",
+                    "text": "12",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "lm3",
+                    "text": "6",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "lm4",
+                    "text": "SyntaxError",
+                    "isCorrect": false
+                  }
                 ]
               },
               {
@@ -1779,10 +2168,26 @@ export const COURSES: Course[] = [
                 "hint": "Önce çift olanlar filtrelenir (2 ve 4), sonra her biri 2 ile çarpılır.",
                 "explanation": "Listede çift olan sayılar 2 ve 4'tür. 2*2=4 ve 4*2=8 olur. Sonuç [4, 8] listesidir.",
                 "options": [
-                  { "id": "lc1_a", "text": "[4, 8]", "isCorrect": true },
-                  { "id": "lc1_b", "text": "[2, 4, 6, 8]", "isCorrect": false },
-                  { "id": "lc1_c", "text": "[2, 4]", "isCorrect": false },
-                  { "id": "lc1_d", "text": "[8]", "isCorrect": false }
+                  {
+                    "id": "lc1_a",
+                    "text": "[4, 8]",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "lc1_b",
+                    "text": "[2, 4, 6, 8]",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "lc1_c",
+                    "text": "[2, 4]",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "lc1_d",
+                    "text": "[8]",
+                    "isCorrect": false
+                  }
                 ]
               },
               {
@@ -1792,9 +2197,21 @@ export const COURSES: Course[] = [
                 "difficulty": "orta",
                 "explanation": "map dönüştürür, filter süzer, zip iki listeyi birleştirip eşler.",
                 "pairs": [
-                  { "id": "lp1", "left": "map()", "right": "Her elemana fonksiyonu uygulayıp dönüştürür" },
-                  { "id": "lp2", "left": "filter()", "right": "Şarta uyan elemanları süzer" },
-                  { "id": "lp3", "left": "zip()", "right": "İki listeyi ikili demetler halinde eşler" }
+                  {
+                    "id": "lp1",
+                    "left": "map()",
+                    "right": "Her elemana fonksiyonu uygulayıp dönüştürür"
+                  },
+                  {
+                    "id": "lp2",
+                    "left": "filter()",
+                    "right": "Şarta uyan elemanları süzer"
+                  },
+                  {
+                    "id": "lp3",
+                    "left": "zip()",
+                    "right": "İki listeyi ikili demetler halinde eşler"
+                  }
                 ]
               },
               {
@@ -1804,10 +2221,26 @@ export const COURSES: Course[] = [
                 "difficulty": "kolay",
                 "explanation": "Python Package Index (PyPI) paketlerini kurmak için 'pip install <paket_adi>' kullanılır.",
                 "options": [
-                  { "id": "pip1", "text": "pip install <paket>", "isCorrect": true },
-                  { "id": "pip2", "text": "npm install <paket>", "isCorrect": false },
-                  { "id": "pip3", "text": "python get <paket>", "isCorrect": false },
-                  { "id": "pip4", "text": "brew add <paket>", "isCorrect": false }
+                  {
+                    "id": "pip1",
+                    "text": "pip install <paket>",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "pip2",
+                    "text": "npm install <paket>",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "pip3",
+                    "text": "python get <paket>",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "pip4",
+                    "text": "brew add <paket>",
+                    "isCorrect": false
+                  }
                 ]
               },
               {
@@ -1851,10 +2284,26 @@ export const COURSES: Course[] = [
                 "difficulty": "kolay",
                 "explanation": "Python'da sınıf metodlarının ilk parametresi nesnenin kendisini işaret eden 'self' referansıdır.",
                 "options": [
-                  { "id": "op1_a", "text": "self", "isCorrect": true },
-                  { "id": "op1_b", "text": "this", "isCorrect": false },
-                  { "id": "op1_c", "text": "cls", "isCorrect": false },
-                  { "id": "op1_d", "text": "object", "isCorrect": false }
+                  {
+                    "id": "op1_a",
+                    "text": "self",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "op1_b",
+                    "text": "this",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "op1_c",
+                    "text": "cls",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "op1_d",
+                    "text": "object",
+                    "isCorrect": false
+                  }
                 ]
               },
               {
@@ -1864,9 +2313,21 @@ export const COURSES: Course[] = [
                 "difficulty": "orta",
                 "explanation": "Class şablondur, Object somut örnektir, Attribute özelliktir, Method işlevdir.",
                 "pairs": [
-                  { "id": "oop1", "left": "Class (Sınıf)", "right": "Nesnelerin genel planı ve şablonu" },
-                  { "id": "oop2", "left": "Object (Nesne)", "right": "Sınıftan türetilen somut varlık" },
-                  { "id": "oop3", "left": "Method (Metod)", "right": "Sınıfa ait fonksiyonlar ve eylemler" }
+                  {
+                    "id": "oop1",
+                    "left": "Class (Sınıf)",
+                    "right": "Nesnelerin genel planı ve şablonu"
+                  },
+                  {
+                    "id": "oop2",
+                    "left": "Object (Nesne)",
+                    "right": "Sınıftan türetilen somut varlık"
+                  },
+                  {
+                    "id": "oop3",
+                    "left": "Method (Metod)",
+                    "right": "Sınıfa ait fonksiyonlar ve eylemler"
+                  }
                 ]
               },
               {
@@ -1876,10 +2337,26 @@ export const COURSES: Course[] = [
                 "difficulty": "kolay",
                 "explanation": "Sınıf adının yanına parantez açılarak çağrılır: ogrenci1 = Ogrenci()",
                 "options": [
-                  { "id": "ins1", "text": "ogrenci1 = Ogrenci()", "isCorrect": true },
-                  { "id": "ins2", "text": "ogrenci1 = new Ogrenci()", "isCorrect": false },
-                  { "id": "ins3", "text": "Ogrenci.create(ogrenci1)", "isCorrect": false },
-                  { "id": "ins4", "text": "ogrenci1 -> Ogrenci()", "isCorrect": false }
+                  {
+                    "id": "ins1",
+                    "text": "ogrenci1 = Ogrenci()",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "ins2",
+                    "text": "ogrenci1 = new Ogrenci()",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "ins3",
+                    "text": "Ogrenci.create(ogrenci1)",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "ins4",
+                    "text": "ogrenci1 -> Ogrenci()",
+                    "isCorrect": false
+                  }
                 ]
               },
               {
@@ -1914,10 +2391,26 @@ export const COURSES: Course[] = [
                 "difficulty": "orta",
                 "explanation": "super() fonksiyonu üst sınıfa erişmek ve ata sınıfın metodlarını çalıştırmak için kullanılır.",
                 "options": [
-                  { "id": "inh1_a", "text": "super()", "isCorrect": true },
-                  { "id": "inh1_b", "text": "parent()", "isCorrect": false },
-                  { "id": "inh1_c", "text": "base()", "isCorrect": false },
-                  { "id": "inh1_d", "text": "root()", "isCorrect": false }
+                  {
+                    "id": "inh1_a",
+                    "text": "super()",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "inh1_b",
+                    "text": "parent()",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "inh1_c",
+                    "text": "base()",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "inh1_d",
+                    "text": "root()",
+                    "isCorrect": false
+                  }
                 ]
               },
               {
@@ -1927,9 +2420,21 @@ export const COURSES: Course[] = [
                 "difficulty": "orta",
                 "explanation": "Kalıtım miras alır, Kapsülleme gizler, Polimorfizm çok biçimliliktir.",
                 "pairs": [
-                  { "id": "ip1", "left": "Kalıtım (Inheritance)", "right": "Bir sınıfın başka bir sınıfın özelliklerini devralması" },
-                  { "id": "ip2", "left": "Kapsülleme (Encapsulation)", "right": "Verilerin dışarıdan doğrudan değiştirilmesini kısıtlama" },
-                  { "id": "ip3", "left": "Polimorfizm (Polymorphism)", "right": "Aynı isimli metodun farklı sınıflarda farklı davranması" }
+                  {
+                    "id": "ip1",
+                    "left": "Kalıtım (Inheritance)",
+                    "right": "Bir sınıfın başka bir sınıfın özelliklerini devralması"
+                  },
+                  {
+                    "id": "ip2",
+                    "left": "Kapsülleme (Encapsulation)",
+                    "right": "Verilerin dışarıdan doğrudan değiştirilmesini kısıtlama"
+                  },
+                  {
+                    "id": "ip3",
+                    "left": "Polimorfizm (Polymorphism)",
+                    "right": "Aynı isimli metodun farklı sınıflarda farklı davranması"
+                  }
                 ]
               },
               {
@@ -1939,10 +2444,26 @@ export const COURSES: Course[] = [
                 "difficulty": "orta",
                 "explanation": "Python'da bir sınıf 'class C(A, B):' şeklinde birden fazla üst sınıftan türeyebilir; buna Multiple Inheritance denir.",
                 "options": [
-                  { "id": "mi1", "text": "Çoklu Kalıtım (Multiple Inheritance)", "isCorrect": true },
-                  { "id": "mi2", "text": "Tekil Kalıtım (Single Inheritance)", "isCorrect": false },
-                  { "id": "mi3", "text": "Aşırı Yükleme (Overloading)", "isCorrect": false },
-                  { "id": "mi4", "text": "İnterface (Arayüz)", "isCorrect": false }
+                  {
+                    "id": "mi1",
+                    "text": "Çoklu Kalıtım (Multiple Inheritance)",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "mi2",
+                    "text": "Tekil Kalıtım (Single Inheritance)",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "mi3",
+                    "text": "Aşırı Yükleme (Overloading)",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "mi4",
+                    "text": "İnterface (Arayüz)",
+                    "isCorrect": false
+                  }
                 ]
               },
               {
@@ -1986,10 +2507,26 @@ export const COURSES: Course[] = [
                 "difficulty": "kolay",
                 "explanation": "Sıfıra bölme hatası 'ZeroDivisionError' olarak fırlatılır.",
                 "options": [
-                  { "id": "tr1_a", "text": "ZeroDivisionError", "isCorrect": true },
-                  { "id": "tr1_b", "text": "ValueError", "isCorrect": false },
-                  { "id": "tr1_c", "text": "TypeError", "isCorrect": false },
-                  { "id": "tr1_d", "text": "IndexError", "isCorrect": false }
+                  {
+                    "id": "tr1_a",
+                    "text": "ZeroDivisionError",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "tr1_b",
+                    "text": "ValueError",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "tr1_c",
+                    "text": "TypeError",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "tr1_d",
+                    "text": "IndexError",
+                    "isCorrect": false
+                  }
                 ]
               },
               {
@@ -1999,9 +2536,21 @@ export const COURSES: Course[] = [
                 "difficulty": "kolay",
                 "explanation": "try dener, except yakalar, finally mutlaka çalışır.",
                 "pairs": [
-                  { "id": "tp1", "left": "try", "right": "Hata riski taşıyan kod bloğu" },
-                  { "id": "tp2", "left": "except", "right": "Hata oluştuğunda çalışan blok" },
-                  { "id": "tp3", "left": "finally", "right": "Hata olsun veya olmasın her zaman çalışan blok" }
+                  {
+                    "id": "tp1",
+                    "left": "try",
+                    "right": "Hata riski taşıyan kod bloğu"
+                  },
+                  {
+                    "id": "tp2",
+                    "left": "except",
+                    "right": "Hata oluştuğunda çalışan blok"
+                  },
+                  {
+                    "id": "tp3",
+                    "left": "finally",
+                    "right": "Hata olsun veya olmasın her zaman çalışan blok"
+                  }
                 ]
               },
               {
@@ -2011,10 +2560,26 @@ export const COURSES: Course[] = [
                 "difficulty": "orta",
                 "explanation": "Python'da manuel hata fırlatmak için 'raise ValueError(\\'Geçersiz yaş!\\')' yapısı kullanılır.",
                 "options": [
-                  { "id": "rs1", "text": "raise", "isCorrect": true },
-                  { "id": "rs2", "text": "throw", "isCorrect": false },
-                  { "id": "rs3", "text": "catch", "isCorrect": false },
-                  { "id": "rs4", "text": "error", "isCorrect": false }
+                  {
+                    "id": "rs1",
+                    "text": "raise",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "rs2",
+                    "text": "throw",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "rs3",
+                    "text": "catch",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "rs4",
+                    "text": "error",
+                    "isCorrect": false
+                  }
                 ]
               },
               {
@@ -2049,10 +2614,26 @@ export const COURSES: Course[] = [
                 "difficulty": "kolay",
                 "explanation": "json.loads() (load string) metodu JSON metnini Python veri yapısına dönüştürür.",
                 "options": [
-                  { "id": "js1_a", "text": "json.loads()", "isCorrect": true },
-                  { "id": "js1_b", "text": "json.dumps()", "isCorrect": false },
-                  { "id": "js1_c", "text": "json.parse()", "isCorrect": false },
-                  { "id": "js1_d", "text": "json.convert()", "isCorrect": false }
+                  {
+                    "id": "js1_a",
+                    "text": "json.loads()",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "js1_b",
+                    "text": "json.dumps()",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "js1_c",
+                    "text": "json.parse()",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "js1_d",
+                    "text": "json.convert()",
+                    "isCorrect": false
+                  }
                 ]
               },
               {
@@ -2062,9 +2643,21 @@ export const COURSES: Course[] = [
                 "difficulty": "orta",
                 "explanation": "GET okur, POST ekler, PUT günceller, DELETE siler.",
                 "pairs": [
-                  { "id": "hp1", "left": "GET", "right": "Sunucudan veri okuma ve listeleme" },
-                  { "id": "hp2", "left": "POST", "right": "Sunucuya yeni veri gönderme/kaydetme" },
-                  { "id": "hp3", "left": "DELETE", "right": "Sunucudaki mevcut veriyi silme" }
+                  {
+                    "id": "hp1",
+                    "left": "GET",
+                    "right": "Sunucudan veri okuma ve listeleme"
+                  },
+                  {
+                    "id": "hp2",
+                    "left": "POST",
+                    "right": "Sunucuya yeni veri gönderme/kaydetme"
+                  },
+                  {
+                    "id": "hp3",
+                    "left": "DELETE",
+                    "right": "Sunucudaki mevcut veriyi silme"
+                  }
                 ]
               },
               {
@@ -2074,10 +2667,26 @@ export const COURSES: Course[] = [
                 "difficulty": "kolay",
                 "explanation": "200 OK, isteğin başarıyla işlendiğini ve yanıtın döndüğünü ifade eder.",
                 "options": [
-                  { "id": "st1", "text": "200 OK", "isCorrect": true },
-                  { "id": "st2", "text": "404 Not Found", "isCorrect": false },
-                  { "id": "st3", "text": "500 Internal Server Error", "isCorrect": false },
-                  { "id": "st4", "text": "301 Moved Permanently", "isCorrect": false }
+                  {
+                    "id": "st1",
+                    "text": "200 OK",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "st2",
+                    "text": "404 Not Found",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "st3",
+                    "text": "500 Internal Server Error",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "st4",
+                    "text": "301 Moved Permanently",
+                    "isCorrect": false
+                  }
                 ]
               },
               {
@@ -2531,7 +3140,7 @@ export const COURSES: Course[] = [
           }
         ]
       },
-{
+      {
         "id": "kpss-u4",
         "number": 4,
         "title": "KPSS Coğrafya: Türkiye'nin Yerşekilleri & İklimi",
@@ -2561,10 +3170,26 @@ export const COURSES: Course[] = [
                 "hint": "Ege kıyılarındaki dağlar kırıktır; İç ve Doğu Anadolu'daki bazı dağlar volkaniktir.",
                 "explanation": "Erciyes Dağı volkanik patlamalar sonucu oluşmuş volkanik bir dağdır; Kaz, Madra ve Yunt ise kırık (horst) dağlarıdır.",
                 "options": [
-                  { "id": "cg1_a", "text": "Erciyes Dağı", "isCorrect": true },
-                  { "id": "cg1_b", "text": "Kaz Dağları", "isCorrect": false },
-                  { "id": "cg1_c", "text": "Madra Dağı", "isCorrect": false },
-                  { "id": "cg1_d", "text": "Yunt Dağı", "isCorrect": false }
+                  {
+                    "id": "cg1_a",
+                    "text": "Erciyes Dağı",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "cg1_b",
+                    "text": "Kaz Dağları",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "cg1_c",
+                    "text": "Madra Dağı",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "cg1_d",
+                    "text": "Yunt Dağı",
+                    "isCorrect": false
+                  }
                 ]
               },
               {
@@ -2574,9 +3199,21 @@ export const COURSES: Course[] = [
                 "difficulty": "orta",
                 "explanation": "Teke/Taşeli karstik kireçtaşıdır, Erzurum-Kars bazalt lavıdır, Çatalca-Kocaeli aşınım platosudur.",
                 "pairs": [
-                  { "id": "cp1", "left": "Karstik Plato", "right": "Teke ve Taşeli Platoları" },
-                  { "id": "cp2", "left": "Lav (Volkanik) Platosu", "right": "Erzurum - Kars Platosu" },
-                  { "id": "cp3", "left": "Aşınım (Peneple) Platosu", "right": "Çatalca - Kocaeli Platosu" }
+                  {
+                    "id": "cp1",
+                    "left": "Karstik Plato",
+                    "right": "Teke ve Taşeli Platoları"
+                  },
+                  {
+                    "id": "cp2",
+                    "left": "Lav (Volkanik) Platosu",
+                    "right": "Erzurum - Kars Platosu"
+                  },
+                  {
+                    "id": "cp3",
+                    "left": "Aşınım (Peneple) Platosu",
+                    "right": "Çatalca - Kocaeli Platosu"
+                  }
                 ]
               },
               {
@@ -2587,10 +3224,26 @@ export const COURSES: Course[] = [
                 "hint": "Van Gölü en büyük göldür fakat sodalıdır; tatlı su gölü değildir.",
                 "explanation": "Beyşehir Gölü Türkiye'nin en büyük tatlı su gölüdür ve su ürünleri ile tarımsal sulamada kullanılır.",
                 "options": [
-                  { "id": "gl1", "text": "Beyşehir Gölü", "isCorrect": true },
-                  { "id": "gl2", "text": "Van Gölü", "isCorrect": false },
-                  { "id": "gl3", "text": "Tuz Gölü", "isCorrect": false },
-                  { "id": "gl4", "text": "Eğirdir Gölü", "isCorrect": false }
+                  {
+                    "id": "gl1",
+                    "text": "Beyşehir Gölü",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "gl2",
+                    "text": "Van Gölü",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "gl3",
+                    "text": "Tuz Gölü",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "gl4",
+                    "text": "Eğirdir Gölü",
+                    "isCorrect": false
+                  }
                 ]
               },
               {
@@ -2625,10 +3278,26 @@ export const COURSES: Course[] = [
                 "difficulty": "kolay",
                 "explanation": "Lodos güneybatıdan eser, kışın kar erimelerine ve baca gazı geri tepmesine neden olabilir.",
                 "options": [
-                  { "id": "ik1_a", "text": "Lodos", "isCorrect": true },
-                  { "id": "ik1_b", "text": "Poyraz", "isCorrect": false },
-                  { "id": "ik1_c", "text": "Karayel", "isCorrect": false },
-                  { "id": "ik1_d", "text": "Samyeli", "isCorrect": false }
+                  {
+                    "id": "ik1_a",
+                    "text": "Lodos",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "ik1_b",
+                    "text": "Poyraz",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "ik1_c",
+                    "text": "Karayel",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "ik1_d",
+                    "text": "Samyeli",
+                    "isCorrect": false
+                  }
                 ]
               },
               {
@@ -2638,9 +3307,21 @@ export const COURSES: Course[] = [
                 "difficulty": "orta",
                 "explanation": "Terra Rossa Akdeniz kalkerinde, Kahverengi Orman Karadeniz'de, Çernezyom Erzurum-Kars'tadır.",
                 "pairs": [
-                  { "id": "tp1", "left": "Terra Rossa (Kırmızı Akdeniz Toprağı)", "right": "Akdeniz Bölgesi (Kalker üzeri)" },
-                  { "id": "tp2", "left": "Çernezyom (Kara Toprak)", "right": "Erzurum - Kars Platosu" },
-                  { "id": "tp3", "left": "Kahverengi Orman Toprağı", "right": "Karadeniz Dağları" }
+                  {
+                    "id": "tp1",
+                    "left": "Terra Rossa (Kırmızı Akdeniz Toprağı)",
+                    "right": "Akdeniz Bölgesi (Kalker üzeri)"
+                  },
+                  {
+                    "id": "tp2",
+                    "left": "Çernezyom (Kara Toprak)",
+                    "right": "Erzurum - Kars Platosu"
+                  },
+                  {
+                    "id": "tp3",
+                    "left": "Kahverengi Orman Toprağı",
+                    "right": "Karadeniz Dağları"
+                  }
                 ]
               },
               {
@@ -2650,10 +3331,26 @@ export const COURSES: Course[] = [
                 "difficulty": "orta",
                 "explanation": "Maki tahribiyle Garig (Frigana), Karadeniz orman tahribiyle Psödomaki, İç Anadolu bozkır tahribiyle Antropojen Bozkır oluşur.",
                 "options": [
-                  { "id": "gr1", "text": "Garig", "isCorrect": true },
-                  { "id": "gr2", "text": "Psödomaki", "isCorrect": false },
-                  { "id": "gr3", "text": "Bozkır", "isCorrect": false },
-                  { "id": "gr4", "text": "Tundra", "isCorrect": false }
+                  {
+                    "id": "gr1",
+                    "text": "Garig",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "gr2",
+                    "text": "Psödomaki",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "gr3",
+                    "text": "Bozkır",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "gr4",
+                    "text": "Tundra",
+                    "isCorrect": false
+                  }
                 ]
               },
               {
@@ -2697,10 +3394,26 @@ export const COURSES: Course[] = [
                 "difficulty": "kolay",
                 "explanation": "Soru metnindeki en değişmez sabit parametre (örneğin haftanın günleri: Pazartesi-Cuma) belirlenip tablonun sütunları oluşturulur.",
                 "options": [
-                  { "id": "sm1_a", "text": "Sabit parametreyi (günler, sıra, katlar) tablonun iskeleti yapmak", "isCorrect": true },
-                  { "id": "sm1_b", "text": "Kişileri rastgele kutulara yazmak", "isCorrect": false },
-                  { "id": "sm1_c", "text": "Doğrudan şıklardan eleme yapmaya çalışmak", "isCorrect": false },
-                  { "id": "sm1_d", "text": "Tüm olasılıkları tek tek ezberlemek", "isCorrect": false }
+                  {
+                    "id": "sm1_a",
+                    "text": "Sabit parametreyi (günler, sıra, katlar) tablonun iskeleti yapmak",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "sm1_b",
+                    "text": "Kişileri rastgele kutulara yazmak",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "sm1_c",
+                    "text": "Doğrudan şıklardan eleme yapmaya çalışmak",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "sm1_d",
+                    "text": "Tüm olasılıkları tek tek ezberlemek",
+                    "isCorrect": false
+                  }
                 ]
               },
               {
@@ -2710,9 +3423,21 @@ export const COURSES: Course[] = [
                 "difficulty": "orta",
                 "explanation": "Hemen önceki blok bitişik [K][L], aralarında 1 kişi olan [K][ _ ][L] olarak modellenir.",
                 "pairs": [
-                  { "id": "smp1", "left": "K, L'den hemen önceki sıradadır", "right": "[K][L] bitişik blok" },
-                  { "id": "smp2", "left": "K ve L arasında yalnızca 1 kişi vardır", "right": "[K] [ _ ] [L] aralı blok" },
-                  { "id": "smp3", "left": "K ve L aynı gün nöbet tutmaktadır", "right": "Aynı sütun içine yazma" }
+                  {
+                    "id": "smp1",
+                    "left": "K, L'den hemen önceki sıradadır",
+                    "right": "[K][L] bitişik blok"
+                  },
+                  {
+                    "id": "smp2",
+                    "left": "K ve L arasında yalnızca 1 kişi vardır",
+                    "right": "[K] [ _ ] [L] aralı blok"
+                  },
+                  {
+                    "id": "smp3",
+                    "left": "K ve L aynı gün nöbet tutmaktadır",
+                    "right": "Aynı sütun içine yazma"
+                  }
                 ]
               },
               {
@@ -2722,10 +3447,26 @@ export const COURSES: Course[] = [
                 "difficulty": "kolay",
                 "explanation": "Cuma sütununa X doğrudan kalıcı olarak yazılır ve diğer olasılıklarda X'in yeri değiştirilmez.",
                 "options": [
-                  { "id": "fx1", "text": "Cuma hücresine X doğrudan sabitlenir", "isCorrect": true },
-                  { "id": "fx2", "text": "X tüm günlere soru işaretiyle konur", "isCorrect": false },
-                  { "id": "fx3", "text": "X tablodan tamamen çıkarılır", "isCorrect": false },
-                  { "id": "fx4", "text": "Soru iptal edilir", "isCorrect": false }
+                  {
+                    "id": "fx1",
+                    "text": "Cuma hücresine X doğrudan sabitlenir",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "fx2",
+                    "text": "X tüm günlere soru işaretiyle konur",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "fx3",
+                    "text": "X tablodan tamamen çıkarılır",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "fx4",
+                    "text": "Soru iptal edilir",
+                    "isCorrect": false
+                  }
                 ]
               },
               {
@@ -2761,10 +3502,26 @@ export const COURSES: Course[] = [
                 "hint": "Unvan kelimesi 'u' harfi ile başlar.",
                 "explanation": "TDK kılavuzuna göre 'Unvan' doğrudur ('Ünvan' yanlıştır).",
                 "options": [
-                  { "id": "yz1_a", "text": "Unvan", "isCorrect": true },
-                  { "id": "yz1_b", "text": "Ünvan", "isCorrect": false },
-                  { "id": "yz1_c", "text": "Dinazor", "isCorrect": false },
-                  { "id": "yz1_d", "text": "Karnıbahar", "isCorrect": false }
+                  {
+                    "id": "yz1_a",
+                    "text": "Unvan",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "yz1_b",
+                    "text": "Ünvan",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "yz1_c",
+                    "text": "Dinazor",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "yz1_d",
+                    "text": "Karnıbahar",
+                    "isCorrect": false
+                  }
                 ]
               },
               {
@@ -2774,9 +3531,21 @@ export const COURSES: Course[] = [
                 "difficulty": "orta",
                 "explanation": "Kurum ekleri ayrılmaz, SOMBAHÇEMİ bitişik ki, durum eki de/da bitişiktir.",
                 "pairs": [
-                  { "id": "yp1", "left": "Kurum adlarına gelen ekler", "right": "Türk Dil Kurumuna (Ayrılmaz)" },
-                  { "id": "yp2", "left": "Kalıplaşmış 'ki' bağlacı", "right": "Mademki / Oysaki (Bitişik)" },
-                  { "id": "yp3", "left": "Bulunma durum eki (-de/-da)", "right": "Evde / Okulda (Bitişik)" }
+                  {
+                    "id": "yp1",
+                    "left": "Kurum adlarına gelen ekler",
+                    "right": "Türk Dil Kurumuna (Ayrılmaz)"
+                  },
+                  {
+                    "id": "yp2",
+                    "left": "Kalıplaşmış 'ki' bağlacı",
+                    "right": "Mademki / Oysaki (Bitişik)"
+                  },
+                  {
+                    "id": "yp3",
+                    "left": "Bulunma durum eki (-de/-da)",
+                    "right": "Evde / Okulda (Bitişik)"
+                  }
                 ]
               },
               {
@@ -2786,10 +3555,26 @@ export const COURSES: Course[] = [
                 "difficulty": "orta",
                 "explanation": "Kurum, kuruluş ve kurul adlarına gelen ekler kesmeyle ayrılmaz. 'Türkiye Büyük Millet Meclisi'ne' yazımı yanlıştır; 'Türkiye Büyük Millet Meclisine' olmalıdır.",
                 "options": [
-                  { "id": "ks1", "text": "Türkiye Büyük Millet Meclisi'ne yeni bir yasa teklifi sunuldu.", "isCorrect": true },
-                  { "id": "ks2", "text": "Ahmet Bey'in konuşması herkesi duygulandırdı.", "isCorrect": false },
-                  { "id": "ks3", "text": "1923'te Cumhuriyet ilan edildi.", "isCorrect": false },
-                  { "id": "ks4", "text": "TDK'nin yeni sözlüğü yayımlandı.", "isCorrect": false }
+                  {
+                    "id": "ks1",
+                    "text": "Türkiye Büyük Millet Meclisi'ne yeni bir yasa teklifi sunuldu.",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "ks2",
+                    "text": "Ahmet Bey'in konuşması herkesi duygulandırdı.",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "ks3",
+                    "text": "1923'te Cumhuriyet ilan edildi.",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "ks4",
+                    "text": "TDK'nin yeni sözlüğü yayımlandı.",
+                    "isCorrect": false
+                  }
                 ]
               },
               {
@@ -2833,10 +3618,26 @@ export const COURSES: Course[] = [
                 "difficulty": "kolay",
                 "explanation": "2017 anayasa değişikliği ile TBMM milletvekili sayısı 550'den 600'e çıkarılmıştır.",
                 "options": [
-                  { "id": "vt1_a", "text": "600 milletvekili", "isCorrect": true },
-                  { "id": "vt1_b", "text": "550 milletvekili", "isCorrect": false },
-                  { "id": "vt1_c", "text": "450 milletvekili", "isCorrect": false },
-                  { "id": "vt1_d", "text": "650 milletvekili", "isCorrect": false }
+                  {
+                    "id": "vt1_a",
+                    "text": "600 milletvekili",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "vt1_b",
+                    "text": "550 milletvekili",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "vt1_c",
+                    "text": "450 milletvekili",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "vt1_d",
+                    "text": "650 milletvekili",
+                    "isCorrect": false
+                  }
                 ]
               },
               {
@@ -2846,9 +3647,21 @@ export const COURSES: Course[] = [
                 "difficulty": "orta",
                 "explanation": "TBMM 600 üye, AYM 15 üye, HSK 13 üyeden oluşur.",
                 "pairs": [
-                  { "id": "vp1", "left": "TBMM", "right": "600 milletvekili" },
-                  { "id": "vp2", "left": "Anayasa Mahkemesi (AYM)", "right": "15 üye (12 yıl görev)" },
-                  { "id": "vp3", "left": "Hakimler ve Savcılar Kurulu (HSK)", "right": "13 üye" }
+                  {
+                    "id": "vp1",
+                    "left": "TBMM",
+                    "right": "600 milletvekili"
+                  },
+                  {
+                    "id": "vp2",
+                    "left": "Anayasa Mahkemesi (AYM)",
+                    "right": "15 üye (12 yıl görev)"
+                  },
+                  {
+                    "id": "vp3",
+                    "left": "Hakimler ve Savcılar Kurulu (HSK)",
+                    "right": "13 üye"
+                  }
                 ]
               },
               {
@@ -2858,10 +3671,26 @@ export const COURSES: Course[] = [
                 "difficulty": "orta",
                 "explanation": "AYM üyeleri 12 yıl için seçilirler ve bir kimse iki defa Anayasa Mahkemesi üyesi seçilemez.",
                 "options": [
-                  { "id": "aym1", "text": "12 yıl", "isCorrect": true },
-                  { "id": "aym2", "text": "5 yıl", "isCorrect": false },
-                  { "id": "aym3", "text": "7 yıl", "isCorrect": false },
-                  { "id": "aym4", "text": "Ömür boyu", "isCorrect": false }
+                  {
+                    "id": "aym1",
+                    "text": "12 yıl",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "aym2",
+                    "text": "5 yıl",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "aym3",
+                    "text": "7 yıl",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "aym4",
+                    "text": "Ömür boyu",
+                    "isCorrect": false
+                  }
                 ]
               },
               {
@@ -2897,10 +3726,26 @@ export const COURSES: Course[] = [
                 "hint": "FİRÇA kısaltması: Fransa, İngiltere, Rusya, Çin, ABD.",
                 "explanation": "Almanya BM Güvenlik Konseyi daimi veto üyesi değildir. Daimi üyeler: ABD, Rusya, Çin, İngiltere ve Fransa'dır.",
                 "options": [
-                  { "id": "gn1_a", "text": "Almanya", "isCorrect": true },
-                  { "id": "gn1_b", "text": "Fransa", "isCorrect": false },
-                  { "id": "gn1_c", "text": "Çin", "isCorrect": false },
-                  { "id": "gn1_d", "text": "Rusya", "isCorrect": false }
+                  {
+                    "id": "gn1_a",
+                    "text": "Almanya",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "gn1_b",
+                    "text": "Fransa",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "gn1_c",
+                    "text": "Çin",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "gn1_d",
+                    "text": "Rusya",
+                    "isCorrect": false
+                  }
                 ]
               },
               {
@@ -2910,9 +3755,21 @@ export const COURSES: Course[] = [
                 "difficulty": "orta",
                 "explanation": "NATO Brüksel'de, UNESCO Paris'te, BM New York'ta, WHO Cenevre'dedir.",
                 "pairs": [
-                  { "id": "org1", "left": "NATO", "right": "Brüksel (Belçika)" },
-                  { "id": "org2", "left": "UNESCO", "right": "Paris (Fransa)" },
-                  { "id": "org3", "left": "Birleşmiş Milletler (BM)", "right": "New York (ABD)" }
+                  {
+                    "id": "org1",
+                    "left": "NATO",
+                    "right": "Brüksel (Belçika)"
+                  },
+                  {
+                    "id": "org2",
+                    "left": "UNESCO",
+                    "right": "Paris (Fransa)"
+                  },
+                  {
+                    "id": "org3",
+                    "left": "Birleşmiş Milletler (BM)",
+                    "right": "New York (ABD)"
+                  }
                 ]
               },
               {
@@ -2922,10 +3779,26 @@ export const COURSES: Course[] = [
                 "difficulty": "kolay",
                 "explanation": "Alper Gezeravcı, Ax-3 misyonu ile uzaya çıkan ilk Türk astronot olmuştur.",
                 "options": [
-                  { "id": "ast1", "text": "Alper Gezeravcı", "isCorrect": true },
-                  { "id": "ast2", "text": "Tuva Cihangir Atasever", "isCorrect": false },
-                  { "id": "ast3", "text": "Umut Yıldız", "isCorrect": false },
-                  { "id": "ast4", "text": "Aziz Sancar", "isCorrect": false }
+                  {
+                    "id": "ast1",
+                    "text": "Alper Gezeravcı",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "ast2",
+                    "text": "Tuva Cihangir Atasever",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "ast3",
+                    "text": "Umut Yıldız",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "ast4",
+                    "text": "Aziz Sancar",
+                    "isCorrect": false
+                  }
                 ]
               },
               {
@@ -2935,6 +3808,287 @@ export const COURSES: Course[] = [
                 "statement": "Avrupa İnsan Hakları Mahkemesi (AİHM), Avrupa Birliği'nin değil, 1949'da kurulan ve Türkiye'nin de kurucu üyeleri arasında olduğu Avrupa Konseyi'nin yargı organıdır.",
                 "correctAnswer": true,
                 "explanation": "Doğrudur! AİHM Avrupa Konseyi'ne bağlıdır; Avrupa Birliği Adalet Divanı ile karıştırılmamalıdır."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "kpss-u7",
+        "number": 7,
+        "title": "Milli Mücadele & Atatürk İnkılapları",
+        "description": "Amasya, Erzurum, Sivas kongreleri, TBMM dönemi ve Cumhuriyet inkılapları.",
+        "color": "#10b981",
+        "lessons": [
+          {
+            "id": "kpss-u7-l1",
+            "unitId": "kpss-u7",
+            "title": "Milli Mücadele Hazırlık & Kongreler",
+            "description": "Genelgeler, Temsil Heyeti, Misak-ı Milli kararları ve TBMM nin açılışı.",
+            "xpReward": 25,
+            "gemReward": 6,
+            "type": "lesson",
+            "summaryNotes": [
+              "Amasya Genelgesi Kurtuluş Savaşı nın amaç, gerekçe ve yöntemini belirten ihtilal beyannamesidir.",
+              "Erzurum Kongresi toplanış bakımından bölgesel, aldığı kararlar bakımından ulusaldır.",
+              "Sivas Kongresi nde tüm milli cemiyetler tek çatı altında birleştirilmiştir."
+            ],
+            "questions": [
+              {
+                "id": "kpss-q40",
+                "type": "multiple_choice",
+                "prompt": "Milletin bağımsızlığını yine milletin azim ve kararı kurtaracaktır ilkesi İLK KEZ nerede ilan edilmiştir?",
+                "difficulty": "kolay",
+                "hint": "Kurtuluş Savaşı nın yöntemini ve milli egemenliği ilk kez vurgulayan belge.",
+                "options": [
+                  {
+                    "id": "opt-1",
+                    "text": "Amasya Genelgesi",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "opt-2",
+                    "text": "Havza Genelgesi",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "opt-3",
+                    "text": "Erzurum Kongresi",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "opt-4",
+                    "text": "Amasya Görüşmeleri",
+                    "isCorrect": false
+                  }
+                ],
+                "explanation": "22 Haziran 1919 tarihli Amasya Genelgesi nde Kurtuluş Savaşı nın yöntemi ve milli egemenlik ilkesi ilk kez yer almıştır."
+              },
+              {
+                "id": "kpss-q41",
+                "type": "multiple_choice",
+                "prompt": "Milli sınırlar içinde vatan bir bütündür, bölünemez kararı İLK KEZ hangi kongrede kabul edilmiştir?",
+                "difficulty": "orta",
+                "hint": "Doğu Anadolu daki Ermeni tehdidine karşı toplanan ancak ulusal kararlar alan kongre.",
+                "options": [
+                  {
+                    "id": "opt-1",
+                    "text": "Erzurum Kongresi",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "opt-2",
+                    "text": "Sivas Kongresi",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "opt-3",
+                    "text": "Balıkesir Kongresi",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "opt-4",
+                    "text": "Alaşehir Kongresi",
+                    "isCorrect": false
+                  }
+                ],
+                "explanation": "Erzurum Kongresi nde ulusal sınırlar (Misak-ı Milli nin temeli) ilk kez belirlenmiştir."
+              },
+              {
+                "id": "kpss-q42",
+                "type": "multiple_choice",
+                "prompt": "Anadolu daki tüm direniş cemiyetleri hangi kongrede Anadolu ve Rumeli Müdafaa-i Hukuk Cemiyeti adı altında birleştirilmiştir?",
+                "difficulty": "kolay",
+                "hint": "Milli Mücadele nin tek merkezden yönetilmesini sağlayan ulusal kongre.",
+                "options": [
+                  {
+                    "id": "opt-1",
+                    "text": "Sivas Kongresi",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "opt-2",
+                    "text": "Erzurum Kongresi",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "opt-3",
+                    "text": "Amasya Tamimi",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "opt-4",
+                    "text": "Pozantı Kongresi",
+                    "isCorrect": false
+                  }
+                ],
+                "explanation": "4-11 Eylül 1919 da toplanan Sivas Kongresi nde bütün milli cemiyetler tek çatı altında toplanarak birlik sağlanmıştır."
+              },
+              {
+                "id": "kpss-q43",
+                "type": "multiple_choice",
+                "prompt": "Son Osmanlı Mebusan Meclisi nde Misak-ı Milli kararlarının kabul edilmesini sağlayan grup hangisidir?",
+                "difficulty": "zor",
+                "hint": "Mustafa Kemal in kurulmasını istediği Müdafaa-i Hukuk yerine kurulan grup.",
+                "options": [
+                  {
+                    "id": "opt-1",
+                    "text": "Felah-ı Vatan Grubu",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "opt-2",
+                    "text": "Müdafaa-i Hukuk Grubu",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "opt-3",
+                    "text": "İstiklal Grubu",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "opt-4",
+                    "text": "Halk Zümresi",
+                    "isCorrect": false
+                  }
+                ],
+                "explanation": "Rauf Orbay liderliğindeki Felah-ı Vatan grubu 28 Ocak 1920 de Misak-ı Milli kararlarının mecliste kabulünü sağlamıştır."
+              }
+            ]
+          },
+          {
+            "id": "kpss-u7-l2",
+            "unitId": "kpss-u7",
+            "title": "Atatürk İnkılapları & Çağdaşlaşma",
+            "description": "Eğitim, hukuk ve toplumsal alanda yapılan temel inkılaplar ve sözleşmeler.",
+            "xpReward": 30,
+            "gemReward": 8,
+            "type": "lesson",
+            "summaryNotes": [
+              "Tevhid-i Tedrisat Kanunu ile eğitim öğretim birleştirilmiş, medreseler kapatılmıştır.",
+              "1926 Türk Medeni Kanunu ile tek eşlilik, miras ve mahkemede eşitlik sağlanmıştır.",
+              "Montrö Boğazlar Sözleşmesi ile Boğazlar Komisyonu lağvedilmiş, egemenlik tam sağlanmıştır."
+            ],
+            "questions": [
+              {
+                "id": "kpss-q44",
+                "type": "multiple_choice",
+                "prompt": "3 Mart 1924 tarihinde çıkarılan hangi kanunla Türkiye deki tüm okullar ve medreseler Milli Eğitim Bakanlığı na bağlanmıştır?",
+                "difficulty": "kolay",
+                "hint": "Eğitimde birlik anlamına gelen kanun.",
+                "options": [
+                  {
+                    "id": "opt-1",
+                    "text": "Tevhid-i Tedrisat Kanunu",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "opt-2",
+                    "text": "Maarif Teşkilatı Kanunu",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "opt-3",
+                    "text": "Tekalif-i Milliye Kanunu",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "opt-4",
+                    "text": "Hıyanet-i Vataniye Kanunu",
+                    "isCorrect": false
+                  }
+                ],
+                "explanation": "Tevhid-i Tedrisat (Öğretim Birliği) Kanunu ile eğitim tek merkezde toplanmış, laik ve modern eğitime geçilmiştir."
+              },
+              {
+                "id": "kpss-q45",
+                "type": "multiple_choice",
+                "prompt": "1926 yılında İsviçre Medeni Kanunu örnek alınarak kabul edilen Türk Medeni Kanunu ile hangisi SAĞLANMAMIŞTIR?",
+                "difficulty": "orta",
+                "hint": "Siyasi haklar (seçme-seçilme) Medeni Kanun ile değil, 1930 ve 1934 anayasa değişiklikleriyle verilmiştir.",
+                "options": [
+                  {
+                    "id": "opt-1",
+                    "text": "Kadınlara milletvekili seçme ve seçilme hakkı",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "opt-2",
+                    "text": "Mirasta kadın-erkek eşitliği",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "opt-3",
+                    "text": "Tek eşle evlilik ve resmi nikah zorunluluğu",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "opt-4",
+                    "text": "Mahkemelerde kadın şahitliğinin eşit sayılması",
+                    "isCorrect": false
+                  }
+                ],
+                "explanation": "Kadınlara milletvekili seçme ve seçilme hakkı 1934 te anayasa değişikliğiyle verilmiştir; 1926 Medeni Kanun da siyasi haklar yer almaz."
+              },
+              {
+                "id": "kpss-q46",
+                "type": "multiple_choice",
+                "prompt": "Türkiye Cumhuriyeti nin İLK muhalefet partisi aşağıdakilerden hangisidir?",
+                "difficulty": "kolay",
+                "hint": "Kazım Karabekir, Rauf Orbay, Ali Fuat Cebesoy tarafından kurulan parti.",
+                "options": [
+                  {
+                    "id": "opt-1",
+                    "text": "Terakkiperver Cumhuriyet Fırkası",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "opt-2",
+                    "text": "Serbest Cumhuriyet Fırkası",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "opt-3",
+                    "text": "Demokrat Parti",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "opt-4",
+                    "text": "Milli Kalkınma Partisi",
+                    "isCorrect": false
+                  }
+                ],
+                "explanation": "17 Kasım 1924 te kurulan Terakkiperver Cumhuriyet Fırkası Türkiye nin ilk muhalefet partisidir."
+              },
+              {
+                "id": "kpss-q47",
+                "type": "multiple_choice",
+                "prompt": "Uluslararası Boğazlar Komisyonu nu kaldırarak Boğazların yönetim ve savunmasını tamamen Türkiye ye bırakan antlaşma hangisidir?",
+                "difficulty": "orta",
+                "hint": "1936 yılında İsviçre de imzalanan tarihi sözleşme.",
+                "options": [
+                  {
+                    "id": "opt-1",
+                    "text": "Montrö Boğazlar Sözleşmesi",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "opt-2",
+                    "text": "Lozan Barış Antlaşması",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "opt-3",
+                    "text": "Sadabat Paktı",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "opt-4",
+                    "text": "Balkan Antantı",
+                    "isCorrect": false
+                  }
+                ],
+                "explanation": "20 Temmuz 1936 da imzalanan Montrö Boğazlar Sözleşmesi ile Boğazlar Komisyonu kaldırılmış ve asker çıkarma hakkı Türkiye ye verilmiştir."
               }
             ]
           }
@@ -3270,7 +4424,7 @@ export const COURSES: Course[] = [
           }
         ]
       },
-{
+      {
         "id": "lgs-u3",
         "number": 3,
         "title": "LGS Türkçe: Fiilimsiler & Cümlenin Ögeleri",
@@ -3300,10 +4454,26 @@ export const COURSES: Course[] = [
                 "hint": "Cümledeki kelimelerin eklerini tek tek inceleyin: -an (sıfat), -ip (zarf), -mak (isim).",
                 "explanation": "'Güneş doğarken (zarf-fiil) yola çıkan (sıfat-fiil) yolcular, dinlenmek (isim-fiil) için mola verdi.' cümlesinde her üç tür de vardır.",
                 "options": [
-                  { "id": "f1_a", "text": "Güneş doğarken yola çıkan yolcular, dinlenmek için mola verdi.", "isCorrect": true },
-                  { "id": "f1_b", "text": "Kitap okumak insanın ufkunu genişleten en güzel alışkanlıktır.", "isCorrect": false },
-                  { "id": "f1_c", "text": "Koşarak gelen çocuk birdenbire yere düştü.", "isCorrect": false },
-                  { "id": "f1_d", "text": "Biten işleri teslim edip hemen evine döndü.", "isCorrect": false }
+                  {
+                    "id": "f1_a",
+                    "text": "Güneş doğarken yola çıkan yolcular, dinlenmek için mola verdi.",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "f1_b",
+                    "text": "Kitap okumak insanın ufkunu genişleten en güzel alışkanlıktır.",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "f1_c",
+                    "text": "Koşarak gelen çocuk birdenbire yere düştü.",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "f1_d",
+                    "text": "Biten işleri teslim edip hemen evine döndü.",
+                    "isCorrect": false
+                  }
                 ]
               },
               {
@@ -3313,9 +4483,21 @@ export const COURSES: Course[] = [
                 "difficulty": "orta",
                 "explanation": "-an sıfat-fiil, -erek zarf-fiil, -ma isim-fiil ekidir.",
                 "pairs": [
-                  { "id": "fp1", "left": "Gülümseyen çocuk", "right": "Sıfat-Fiil (Ortaç)" },
-                  { "id": "fp2", "left": "Düşünerek konuşmak", "right": "Zarf-Fiil (Ulaç)" },
-                  { "id": "fp3", "left": "Yazma etkinliği", "right": "İsim-Fiil (Mastar)" }
+                  {
+                    "id": "fp1",
+                    "left": "Gülümseyen çocuk",
+                    "right": "Sıfat-Fiil (Ortaç)"
+                  },
+                  {
+                    "id": "fp2",
+                    "left": "Düşünerek konuşmak",
+                    "right": "Zarf-Fiil (Ulaç)"
+                  },
+                  {
+                    "id": "fp3",
+                    "left": "Yazma etkinliği",
+                    "right": "İsim-Fiil (Mastar)"
+                  }
                 ]
               },
               {
@@ -3325,10 +4507,26 @@ export const COURSES: Course[] = [
                 "difficulty": "orta",
                 "explanation": "'Dolma' bir yemek adı olarak kalıplaşmış, fiil hareket anlamını yitirmiştir.",
                 "options": [
-                  { "id": "kl1", "text": "Annemin yaptığı biber dolması çok lezzetliydi.", "isCorrect": true },
-                  { "id": "kl2", "text": "Salondaki kovayı suyla doldurmak zaman aldı.", "isCorrect": false },
-                  { "id": "kl3", "text": "Gelen misafirleri kapıda karşıladık.", "isCorrect": false },
-                  { "id": "kl4", "text": "Soru çözerek konuyu pekiştirdi.", "isCorrect": false }
+                  {
+                    "id": "kl1",
+                    "text": "Annemin yaptığı biber dolması çok lezzetliydi.",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "kl2",
+                    "text": "Salondaki kovayı suyla doldurmak zaman aldı.",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "kl3",
+                    "text": "Gelen misafirleri kapıda karşıladık.",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "kl4",
+                    "text": "Soru çözerek konuyu pekiştirdi.",
+                    "isCorrect": false
+                  }
                 ]
               },
               {
@@ -3364,10 +4562,26 @@ export const COURSES: Course[] = [
                 "hint": "İnceliyordu (Yüklem), Kim? Genç yazar (Özne), Neyi? Kütüphanede bulduğu eski el yazmasını (Belirtili nesne), Nasıl? Dikkatle (Zarf tümleci).",
                 "explanation": "Özne - Belirtili Nesne - Zarf Tümleci - Yüklem dizilişi mevcuttur.",
                 "options": [
-                  { "id": "og1_a", "text": "Özne - Belirtili Nesne - Zarf Tümleci - Yüklem", "isCorrect": true },
-                  { "id": "og1_b", "text": "Özne - Yer Tamlayıcısı - Nesne - Yüklem", "isCorrect": false },
-                  { "id": "og1_c", "text": "Zarf Tümleci - Özne - Nesne - Yüklem", "isCorrect": false },
-                  { "id": "og1_d", "text": "Özne - Zarf Tümleci - Belirtisiz Nesne - Yüklem", "isCorrect": false }
+                  {
+                    "id": "og1_a",
+                    "text": "Özne - Belirtili Nesne - Zarf Tümleci - Yüklem",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "og1_b",
+                    "text": "Özne - Yer Tamlayıcısı - Nesne - Yüklem",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "og1_c",
+                    "text": "Zarf Tümleci - Özne - Nesne - Yüklem",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "og1_d",
+                    "text": "Özne - Zarf Tümleci - Belirtisiz Nesne - Yüklem",
+                    "isCorrect": false
+                  }
                 ]
               },
               {
@@ -3377,9 +4591,21 @@ export const COURSES: Course[] = [
                 "difficulty": "kolay",
                 "explanation": "Kimi/Neyi belirtili nesneyi, Nerede/Nereden yer tamlayıcısını, Nasıl/Ne zaman zarf tümlecini buldurur.",
                 "pairs": [
-                  { "id": "op1", "left": "Kimi? / Neyi?", "right": "Belirtili Nesne" },
-                  { "id": "op2", "left": "Nereye? / Nerede? / Nereden?", "right": "Yer Tamlayıcısı (Dolaylı Tümleç)" },
-                  { "id": "op3", "left": "Nasıl? / Ne zaman? / Neden?", "right": "Zarf Tümleci" }
+                  {
+                    "id": "op1",
+                    "left": "Kimi? / Neyi?",
+                    "right": "Belirtili Nesne"
+                  },
+                  {
+                    "id": "op2",
+                    "left": "Nereye? / Nerede? / Nereden?",
+                    "right": "Yer Tamlayıcısı (Dolaylı Tümleç)"
+                  },
+                  {
+                    "id": "op3",
+                    "left": "Nasıl? / Ne zaman? / Neden?",
+                    "right": "Zarf Tümleci"
+                  }
                 ]
               },
               {
@@ -3390,10 +4616,26 @@ export const COURSES: Course[] = [
                 "hint": "Fiil cümlelerinde vurgu yüklemden bir önceki ögededir.",
                 "explanation": "Yüklem 'gelecek'. Ondan hemen önceki öge 'bize' (Yer tamlayıcısı) olduğu için vurgu Yer Tamlayıcısı üzerindedir.",
                 "options": [
-                  { "id": "vr1", "text": "Yer Tamlayıcısı (bize)", "isCorrect": true },
-                  { "id": "vr2", "text": "Özne (Ahmet)", "isCorrect": false },
-                  { "id": "vr3", "text": "Zarf Tümleci (bu akşam)", "isCorrect": false },
-                  { "id": "vr4", "text": "Yüklem (gelecek)", "isCorrect": false }
+                  {
+                    "id": "vr1",
+                    "text": "Yer Tamlayıcısı (bize)",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "vr2",
+                    "text": "Özne (Ahmet)",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "vr3",
+                    "text": "Zarf Tümleci (bu akşam)",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "vr4",
+                    "text": "Yüklem (gelecek)",
+                    "isCorrect": false
+                  }
                 ]
               },
               {
@@ -3437,10 +4679,26 @@ export const COURSES: Course[] = [
                 "hint": "Milli Mücadelenin yöntem ve amacının ilan edildiği genelgedir.",
                 "explanation": "Amasya Genelgesi'nde bu madde ile ilk kez milli egemenlik ilkesine vurgu yapılmış ve yöntemi çizilmiştir.",
                 "options": [
-                  { "id": "in1_a", "text": "Amasya Genelgesi", "isCorrect": true },
-                  { "id": "in1_b", "text": "Havza Genelgesi", "isCorrect": false },
-                  { "id": "in1_c", "text": "Erzurum Kongresi", "isCorrect": false },
-                  { "id": "in1_d", "text": "Amasya Görüşmeleri", "isCorrect": false }
+                  {
+                    "id": "in1_a",
+                    "text": "Amasya Genelgesi",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "in1_b",
+                    "text": "Havza Genelgesi",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "in1_c",
+                    "text": "Erzurum Kongresi",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "in1_d",
+                    "text": "Amasya Görüşmeleri",
+                    "isCorrect": false
+                  }
                 ]
               },
               {
@@ -3450,9 +4708,21 @@ export const COURSES: Course[] = [
                 "difficulty": "orta",
                 "explanation": "Erzurum'da ilk kez manda reddedildi, Sivas'ta tüm cemiyetler birleşti, Amasya'da amaç/yöntem belirlendi.",
                 "pairs": [
-                  { "id": "ip1", "left": "Amasya Genelgesi", "right": "Kurtuluş Savaşının amacı ve yöntemi ilan edildi" },
-                  { "id": "ip2", "left": "Erzurum Kongresi", "right": "Manda ve himaye ilk kez açıkça reddedildi" },
-                  { "id": "ip3", "left": "Sivas Kongresi", "right": "Milli cemiyetler tek çatı altında birleştirildi" }
+                  {
+                    "id": "ip1",
+                    "left": "Amasya Genelgesi",
+                    "right": "Kurtuluş Savaşının amacı ve yöntemi ilan edildi"
+                  },
+                  {
+                    "id": "ip2",
+                    "left": "Erzurum Kongresi",
+                    "right": "Manda ve himaye ilk kez açıkça reddedildi"
+                  },
+                  {
+                    "id": "ip3",
+                    "left": "Sivas Kongresi",
+                    "right": "Milli cemiyetler tek çatı altında birleştirildi"
+                  }
                 ]
               },
               {
@@ -3462,10 +4732,26 @@ export const COURSES: Course[] = [
                 "difficulty": "kolay",
                 "explanation": "Mustafa Kemal, 13 Kasım 1918'de İstanbul Boğazı'ndaki İtilaf donanmasını görünce yaveri Cevat Abbas'a 'Geldikleri gibi giderler!' demiştir.",
                 "options": [
-                  { "id": "sz1", "text": "Geldikleri gibi giderler!", "isCorrect": true },
-                  { "id": "sz2", "text": "Ya istiklal ya ölüm!", "isCorrect": false },
-                  { "id": "sz3", "text": "Ordular! İlk hedefiniz Akdeniz'dir, ileri!", "isCorrect": false },
-                  { "id": "sz4", "text": "Hattı müdafaa yoktur, sathı müdafaa vardır.", "isCorrect": false }
+                  {
+                    "id": "sz1",
+                    "text": "Geldikleri gibi giderler!",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "sz2",
+                    "text": "Ya istiklal ya ölüm!",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "sz3",
+                    "text": "Ordular! İlk hedefiniz Akdeniz'dir, ileri!",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "sz4",
+                    "text": "Hattı müdafaa yoktur, sathı müdafaa vardır.",
+                    "isCorrect": false
+                  }
                 ]
               },
               {
@@ -3499,10 +4785,26 @@ export const COURSES: Course[] = [
                 "difficulty": "kolay",
                 "explanation": "I. İnönü Muharebesi (Ocak 1921), düzenli ordunun Batı Cephesi'ndeki ilk askeri zaferidir.",
                 "options": [
-                  { "id": "cp1_a", "text": "I. İnönü Muharebesi", "isCorrect": true },
-                  { "id": "cp1_b", "text": "II. İnönü Muharebesi", "isCorrect": false },
-                  { "id": "cp1_c", "text": "Sakarya Meydan Muharebesi", "isCorrect": false },
-                  { "id": "cp1_d", "text": "Büyük Taarruz", "isCorrect": false }
+                  {
+                    "id": "cp1_a",
+                    "text": "I. İnönü Muharebesi",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "cp1_b",
+                    "text": "II. İnönü Muharebesi",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "cp1_c",
+                    "text": "Sakarya Meydan Muharebesi",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "cp1_d",
+                    "text": "Büyük Taarruz",
+                    "isCorrect": false
+                  }
                 ]
               },
               {
@@ -3512,9 +4814,21 @@ export const COURSES: Course[] = [
                 "difficulty": "orta",
                 "explanation": "Gümrü Doğu'yu, 1921 Ankara Güney'i, Mudanya ise Batı Cephesi'ndeki silahlı çatışmayı bitirdi.",
                 "pairs": [
-                  { "id": "ap1", "left": "Gümrü Antlaşması", "right": "Doğu Cephesi kapandı" },
-                  { "id": "ap2", "left": "1921 Ankara Antlaşması", "right": "Güney Cephesi kapandı (Fransa çekildi)" },
-                  { "id": "ap3", "left": "Mudanya Ateşkes Antlaşması", "right": "Batı Cephesi silahlı çatışma bitti" }
+                  {
+                    "id": "ap1",
+                    "left": "Gümrü Antlaşması",
+                    "right": "Doğu Cephesi kapandı"
+                  },
+                  {
+                    "id": "ap2",
+                    "left": "1921 Ankara Antlaşması",
+                    "right": "Güney Cephesi kapandı (Fransa çekildi)"
+                  },
+                  {
+                    "id": "ap3",
+                    "left": "Mudanya Ateşkes Antlaşması",
+                    "right": "Batı Cephesi silahlı çatışma bitti"
+                  }
                 ]
               },
               {
@@ -3524,10 +4838,26 @@ export const COURSES: Course[] = [
                 "difficulty": "orta",
                 "explanation": "Mustafa Kemal Paşa bu dünya savaş tarihine geçen taktiği Sakarya Meydan Muharebesi'nde (1921) vermiştir.",
                 "options": [
-                  { "id": "sk1", "text": "Sakarya Meydan Muharebesi", "isCorrect": true },
-                  { "id": "sk2", "text": "Çanakkale Kara Savaşları", "isCorrect": false },
-                  { "id": "sk3", "text": "Başkomutanlık Meydan Muharebesi", "isCorrect": false },
-                  { "id": "sk4", "text": "Eskişehir - Kütahya Muharebeleri", "isCorrect": false }
+                  {
+                    "id": "sk1",
+                    "text": "Sakarya Meydan Muharebesi",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "sk2",
+                    "text": "Çanakkale Kara Savaşları",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "sk3",
+                    "text": "Başkomutanlık Meydan Muharebesi",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "sk4",
+                    "text": "Eskişehir - Kütahya Muharebeleri",
+                    "isCorrect": false
+                  }
                 ]
               },
               {
@@ -3572,10 +4902,26 @@ export const COURSES: Course[] = [
                 "hint": "Basıncın en büyük olması için yüzey alanının en küçük olması gerekir.",
                 "explanation": "Ağırlık sabitken temas yüzey alanı en küçük olan tuğla zemine en büyük basıncı uygular.",
                 "options": [
-                  { "id": "bs1_a", "text": "Küçük yüzeyi üzerine dik konulan tuğla", "isCorrect": true },
-                  { "id": "bs1_b", "text": "Geniş yüzeyi üzerine yatay konulan tuğla", "isCorrect": false },
-                  { "id": "bs1_c", "text": "Yan yüzeyi üzerine konulan tuğla", "isCorrect": false },
-                  { "id": "bs1_d", "text": "Hepsinde basınç eşittir", "isCorrect": false }
+                  {
+                    "id": "bs1_a",
+                    "text": "Küçük yüzeyi üzerine dik konulan tuğla",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "bs1_b",
+                    "text": "Geniş yüzeyi üzerine yatay konulan tuğla",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "bs1_c",
+                    "text": "Yan yüzeyi üzerine konulan tuğla",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "bs1_d",
+                    "text": "Hepsinde basınç eşittir",
+                    "isCorrect": false
+                  }
                 ]
               },
               {
@@ -3585,9 +4931,21 @@ export const COURSES: Course[] = [
                 "difficulty": "kolay",
                 "explanation": "Yüzey küçüldükçe basınç artar, yüzey genişledikçe basınç azalır.",
                 "pairs": [
-                  { "id": "bp1", "left": "Bıçakların bilenerek inceltilmesi", "right": "Basıncı artırmak için" },
-                  { "id": "bp2", "left": "Ağır iş makinelerine palet takılması", "right": "Basıncı azaltmak için" },
-                  { "id": "bp3", "left": "Futbol kramponlarının altına diş konması", "right": "Basıncı artırmak için" }
+                  {
+                    "id": "bp1",
+                    "left": "Bıçakların bilenerek inceltilmesi",
+                    "right": "Basıncı artırmak için"
+                  },
+                  {
+                    "id": "bp2",
+                    "left": "Ağır iş makinelerine palet takılması",
+                    "right": "Basıncı azaltmak için"
+                  },
+                  {
+                    "id": "bp3",
+                    "left": "Futbol kramponlarının altına diş konması",
+                    "right": "Basıncı artırmak için"
+                  }
                 ]
               },
               {
@@ -3597,10 +4955,26 @@ export const COURSES: Course[] = [
                 "difficulty": "orta",
                 "explanation": "P = F / S = 40 N ÷ 2 m² = 20 Pa (Pascal) bulunur.",
                 "options": [
-                  { "id": "pa1", "text": "20 Pa", "isCorrect": true },
-                  { "id": "pa2", "text": "80 Pa", "isCorrect": false },
-                  { "id": "pa3", "text": "40 Pa", "isCorrect": false },
-                  { "id": "pa4", "text": "10 Pa", "isCorrect": false }
+                  {
+                    "id": "pa1",
+                    "text": "20 Pa",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "pa2",
+                    "text": "80 Pa",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "pa3",
+                    "text": "40 Pa",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "pa4",
+                    "text": "10 Pa",
+                    "isCorrect": false
+                  }
                 ]
               },
               {
@@ -3636,10 +5010,26 @@ export const COURSES: Course[] = [
                 "hint": "Sıvı basıncı formülü: P = h . d . g'dir.",
                 "explanation": "Sıvı basıncı sıvının derinliğine ve yoğunluğuna bağlıdır; kabın şekline veya içindeki toplam su hacmine bağlı değildir.",
                 "options": [
-                  { "id": "sv1_a", "text": "Kabın şekline ve genişliğine", "isCorrect": true },
-                  { "id": "sv1_b", "text": "Sıvının derinliğine (h)", "isCorrect": false },
-                  { "id": "sv1_c", "text": "Sıvının yoğunluğuna (d)", "isCorrect": false },
-                  { "id": "sv1_d", "text": "Yer çekimi ivmesine (g)", "isCorrect": false }
+                  {
+                    "id": "sv1_a",
+                    "text": "Kabın şekline ve genişliğine",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "sv1_b",
+                    "text": "Sıvının derinliğine (h)",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "sv1_c",
+                    "text": "Sıvının yoğunluğuna (d)",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "sv1_d",
+                    "text": "Yer çekimi ivmesine (g)",
+                    "isCorrect": false
+                  }
                 ]
               },
               {
@@ -3649,9 +5039,21 @@ export const COURSES: Course[] = [
                 "difficulty": "orta",
                 "explanation": "Pascal prensibi hidrolik frenlerde, Torricelli açık hava basıncı ölçümünde kullanılır.",
                 "pairs": [
-                  { "id": "sp1", "left": "Pascal Prensibi", "right": "Sıvıların basıncı aynen iletmesi (Hidrolik fren, berber koltuğu)" },
-                  { "id": "sp2", "left": "Torricelli Deneyi", "right": "Deniz seviyesinde açık hava basıncı (76 cmHg)" },
-                  { "id": "sp3", "left": "U Borusu Manometresi", "right": "Farklı yoğunluktaki sıvıların basınç dengesi" }
+                  {
+                    "id": "sp1",
+                    "left": "Pascal Prensibi",
+                    "right": "Sıvıların basıncı aynen iletmesi (Hidrolik fren, berber koltuğu)"
+                  },
+                  {
+                    "id": "sp2",
+                    "left": "Torricelli Deneyi",
+                    "right": "Deniz seviyesinde açık hava basıncı (76 cmHg)"
+                  },
+                  {
+                    "id": "sp3",
+                    "left": "U Borusu Manometresi",
+                    "right": "Farklı yoğunluktaki sıvıların basınç dengesi"
+                  }
                 ]
               },
               {
@@ -3661,10 +5063,26 @@ export const COURSES: Course[] = [
                 "difficulty": "kolay",
                 "explanation": "Yukarı çıkıldıkça üstümüzdeki hava tabakasının kalınlığı ve yoğunluğu azaldığı için açık hava basıncı azalır.",
                 "options": [
-                  { "id": "ah1", "text": "Açık hava basıncı azalır", "isCorrect": true },
-                  { "id": "ah2", "text": "Açık hava basıncı artar", "isCorrect": false },
-                  { "id": "ah3", "text": "Değişmez, 76 cmHg sabit kalır", "isCorrect": false },
-                  { "id": "ah4", "text": "Önce artar sonra sıfır olur", "isCorrect": false }
+                  {
+                    "id": "ah1",
+                    "text": "Açık hava basıncı azalır",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "ah2",
+                    "text": "Açık hava basıncı artar",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "ah3",
+                    "text": "Değişmez, 76 cmHg sabit kalır",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "ah4",
+                    "text": "Önce artar sonra sıfır olur",
+                    "isCorrect": false
+                  }
                 ]
               },
               {
@@ -3674,6 +5092,287 @@ export const COURSES: Course[] = [
                 "statement": "Sıvılar pratik olarak sıkıştırılamaz kabul edilir; bu nedenle üzerlerine uygulanan basıncı her doğrultuda eşit büyüklükte iletirler.",
                 "correctAnswer": true,
                 "explanation": "Doğrudur! Sıvıların sıkıştırılamama özelliği ve basıncı iletmesi Pascal prensibinin temelini oluşturur."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "lgs-u6",
+        "number": 6,
+        "title": "Doğrusal Denklemler & Eğim",
+        "description": "Koordinat sistemi, doğrusal denklemlerin grafikleri ve eğim hesaplama.",
+        "color": "#3b82f6",
+        "lessons": [
+          {
+            "id": "lgs-u6-l1",
+            "unitId": "lgs-u6",
+            "title": "Koordinat Sistemi & Doğru Grafikleri",
+            "description": "Nokta analitiği, eksenleri kesen doğrular ve orijinden geçen doğrular.",
+            "xpReward": 25,
+            "gemReward": 6,
+            "type": "lesson",
+            "summaryNotes": [
+              "y ekseni üzerindeki noktaların apsisi (x) 0 dır.",
+              "x ekseni üzerindeki noktaların ordinatı (y) 0 dır.",
+              "y = mx formundaki doğrular daima orijinden geçer."
+            ],
+            "questions": [
+              {
+                "id": "lgs-q36",
+                "type": "multiple_choice",
+                "prompt": "A(m - 3, 2m + 4) noktası koordinat sisteminde y ekseni üzerinde olduğuna göre bu noktanın ordinatı kaçtır?",
+                "difficulty": "kolay",
+                "hint": "y ekseni üzerindeki noktaların apsis değeri 0 dır.",
+                "options": [
+                  {
+                    "id": "opt-1",
+                    "text": "10",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "opt-2",
+                    "text": "6",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "opt-3",
+                    "text": "8",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "opt-4",
+                    "text": "12",
+                    "isCorrect": false
+                  }
+                ],
+                "explanation": "y ekseni üzerinde olduğundan apsis 0 olmalıdır: m - 3 = 0 => m = 3. Ordinat = 2(3) + 4 = 10."
+              },
+              {
+                "id": "lgs-q37",
+                "type": "multiple_choice",
+                "prompt": "2x - 3y = 12 doğrusunun koordinat eksenlerini kestiği noktalar arasındaki uzaklık kaç birimdir?",
+                "difficulty": "orta",
+                "hint": "x=0 için y yi, y=0 için x i bulup Pisagor bağıntısı uygula.",
+                "options": [
+                  {
+                    "id": "opt-1",
+                    "text": "2√13",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "opt-2",
+                    "text": "10",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "opt-3",
+                    "text": "5√2",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "opt-4",
+                    "text": "4√3",
+                    "isCorrect": false
+                  }
+                ],
+                "explanation": "x=0 => -3y=12 => y=-4 (0, -4). y=0 => 2x=12 => x=6 (6, 0). Uzaklık = √(6² + (-4)²) = √(36+16) = √52 = 2√13."
+              },
+              {
+                "id": "lgs-q38",
+                "type": "multiple_choice",
+                "prompt": "Orijinden geçen ve eğimi -2 olan doğrunun denklemi hangisidir?",
+                "difficulty": "kolay",
+                "hint": "Orijinden geçen doğruların genel formülü y = mx dir.",
+                "options": [
+                  {
+                    "id": "opt-1",
+                    "text": "y = -2x",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "opt-2",
+                    "text": "y = 2x - 2",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "opt-3",
+                    "text": "2x + y = 2",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "opt-4",
+                    "text": "y = x - 2",
+                    "isCorrect": false
+                  }
+                ],
+                "explanation": "Orijinden geçen doğrular y = mx formundadır. Eğim m = -2 olduğundan denklem y = -2x tir."
+              },
+              {
+                "id": "lgs-q39",
+                "type": "multiple_choice",
+                "prompt": "y = 3x - 5 doğrusu ile ax - y + 7 = 0 doğrusu birbirine paralel olduğuna göre a kaçtır?",
+                "difficulty": "orta",
+                "hint": "Paralel doğruların eğimleri birbirine eşittir.",
+                "options": [
+                  {
+                    "id": "opt-1",
+                    "text": "3",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "opt-2",
+                    "text": "-3",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "opt-3",
+                    "text": "1/3",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "opt-4",
+                    "text": "5",
+                    "isCorrect": false
+                  }
+                ],
+                "explanation": "Birinci doğrunun eğimi m₁ = 3 tür. İkinci doğruda y = ax + 7 olduğundan m₂ = a dır. Paralel oldukları için a = 3."
+              }
+            ]
+          },
+          {
+            "id": "lgs-u6-l2",
+            "unitId": "lgs-u6",
+            "title": "Eğim & Doğrusal İlişki Problemleri",
+            "description": "Dikey uzunluk / yatay uzunluk oranı ve günlük hayat doğrusal grafikleri.",
+            "xpReward": 30,
+            "gemReward": 8,
+            "type": "lesson",
+            "summaryNotes": [
+              "Eğim = Dikey Uzunluk / Yatay Uzunluk formülüyle hesaplanır.",
+              "Sağa yatık doğruların eğimi pozitif, sola yatık doğruların eğimi negatiftir.",
+              "x eksenine paralel yatay doğruların eğimi 0, dikey doğruların eğimi tanımsızdır."
+            ],
+            "questions": [
+              {
+                "id": "lgs-q40",
+                "type": "multiple_choice",
+                "prompt": "Dikey uzunluğu 12 metre, yatay uzunluğu 16 metre olan bir engelli rampasının eğimi yüzde kaçtır?",
+                "difficulty": "kolay",
+                "hint": "Eğim = Dikey / Yatay oranını yüzdeye dönüştür.",
+                "options": [
+                  {
+                    "id": "opt-1",
+                    "text": "%75",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "opt-2",
+                    "text": "%60",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "opt-3",
+                    "text": "%80",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "opt-4",
+                    "text": "%120",
+                    "isCorrect": false
+                  }
+                ],
+                "explanation": "Eğim = 12 / 16 = 3 / 4. 25 ile genişletilirse 75 / 100 yani %75 tir."
+              },
+              {
+                "id": "lgs-q41",
+                "type": "multiple_choice",
+                "prompt": "A(-2, 3) ve B(4, -1) noktalarından geçen doğrunun eğimi kaçtır?",
+                "difficulty": "orta",
+                "hint": "m = (y₂ - y₁) / (x₂ - x₁) formülünü uygula.",
+                "options": [
+                  {
+                    "id": "opt-1",
+                    "text": "-2/3",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "opt-2",
+                    "text": "-3/2",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "opt-3",
+                    "text": "2/3",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "opt-4",
+                    "text": "-1/3",
+                    "isCorrect": false
+                  }
+                ],
+                "explanation": "m = (-1 - 3) / (4 - (-2)) = -4 / 6 = -2/3 tür."
+              },
+              {
+                "id": "lgs-q42",
+                "type": "multiple_choice",
+                "prompt": "İçinde 50 litre su bulunan bir deponun musluğu açıldığında saatte 4 litre su boşalmaktadır. x geçen saat ve y depoda kalan su miktarı olduğuna göre doğrusal denklem hangisidir?",
+                "difficulty": "kolay",
+                "hint": "Başlangıç değeri 50 dir ve saatte 4 azalmaktadır.",
+                "options": [
+                  {
+                    "id": "opt-1",
+                    "text": "y = 50 - 4x",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "opt-2",
+                    "text": "y = 50 + 4x",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "opt-3",
+                    "text": "y = 4x - 50",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "opt-4",
+                    "text": "x = 50 - 4y",
+                    "isCorrect": false
+                  }
+                ],
+                "explanation": "Başlangıçta 50 litre var, her x saatte 4x litre eksildiği için kalan miktar y = 50 - 4x olur."
+              },
+              {
+                "id": "lgs-q43",
+                "type": "multiple_choice",
+                "prompt": "x = -4 doğrusunun eğimi hakkında hangisi söylenebilir?",
+                "difficulty": "orta",
+                "hint": "y eksenine paralel dikey doğruların eğimini hatırla.",
+                "options": [
+                  {
+                    "id": "opt-1",
+                    "text": "Tanımsızdır",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "opt-2",
+                    "text": "Sıfırdır",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "opt-3",
+                    "text": "-4 tür",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "opt-4",
+                    "text": "1 dir",
+                    "isCorrect": false
+                  }
+                ],
+                "explanation": "x = k şeklindeki doğrular dikey doğrulardır. Yatay uzunluk 0 olduğu için paydaya 0 gelir ve eğim tanımsızdır."
               }
             ]
           }
@@ -4009,7 +5708,7 @@ export const COURSES: Course[] = [
           }
         ]
       },
-{
+      {
         "id": "dil-u3",
         "number": 3,
         "title": "Past Simple: Geçmiş Zaman & Düzensiz Fiiller",
@@ -4038,10 +5737,26 @@ export const COURSES: Course[] = [
                 "difficulty": "orta",
                 "explanation": "See fiilinin 2. hali 'saw', go fiilinin 2. hali ise 'went' şeklindedir.",
                 "options": [
-                  { "id": "ps1_a", "text": "saw / went", "isCorrect": true },
-                  { "id": "ps1_b", "text": "seed / goed", "isCorrect": false },
-                  { "id": "ps1_c", "text": "see / went", "isCorrect": false },
-                  { "id": "ps1_d", "text": "saw / gone", "isCorrect": false }
+                  {
+                    "id": "ps1_a",
+                    "text": "saw / went",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "ps1_b",
+                    "text": "seed / goed",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "ps1_c",
+                    "text": "see / went",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "ps1_d",
+                    "text": "saw / gone",
+                    "isCorrect": false
+                  }
                 ]
               },
               {
@@ -4051,9 +5766,21 @@ export const COURSES: Course[] = [
                 "difficulty": "kolay",
                 "explanation": "buy-bought, write-wrote, take-took, eat-ate.",
                 "pairs": [
-                  { "id": "vp1", "left": "buy (satın almak)", "right": "bought" },
-                  { "id": "vp2", "left": "write (yazmak)", "right": "wrote" },
-                  { "id": "vp3", "left": "take (almak / götürmek)", "right": "took" }
+                  {
+                    "id": "vp1",
+                    "left": "buy (satın almak)",
+                    "right": "bought"
+                  },
+                  {
+                    "id": "vp2",
+                    "left": "write (yazmak)",
+                    "right": "wrote"
+                  },
+                  {
+                    "id": "vp3",
+                    "left": "take (almak / götürmek)",
+                    "right": "took"
+                  }
                 ]
               },
               {
@@ -4064,10 +5791,26 @@ export const COURSES: Course[] = [
                 "hint": "didn't sonrasında fiil 1. haline (yalın) döner.",
                 "explanation": "'She didn't go to school yesterday.' doğrudur. 'didn't went' kullanımı gramer hatasıdır.",
                 "options": [
-                  { "id": "gr1", "text": "She didn't go to school yesterday.", "isCorrect": true },
-                  { "id": "gr2", "text": "She didn't went to school yesterday.", "isCorrect": false },
-                  { "id": "gr3", "text": "She doesn't went to school yesterday.", "isCorrect": false },
-                  { "id": "gr4", "text": "She did not goes to school yesterday.", "isCorrect": false }
+                  {
+                    "id": "gr1",
+                    "text": "She didn't go to school yesterday.",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "gr2",
+                    "text": "She didn't went to school yesterday.",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "gr3",
+                    "text": "She doesn't went to school yesterday.",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "gr4",
+                    "text": "She did not goes to school yesterday.",
+                    "isCorrect": false
+                  }
                 ]
               },
               {
@@ -4102,10 +5845,26 @@ export const COURSES: Course[] = [
                 "difficulty": "kolay",
                 "explanation": "Past Simple soru yapısı 'Where did you go' şeklindedir.",
                 "options": [
-                  { "id": "pq1_a", "text": "did / go", "isCorrect": true },
-                  { "id": "pq1_b", "text": "did / went", "isCorrect": false },
-                  { "id": "pq1_c", "text": "do / went", "isCorrect": false },
-                  { "id": "pq1_d", "text": "were / go", "isCorrect": false }
+                  {
+                    "id": "pq1_a",
+                    "text": "did / go",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "pq1_b",
+                    "text": "did / went",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "pq1_c",
+                    "text": "do / went",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "pq1_d",
+                    "text": "were / go",
+                    "isCorrect": false
+                  }
                 ]
               },
               {
@@ -4115,9 +5874,21 @@ export const COURSES: Course[] = [
                 "difficulty": "kolay",
                 "explanation": "yesterday dün, last year geçen yıl, two weeks ago iki hafta önce demektir.",
                 "pairs": [
-                  { "id": "zp1", "left": "yesterday", "right": "dün" },
-                  { "id": "zp2", "left": "two weeks ago", "right": "iki hafta önce" },
-                  { "id": "zp3", "left": "last night", "right": "dün gece" }
+                  {
+                    "id": "zp1",
+                    "left": "yesterday",
+                    "right": "dün"
+                  },
+                  {
+                    "id": "zp2",
+                    "left": "two weeks ago",
+                    "right": "iki hafta önce"
+                  },
+                  {
+                    "id": "zp3",
+                    "left": "last night",
+                    "right": "dün gece"
+                  }
                 ]
               },
               {
@@ -4127,10 +5898,26 @@ export const COURSES: Course[] = [
                 "difficulty": "kolay",
                 "explanation": "Did ile sorulan soruya 'Yes, I did.' şeklinde yanıt verilir.",
                 "options": [
-                  { "id": "an1", "text": "Yes, I did.", "isCorrect": true },
-                  { "id": "an2", "text": "Yes, I do.", "isCorrect": false },
-                  { "id": "an3", "text": "Yes, I finished.", "isCorrect": false },
-                  { "id": "an4", "text": "Yes, I was.", "isCorrect": false }
+                  {
+                    "id": "an1",
+                    "text": "Yes, I did.",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "an2",
+                    "text": "Yes, I do.",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "an3",
+                    "text": "Yes, I finished.",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "an4",
+                    "text": "Yes, I was.",
+                    "isCorrect": false
+                  }
                 ]
               },
               {
@@ -4174,10 +5961,26 @@ export const COURSES: Course[] = [
                 "difficulty": "kolay",
                 "explanation": "Pencere kenarı (window) mı yoksa koridor tarafı (aisle) mı koltuk tercih ettiğinizi sorar.",
                 "options": [
-                  { "id": "ap1_a", "text": "Pencere kenarı mı koridor kenarı mı koltuk istediğinizi", "isCorrect": true },
-                  { "id": "ap1_b", "text": "Uçakta yemek yemek isteyip istemediğinizi", "isCorrect": false },
-                  { "id": "ap1_c", "text": "Fazla bagajınızın olup olmadığını", "isCorrect": false },
-                  { "id": "ap1_d", "text": "Dönüş biletinizi ne zaman alacağınızı", "isCorrect": false }
+                  {
+                    "id": "ap1_a",
+                    "text": "Pencere kenarı mı koridor kenarı mı koltuk istediğinizi",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "ap1_b",
+                    "text": "Uçakta yemek yemek isteyip istemediğinizi",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "ap1_c",
+                    "text": "Fazla bagajınızın olup olmadığını",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "ap1_d",
+                    "text": "Dönüş biletinizi ne zaman alacağınızı",
+                    "isCorrect": false
+                  }
                 ]
               },
               {
@@ -4187,9 +5990,21 @@ export const COURSES: Course[] = [
                 "difficulty": "orta",
                 "explanation": "Boarding pass biniş kartıdır, Baggage claim bagaj teslimidir, Customs gümrüktür.",
                 "pairs": [
-                  { "id": "air1", "left": "Boarding pass", "right": "Uçuş biniş kartı" },
-                  { "id": "air2", "left": "Baggage claim", "right": "Bagaj teslim alanı" },
-                  { "id": "air3", "left": "Gate", "right": "Uçağa biniş kapısı" }
+                  {
+                    "id": "air1",
+                    "left": "Boarding pass",
+                    "right": "Uçuş biniş kartı"
+                  },
+                  {
+                    "id": "air2",
+                    "left": "Baggage claim",
+                    "right": "Bagaj teslim alanı"
+                  },
+                  {
+                    "id": "air3",
+                    "left": "Gate",
+                    "right": "Uçağa biniş kapısı"
+                  }
                 ]
               },
               {
@@ -4199,10 +6014,26 @@ export const COURSES: Course[] = [
                 "difficulty": "orta",
                 "explanation": "'No, I don't have any liquids in my backpack.' uygun ve doğru cevaptır.",
                 "options": [
-                  { "id": "sec1", "text": "No, I don't have any liquids in my backpack.", "isCorrect": true },
-                  { "id": "sec2", "text": "Yes, I am going to London.", "isCorrect": false },
-                  { "id": "sec3", "text": "Here is my passport.", "isCorrect": false },
-                  { "id": "sec4", "text": "Flight number is TK1980.", "isCorrect": false }
+                  {
+                    "id": "sec1",
+                    "text": "No, I don't have any liquids in my backpack.",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "sec2",
+                    "text": "Yes, I am going to London.",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "sec3",
+                    "text": "Here is my passport.",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "sec4",
+                    "text": "Flight number is TK1980.",
+                    "isCorrect": false
+                  }
                 ]
               },
               {
@@ -4237,10 +6068,26 @@ export const COURSES: Course[] = [
                 "difficulty": "kolay",
                 "explanation": "'Could we have the bill, please?' (veya check) standart ve nazik hesap isteme kalıbıdır.",
                 "options": [
-                  { "id": "rs1_a", "text": "Could we have the bill, please?", "isCorrect": true },
-                  { "id": "rs1_b", "text": "Give me the money now!", "isCorrect": false },
-                  { "id": "rs1_c", "text": "Where is my wallet?", "isCorrect": false },
-                  { "id": "rs1_d", "text": "We are leaving now.", "isCorrect": false }
+                  {
+                    "id": "rs1_a",
+                    "text": "Could we have the bill, please?",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "rs1_b",
+                    "text": "Give me the money now!",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "rs1_c",
+                    "text": "Where is my wallet?",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "rs1_d",
+                    "text": "We are leaving now.",
+                    "isCorrect": false
+                  }
                 ]
               },
               {
@@ -4250,9 +6097,21 @@ export const COURSES: Course[] = [
                 "difficulty": "orta",
                 "explanation": "Are you ready to order: siparişe hazır mısınız, Keep the change: üstü kalsın, Table for two: 2 kişilik masa.",
                 "pairs": [
-                  { "id": "rest1", "left": "Are you ready to order?", "right": "Sipariş vermeye hazır mısınız?" },
-                  { "id": "rest2", "left": "Keep the change.", "right": "Para üstü kalsın (bahşiş)." },
-                  { "id": "rest3", "left": "I would like to have the grilled chicken.", "right": "Izgara tavuk almak istiyorum." }
+                  {
+                    "id": "rest1",
+                    "left": "Are you ready to order?",
+                    "right": "Sipariş vermeye hazır mısınız?"
+                  },
+                  {
+                    "id": "rest2",
+                    "left": "Keep the change.",
+                    "right": "Para üstü kalsın (bahşiş)."
+                  },
+                  {
+                    "id": "rest3",
+                    "left": "I would like to have the grilled chicken.",
+                    "right": "Izgara tavuk almak istiyorum."
+                  }
                 ]
               },
               {
@@ -4262,10 +6121,26 @@ export const COURSES: Course[] = [
                 "difficulty": "kolay",
                 "explanation": "Müşteri vejetaryen olduğunu ve çorbanın içinde et bulunup bulunmadığını sormaktadır.",
                 "options": [
-                  { "id": "veg1", "text": "Vejetaryen olduğunu ve çorbada et olup olmadığını sormaktadır", "isCorrect": true },
-                  { "id": "veg2", "text": "Çorbanın çok sıcak olduğunu söylemektedir", "isCorrect": false },
-                  { "id": "veg3", "text": "Daha fazla ekmek istemektedir", "isCorrect": false },
-                  { "id": "veg4", "text": "Hesabı ödemek istemektedir", "isCorrect": false }
+                  {
+                    "id": "veg1",
+                    "text": "Vejetaryen olduğunu ve çorbada et olup olmadığını sormaktadır",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "veg2",
+                    "text": "Çorbanın çok sıcak olduğunu söylemektedir",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "veg3",
+                    "text": "Daha fazla ekmek istemektedir",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "veg4",
+                    "text": "Hesabı ödemek istemektedir",
+                    "isCorrect": false
+                  }
                 ]
               },
               {
@@ -4309,10 +6184,26 @@ export const COURSES: Course[] = [
                 "difficulty": "kolay",
                 "explanation": "Konuşma anında verilen ani kararlarda 'will' kullanılır: 'I will answer it!'",
                 "options": [
-                  { "id": "wl1_a", "text": "will", "isCorrect": true },
-                  { "id": "wl1_b", "text": "am going to", "isCorrect": false },
-                  { "id": "wl1_c", "text": "did", "isCorrect": false },
-                  { "id": "wl1_d", "text": "have", "isCorrect": false }
+                  {
+                    "id": "wl1_a",
+                    "text": "will",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "wl1_b",
+                    "text": "am going to",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "wl1_c",
+                    "text": "did",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "wl1_d",
+                    "text": "have",
+                    "isCorrect": false
+                  }
                 ]
               },
               {
@@ -4322,9 +6213,21 @@ export const COURSES: Course[] = [
                 "difficulty": "orta",
                 "explanation": "Going to önceden plan veya kanıt, Will ani karar veya söz vermedir.",
                 "pairs": [
-                  { "id": "wp1", "left": "Look at those dark clouds! It is going to rain.", "right": "Gözle görülür kanıta dayalı güçlü tahmin" },
-                  { "id": "wp2", "left": "Don't worry, I will keep your secret.", "right": "Söz verme (Promise)" },
-                  { "id": "wp3", "left": "We are going to visit Paris next month.", "right": "Önceden planlanmış seyahat" }
+                  {
+                    "id": "wp1",
+                    "left": "Look at those dark clouds! It is going to rain.",
+                    "right": "Gözle görülür kanıta dayalı güçlü tahmin"
+                  },
+                  {
+                    "id": "wp2",
+                    "left": "Don't worry, I will keep your secret.",
+                    "right": "Söz verme (Promise)"
+                  },
+                  {
+                    "id": "wp3",
+                    "left": "We are going to visit Paris next month.",
+                    "right": "Önceden planlanmış seyahat"
+                  }
                 ]
               },
               {
@@ -4334,10 +6237,26 @@ export const COURSES: Course[] = [
                 "difficulty": "kolay",
                 "explanation": "Will not kısaltması 'won't' şeklindedir: 'They won't come to the party.'",
                 "options": [
-                  { "id": "wnt1", "text": "won't come", "isCorrect": true },
-                  { "id": "wnt2", "text": "don't come", "isCorrect": false },
-                  { "id": "wnt3", "text": "didn't came", "isCorrect": false },
-                  { "id": "wnt4", "text": "aren't came", "isCorrect": false }
+                  {
+                    "id": "wnt1",
+                    "text": "won't come",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "wnt2",
+                    "text": "don't come",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "wnt3",
+                    "text": "didn't came",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "wnt4",
+                    "text": "aren't came",
+                    "isCorrect": false
+                  }
                 ]
               },
               {
@@ -4372,10 +6291,26 @@ export const COURSES: Course[] = [
                 "difficulty": "kolay",
                 "explanation": "Tavsiye ve öğüt bildirmek için 'should' kullanılır: 'You should take a rest.'",
                 "options": [
-                  { "id": "md1_a", "text": "should", "isCorrect": true },
-                  { "id": "md1_b", "text": "mustn't", "isCorrect": false },
-                  { "id": "md1_c", "text": "can't", "isCorrect": false },
-                  { "id": "md1_d", "text": "have to not", "isCorrect": false }
+                  {
+                    "id": "md1_a",
+                    "text": "should",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "md1_b",
+                    "text": "mustn't",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "md1_c",
+                    "text": "can't",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "md1_d",
+                    "text": "have to not",
+                    "isCorrect": false
+                  }
                 ]
               },
               {
@@ -4385,9 +6320,21 @@ export const COURSES: Course[] = [
                 "difficulty": "orta",
                 "explanation": "Must zorunluluk, Mustn't yasak, Should tavsiye, Can yetenek bildirir.",
                 "pairs": [
-                  { "id": "mp1", "left": "must", "right": "Zorunluluk ve kesin kural" },
-                  { "id": "mp2", "left": "mustn't", "right": "Kesin yasaklama" },
-                  { "id": "mp3", "left": "should", "right": "Tavsiye ve öğüt" }
+                  {
+                    "id": "mp1",
+                    "left": "must",
+                    "right": "Zorunluluk ve kesin kural"
+                  },
+                  {
+                    "id": "mp2",
+                    "left": "mustn't",
+                    "right": "Kesin yasaklama"
+                  },
+                  {
+                    "id": "mp3",
+                    "left": "should",
+                    "right": "Tavsiye ve öğüt"
+                  }
                 ]
               },
               {
@@ -4397,10 +6344,26 @@ export const COURSES: Course[] = [
                 "difficulty": "orta",
                 "explanation": "Uçakta telefon kullanımı katı bir yasaktır; bu nedenle 'mustn't' (yasak) kullanılır.",
                 "options": [
-                  { "id": "mst1", "text": "mustn't", "isCorrect": true },
-                  { "id": "mst2", "text": "should", "isCorrect": false },
-                  { "id": "mst3", "text": "can", "isCorrect": false },
-                  { "id": "mst4", "text": "don't have to", "isCorrect": false }
+                  {
+                    "id": "mst1",
+                    "text": "mustn't",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "mst2",
+                    "text": "should",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "mst3",
+                    "text": "can",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "mst4",
+                    "text": "don't have to",
+                    "isCorrect": false
+                  }
                 ]
               },
               {

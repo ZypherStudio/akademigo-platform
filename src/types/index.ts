@@ -180,6 +180,20 @@ export interface UserStats {
   gradeOrTarget?: string;
   dailyGoalQuestions?: number;
   hasCompletedOnboarding?: boolean;
+  currentLevel: number;
+  levelProgress: number;
+  streakBonusMultiplier: number;
+  achievementBadges: string[];
+}
+
+export interface AchievementToastData {
+  id: string;
+  title: string;
+  subtitle?: string;
+  description: string;
+  icon: string;
+  xpReward?: number;
+  gemReward?: number;
 }
 
 export interface LeaderboardUser {

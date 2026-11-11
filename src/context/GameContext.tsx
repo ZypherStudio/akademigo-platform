@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { CourseCategory, Lesson, UserStats, LeaderboardUser, StudyNote, AppTheme, UserAvatar, MistakeItem, KnowzaCostume } from '../types';
+import { CourseCategory, Lesson, UserStats, LeaderboardUser, StudyNote, AppTheme, UserAvatar, MistakeItem, KnowzaCostume, AchievementToastData } from '../types';
 import { KNOWZA_COSTUMES } from '../data/costumesData';
 import { sound } from '../utils/audio';
 import confetti from 'canvas-confetti';
@@ -50,6 +50,9 @@ interface GameContextType {
     targetGoal?: CourseCategory;
     dailyGoalQuestions?: number;
   }) => void;
+  activeAchievement: AchievementToastData | null;
+  dismissAchievement: () => void;
+  triggerAchievement: (achievement: AchievementToastData) => void;
 }
 
 const DEFAULT_MISTAKES: MistakeItem[] = [
@@ -112,7 +115,11 @@ const DEFAULT_STATS: UserStats = {
   },
   targetGoal: 'yks',
   dailyGoalQuestions: 20,
-  hasCompletedOnboarding: false
+  hasCompletedOnboarding: false,
+  currentLevel: 1,
+  levelProgress: 0,
+  streakBonusMultiplier: 1,
+  achievementBadges: []
 };
 
 const DEFAULT_NOTES: StudyNote[] = [];
@@ -127,36 +134,39 @@ export const AVATAR_MAP: Record<UserAvatar, { emoji: string; name: string }> = {
   coder_cat: { emoji: '🐱', name: 'Kodcu Kedi' }
 };
 
+const KNOWZA_STORAGE_VERSION = 'knowza_v2026_real_v3';
+
 const GameContext = createContext<GameContextType | undefined>(undefined);
 
 export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [activeAchievement, setActiveAchievement] = useState<AchievementToastData | null>(null);
+
   const [stats, setStats] = useState<UserStats>(() => {
     try {
+      const version = localStorage.getItem('knowza_storage_version');
+      if (version !== KNOWZA_STORAGE_VERSION) {
+        localStorage.removeItem('akademi_user_stats');
+        localStorage.removeItem('knowza_has_started');
+        localStorage.setItem('knowza_storage_version', KNOWZA_STORAGE_VERSION);
+        return DEFAULT_STATS;
+      }
+
       const saved = localStorage.getItem('akademi_user_stats');
       if (saved) {
         const parsed = JSON.parse(saved);
-        // Clear any old 'Ali' or 'ali@gmail.com' demo account from previous versions
-        if (parsed.username === 'Ali' || parsed.email === 'ali@gmail.com' || parsed.email === 'demo@knowza.app' || !parsed.email) {
-          parsed.isLoggedIn = false;
-          parsed.email = undefined;
-          parsed.username = 'Öğrenci';
-          parsed.hasCompletedOnboarding = false;
+        // Wipe out any stale 'Ali' or demo streak/gems values
+        if (
+          parsed.username === 'Ali' ||
+          parsed.email === 'ali@gmail.com' ||
+          parsed.email === 'demo@knowza.app' ||
+          !parsed.email ||
+          parsed.streak === 6 ||
+          parsed.gems === 280
+        ) {
+          localStorage.removeItem('akademi_user_stats');
+          return DEFAULT_STATS;
         }
 
-        // Flush any hardcoded legacy demo stats (streak 6, xp 260, gems 280, fake lessons)
-        if (parsed.streak === 6 && parsed.xp === 260) {
-          parsed.streak = 0;
-          parsed.xp = 0;
-          parsed.gems = 0;
-          parsed.completedLessons = [];
-          parsed.totalQuestionsAnswered = 0;
-          parsed.totalStudyMinutes = 0;
-          parsed.errorList = [];
-          parsed.duelWins = 0;
-          parsed.duelLosses = 0;
-        }
-
-        // Automatically migrate old default avatar to Knowza Ayıcık
         const avatar = (parsed.avatar === 'owl' || !parsed.avatar) ? 'haribo' : parsed.avatar;
         return { ...DEFAULT_STATS, ...parsed, avatar };
       }
@@ -275,6 +285,27 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return false;
   };
 
+  const dismissAchievement = () => {
+    setActiveAchievement(null);
+  };
+
+  const triggerAchievement = (achievement: AchievementToastData) => {
+    setStats(prev => {
+      const alreadyEarned = (prev.achievementBadges || []).includes(achievement.id);
+      if (alreadyEarned) return prev;
+
+      const updatedBadges = [...(prev.achievementBadges || []), achievement.id];
+      setActiveAchievement(achievement);
+
+      return {
+        ...prev,
+        achievementBadges: updatedBadges,
+        xp: prev.xp + (achievement.xpReward || 0),
+        gems: prev.gems + (achievement.gemReward || 0)
+      };
+    });
+  };
+
   const completeLesson = (lessonId: string, earnedXp: number, earnedGems: number, accuracy: number) => {
     sound.playVictory();
 
@@ -287,14 +318,111 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setStats(prev => {
       const isAlreadyCompleted = prev.completedLessons.includes(lessonId);
       const newCompleted = isAlreadyCompleted ? prev.completedLessons : [...prev.completedLessons, lessonId];
+      const newXp = prev.xp + earnedXp;
+      const newGems = prev.gems + earnedGems;
+      const newStreak = prev.streak + (isAlreadyCompleted ? 0 : 1);
+      const newTotalQuestions = prev.totalQuestionsAnswered + 4;
+      const prevLevel = Math.max(1, Math.floor((prev.xp || 0) / 100) + 1);
+      const newLevel = Math.max(1, Math.floor(newXp / 100) + 1);
+
+      const badges = [...(prev.achievementBadges || [])];
+      let pendingAchievement: AchievementToastData | null = null;
+
+      // 1. First Lesson Badge
+      if (newCompleted.length === 1 && !badges.includes('first_lesson')) {
+        badges.push('first_lesson');
+        pendingAchievement = {
+          id: 'first_lesson',
+          title: 'İlk Ders Tamamlandı! 🎓',
+          description: 'Knowza ile ilk dersini başarıyla bitirdin ve eğitime başladın!',
+          icon: '🎓',
+          xpReward: 25,
+          gemReward: 10
+        };
+      }
+      // 2. Perfect Lesson Badge (%100 Accuracy)
+      else if (accuracy === 100 && !badges.includes('perfect_lesson')) {
+        badges.push('perfect_lesson');
+        pendingAchievement = {
+          id: 'perfect_lesson',
+          title: 'Kusursuz Çözüm! 🎯',
+          description: 'Tüm soruları tek bir hata bile yapmadan %100 doğrulukla çözdün!',
+          icon: '🎯',
+          xpReward: 30,
+          gemReward: 15
+        };
+      }
+      // 3. Level Up Badge
+      else if (newLevel > prevLevel && !badges.includes(`level_${newLevel}`)) {
+        badges.push(`level_${newLevel}`);
+        pendingAchievement = {
+          id: `level_${newLevel}`,
+          title: `${newLevel}. Seviyeye Ulaştın! 🌟`,
+          description: `Tebrikler! ${newLevel}. seviye rütbesine yükseldin!`,
+          icon: '🌟',
+          xpReward: 50,
+          gemReward: 20
+        };
+      }
+      // 4. Streak Badges
+      else if (newStreak >= 7 && !badges.includes('streak_7')) {
+        badges.push('streak_7');
+        pendingAchievement = {
+          id: 'streak_7',
+          title: '7 Günlük Seri Efsanesi! 🔥',
+          description: 'Üst üste 7 gün boyunca her gün en az 1 ders çözerek serini korudun!',
+          icon: '🔥',
+          xpReward: 40,
+          gemReward: 20
+        };
+      } else if (newStreak >= 3 && !badges.includes('streak_3')) {
+        badges.push('streak_3');
+        pendingAchievement = {
+          id: 'streak_3',
+          title: '3 Günlük Seri Ustası! 🔥',
+          description: '3 gün boyunca aralıksız soru çözerek disiplinini kanıtladın!',
+          icon: '🔥',
+          xpReward: 25,
+          gemReward: 10
+        };
+      } else if (newStreak === 1 && !badges.includes('streak_1')) {
+        badges.push('streak_1');
+        pendingAchievement = {
+          id: 'streak_1',
+          title: 'Seri Ateşi Yandı! 🔥',
+          description: 'İlk gün serin başladı! Yarın tekrar gelip serini koru!',
+          icon: '🔥',
+          xpReward: 20,
+          gemReward: 5
+        };
+      }
+      // 5. Questions Count Milestone
+      else if (newTotalQuestions >= 10 && !badges.includes('questions_10')) {
+        badges.push('questions_10');
+        pendingAchievement = {
+          id: 'questions_10',
+          title: '10 Soru Avcısı! 📚',
+          description: '10 soruyu başarıyla geride bıraktın, hızını koru!',
+          icon: '📚',
+          xpReward: 20,
+          gemReward: 5
+        };
+      }
+
+      if (pendingAchievement) {
+        setTimeout(() => {
+          setActiveAchievement(pendingAchievement);
+        }, 300);
+      }
 
       return {
         ...prev,
-        xp: prev.xp + earnedXp,
-        gems: prev.gems + earnedGems,
-        streak: prev.streak + (isAlreadyCompleted ? 0 : 1),
+        xp: newXp + (pendingAchievement?.xpReward || 0),
+        gems: newGems + (pendingAchievement?.gemReward || 0),
+        streak: newStreak,
         completedLessons: newCompleted,
-        totalQuestionsAnswered: prev.totalQuestionsAnswered + 4,
+        achievementBadges: badges,
+        totalQuestionsAnswered: newTotalQuestions,
         totalStudyMinutes: prev.totalStudyMinutes + 10,
         dailyQuestProgress: {
           completedLessonsToday: prev.dailyQuestProgress.completedLessonsToday + 1,
@@ -314,12 +442,32 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
       origin: { y: 0.7 }
     });
 
-    setStats(prev => ({
-      ...prev,
-      xp: prev.xp + earnedXp,
-      gems: prev.gems + earnedGems,
-      openedChests: [...prev.openedChests, chestId]
-    }));
+    setStats(prev => {
+      const badges = [...(prev.achievementBadges || [])];
+      let pendingAchievement: AchievementToastData | null = null;
+      if (prev.openedChests.length === 0 && !badges.includes('first_chest')) {
+        badges.push('first_chest');
+        pendingAchievement = {
+          id: 'first_chest',
+          title: 'Hazine Avcısı! 🎁',
+          description: 'İlk ödül sandığını açarak gizemli hazineyi topladın!',
+          icon: '🎁',
+          xpReward: 30,
+          gemReward: 15
+        };
+        setTimeout(() => {
+          setActiveAchievement(pendingAchievement);
+        }, 300);
+      }
+
+      return {
+        ...prev,
+        xp: prev.xp + earnedXp + (pendingAchievement?.xpReward || 0),
+        gems: prev.gems + earnedGems + (pendingAchievement?.gemReward || 0),
+        openedChests: [...prev.openedChests, chestId],
+        achievementBadges: badges
+      };
+    });
   };
 
   const buyShopItem = (item: 'freeze' | 'refill' | 'double'): boolean => {
@@ -641,7 +789,10 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
         addXpAndGems,
         upgradeToPro,
         completeOnboarding,
-        updateUserPreferences
+        updateUserPreferences,
+        activeAchievement,
+        dismissAchievement,
+        triggerAchievement
       }}
     >
       {children}

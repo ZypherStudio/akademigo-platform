@@ -21,11 +21,12 @@ import { AiCoach } from './components/AiCoach';
 import { AuthModal } from './components/AuthModal';
 import { Shop } from './components/Shop';
 import { KnowzaOnboarding } from './components/KnowzaOnboarding';
+import { AchievementToast } from './components/AchievementToast';
 import { ArrowLeft, Smartphone, Monitor } from 'lucide-react';
 import { soundSystem } from './utils/audio';
 
 const KnowzaAppContent: React.FC = () => {
-  const { stats, activeLesson, closeLesson } = useGame();
+  const { stats, activeLesson, closeLesson, activeAchievement, dismissAchievement } = useGame();
   const [currentTab, setCurrentTab] = useState<KnowzaTab>('home');
   const [hasStarted, setHasStarted] = useState<boolean>(() => {
     return localStorage.getItem('knowza_has_started') === 'true';
@@ -347,6 +348,12 @@ const KnowzaAppContent: React.FC = () => {
             onClose={() => setShowLevelUpModal(false)}
           />
         )}
+
+        {/* Top-Sliding Achievement Celebration Toast */}
+        <AchievementToast
+          achievement={activeAchievement}
+          onDismiss={dismissAchievement}
+        />
 
         {/* Account / Auth Modal */}
         {showAuthModal && (

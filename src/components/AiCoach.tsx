@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { sound } from '../utils/audio';
 import { AiChatMessage } from '../types';
+import { sendChatMessageToClaude, ClaudeMessage, getClaudeApiKey } from '../utils/claudeService';
 
 const INITIAL_MESSAGES: AiChatMessage[] = [
   {
@@ -137,7 +138,7 @@ export const AiCoach: React.FC = () => {
     recognition.start();
   };
 
-  const handleSendMessage = (textToSend?: string) => {
+  const handleSendMessage = async (textToSend?: string) => {
     const text = (textToSend || inputText).trim();
     if (!text) return;
     sound.playClick();
@@ -154,18 +155,29 @@ export const AiCoach: React.FC = () => {
     setIsTyping(true);
     setMascotMood('thinking');
 
-    // AI intelligent tutor response simulation
-    setTimeout(() => {
-      setIsTyping(false);
-      sound.playVictory();
+    // Build context for Claude API
+    const history: ClaudeMessage[] = messages.slice(-5).map((m) => ({
+      role: m.sender === 'user' ? 'user' : 'assistant',
+      content: m.text
+    }));
+    history.push({ role: 'user', content: text });
 
-      let replyText = '';
-      let tip = '';
+    const claudeResult = await sendChatMessageToClaude(history);
+    setIsTyping(false);
+    sound.playVictory();
 
+    let replyText = '';
+    let tip = '';
+
+    if (claudeResult.success && claudeResult.text) {
+      replyText = claudeResult.text;
+      tip = '⚡ Anthropic Claude 3.5 AI yanıtı';
+    } else {
+      // Fallback smart tutor if API key has network/auth issue
       const lower = text.toLowerCase();
       if (lower.includes('matematik') || lower.includes('temel')) {
         replyText =
-          'Harika bir soru! Matematik temeli atarken ilk kural formül ezberlemek değil, "sayıların mantığını" kavramaktır. Öncelikle Tek-Çift sayılar ve Temel İşlem Önceliğini pekiştir, ardından her gün 15 adet yeni nesil problem çöz. Günde 15 soru 1 ayda 450 soru demektir!';
+          'Matematik temeli atarken ilk kural formül ezberlemek değil, "sayıların mantığını" kavramaktır. Öncelikle Tek-Çift sayılar ve Temel İşlem Önceliğini pekiştir, ardından her gün 15 adet yeni nesil problem çöz. Günde 15 soru 1 ayda 450 soru demektir!';
         tip = '💡 Taktik: Gauss Toplam Formülü: [n × (n + 1)] / 2 hayat kurtarır!';
       } else if (lower.includes('soru sor') || lower.includes('test et')) {
         replyText =
@@ -184,21 +196,25 @@ export const AiCoach: React.FC = () => {
           'Python\'da fonksiyonlar "def fonksiyon_adi(parametre):" şeklinde tanımlanır. Döngüler ise "for i in range(sayi):" kalıbıyla belirli sayıda işlemi otomatik tekrar eder. Kod Lab sekmemizde bunu hemen canlı deneyebilirsin!';
         tip = '💻 Kod Lab sekmesinde interaktif Python konsolun seni bekliyor.';
       } else {
-        replyText = `Bu harika bir konu! Sınav hazırlığında ve yeni beceriler öğrenirken en önemli şey sürekliliktir. Knowza ile her gün en az 1 ders tamamlamak seni rakiplerinin çok önüne taşır. Başka aklına takılan bir konu var mı?`;
-        tip = '🎓 Knowza 3D Ayıcık her zaman yanında!';
+        replyText = `Harika bir soru! Sınav hazırlığında ve yeni beceriler öğrenirken en önemli şey sürekliliktir. Knowza ile her gün düzenli pratik yaparak hedefine ulaşabilirsin.`;
+        tip = '🎓 Knowza AI Koç her zaman yanında!';
       }
 
-      const aiMsg: AiChatMessage = {
-        id: 'knowza-' + Date.now(),
-        sender: 'knowza',
-        text: replyText,
-        timestamp: 'Şimdi',
-        cardTip: tip
-      };
+      if (claudeResult.error) {
+        tip += ` (API: ${claudeResult.error.slice(0, 35)}...)`;
+      }
+    }
 
-      setMessages((prev) => [...prev, aiMsg]);
-      speakText(replyText);
-    }, 1200);
+    const aiMsg: AiChatMessage = {
+      id: 'knowza-' + Date.now(),
+      sender: 'knowza',
+      text: replyText,
+      timestamp: 'Şimdi',
+      cardTip: tip
+    };
+
+    setMessages((prev) => [...prev, aiMsg]);
+    speakText(replyText);
   };
 
   // Determine which 3D mascot asset to render based on active mood

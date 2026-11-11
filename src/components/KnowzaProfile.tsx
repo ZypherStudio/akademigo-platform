@@ -14,7 +14,6 @@ import {
   Check,
   Edit3,
   Download,
-  MapPin,
   Compass,
   GraduationCap
 } from 'lucide-react';
@@ -37,7 +36,7 @@ export const KnowzaProfile: React.FC<KnowzaProfileProps> = ({
   const [bgmOn, setBgmOn] = useState(() => soundSystem.getBgmEnabled());
   const [sfxOn, setSfxOn] = useState(() => soundSystem.getSfxEnabled());
   const [isEditingName, setIsEditingName] = useState(false);
-  const [nameInput, setNameInput] = useState(stats.username || 'Alp');
+  const [nameInput, setNameInput] = useState(stats.username || 'Öğrenci');
   const [activeModal, setActiveModal] = useState<string | null>(null);
 
   const handleSaveName = () => {
@@ -106,7 +105,7 @@ export const KnowzaProfile: React.FC<KnowzaProfileProps> = ({
               onClick={() => setIsEditingName(true)}
               className="group flex items-center gap-1.5 text-xl font-extrabold text-slate-900 hover:text-amber-600 transition"
             >
-              <span>{stats.username || 'Alp'}</span>
+              <span>{stats.username || 'Öğrenci'}</span>
               <Edit3 className="w-4 h-4 text-slate-400 group-hover:text-amber-500 transition" />
             </button>
           )}
@@ -114,9 +113,8 @@ export const KnowzaProfile: React.FC<KnowzaProfileProps> = ({
           <div className="flex items-center gap-1.5 text-xs font-bold text-slate-500 mb-2">
             <span>Seviye {currentLevel}</span>
             <span>•</span>
-            <span className="flex items-center gap-0.5 text-amber-700">
-              <MapPin className="w-3 h-3 text-amber-600" />
-              {stats.city || 'İstanbul'}
+            <span className="text-amber-700 font-bold truncate max-w-[140px]">
+              {stats.email || 'Öğrenci'}
             </span>
             <span>•</span>
             <span className="text-amber-800 font-extrabold uppercase">
@@ -140,7 +138,7 @@ export const KnowzaProfile: React.FC<KnowzaProfileProps> = ({
 
         {/* Menu Items matching Screen 8 */}
         <div className="bg-white rounded-3xl p-2 shadow-sm border border-amber-100/70 divide-y divide-amber-50">
-          {/* Hedef ve Şehir Değiştirme */}
+          {/* Hedef Değiştirme */}
           {onOpenOnboarding && (
             <button
               onClick={onOpenOnboarding}
@@ -151,9 +149,9 @@ export const KnowzaProfile: React.FC<KnowzaProfileProps> = ({
                   <Compass className="w-5 h-5 text-slate-900" />
                 </div>
                 <div>
-                  <span className="text-sm font-black text-slate-900 block">Hedefim & Şehrim</span>
+                  <span className="text-sm font-black text-slate-900 block">Hedef Sınavım</span>
                   <span className="text-[11px] font-bold text-amber-800">
-                    📍 {stats.city || 'İstanbul'} • {stats.targetGoal?.toUpperCase() || 'YKS'}
+                    🎯 {stats.targetGoal?.toUpperCase() || 'YKS'} ({stats.dailyGoalQuestions || 25} Soru/Gün)
                   </span>
                 </div>
               </div>
@@ -372,8 +370,12 @@ export const KnowzaProfile: React.FC<KnowzaProfileProps> = ({
                   <span className="font-black text-slate-900">{stats.username || 'Öğrenci'}</span>
                 </div>
                 <div className="flex justify-between py-1 border-b border-amber-200/40">
-                  <span className="font-bold text-slate-500">Şehir:</span>
-                  <span className="font-black text-slate-900">📍 {stats.city || 'İstanbul'}</span>
+                  <span className="font-bold text-slate-500">Hesap E-postası:</span>
+                  <span className="font-black text-slate-900">{stats.email || 'Giriş yapılmadı'}</span>
+                </div>
+                <div className="flex justify-between py-1 border-b border-amber-200/40">
+                  <span className="font-bold text-slate-500">Giriş Türü:</span>
+                  <span className="font-black text-amber-900 uppercase">{stats.authProvider || 'Misafir'}</span>
                 </div>
                 <div className="flex justify-between py-1 border-b border-amber-200/40">
                   <span className="font-bold text-slate-500">Öncelikli Hedef:</span>

@@ -41,13 +41,12 @@ interface GameContextType {
   upgradeToPro: () => void;
   completeOnboarding: (data: {
     username: string;
-    city: string;
     targetGoal: CourseCategory;
     dailyGoalQuestions?: number;
+    email?: string;
   }) => void;
   updateUserPreferences: (data: {
     username?: string;
-    city?: string;
     targetGoal?: CourseCategory;
     dailyGoalQuestions?: number;
   }) => void;
@@ -75,7 +74,7 @@ const DEFAULT_MISTAKES: MistakeItem[] = [
 ];
 
 const DEFAULT_STATS: UserStats = {
-  username: 'Ali',
+  username: 'Öğrenci',
   uniqueTag: '#2026',
   email: undefined,
   isLoggedIn: false,
@@ -111,7 +110,6 @@ const DEFAULT_STATS: UserStats = {
     xpGainedToday: 65,
     perfectLessonsToday: 1
   },
-  city: 'İstanbul',
   targetGoal: 'yks',
   dailyGoalQuestions: 25,
   hasCompletedOnboarding: false
@@ -454,21 +452,23 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return { success: true, finalUsername: finalName };
   };
 
-  // Google / Email Authentication Simulation
+  // Google / Email Authentication
   const loginUser = (provider: 'google' | 'email', email?: string, username?: string) => {
     sound.playVictory();
     confetti({ particleCount: 50, spread: 70 });
-    const name = username || (provider === 'google' ? 'Ali Yılmaz' : 'Ali');
-    const userEmail = email || (provider === 'google' ? 'ali.yilmaz@gmail.com' : 'ali@ogrenci.com');
+    const userEmail = email?.trim() || '';
+    const name = username?.trim() || (userEmail ? userEmail.split('@')[0] : 'Öğrenci');
 
     setStats(prev => ({
       ...prev,
       isLoggedIn: true,
       authProvider: provider,
       username: name,
-      email: userEmail,
-      uniqueTag: '#DOĞRULANDI'
+      email: userEmail || undefined,
+      uniqueTag: '#DOĞRULANDI',
+      hasCompletedOnboarding: true
     }));
+    localStorage.setItem('knowza_has_started', 'true');
   };
 
   const logoutUser = () => {
@@ -478,8 +478,10 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
       isLoggedIn: false,
       authProvider: 'guest',
       email: undefined,
-      uniqueTag: '#2026'
+      username: 'Öğrenci',
+      hasCompletedOnboarding: false
     }));
+    localStorage.removeItem('knowza_has_started');
   };
 
   // Knowza Costume Purchase & Equip
@@ -539,9 +541,9 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const completeOnboarding = (data: {
     username: string;
-    city: string;
     targetGoal: CourseCategory;
     dailyGoalQuestions?: number;
+    email?: string;
   }) => {
     sound.playVictory();
     confetti({ particleCount: 90, spread: 80 });
@@ -557,7 +559,8 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setStats(prev => ({
       ...prev,
       username: data.username.trim() || 'Öğrenci',
-      city: data.city || 'İstanbul',
+      email: data.email || prev.email,
+      isLoggedIn: true,
       targetGoal: data.targetGoal,
       selectedCourseId: data.targetGoal,
       dailyGoalQuestions: data.dailyGoalQuestions || 25,
@@ -569,14 +572,12 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const updateUserPreferences = (data: {
     username?: string;
-    city?: string;
     targetGoal?: CourseCategory;
     dailyGoalQuestions?: number;
   }) => {
     setStats(prev => {
       const updated = { ...prev };
       if (data.username) updated.username = data.username.trim();
-      if (data.city) updated.city = data.city;
       if (data.targetGoal) {
         updated.targetGoal = data.targetGoal;
         updated.selectedCourseId = data.targetGoal;

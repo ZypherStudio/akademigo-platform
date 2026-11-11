@@ -44,7 +44,7 @@ export const Profile: React.FC = () => {
   
   const [activeTab, setActiveTab] = useState<'stats' | 'themes' | 'avatar' | 'account'>('stats');
   const [isEditingName, setIsEditingName] = useState(false);
-  const [tempName, setTempName] = useState(stats.username || 'Ali');
+  const [tempName, setTempName] = useState(stats.username || 'Öğrenci');
   const [nameNotice, setNameNotice] = useState<string | null>(null);
   const [showAuthModal, setShowAuthModal] = useState(false);
 

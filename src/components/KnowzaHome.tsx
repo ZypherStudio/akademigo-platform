@@ -23,7 +23,6 @@ import {
   Music,
   VolumeX,
   ShoppingBag,
-  MapPin,
   Compass
 } from 'lucide-react';
 import { sound } from '../utils/audio';
@@ -96,10 +95,9 @@ export const KnowzaHome: React.FC<KnowzaHomeProps> = ({
           <div className="flex-shrink-0">
             <KnowzaAvatar size="md" costume={stats.selectedCostume} />
           </div>
-          <div className="min-w-0 max-w-[120px] sm:max-w-[160px]">
-            <span className="text-[10px] font-bold text-[#8C7A5E] block leading-none truncate flex items-center gap-1">
-              <MapPin className="w-2.5 h-2.5 text-amber-600 flex-shrink-0" />
-              <span className="truncate">{stats.city || 'İstanbul'}</span>
+          <div className="min-w-0 max-w-[130px] sm:max-w-[180px]">
+            <span className="text-[10px] font-bold text-[#8C7A5E] block leading-none truncate">
+              {stats.email ? stats.email : 'Merhaba!'}
             </span>
             <h2 className="text-base sm:text-lg font-black text-[#2A1E00] flex items-center gap-1 leading-snug truncate mt-0.5">
               <span className="truncate">{stats.username || 'Öğrenci'}</span>

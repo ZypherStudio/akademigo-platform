@@ -176,7 +176,6 @@ export interface UserStats {
     xpGainedToday: number;
     perfectLessonsToday: number;
   };
-  city?: string;
   targetGoal?: CourseCategory;
   gradeOrTarget?: string;
   dailyGoalQuestions?: number;

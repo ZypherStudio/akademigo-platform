@@ -37,46 +37,37 @@ const KnowzaAppContent: React.FC = () => {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
 
-  const handleStartFromSplash = () => {
-    setShowOnboarding(true);
-    soundSystem.playClick();
-  };
+  // User must authenticate / login first before entering main app
+  const isUserAuthenticated = stats.isLoggedIn && !!stats.email;
 
-  const handleOpenLogin = () => {
-    setShowAuthModal(true);
-    soundSystem.playClick();
-  };
-
-  // If user has not started yet, show Screen 1: Splash / Onboarding
-  if (!hasStarted) {
+  if (!isUserAuthenticated) {
     return (
       <div className="h-[100dvh] w-full bg-[#FFFDF7] flex justify-center items-center overflow-hidden">
-        <div className="w-full max-w-md h-full md:h-auto md:max-h-[860px] md:my-6 md:rounded-[40px] md:shadow-2xl md:border md:border-amber-200/50 bg-[#FFFDF7] overflow-hidden flex flex-col justify-between">
-          {showOnboarding ? (
-            <KnowzaOnboarding
-              onComplete={() => {
-                setHasStarted(true);
-                setShowOnboarding(false);
-              }}
-              onSkip={() => {
-                setHasStarted(true);
-                setShowOnboarding(false);
-              }}
-            />
-          ) : (
-            <KnowzaSplash
-              onStart={handleStartFromSplash}
-              onLogin={handleOpenLogin}
-            />
-          )}
+        <div className="w-full max-w-md h-full md:h-auto md:max-h-[860px] md:my-6 md:rounded-[40px] md:shadow-2xl md:border md:border-amber-200/50 bg-[#FFFDF7] overflow-hidden flex flex-col justify-between relative">
+          <KnowzaSplash
+            onStartGoogle={() => setShowAuthModal(true)}
+            onOpenEmailAuth={() => setShowAuthModal(true)}
+          />
           {showAuthModal && (
             <AuthModal
-              onClose={() => {
-                setShowAuthModal(false);
-                setHasStarted(true);
-              }}
+              onClose={() => setShowAuthModal(false)}
             />
           )}
+        </div>
+      </div>
+    );
+  }
+
+  // If user is authenticated but has not set up target goal & pace:
+  if (!stats.hasCompletedOnboarding) {
+    return (
+      <div className="h-[100dvh] w-full bg-[#FFFDF7] flex justify-center items-center overflow-hidden">
+        <div className="w-full max-w-md h-full md:h-auto md:max-h-[860px] md:my-6 md:rounded-[40px] md:shadow-2xl md:border md:border-amber-200/50 bg-[#FFFDF7] overflow-hidden flex flex-col justify-between relative">
+          <KnowzaOnboarding
+            onComplete={() => {
+              setShowOnboarding(false);
+            }}
+          />
         </div>
       </div>
     );

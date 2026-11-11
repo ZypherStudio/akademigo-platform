@@ -20,7 +20,7 @@ export const KahootArena: React.FC = () => {
   const [selectedSetId, setSelectedSetId] = useState<KahootCategory>('matematik');
   const [roomPin, setRoomPin] = useState('582 910');
   const [inputPin, setInputPin] = useState('582 910');
-  const [nicknameInput, setNicknameInput] = useState(stats.username || 'Ali');
+  const [nicknameInput, setNicknameInput] = useState(stats.username || 'Öğrenci');
   const [pinCopied, setPinCopied] = useState(false);
   const [nameWarning, setNameWarning] = useState<string | null>(null);
 
@@ -53,7 +53,7 @@ export const KahootArena: React.FC = () => {
 
     const me: KahootPlayer = {
       id: 'me',
-      name: stats.username || 'Ali',
+      name: stats.username || 'Öğrenci',
       costume: stats.selectedCostume || 'classic',
       score: 0,
       streak: 0,

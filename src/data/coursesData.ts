@@ -1684,6 +1684,413 @@ export const COURSES: Course[] = [
             ]
           }
         ]
+      },
+{
+        "id": "kod-u3",
+        "number": 3,
+        "title": "Python Fonksiyonlar & Modüller (*args, **kwargs)",
+        "description": "def, return, lambda fonksiyonları, varsayılan parametreler ve built-in modüller",
+        "color": "#af72ff",
+        "lessons": [
+          {
+            "id": "kod-u3-l1",
+            "unitId": "kod-u3",
+            "title": "Fonksiyonlar ve Parametre Yönetimi",
+            "description": "Fonksiyon tanımlama, return, varsayılan argümanlar ve değişken uzunluklu parametreler.",
+            "xpReward": 25,
+            "gemReward": 6,
+            "type": "lesson",
+            "summaryNotes": [
+              "def anahtar kelimesiyle fonksiyon tanımlanır.",
+              "*args: İstenilen sayıda konumsal argümanı bir TUPLE (demet) olarak toplar.",
+              "**kwargs: İstenilen sayıda anahtar-değer (keyword) argümanını bir DICTIONARY (sözlük) olarak toplar.",
+              "return ifadesi fonksiyonun çalışmasını anında durdurur ve çağrıldığı yere değer döner."
+            ],
+            "questions": [
+              {
+                "id": "kod-q-fn1",
+                "type": "multiple_choice",
+                "prompt": "Python'da 'def topla(*sayilar):' fonksiyonu tanımlandığında, fonksiyon içinde 'sayilar' değişkeninin veri tipi nedir?",
+                "difficulty": "orta",
+                "hint": "*args tek yıldızlı değişkenler demet (tuple) oluşturur.",
+                "explanation": "*args yapısı gelen tüm argümanları bir 'tuple' (demet) veri tipinde toplar.",
+                "options": [
+                  { "id": "fn1_a", "text": "tuple (Demet)", "isCorrect": true },
+                  { "id": "fn1_b", "text": "list (Liste)", "isCorrect": false },
+                  { "id": "fn1_c", "text": "dict (Sözlük)", "isCorrect": false },
+                  { "id": "fn1_d", "text": "set (Küme)", "isCorrect": false }
+                ]
+              },
+              {
+                "id": "kod-q-fn2",
+                "type": "matching",
+                "prompt": "Fonksiyon anahtar kelimelerini görevleriyle eşleştiriniz:",
+                "difficulty": "kolay",
+                "explanation": "def tanımlar, return döner, lambda tek satırlıktır, yield jeneratördür.",
+                "pairs": [
+                  { "id": "fp1", "left": "def", "right": "Fonksiyon tanımlama" },
+                  { "id": "fp2", "left": "return", "right": "Fonksiyondan değer döndürme ve sonlandırma" },
+                  { "id": "fp3", "left": "lambda", "right": "İsimsiz, tek satırlık pratik fonksiyon" }
+                ]
+              },
+              {
+                "id": "kod-q-fn3",
+                "type": "multiple_choice",
+                "prompt": "kare = lambda x: x ** 2\nprint(kare(6))\n\nYukarıdaki kod çalıştırıldığında ekrana ne yazdırılır?",
+                "difficulty": "kolay",
+                "explanation": "lambda fonksiyonu 6'nın karesini (6 ** 2 = 36) hesaplar ve ekrana yazdırır.",
+                "options": [
+                  { "id": "lm1", "text": "36", "isCorrect": true },
+                  { "id": "lm2", "text": "12", "isCorrect": false },
+                  { "id": "lm3", "text": "6", "isCorrect": false },
+                  { "id": "lm4", "text": "SyntaxError", "isCorrect": false }
+                ]
+              },
+              {
+                "id": "kod-q-fn4",
+                "type": "true_false",
+                "prompt": "Fonksiyonda return sonrası kodlar çalışır mı?",
+                "statement": "Bir fonksiyon içerisinde 'return' komutu çalıştırıldığı anda fonksiyon sona erer ve altındaki satırlar çalıştırılmaz.",
+                "correctAnswer": true,
+                "explanation": "Doğrudur! return fonksiyonu derhal sonlandırır ve kontrolü çağıran yere devreder."
+              }
+            ]
+          },
+          {
+            "id": "kod-u3-l2",
+            "unitId": "kod-u3",
+            "title": "List Comprehension, map() ve filter()",
+            "description": "Tek satırda liste üretimi, fonksiyonel programlama ve pip modül yönetimi.",
+            "xpReward": 30,
+            "gemReward": 8,
+            "type": "lesson",
+            "summaryNotes": [
+              "List Comprehension: [ifade for eleman in liste if kosul]",
+              "map(fonksiyon, liste): Listenin her elemanına fonksiyonu uygular.",
+              "filter(fonksiyon, liste): Yalnızca True dönen elemanları seçer.",
+              "pip install <paket>: Harici kütüphaneleri (requests, pandas vb.) sisteme kurar."
+            ],
+            "questions": [
+              {
+                "id": "kod-q-lc1",
+                "type": "multiple_choice",
+                "prompt": "[x * 2 for x in [1, 2, 3, 4] if x % 2 == 0] ifadesinin çıktısı nedir?",
+                "difficulty": "orta",
+                "hint": "Önce çift olanlar filtrelenir (2 ve 4), sonra her biri 2 ile çarpılır.",
+                "explanation": "Listede çift olan sayılar 2 ve 4'tür. 2*2=4 ve 4*2=8 olur. Sonuç [4, 8] listesidir.",
+                "options": [
+                  { "id": "lc1_a", "text": "[4, 8]", "isCorrect": true },
+                  { "id": "lc1_b", "text": "[2, 4, 6, 8]", "isCorrect": false },
+                  { "id": "lc1_c", "text": "[2, 4]", "isCorrect": false },
+                  { "id": "lc1_d", "text": "[8]", "isCorrect": false }
+                ]
+              },
+              {
+                "id": "kod-q-lc2",
+                "type": "matching",
+                "prompt": "Fonksiyonel metodları amaçlarıyla eşleştiriniz:",
+                "difficulty": "orta",
+                "explanation": "map dönüştürür, filter süzer, zip iki listeyi birleştirip eşler.",
+                "pairs": [
+                  { "id": "lp1", "left": "map()", "right": "Her elemana fonksiyonu uygulayıp dönüştürür" },
+                  { "id": "lp2", "left": "filter()", "right": "Şarta uyan elemanları süzer" },
+                  { "id": "lp3", "left": "zip()", "right": "İki listeyi ikili demetler halinde eşler" }
+                ]
+              },
+              {
+                "id": "kod-q-lc3",
+                "type": "multiple_choice",
+                "prompt": "Python'da harici bir kütüphaneyi terminalden yüklemek için kullanılan resmi paket yöneticisi komutu hangisidir?",
+                "difficulty": "kolay",
+                "explanation": "Python Package Index (PyPI) paketlerini kurmak için 'pip install <paket_adi>' kullanılır.",
+                "options": [
+                  { "id": "pip1", "text": "pip install <paket>", "isCorrect": true },
+                  { "id": "pip2", "text": "npm install <paket>", "isCorrect": false },
+                  { "id": "pip3", "text": "python get <paket>", "isCorrect": false },
+                  { "id": "pip4", "text": "brew add <paket>", "isCorrect": false }
+                ]
+              },
+              {
+                "id": "kod-q-lc4",
+                "type": "true_false",
+                "prompt": "**kwargs parametresi sözlük (dictionary) olarak mı saklanır?",
+                "statement": "Python fonksiyonlarında iki yıldızlı (**kwargs) parametresi, gönderilen tüm isimli argümanları anahtar-değer sözlüğü (dict) olarak tutar.",
+                "correctAnswer": true,
+                "explanation": "Doğrudur! Örneğin fonk(ad='Ali', yas=20) çağrıldığında kwargs = {'ad': 'Ali', 'yas': 20} olur."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "kod-u4",
+        "number": 4,
+        "title": "Nesne Yönelimli Programlama (OOP): Class & Self",
+        "description": "Sınıf tanımlama, kurucu fonksiyon (__init__), nesne örnekleme ve kalıtım",
+        "color": "#af72ff",
+        "lessons": [
+          {
+            "id": "kod-u4-l1",
+            "unitId": "kod-u4",
+            "title": "Sınıf Yapısı & __init__ Kurucusu",
+            "description": "Class tanımı, constructor mantığı, self referansı ve nesne türetme.",
+            "xpReward": 25,
+            "gemReward": 6,
+            "type": "lesson",
+            "summaryNotes": [
+              "class anahtar kelimesi ile nesne şablonu (sınıf) tanımlanır.",
+              "__init__(self, ...) metodu, nesne oluşturulduğu an otomatik çalışan yapıcı (constructor) fonksiyondur.",
+              "self parametresi, oluşturulan o anki somut nesnenin kendisini temsil eder.",
+              "Örnek: araba1 = Araba('Kırmızı', 'Sedan')"
+            ],
+            "questions": [
+              {
+                "id": "kod-q-op1",
+                "type": "multiple_choice",
+                "prompt": "Python sınıfı içindeki metodların ilk parametresi geleneksel olarak ne olarak adlandırılır?",
+                "difficulty": "kolay",
+                "explanation": "Python'da sınıf metodlarının ilk parametresi nesnenin kendisini işaret eden 'self' referansıdır.",
+                "options": [
+                  { "id": "op1_a", "text": "self", "isCorrect": true },
+                  { "id": "op1_b", "text": "this", "isCorrect": false },
+                  { "id": "op1_c", "text": "cls", "isCorrect": false },
+                  { "id": "op1_d", "text": "object", "isCorrect": false }
+                ]
+              },
+              {
+                "id": "kod-q-op2",
+                "type": "matching",
+                "prompt": "OOP temel kavramlarını anlamlarıyla eşleştiriniz:",
+                "difficulty": "orta",
+                "explanation": "Class şablondur, Object somut örnektir, Attribute özelliktir, Method işlevdir.",
+                "pairs": [
+                  { "id": "oop1", "left": "Class (Sınıf)", "right": "Nesnelerin genel planı ve şablonu" },
+                  { "id": "oop2", "left": "Object (Nesne)", "right": "Sınıftan türetilen somut varlık" },
+                  { "id": "oop3", "left": "Method (Metod)", "right": "Sınıfa ait fonksiyonlar ve eylemler" }
+                ]
+              },
+              {
+                "id": "kod-q-op3",
+                "type": "multiple_choice",
+                "prompt": "'class Ogrenci:' sınıfından 'ogrenci1' adında yeni bir nesne üretmek için doğru söz dizimi hangisidir?",
+                "difficulty": "kolay",
+                "explanation": "Sınıf adının yanına parantez açılarak çağrılır: ogrenci1 = Ogrenci()",
+                "options": [
+                  { "id": "ins1", "text": "ogrenci1 = Ogrenci()", "isCorrect": true },
+                  { "id": "ins2", "text": "ogrenci1 = new Ogrenci()", "isCorrect": false },
+                  { "id": "ins3", "text": "Ogrenci.create(ogrenci1)", "isCorrect": false },
+                  { "id": "ins4", "text": "ogrenci1 -> Ogrenci()", "isCorrect": false }
+                ]
+              },
+              {
+                "id": "kod-q-op4",
+                "type": "true_false",
+                "prompt": "__init__ metodu nesne oluşturulduğunda otomatik çalışır mı?",
+                "statement": "__init__ kurucu (constructor) fonksiyonu, sınıftan bir nesne oluşturulduğu anda Python tarafından otomatik olarak çağrılır.",
+                "correctAnswer": true,
+                "explanation": "Doğrudur! Nesnenin başlangıç özelliklerini (attributes) atamak için kullanılır."
+              }
+            ]
+          },
+          {
+            "id": "kod-u4-l2",
+            "unitId": "kod-u4",
+            "title": "Kalıtım (Inheritance) & Polimorfizm",
+            "description": "Üst sınıftan miras alma, super() kullanımı ve metod ezme (override).",
+            "xpReward": 30,
+            "gemReward": 8,
+            "type": "lesson",
+            "summaryNotes": [
+              "Kalıtım: class Kopek(Hayvan): şeklinde alt sınıf üst sınıfın tüm özelliklerini miras alır.",
+              "super().__init__() ile üst sınıfın kurucu metodu çağrılır.",
+              "Override: Alt sınıfın üst sınıftaki bir metodu kendi ihtiyacına göre yeniden yazmasıdır.",
+              "Encapsulation: Çift alt çizgi (__gizli) değişkenleri private yapar."
+            ],
+            "questions": [
+              {
+                "id": "kod-q-inh1",
+                "type": "multiple_choice",
+                "prompt": "Alt sınıf içinden üst (ata) sınıfın metodunu çağırmak için hangi fonksiyon kullanılır?",
+                "difficulty": "orta",
+                "explanation": "super() fonksiyonu üst sınıfa erişmek ve ata sınıfın metodlarını çalıştırmak için kullanılır.",
+                "options": [
+                  { "id": "inh1_a", "text": "super()", "isCorrect": true },
+                  { "id": "inh1_b", "text": "parent()", "isCorrect": false },
+                  { "id": "inh1_c", "text": "base()", "isCorrect": false },
+                  { "id": "inh1_d", "text": "root()", "isCorrect": false }
+                ]
+              },
+              {
+                "id": "kod-q-inh2",
+                "type": "matching",
+                "prompt": "OOP prensiplerini açıklamalarıyla eşleştiriniz:",
+                "difficulty": "orta",
+                "explanation": "Kalıtım miras alır, Kapsülleme gizler, Polimorfizm çok biçimliliktir.",
+                "pairs": [
+                  { "id": "ip1", "left": "Kalıtım (Inheritance)", "right": "Bir sınıfın başka bir sınıfın özelliklerini devralması" },
+                  { "id": "ip2", "left": "Kapsülleme (Encapsulation)", "right": "Verilerin dışarıdan doğrudan değiştirilmesini kısıtlama" },
+                  { "id": "ip3", "left": "Polimorfizm (Polymorphism)", "right": "Aynı isimli metodun farklı sınıflarda farklı davranması" }
+                ]
+              },
+              {
+                "id": "kod-q-inh3",
+                "type": "multiple_choice",
+                "prompt": "Python'da bir sınıfın birden fazla sınıftan miras almasına ne ad verilir?",
+                "difficulty": "orta",
+                "explanation": "Python'da bir sınıf 'class C(A, B):' şeklinde birden fazla üst sınıftan türeyebilir; buna Multiple Inheritance denir.",
+                "options": [
+                  { "id": "mi1", "text": "Çoklu Kalıtım (Multiple Inheritance)", "isCorrect": true },
+                  { "id": "mi2", "text": "Tekil Kalıtım (Single Inheritance)", "isCorrect": false },
+                  { "id": "mi3", "text": "Aşırı Yükleme (Overloading)", "isCorrect": false },
+                  { "id": "mi4", "text": "İnterface (Arayüz)", "isCorrect": false }
+                ]
+              },
+              {
+                "id": "kod-q-inh4",
+                "type": "true_false",
+                "prompt": "Değişkenin başına çift alt çizgi konulursa private mi olur?",
+                "statement": "Python'da bir değişken adının başına iki alt çizgi (örn: self.__bakiye) konursa değişken private (özel) olur ve dışarıdan doğrudan erişilemez.",
+                "correctAnswer": true,
+                "explanation": "Doğrudur! Bu mekanizmaya 'Name Mangling' denir ve kapsülleme (encapsulation) sağlar."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "kod-u5",
+        "number": 5,
+        "title": "Hata Yönetimi (Try/Except) & JSON/API İşlemleri",
+        "description": "İstisna yakalama, raise, with open() dosya okuma ve REST API veri çekme",
+        "color": "#af72ff",
+        "lessons": [
+          {
+            "id": "kod-u5-l1",
+            "unitId": "kod-u5",
+            "title": "Try, Except, Finally Hata Yakalama",
+            "description": "Hataları zararsızca yönetme, raise ile özel hata fırlatma.",
+            "xpReward": 25,
+            "gemReward": 6,
+            "type": "lesson",
+            "summaryNotes": [
+              "try: Hata çıkma olasılığı olan riskli kod buraya yazılır.",
+              "except: Hata meydana geldiğinde çalışacak kurtarma kodudur.",
+              "finally: Hata çıksa da çıkmasa da HER KOŞULDA çalıştırılır.",
+              "with open('dosya.txt', 'r') as f: dosyayı işlem bitince otomatik kapatır."
+            ],
+            "questions": [
+              {
+                "id": "kod-q-tr1",
+                "type": "multiple_choice",
+                "prompt": "Python'da bir sayıyı sıfıra bölmeye çalıştığınızda hangi istisna (exception) fırlatılır?",
+                "difficulty": "kolay",
+                "explanation": "Sıfıra bölme hatası 'ZeroDivisionError' olarak fırlatılır.",
+                "options": [
+                  { "id": "tr1_a", "text": "ZeroDivisionError", "isCorrect": true },
+                  { "id": "tr1_b", "text": "ValueError", "isCorrect": false },
+                  { "id": "tr1_c", "text": "TypeError", "isCorrect": false },
+                  { "id": "tr1_d", "text": "IndexError", "isCorrect": false }
+                ]
+              },
+              {
+                "id": "kod-q-tr2",
+                "type": "matching",
+                "prompt": "Hata yakalama bloklarını görevleriyle eşleştiriniz:",
+                "difficulty": "kolay",
+                "explanation": "try dener, except yakalar, finally mutlaka çalışır.",
+                "pairs": [
+                  { "id": "tp1", "left": "try", "right": "Hata riski taşıyan kod bloğu" },
+                  { "id": "tp2", "left": "except", "right": "Hata oluştuğunda çalışan blok" },
+                  { "id": "tp3", "left": "finally", "right": "Hata olsun veya olmasın her zaman çalışan blok" }
+                ]
+              },
+              {
+                "id": "kod-q-tr3",
+                "type": "multiple_choice",
+                "prompt": "Kod içinde bilinçli olarak özel bir hata fırlatmak (tetiklemek) için hangi anahtar kelime kullanılır?",
+                "difficulty": "orta",
+                "explanation": "Python'da manuel hata fırlatmak için 'raise ValueError(\\'Geçersiz yaş!\\')' yapısı kullanılır.",
+                "options": [
+                  { "id": "rs1", "text": "raise", "isCorrect": true },
+                  { "id": "rs2", "text": "throw", "isCorrect": false },
+                  { "id": "rs3", "text": "catch", "isCorrect": false },
+                  { "id": "rs4", "text": "error", "isCorrect": false }
+                ]
+              },
+              {
+                "id": "kod-q-tr4",
+                "type": "true_false",
+                "prompt": "with open yapısı dosyayı otomatik kapatır mı?",
+                "statement": "'with open(...) as f:' bağlam yöneticisi kullanıldığında, blok tamamlandığında f.close() komutuna gerek kalmadan dosya otomatik olarak kapatılır.",
+                "correctAnswer": true,
+                "explanation": "Doğrudur! Bu sayede bellek ve dosya sızıntıları tamamen engellenir."
+              }
+            ]
+          },
+          {
+            "id": "kod-u5-l2",
+            "unitId": "kod-u5",
+            "title": "JSON Formatı & Web API Temelleri",
+            "description": "json.loads(), json.dumps(), REST API HTTP istekleri (GET, POST).",
+            "xpReward": 30,
+            "gemReward": 8,
+            "type": "lesson",
+            "summaryNotes": [
+              "JSON: Platformlar arası veri değişim standardıdır.",
+              "json.loads(string): JSON metnini Python sözlüğüne (dict) çevirir.",
+              "json.dumps(dict): Python sözlüğünü JSON metnine (string) çevirir.",
+              "HTTP Durum Kodları: 200 (Başarılı), 404 (Bulunamadı), 500 (Sunucu Hatası)."
+            ],
+            "questions": [
+              {
+                "id": "kod-q-js1",
+                "type": "multiple_choice",
+                "prompt": "Bir JSON metnini Python sözlüğüne (dictionary) çevirmek için 'json' modülünün hangi metodu kullanılır?",
+                "difficulty": "kolay",
+                "explanation": "json.loads() (load string) metodu JSON metnini Python veri yapısına dönüştürür.",
+                "options": [
+                  { "id": "js1_a", "text": "json.loads()", "isCorrect": true },
+                  { "id": "js1_b", "text": "json.dumps()", "isCorrect": false },
+                  { "id": "js1_c", "text": "json.parse()", "isCorrect": false },
+                  { "id": "js1_d", "text": "json.convert()", "isCorrect": false }
+                ]
+              },
+              {
+                "id": "kod-q-js2",
+                "type": "matching",
+                "prompt": "HTTP metodlarını görevleriyle eşleştiriniz:",
+                "difficulty": "orta",
+                "explanation": "GET okur, POST ekler, PUT günceller, DELETE siler.",
+                "pairs": [
+                  { "id": "hp1", "left": "GET", "right": "Sunucudan veri okuma ve listeleme" },
+                  { "id": "hp2", "left": "POST", "right": "Sunucuya yeni veri gönderme/kaydetme" },
+                  { "id": "hp3", "left": "DELETE", "right": "Sunucudaki mevcut veriyi silme" }
+                ]
+              },
+              {
+                "id": "kod-q-js3",
+                "type": "multiple_choice",
+                "prompt": "Bir REST API isteğinin tamamen BAŞARILI olduğunu belirten standart HTTP durum kodu (Status Code) hangisidir?",
+                "difficulty": "kolay",
+                "explanation": "200 OK, isteğin başarıyla işlendiğini ve yanıtın döndüğünü ifade eder.",
+                "options": [
+                  { "id": "st1", "text": "200 OK", "isCorrect": true },
+                  { "id": "st2", "text": "404 Not Found", "isCorrect": false },
+                  { "id": "st3", "text": "500 Internal Server Error", "isCorrect": false },
+                  { "id": "st4", "text": "301 Moved Permanently", "isCorrect": false }
+                ]
+              },
+              {
+                "id": "kod-q-js4",
+                "type": "true_false",
+                "prompt": "JSON formatı yalnızca JavaScript ile mi kullanılır?",
+                "statement": "JSON ismi JavaScript'ten gelse de tamamen dilden bağımsızdır; Python, Java, C#, Go gibi tüm programlama dillerinde veri iletişimi için kullanılır.",
+                "correctAnswer": true,
+                "explanation": "Doğrudur! JSON günümüzde web dünyasının evrensel veri taşıma formatıdır."
+              }
+            ]
+          }
+        ]
       }
     ]
   },
@@ -2123,6 +2530,415 @@ export const COURSES: Course[] = [
             ]
           }
         ]
+      },
+{
+        "id": "kpss-u4",
+        "number": 4,
+        "title": "KPSS Coğrafya: Türkiye'nin Yerşekilleri & İklimi",
+        "description": "Dağlar, platolar, karstik ve volkanik şekiller, akarsular ve iklim özellikleri",
+        "color": "#ff9600",
+        "lessons": [
+          {
+            "id": "kpss-u4-l1",
+            "unitId": "kpss-u4",
+            "title": "Türkiye'nin Dağları, Platoları & Gölleri",
+            "description": "Kıvrım, kırık (horst-graben) ve volkanik dağlar ile karstik/lav platoları.",
+            "xpReward": 25,
+            "gemReward": 6,
+            "type": "lesson",
+            "summaryNotes": [
+              "Kırık Dağlar (Horst-Graben): Kaz, Madra, Yunt, Bozdağlar, Aydın, Menteşe Dağları.",
+              "Volkanik Dağlar: Ağrı, Tendürek, Süphan, Nemrut (Doğu); Erciyes, Hasan, Karacadağ (İç).",
+              "Karstik Platolar: Teke ve Taşeli Platoları (Kalker/kireçtaşı arazisi).",
+              "Lav Platosu: Erzurum - Kars - Ardahan Platosu (Yaz yağışları ve çernezyom toprak)."
+            ],
+            "questions": [
+              {
+                "id": "kpss-q-cg1",
+                "type": "multiple_choice",
+                "prompt": "Aşağıdaki dağlardan hangisi oluşum türü bakımından kırılma (horst-graben) sonucu oluşmuş dağlar arasında YER ALMAZ?",
+                "difficulty": "orta",
+                "hint": "Ege kıyılarındaki dağlar kırıktır; İç ve Doğu Anadolu'daki bazı dağlar volkaniktir.",
+                "explanation": "Erciyes Dağı volkanik patlamalar sonucu oluşmuş volkanik bir dağdır; Kaz, Madra ve Yunt ise kırık (horst) dağlarıdır.",
+                "options": [
+                  { "id": "cg1_a", "text": "Erciyes Dağı", "isCorrect": true },
+                  { "id": "cg1_b", "text": "Kaz Dağları", "isCorrect": false },
+                  { "id": "cg1_c", "text": "Madra Dağı", "isCorrect": false },
+                  { "id": "cg1_d", "text": "Yunt Dağı", "isCorrect": false }
+                ]
+              },
+              {
+                "id": "kpss-q-cg2",
+                "type": "matching",
+                "prompt": "Plato türlerini Türkiye'deki en belirgin örnekleriyle eşleştirin:",
+                "difficulty": "orta",
+                "explanation": "Teke/Taşeli karstik kireçtaşıdır, Erzurum-Kars bazalt lavıdır, Çatalca-Kocaeli aşınım platosudur.",
+                "pairs": [
+                  { "id": "cp1", "left": "Karstik Plato", "right": "Teke ve Taşeli Platoları" },
+                  { "id": "cp2", "left": "Lav (Volkanik) Platosu", "right": "Erzurum - Kars Platosu" },
+                  { "id": "cp3", "left": "Aşınım (Peneple) Platosu", "right": "Çatalca - Kocaeli Platosu" }
+                ]
+              },
+              {
+                "id": "kpss-q-cg3",
+                "type": "multiple_choice",
+                "prompt": "Türkiye'nin yüzölçümü bakımından en büyük TATLI SU gölü hangisidir?",
+                "difficulty": "kolay",
+                "hint": "Van Gölü en büyük göldür fakat sodalıdır; tatlı su gölü değildir.",
+                "explanation": "Beyşehir Gölü Türkiye'nin en büyük tatlı su gölüdür ve su ürünleri ile tarımsal sulamada kullanılır.",
+                "options": [
+                  { "id": "gl1", "text": "Beyşehir Gölü", "isCorrect": true },
+                  { "id": "gl2", "text": "Van Gölü", "isCorrect": false },
+                  { "id": "gl3", "text": "Tuz Gölü", "isCorrect": false },
+                  { "id": "gl4", "text": "Eğirdir Gölü", "isCorrect": false }
+                ]
+              },
+              {
+                "id": "kpss-q-cg4",
+                "type": "true_false",
+                "prompt": "Türkiye'de dağların doğu-batı uzanması iklimi etkiler mi?",
+                "statement": "Türkiye'de dağların doğu-batı yönünde uzanması, Akdeniz ve Karadeniz kıyılarında denizel etkinin iç kesimlere sokulmasını engeller.",
+                "correctAnswer": true,
+                "explanation": "Doğrudur! Bu nedenle iç kesimlerde karasal iklim egemen olurken kıyılarda ılıman iklim sıkışıp kalır."
+              }
+            ]
+          },
+          {
+            "id": "kpss-u4-l2",
+            "unitId": "kpss-u4",
+            "title": "Türkiye'nin İklimi, Rüzgarları & Bitki Örtüsü",
+            "description": "KAYIP SAKAL yerel rüzgarları, mikroklima alanları ve toprak çeşitleri.",
+            "xpReward": 30,
+            "gemReward": 8,
+            "type": "lesson",
+            "summaryNotes": [
+              "KAYIP SAKAL: Karayel (KB), Yıldız (K), Poyraz (KD) ➔ Soğuk;",
+              "Samyeli/Keşişleme (GD), Kıble (G), Lodos (GB) ➔ Sıcak yerel rüzgarlar.",
+              "Föhn Rüzgarı: Dağ yamacından inerken her 100 metrede sıcaklığı 1°C artırır (Rize'de turunçgil, Malatya'da kayısı).",
+              "Çernezyom (Kara Toprak): Dünyanın en verimli yerli toprağıdır (Erzurum-Kars)."
+            ],
+            "questions": [
+              {
+                "id": "kpss-q-ik1",
+                "type": "multiple_choice",
+                "prompt": "Türkiye'de kış mevsiminde güneybatı yönünden esen, sıcak ve nemli karakterde olup soba zehirlenmelerine neden olabilen rüzgar hangisidir?",
+                "difficulty": "kolay",
+                "explanation": "Lodos güneybatıdan eser, kışın kar erimelerine ve baca gazı geri tepmesine neden olabilir.",
+                "options": [
+                  { "id": "ik1_a", "text": "Lodos", "isCorrect": true },
+                  { "id": "ik1_b", "text": "Poyraz", "isCorrect": false },
+                  { "id": "ik1_c", "text": "Karayel", "isCorrect": false },
+                  { "id": "ik1_d", "text": "Samyeli", "isCorrect": false }
+                ]
+              },
+              {
+                "id": "kpss-q-ik2",
+                "type": "matching",
+                "prompt": "Toprak türlerini görüldükleri temel bölgelerle eşleştirin:",
+                "difficulty": "orta",
+                "explanation": "Terra Rossa Akdeniz kalkerinde, Kahverengi Orman Karadeniz'de, Çernezyom Erzurum-Kars'tadır.",
+                "pairs": [
+                  { "id": "tp1", "left": "Terra Rossa (Kırmızı Akdeniz Toprağı)", "right": "Akdeniz Bölgesi (Kalker üzeri)" },
+                  { "id": "tp2", "left": "Çernezyom (Kara Toprak)", "right": "Erzurum - Kars Platosu" },
+                  { "id": "tp3", "left": "Kahverengi Orman Toprağı", "right": "Karadeniz Dağları" }
+                ]
+              },
+              {
+                "id": "kpss-q-ik3",
+                "type": "multiple_choice",
+                "prompt": "Akdeniz iklim bölgesinde maki bitki örtüsünün tahrip edildiği alanlarda oluşan kısa boylu dikenli çalı topluluğuna ne ad verilir?",
+                "difficulty": "orta",
+                "explanation": "Maki tahribiyle Garig (Frigana), Karadeniz orman tahribiyle Psödomaki, İç Anadolu bozkır tahribiyle Antropojen Bozkır oluşur.",
+                "options": [
+                  { "id": "gr1", "text": "Garig", "isCorrect": true },
+                  { "id": "gr2", "text": "Psödomaki", "isCorrect": false },
+                  { "id": "gr3", "text": "Bozkır", "isCorrect": false },
+                  { "id": "gr4", "text": "Tundra", "isCorrect": false }
+                ]
+              },
+              {
+                "id": "kpss-q-ik4",
+                "type": "true_false",
+                "prompt": "Rize ve çevresinde turunçgil yetişmesi mikroklima örneği midir?",
+                "statement": "Rize'de dağlardan inen Föhn rüzgarlarının kışın havayı ısıtması sayesinde turunçgil ve çay yetiştirilebilmesi bir mikroklima örneğidir.",
+                "correctAnswer": true,
+                "explanation": "Doğrudur! Doğu Karadeniz Dağları'nın oluşturduğu Föhn etkisi kış aylarında ılıman bir mikroklima alanı meydana getirir."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "kpss-u5",
+        "number": 5,
+        "title": "KPSS Türkçe: Sözel Mantık & Yazım Kuralları",
+        "description": "Sıralama ve grup tabloları kurma taktikleri, 2026 TDK güncel yazım kılavuzu",
+        "color": "#ff9600",
+        "lessons": [
+          {
+            "id": "kpss-u5-l1",
+            "unitId": "kpss-u5",
+            "title": "Sözel Mantık Tablo Kurma Stratejisi",
+            "description": "Sabit parametreleri belirleme, bloklama ve olasılık dallandırma.",
+            "xpReward": 25,
+            "gemReward": 6,
+            "type": "lesson",
+            "summaryNotes": [
+              "Sözel mantık altın kuralı: Sabit olanları (günler, katlar, sıralar) tablo başlığı yap!",
+              "Değişken kişi veya nesneleri tablo içine olasılıklarla yerleştir.",
+              "'A, B'den hemen öncedir' ➔ [A][B] şeklinde bitişik bloktur.",
+              "'Kesinlikle doğrudur / yanlıştır' sorularında ihtimalli durumlar değil, tek net sonuç aranır."
+            ],
+            "questions": [
+              {
+                "id": "kpss-q-sm1",
+                "type": "multiple_choice",
+                "prompt": "Sözel mantık sorularını çözerken tablo kurarken İLK adım olarak hangisi yapılmalıdır?",
+                "difficulty": "kolay",
+                "explanation": "Soru metnindeki en değişmez sabit parametre (örneğin haftanın günleri: Pazartesi-Cuma) belirlenip tablonun sütunları oluşturulur.",
+                "options": [
+                  { "id": "sm1_a", "text": "Sabit parametreyi (günler, sıra, katlar) tablonun iskeleti yapmak", "isCorrect": true },
+                  { "id": "sm1_b", "text": "Kişileri rastgele kutulara yazmak", "isCorrect": false },
+                  { "id": "sm1_c", "text": "Doğrudan şıklardan eleme yapmaya çalışmak", "isCorrect": false },
+                  { "id": "sm1_d", "text": "Tüm olasılıkları tek tek ezberlemek", "isCorrect": false }
+                ]
+              },
+              {
+                "id": "kpss-q-sm2",
+                "type": "matching",
+                "prompt": "Sözel mantık ifadelerini sembolik blok gösterimleriyle eşleştirin:",
+                "difficulty": "orta",
+                "explanation": "Hemen önceki blok bitişik [K][L], aralarında 1 kişi olan [K][ _ ][L] olarak modellenir.",
+                "pairs": [
+                  { "id": "smp1", "left": "K, L'den hemen önceki sıradadır", "right": "[K][L] bitişik blok" },
+                  { "id": "smp2", "left": "K ve L arasında yalnızca 1 kişi vardır", "right": "[K] [ _ ] [L] aralı blok" },
+                  { "id": "smp3", "left": "K ve L aynı gün nöbet tutmaktadır", "right": "Aynı sütun içine yazma" }
+                ]
+              },
+              {
+                "id": "kpss-q-sm3",
+                "type": "multiple_choice",
+                "prompt": "Bir sözel mantık sorusunda 'X'in Cuma günü geldiği kesinlikle biliniyorsa' bu durum tabloya nasıl yansıtılır?",
+                "difficulty": "kolay",
+                "explanation": "Cuma sütununa X doğrudan kalıcı olarak yazılır ve diğer olasılıklarda X'in yeri değiştirilmez.",
+                "options": [
+                  { "id": "fx1", "text": "Cuma hücresine X doğrudan sabitlenir", "isCorrect": true },
+                  { "id": "fx2", "text": "X tüm günlere soru işaretiyle konur", "isCorrect": false },
+                  { "id": "fx3", "text": "X tablodan tamamen çıkarılır", "isCorrect": false },
+                  { "id": "fx4", "text": "Soru iptal edilir", "isCorrect": false }
+                ]
+              },
+              {
+                "id": "kpss-q-sm4",
+                "type": "true_false",
+                "prompt": "Sözel mantıkta 'kesinlikle yanlıştır' sorusu ihtimalli durumu mu hedefler?",
+                "statement": "Sözel mantıkta 'kesinlikle yanlıştır' sorularının doğru yanıtı hiçbir ihtimalde gerçekleşmesi mümkün olmayan, kurallarla çelişen şıktır.",
+                "correctAnswer": true,
+                "explanation": "Doğrudur! Olabilir durumlar elenir; kurallara aykırı imkansız seçenek aranır."
+              }
+            ]
+          },
+          {
+            "id": "kpss-u5-l2",
+            "unitId": "kpss-u5",
+            "title": "2026 TDK Güncel Yazım ve Noktalama Kuralları",
+            "description": "Büyük harflerin kullanımı, birleşik sözcükler, de/da ve ki bağlaçları.",
+            "xpReward": 30,
+            "gemReward": 8,
+            "type": "lesson",
+            "summaryNotes": [
+              "Kurum, kuruluş, kurul ve iş yeri adlarına gelen ekler KESME İŞARETİYLE AYRILMAZ!",
+              "Doğru yazımlar: 'Unvan' (Ünvan yanlış), 'Dinozor' (Dinazor yanlış), 'Karnabahar' (Karnıbahar yanlış).",
+              "Bağlaç olan 'de/da' ayrı yazılır ve asla 'te/ta' biçiminde sertleşmez.",
+              "SOMBAHÇEMİ kalıbındaki 'ki'ler kalıplaşmış bitişik yazılır: Sanki, Oysaki, Mademki, Belki, Halbuki, Çünkü, Meğerki, İllaki."
+            ],
+            "questions": [
+              {
+                "id": "kpss-q-yz1",
+                "type": "multiple_choice",
+                "prompt": "Aşağıdaki kelimelerden hangisinin yazımı TDK'nin güncel kılavuzuna göre DOĞRUDUR?",
+                "difficulty": "orta",
+                "hint": "Unvan kelimesi 'u' harfi ile başlar.",
+                "explanation": "TDK kılavuzuna göre 'Unvan' doğrudur ('Ünvan' yanlıştır).",
+                "options": [
+                  { "id": "yz1_a", "text": "Unvan", "isCorrect": true },
+                  { "id": "yz1_b", "text": "Ünvan", "isCorrect": false },
+                  { "id": "yz1_c", "text": "Dinazor", "isCorrect": false },
+                  { "id": "yz1_d", "text": "Karnıbahar", "isCorrect": false }
+                ]
+              },
+              {
+                "id": "kpss-q-yz2",
+                "type": "matching",
+                "prompt": "Kural ve doğru örnek eşleştirmesini yapınız:",
+                "difficulty": "orta",
+                "explanation": "Kurum ekleri ayrılmaz, SOMBAHÇEMİ bitişik ki, durum eki de/da bitişiktir.",
+                "pairs": [
+                  { "id": "yp1", "left": "Kurum adlarına gelen ekler", "right": "Türk Dil Kurumuna (Ayrılmaz)" },
+                  { "id": "yp2", "left": "Kalıplaşmış 'ki' bağlacı", "right": "Mademki / Oysaki (Bitişik)" },
+                  { "id": "yp3", "left": "Bulunma durum eki (-de/-da)", "right": "Evde / Okulda (Bitişik)" }
+                ]
+              },
+              {
+                "id": "kpss-q-yz3",
+                "type": "multiple_choice",
+                "prompt": "Aşağıdaki cümlelerin hangisinde kesme işaretinin ( ' ) kullanımıyla ilgili bir YANLIŞLIK yapılmıştır?",
+                "difficulty": "orta",
+                "explanation": "Kurum, kuruluş ve kurul adlarına gelen ekler kesmeyle ayrılmaz. 'Türkiye Büyük Millet Meclisi'ne' yazımı yanlıştır; 'Türkiye Büyük Millet Meclisine' olmalıdır.",
+                "options": [
+                  { "id": "ks1", "text": "Türkiye Büyük Millet Meclisi'ne yeni bir yasa teklifi sunuldu.", "isCorrect": true },
+                  { "id": "ks2", "text": "Ahmet Bey'in konuşması herkesi duygulandırdı.", "isCorrect": false },
+                  { "id": "ks3", "text": "1923'te Cumhuriyet ilan edildi.", "isCorrect": false },
+                  { "id": "ks4", "text": "TDK'nin yeni sözlüğü yayımlandı.", "isCorrect": false }
+                ]
+              },
+              {
+                "id": "kpss-q-yz4",
+                "type": "true_false",
+                "prompt": "Özel ada dahil olmayan gazete, dergi ve tablo sözcükleri büyük harfle başlar mı?",
+                "statement": "Özel ada dahil olmayan gazete, dergi ve tablo sözleri küçük harfle başlar (Milliyet gazetesi, Varlık dergisi, Kaplumbağa Terbiyecisi tablosu).",
+                "correctAnswer": true,
+                "explanation": "Doğrudur! Yalnızca 'Resmî Gazete' gazetenin kendi adına dahil olduğu için büyük harfle yazılır."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "kpss-u6",
+        "number": 6,
+        "title": "KPSS Vatandaşlık & 2026 Güncel Bilgiler",
+        "description": "1982 Anayasası organları, TBMM, Cumhurbaşkanlığı, AİHM ve uluslararası örgütler",
+        "color": "#ff9600",
+        "lessons": [
+          {
+            "id": "kpss-u6-l1",
+            "unitId": "kpss-u6",
+            "title": "1982 Anayasası: Yasama & Yürütme",
+            "description": "600 milletvekili, kanun yapım süreci, Cumhurbaşkanlığı Kararnameleri.",
+            "xpReward": 25,
+            "gemReward": 6,
+            "type": "lesson",
+            "summaryNotes": [
+              "TBMM 600 milletvekilinden oluşur. Milletvekili seçilme yaşı 18'dir.",
+              "Milletvekili seçimleri 5 yılda bir Cumhurbaşkanı seçimiyle birlikte aynı gün yapılır.",
+              "Anayasa Mahkemesi 15 üyeden oluşur; üyelerin görev süresi 12 yıldır.",
+              "Cumhurbaşkanı en fazla 2 kez (5'er yıllık) seçilebilir (Meclisin erken seçim kararı hariç)."
+            ],
+            "questions": [
+              {
+                "id": "kpss-q-vt1",
+                "type": "multiple_choice",
+                "prompt": "1982 Anayasası'na göre Türkiye Büyük Millet Meclisi (TBMM) kaç milletvekilinden oluşur?",
+                "difficulty": "kolay",
+                "explanation": "2017 anayasa değişikliği ile TBMM milletvekili sayısı 550'den 600'e çıkarılmıştır.",
+                "options": [
+                  { "id": "vt1_a", "text": "600 milletvekili", "isCorrect": true },
+                  { "id": "vt1_b", "text": "550 milletvekili", "isCorrect": false },
+                  { "id": "vt1_c", "text": "450 milletvekili", "isCorrect": false },
+                  { "id": "vt1_d", "text": "650 milletvekili", "isCorrect": false }
+                ]
+              },
+              {
+                "id": "kpss-q-vt2",
+                "type": "matching",
+                "prompt": "Anayasal kurumları üye sayılarıyla doğru eşleştiriniz:",
+                "difficulty": "orta",
+                "explanation": "TBMM 600 üye, AYM 15 üye, HSK 13 üyeden oluşur.",
+                "pairs": [
+                  { "id": "vp1", "left": "TBMM", "right": "600 milletvekili" },
+                  { "id": "vp2", "left": "Anayasa Mahkemesi (AYM)", "right": "15 üye (12 yıl görev)" },
+                  { "id": "vp3", "left": "Hakimler ve Savcılar Kurulu (HSK)", "right": "13 üye" }
+                ]
+              },
+              {
+                "id": "kpss-q-vt3",
+                "type": "multiple_choice",
+                "prompt": "Anayasa Mahkemesi üyeleri kaç yıl süreyle görev yapmak üzere seçilirler?",
+                "difficulty": "orta",
+                "explanation": "AYM üyeleri 12 yıl için seçilirler ve bir kimse iki defa Anayasa Mahkemesi üyesi seçilemez.",
+                "options": [
+                  { "id": "aym1", "text": "12 yıl", "isCorrect": true },
+                  { "id": "aym2", "text": "5 yıl", "isCorrect": false },
+                  { "id": "aym3", "text": "7 yıl", "isCorrect": false },
+                  { "id": "aym4", "text": "Ömür boyu", "isCorrect": false }
+                ]
+              },
+              {
+                "id": "kpss-q-vt4",
+                "type": "true_false",
+                "prompt": "Milletvekili seçilme yaşı 18 midir?",
+                "statement": "2017 Anayasa değişikliği sonrasında Türkiye'de milletvekili seçilme yaşı 18 olarak uygulanmaktadır.",
+                "correctAnswer": true,
+                "explanation": "Doğrudur! 18 yaşını dolduran her Türk vatandaşı gerekli şartları taşıması halinde milletvekili seçilebilir."
+              }
+            ]
+          },
+          {
+            "id": "kpss-u6-l2",
+            "unitId": "kpss-u6",
+            "title": "Uluslararası Örgütler & 2026 Güncel Olaylar",
+            "description": "BM, NATO, Türk Devletleri Teşkilatı, UNESCO mirasları ve Türkiye'nin ilk astronotu.",
+            "xpReward": 30,
+            "gemReward": 8,
+            "type": "lesson",
+            "summaryNotes": [
+              "BM Güvenlik Konseyi daimi veto hakkına sahip 5 ülke (FİRÇA): Fransa, İngiltere, Rusya, Çin, ABD.",
+              "NATO Genel Merkezi: Brüksel (Belçika). Türkiye 1952 yılında katılmıştır.",
+              "Türkiye'nin ilk astronotu: Alper Gezeravcı (Ocak 2024, Ax-3 Misyonu). İkinci astronot: Tuva Cihangir Atasever.",
+              "UNESCO 20. Dünya Mirası: Ankara Gordion Antik Kenti (2023)."
+            ],
+            "questions": [
+              {
+                "id": "kpss-q-gn1",
+                "type": "multiple_choice",
+                "prompt": "Birleşmiş Milletler (BM) Güvenlik Konseyi'nde mutlak VETO hakkına sahip 5 daimi ülke arasında hangisi YER ALMAZ?",
+                "difficulty": "kolay",
+                "hint": "FİRÇA kısaltması: Fransa, İngiltere, Rusya, Çin, ABD.",
+                "explanation": "Almanya BM Güvenlik Konseyi daimi veto üyesi değildir. Daimi üyeler: ABD, Rusya, Çin, İngiltere ve Fransa'dır.",
+                "options": [
+                  { "id": "gn1_a", "text": "Almanya", "isCorrect": true },
+                  { "id": "gn1_b", "text": "Fransa", "isCorrect": false },
+                  { "id": "gn1_c", "text": "Çin", "isCorrect": false },
+                  { "id": "gn1_d", "text": "Rusya", "isCorrect": false }
+                ]
+              },
+              {
+                "id": "kpss-q-gn2",
+                "type": "matching",
+                "prompt": "Uluslararası örgütleri genel merkez şehirleriyle eşleştiriniz:",
+                "difficulty": "orta",
+                "explanation": "NATO Brüksel'de, UNESCO Paris'te, BM New York'ta, WHO Cenevre'dedir.",
+                "pairs": [
+                  { "id": "org1", "left": "NATO", "right": "Brüksel (Belçika)" },
+                  { "id": "org2", "left": "UNESCO", "right": "Paris (Fransa)" },
+                  { "id": "org3", "left": "Birleşmiş Milletler (BM)", "right": "New York (ABD)" }
+                ]
+              },
+              {
+                "id": "kpss-q-gn3",
+                "type": "multiple_choice",
+                "prompt": "Ocak 2024'te Uluslararası Uzay İstasyonu'na (ISS) giderek Türkiye'nin İLK astronotu olan bilim insanı kimdir?",
+                "difficulty": "kolay",
+                "explanation": "Alper Gezeravcı, Ax-3 misyonu ile uzaya çıkan ilk Türk astronot olmuştur.",
+                "options": [
+                  { "id": "ast1", "text": "Alper Gezeravcı", "isCorrect": true },
+                  { "id": "ast2", "text": "Tuva Cihangir Atasever", "isCorrect": false },
+                  { "id": "ast3", "text": "Umut Yıldız", "isCorrect": false },
+                  { "id": "ast4", "text": "Aziz Sancar", "isCorrect": false }
+                ]
+              },
+              {
+                "id": "kpss-q-gn4",
+                "type": "true_false",
+                "prompt": "AİHM Avrupa Birliği'nin bir organı mıdır?",
+                "statement": "Avrupa İnsan Hakları Mahkemesi (AİHM), Avrupa Birliği'nin değil, 1949'da kurulan ve Türkiye'nin de kurucu üyeleri arasında olduğu Avrupa Konseyi'nin yargı organıdır.",
+                "correctAnswer": true,
+                "explanation": "Doğrudur! AİHM Avrupa Konseyi'ne bağlıdır; Avrupa Birliği Adalet Divanı ile karıştırılmamalıdır."
+              }
+            ]
+          }
+        ]
       }
     ]
   },
@@ -2453,6 +3269,415 @@ export const COURSES: Course[] = [
             ]
           }
         ]
+      },
+{
+        "id": "lgs-u3",
+        "number": 3,
+        "title": "LGS Türkçe: Fiilimsiler & Cümlenin Ögeleri",
+        "description": "İsim-fiil, sıfat-fiil, zarf-fiil ekleri ve cümlenin temel/yardımcı ögeleri",
+        "color": "#ff4b4b",
+        "lessons": [
+          {
+            "id": "lgs-u3-l1",
+            "unitId": "lgs-u3",
+            "title": "Fiilimsiler (Eylemsiler)",
+            "description": "İsim-fiil (Ma-yış-mak), Sıfat-fiil (An-ası-mez-ar-dik-ecek-miş) ve Zarf-fiiller.",
+            "xpReward": 25,
+            "gemReward": 6,
+            "type": "lesson",
+            "summaryNotes": [
+              "İsim-fiil ekleri: -ma, -ış, -mak (Ma-yış-mak)",
+              "Sıfat-fiil ekleri: -an, -ası, -mez, -ar, -dik, -ecek, -miş",
+              "Zarf-fiil ekleri: -ken, -alı, -asya, -esiye, -dıkça, -ince, -ip, -erek, -meden...",
+              "Kalıcı isimler (dondurma, ekmek, çakmak, dolma) fiilimsi özelliğini kaybeder!"
+            ],
+            "questions": [
+              {
+                "id": "lgs-q-f1",
+                "type": "multiple_choice",
+                "prompt": "Aşağıdaki cümlelerin hangisinde üç fiilimsi türü de (isim-fiil, sıfat-fiil, zarf-fiil) bir arada kullanılmıştır?",
+                "difficulty": "zor",
+                "hint": "Cümledeki kelimelerin eklerini tek tek inceleyin: -an (sıfat), -ip (zarf), -mak (isim).",
+                "explanation": "'Güneş doğarken (zarf-fiil) yola çıkan (sıfat-fiil) yolcular, dinlenmek (isim-fiil) için mola verdi.' cümlesinde her üç tür de vardır.",
+                "options": [
+                  { "id": "f1_a", "text": "Güneş doğarken yola çıkan yolcular, dinlenmek için mola verdi.", "isCorrect": true },
+                  { "id": "f1_b", "text": "Kitap okumak insanın ufkunu genişleten en güzel alışkanlıktır.", "isCorrect": false },
+                  { "id": "f1_c", "text": "Koşarak gelen çocuk birdenbire yere düştü.", "isCorrect": false },
+                  { "id": "f1_d", "text": "Biten işleri teslim edip hemen evine döndü.", "isCorrect": false }
+                ]
+              },
+              {
+                "id": "lgs-q-f2",
+                "type": "matching",
+                "prompt": "Altı çizili fiilimsileri türleriyle doğru eşleştirin:",
+                "difficulty": "orta",
+                "explanation": "-an sıfat-fiil, -erek zarf-fiil, -ma isim-fiil ekidir.",
+                "pairs": [
+                  { "id": "fp1", "left": "Gülümseyen çocuk", "right": "Sıfat-Fiil (Ortaç)" },
+                  { "id": "fp2", "left": "Düşünerek konuşmak", "right": "Zarf-Fiil (Ulaç)" },
+                  { "id": "fp3", "left": "Yazma etkinliği", "right": "İsim-Fiil (Mastar)" }
+                ]
+              },
+              {
+                "id": "lgs-q-f3",
+                "type": "multiple_choice",
+                "prompt": "Aşağıdaki altı çizili sözcüklerden hangisi fiilimsi ekini aldığı halde 'kalıcı isim' olmuştur?",
+                "difficulty": "orta",
+                "explanation": "'Dolma' bir yemek adı olarak kalıplaşmış, fiil hareket anlamını yitirmiştir.",
+                "options": [
+                  { "id": "kl1", "text": "Annemin yaptığı biber dolması çok lezzetliydi.", "isCorrect": true },
+                  { "id": "kl2", "text": "Salondaki kovayı suyla doldurmak zaman aldı.", "isCorrect": false },
+                  { "id": "kl3", "text": "Gelen misafirleri kapıda karşıladık.", "isCorrect": false },
+                  { "id": "kl4", "text": "Soru çözerek konuyu pekiştirdi.", "isCorrect": false }
+                ]
+              },
+              {
+                "id": "lgs-q-f4",
+                "type": "true_false",
+                "prompt": "Fiilimsilerin özellikleri hakkında verilen kural doğru mu?",
+                "statement": "Fiilimsiler fiillere gelen özel eklerle türetilir; olumsuzluk eki (-me/-ma) alabilir ancak kip ve şahıs eki alamazlar.",
+                "correctAnswer": true,
+                "explanation": "Doğrudur! Fiilimsiler eylem özelliğini korur ve olumsuzu yapılabilir, fakat çekimli fiil gibi kip eki alamaz."
+              }
+            ]
+          },
+          {
+            "id": "lgs-u3-l2",
+            "unitId": "lgs-u3",
+            "title": "Cümlenin Ögeleri & Vurgu",
+            "description": "Özne, Yüklem, Nesne (Belirtili/Belirtisiz), Yer Tamlayıcısı ve Zarf Tümleci.",
+            "xpReward": 30,
+            "gemReward": 8,
+            "type": "lesson",
+            "summaryNotes": [
+              "Öge bulma sırası: 1. Yüklem, 2. Özne (Kim? Ne?), 3. Nesne ve Tümleçler",
+              "Belirtili Nesne: Neyi? Kimi? sorularına yanıt verir (-i hal eki alır).",
+              "Yer Tamlayıcısı (Dolaylı Tümleç): -e, -de, -den hal eklerini taşır (Kime? Nerede? Nereden?).",
+              "Fiil cümlelerinde vurgu YÜKLEMDEN HEMEN ÖNCEKİ ögededir."
+            ],
+            "questions": [
+              {
+                "id": "lgs-q-og1",
+                "type": "multiple_choice",
+                "prompt": "'Genç yazar, kütüphanede bulduğu eski el yazmasını dikkatle inceliyordu.' cümlesinin öge dizilişi hangisidir?",
+                "difficulty": "orta",
+                "hint": "İnceliyordu (Yüklem), Kim? Genç yazar (Özne), Neyi? Kütüphanede bulduğu eski el yazmasını (Belirtili nesne), Nasıl? Dikkatle (Zarf tümleci).",
+                "explanation": "Özne - Belirtili Nesne - Zarf Tümleci - Yüklem dizilişi mevcuttur.",
+                "options": [
+                  { "id": "og1_a", "text": "Özne - Belirtili Nesne - Zarf Tümleci - Yüklem", "isCorrect": true },
+                  { "id": "og1_b", "text": "Özne - Yer Tamlayıcısı - Nesne - Yüklem", "isCorrect": false },
+                  { "id": "og1_c", "text": "Zarf Tümleci - Özne - Nesne - Yüklem", "isCorrect": false },
+                  { "id": "og1_d", "text": "Özne - Zarf Tümleci - Belirtisiz Nesne - Yüklem", "isCorrect": false }
+                ]
+              },
+              {
+                "id": "lgs-q-og2",
+                "type": "matching",
+                "prompt": "Ögeleri bulduran soruları doğru ögelerle eşleştirin:",
+                "difficulty": "kolay",
+                "explanation": "Kimi/Neyi belirtili nesneyi, Nerede/Nereden yer tamlayıcısını, Nasıl/Ne zaman zarf tümlecini buldurur.",
+                "pairs": [
+                  { "id": "op1", "left": "Kimi? / Neyi?", "right": "Belirtili Nesne" },
+                  { "id": "op2", "left": "Nereye? / Nerede? / Nereden?", "right": "Yer Tamlayıcısı (Dolaylı Tümleç)" },
+                  { "id": "op3", "left": "Nasıl? / Ne zaman? / Neden?", "right": "Zarf Tümleci" }
+                ]
+              },
+              {
+                "id": "lgs-q-og3",
+                "type": "multiple_choice",
+                "prompt": "'Ahmet bu akşam bize gelecek.' cümlesinde vurgulanan öge hangisidir?",
+                "difficulty": "orta",
+                "hint": "Fiil cümlelerinde vurgu yüklemden bir önceki ögededir.",
+                "explanation": "Yüklem 'gelecek'. Ondan hemen önceki öge 'bize' (Yer tamlayıcısı) olduğu için vurgu Yer Tamlayıcısı üzerindedir.",
+                "options": [
+                  { "id": "vr1", "text": "Yer Tamlayıcısı (bize)", "isCorrect": true },
+                  { "id": "vr2", "text": "Özne (Ahmet)", "isCorrect": false },
+                  { "id": "vr3", "text": "Zarf Tümleci (bu akşam)", "isCorrect": false },
+                  { "id": "vr4", "text": "Yüklem (gelecek)", "isCorrect": false }
+                ]
+              },
+              {
+                "id": "lgs-q-og4",
+                "type": "true_false",
+                "prompt": "Cümlede yükleme sorulan ilk 'Ne?' sorusu nesneyi mi verir?",
+                "statement": "Yükleme sorulan İLK 'Ne?' sorusu ÖZNEYİ buldurur; özne bulunduktan sonraki 'Ne?' sorusu Belirtisiz Nesneyi verir.",
+                "correctAnswer": true,
+                "explanation": "Kesinlikle doğru! Sıralama Ö-Y-N kuralıdır: Önce özne, sonra nesne bulunur."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "lgs-u4",
+        "number": 4,
+        "title": "LGS İnkılap Tarihi: Milli Mücadele & Cepheler",
+        "description": "Mondros, Kongreler, TBMM'nin açılışı ve Kurtuluş Savaşı cepheleri",
+        "color": "#ff4b4b",
+        "lessons": [
+          {
+            "id": "lgs-u4-l1",
+            "unitId": "lgs-u4",
+            "title": "Milli Mücadele Hazırlık Dönemi",
+            "description": "Amasya Genelgesi, Erzurum ve Sivas Kongreleri kararları.",
+            "xpReward": 25,
+            "gemReward": 6,
+            "type": "lesson",
+            "summaryNotes": [
+              "Amasya Genelgesi: Kurtuluş Savaşı'nın gerekçesi, amacı ve yöntemi ilk kez belirtildi.",
+              "Erzurum Kongresi: Toplanış bölgesel, kararlar ulusal. 'Manda ve himaye kabul edilemez.'",
+              "Sivas Kongresi: Tüm cemiyetler 'Anadolu ve Rumeli Müdafaa-i Hukuk' adı altında birleşti."
+            ],
+            "questions": [
+              {
+                "id": "lgs-q-in1",
+                "type": "multiple_choice",
+                "prompt": "'Milletin bağımsızlığını yine milletin azim ve kararı kurtaracaktır.' tarihi kararı ilk kez nerede alınmıştır?",
+                "difficulty": "kolay",
+                "hint": "Milli Mücadelenin yöntem ve amacının ilan edildiği genelgedir.",
+                "explanation": "Amasya Genelgesi'nde bu madde ile ilk kez milli egemenlik ilkesine vurgu yapılmış ve yöntemi çizilmiştir.",
+                "options": [
+                  { "id": "in1_a", "text": "Amasya Genelgesi", "isCorrect": true },
+                  { "id": "in1_b", "text": "Havza Genelgesi", "isCorrect": false },
+                  { "id": "in1_c", "text": "Erzurum Kongresi", "isCorrect": false },
+                  { "id": "in1_d", "text": "Amasya Görüşmeleri", "isCorrect": false }
+                ]
+              },
+              {
+                "id": "lgs-q-in2",
+                "type": "matching",
+                "prompt": "Tarihi olayları en önemli özellikleriyle eşleştirin:",
+                "difficulty": "orta",
+                "explanation": "Erzurum'da ilk kez manda reddedildi, Sivas'ta tüm cemiyetler birleşti, Amasya'da amaç/yöntem belirlendi.",
+                "pairs": [
+                  { "id": "ip1", "left": "Amasya Genelgesi", "right": "Kurtuluş Savaşının amacı ve yöntemi ilan edildi" },
+                  { "id": "ip2", "left": "Erzurum Kongresi", "right": "Manda ve himaye ilk kez açıkça reddedildi" },
+                  { "id": "ip3", "left": "Sivas Kongresi", "right": "Milli cemiyetler tek çatı altında birleştirildi" }
+                ]
+              },
+              {
+                "id": "lgs-q-in3",
+                "type": "multiple_choice",
+                "prompt": "İstanbul'un İtilaf donanmaları tarafından işgal edildiği gün Mustafa Kemal Paşa'nın söylediği tarihi söz nedir?",
+                "difficulty": "kolay",
+                "explanation": "Mustafa Kemal, 13 Kasım 1918'de İstanbul Boğazı'ndaki İtilaf donanmasını görünce yaveri Cevat Abbas'a 'Geldikleri gibi giderler!' demiştir.",
+                "options": [
+                  { "id": "sz1", "text": "Geldikleri gibi giderler!", "isCorrect": true },
+                  { "id": "sz2", "text": "Ya istiklal ya ölüm!", "isCorrect": false },
+                  { "id": "sz3", "text": "Ordular! İlk hedefiniz Akdeniz'dir, ileri!", "isCorrect": false },
+                  { "id": "sz4", "text": "Hattı müdafaa yoktur, sathı müdafaa vardır.", "isCorrect": false }
+                ]
+              },
+              {
+                "id": "lgs-q-in4",
+                "type": "true_false",
+                "prompt": "Misak-ı Milli kararları son Osmanlı Mebusan Meclisi'nde kabul edilmiş midir?",
+                "statement": "Misak-ı Milli (Milli Ant) kararları, 28 Ocak 1920'de Son Osmanlı Mebusan Meclisi tarafından oy birliği ile kabul edilmiştir.",
+                "correctAnswer": true,
+                "explanation": "Doğrudur! Bu kararlar üzerine İtilaf Devletleri 16 Mart 1920'de İstanbul'u resmen işgal etmiştir."
+              }
+            ]
+          },
+          {
+            "id": "lgs-u4-l2",
+            "unitId": "lgs-u4",
+            "title": "Kurtuluş Savaşı Cepheleri & Zaferler",
+            "description": "Doğu, Güney ve Batı Cepheleri; Gümrü, Mudanya ve Lozan Barış Antlaşmaları.",
+            "xpReward": 30,
+            "gemReward": 8,
+            "type": "lesson",
+            "summaryNotes": [
+              "Doğu Cephesi: Kazım Karabekir (15. Kolordu) ➔ Gümrü Antlaşması ile kapandı.",
+              "Güney Cephesi: Kuva-yı Milliye halk direnişi (Maraş, Antep, Urfa) ➔ 1921 Ankara Antlaşması ile kapandı.",
+              "Batı Cephesi: Düzenli Ordu (İsmet Paşa & Mustafa Kemal Paşa) ➔ Mudanya Ateşkesi."
+            ],
+            "questions": [
+              {
+                "id": "lgs-q-cp1",
+                "type": "multiple_choice",
+                "prompt": "TBMM Hükümeti'nin kurduğu düzenli ordunun Batı Cephesi'nde kazandığı İLK askeri zafer hangisidir?",
+                "difficulty": "kolay",
+                "explanation": "I. İnönü Muharebesi (Ocak 1921), düzenli ordunun Batı Cephesi'ndeki ilk askeri zaferidir.",
+                "options": [
+                  { "id": "cp1_a", "text": "I. İnönü Muharebesi", "isCorrect": true },
+                  { "id": "cp1_b", "text": "II. İnönü Muharebesi", "isCorrect": false },
+                  { "id": "cp1_c", "text": "Sakarya Meydan Muharebesi", "isCorrect": false },
+                  { "id": "cp1_d", "text": "Büyük Taarruz", "isCorrect": false }
+                ]
+              },
+              {
+                "id": "lgs-q-cp2",
+                "type": "matching",
+                "prompt": "Antlaşmaları kapattıkları cephelerle eşleştirin:",
+                "difficulty": "orta",
+                "explanation": "Gümrü Doğu'yu, 1921 Ankara Güney'i, Mudanya ise Batı Cephesi'ndeki silahlı çatışmayı bitirdi.",
+                "pairs": [
+                  { "id": "ap1", "left": "Gümrü Antlaşması", "right": "Doğu Cephesi kapandı" },
+                  { "id": "ap2", "left": "1921 Ankara Antlaşması", "right": "Güney Cephesi kapandı (Fransa çekildi)" },
+                  { "id": "ap3", "left": "Mudanya Ateşkes Antlaşması", "right": "Batı Cephesi silahlı çatışma bitti" }
+                ]
+              },
+              {
+                "id": "lgs-q-cp3",
+                "type": "multiple_choice",
+                "prompt": "'Hattı müdafaa yoktur, sathı müdafaa vardır. O satıh bütün vatandır.' tarihi emri hangi muharebede verilmiştir?",
+                "difficulty": "orta",
+                "explanation": "Mustafa Kemal Paşa bu dünya savaş tarihine geçen taktiği Sakarya Meydan Muharebesi'nde (1921) vermiştir.",
+                "options": [
+                  { "id": "sk1", "text": "Sakarya Meydan Muharebesi", "isCorrect": true },
+                  { "id": "sk2", "text": "Çanakkale Kara Savaşları", "isCorrect": false },
+                  { "id": "sk3", "text": "Başkomutanlık Meydan Muharebesi", "isCorrect": false },
+                  { "id": "sk4", "text": "Eskişehir - Kütahya Muharebeleri", "isCorrect": false }
+                ]
+              },
+              {
+                "id": "lgs-q-cp4",
+                "type": "true_false",
+                "prompt": "Doğu Cephesi'nde TBMM'yi tanıyan ilk devlet Ermenistan mıdır?",
+                "statement": "TBMM'yi ve Misak-ı Milli'yi tanıyan ilk yabancı devlet Gümrü Antlaşması ile Ermenistan olmuştur.",
+                "correctAnswer": true,
+                "explanation": "Doğrudur! 3 Aralık 1920 Gümrü Antlaşması ile TBMM'nin varlığını tanıyan ilk devlet olmuştur."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "lgs-u5",
+        "number": 5,
+        "title": "LGS Fen Bilimleri: Katı ve Sıvı Basıncı",
+        "description": "Katı basıncı formülü, temas yüzeyi, sıvı basıncı (h.d.g) ve Pascal Prensibi",
+        "color": "#ff4b4b",
+        "lessons": [
+          {
+            "id": "lgs-u5-l1",
+            "unitId": "lgs-u5",
+            "title": "Katı Basıncı ve Günlük Hayat",
+            "description": "P = F / S kuralı, basıncı artıran ve azaltan mühendislik uygulamaları.",
+            "xpReward": 25,
+            "gemReward": 6,
+            "type": "lesson",
+            "summaryNotes": [
+              "Katı basıncı: Basınç (P) = Ağırlık / Kuvvet (F) ÷ Temas Yüzey Alanı (S)",
+              "Yüzey alanı küçüldükçe basınç ARTAR (Bıçağın bilenmesi, krampon çivileri).",
+              "Yüzey alanı büyüdükçe basınç AZALIR (Kar ayakkabısı, tır ve tank paletleri).",
+              "Katılar üzerlerine uygulanan kuvveti AYNEN iletirler."
+            ],
+            "questions": [
+              {
+                "id": "lgs-q-bs1",
+                "type": "multiple_choice",
+                "prompt": "Özdeş tuğlalardan oluşan cisimlerden hangisinin zemine uyguladığı katı basıncı en büyüktür?",
+                "difficulty": "kolay",
+                "hint": "Basıncın en büyük olması için yüzey alanının en küçük olması gerekir.",
+                "explanation": "Ağırlık sabitken temas yüzey alanı en küçük olan tuğla zemine en büyük basıncı uygular.",
+                "options": [
+                  { "id": "bs1_a", "text": "Küçük yüzeyi üzerine dik konulan tuğla", "isCorrect": true },
+                  { "id": "bs1_b", "text": "Geniş yüzeyi üzerine yatay konulan tuğla", "isCorrect": false },
+                  { "id": "bs1_c", "text": "Yan yüzeyi üzerine konulan tuğla", "isCorrect": false },
+                  { "id": "bs1_d", "text": "Hepsinde basınç eşittir", "isCorrect": false }
+                ]
+              },
+              {
+                "id": "lgs-q-bs2",
+                "type": "matching",
+                "prompt": "Uygulamaları basınç üzerindeki etkileriyle eşleştirin:",
+                "difficulty": "kolay",
+                "explanation": "Yüzey küçüldükçe basınç artar, yüzey genişledikçe basınç azalır.",
+                "pairs": [
+                  { "id": "bp1", "left": "Bıçakların bilenerek inceltilmesi", "right": "Basıncı artırmak için" },
+                  { "id": "bp2", "left": "Ağır iş makinelerine palet takılması", "right": "Basıncı azaltmak için" },
+                  { "id": "bp3", "left": "Futbol kramponlarının altına diş konması", "right": "Basıncı artırmak için" }
+                ]
+              },
+              {
+                "id": "lgs-q-bs3",
+                "type": "multiple_choice",
+                "prompt": "Ağırlığı 40 N olan bir cismin taban alanı 2 m² ise zemine uyguladığı basınç kaç Pascal'dır (N/m²)?",
+                "difficulty": "orta",
+                "explanation": "P = F / S = 40 N ÷ 2 m² = 20 Pa (Pascal) bulunur.",
+                "options": [
+                  { "id": "pa1", "text": "20 Pa", "isCorrect": true },
+                  { "id": "pa2", "text": "80 Pa", "isCorrect": false },
+                  { "id": "pa3", "text": "40 Pa", "isCorrect": false },
+                  { "id": "pa4", "text": "10 Pa", "isCorrect": false }
+                ]
+              },
+              {
+                "id": "lgs-q-bs4",
+                "type": "true_false",
+                "prompt": "Katılar kuvveti ve basıncı aynı şekilde mi iletir?",
+                "statement": "Katılar üzerlerine uygulanan kuvveti doğrultusunu değiştirmeden aynen iletir ancak basıncı aynen iletmezler.",
+                "correctAnswer": true,
+                "explanation": "Doğrudur! Örneğin çiviye vurulduğunda çekiç kuvveti çivinin ucuna aynen iletir, ama uç çok ince olduğu için uçtaki basınç devasa boyuta ulaşır."
+              }
+            ]
+          },
+          {
+            "id": "lgs-u5-l2",
+            "unitId": "lgs-u5",
+            "title": "Sıvı & Gaz Basıncı (Pascal & Torricelli)",
+            "description": "Sıvı basıncı formülü (P = h.d.g), derinlik, yoğunluk ve hidrolik sistemler.",
+            "xpReward": 30,
+            "gemReward": 8,
+            "type": "lesson",
+            "summaryNotes": [
+              "Sıvı basıncı: Derinlik (h) × Yoğunluk (d) × Yerçekimi ivmesi (g)",
+              "Sıvı basıncı KABIN ŞEKLİNE ve SIVI MİKTARINA bağlı DEĞİLDİR!",
+              "Pascal Prensibi: Sıvılar sıkıştırılamaz, uygulanan basıncı her yöne aynen iletir.",
+              "Açık hava basıncı Torricelli tarafından cıva deneyiyle deniz seviyesinde 76 cmHg ölçülmüştür."
+            ],
+            "questions": [
+              {
+                "id": "lgs-q-sv1",
+                "type": "multiple_choice",
+                "prompt": "İçinde su bulunan bir kabın tabanındaki sıvı basıncı aşağıdakilerden hangisine BAĞLI DEĞİLDİR?",
+                "difficulty": "orta",
+                "hint": "Sıvı basıncı formülü: P = h . d . g'dir.",
+                "explanation": "Sıvı basıncı sıvının derinliğine ve yoğunluğuna bağlıdır; kabın şekline veya içindeki toplam su hacmine bağlı değildir.",
+                "options": [
+                  { "id": "sv1_a", "text": "Kabın şekline ve genişliğine", "isCorrect": true },
+                  { "id": "sv1_b", "text": "Sıvının derinliğine (h)", "isCorrect": false },
+                  { "id": "sv1_c", "text": "Sıvının yoğunluğuna (d)", "isCorrect": false },
+                  { "id": "sv1_d", "text": "Yer çekimi ivmesine (g)", "isCorrect": false }
+                ]
+              },
+              {
+                "id": "lgs-q-sv2",
+                "type": "matching",
+                "prompt": "Basınç yasalarını mucitleri ve deneyleriyle eşleştirin:",
+                "difficulty": "orta",
+                "explanation": "Pascal prensibi hidrolik frenlerde, Torricelli açık hava basıncı ölçümünde kullanılır.",
+                "pairs": [
+                  { "id": "sp1", "left": "Pascal Prensibi", "right": "Sıvıların basıncı aynen iletmesi (Hidrolik fren, berber koltuğu)" },
+                  { "id": "sp2", "left": "Torricelli Deneyi", "right": "Deniz seviyesinde açık hava basıncı (76 cmHg)" },
+                  { "id": "sp3", "left": "U Borusu Manometresi", "right": "Farklı yoğunluktaki sıvıların basınç dengesi" }
+                ]
+              },
+              {
+                "id": "lgs-q-sv3",
+                "type": "multiple_choice",
+                "prompt": "Deniz seviyesinden yüksek dağların zirvesine doğru çıkıldıkça açık hava basıncı nasıl değişir?",
+                "difficulty": "kolay",
+                "explanation": "Yukarı çıkıldıkça üstümüzdeki hava tabakasının kalınlığı ve yoğunluğu azaldığı için açık hava basıncı azalır.",
+                "options": [
+                  { "id": "ah1", "text": "Açık hava basıncı azalır", "isCorrect": true },
+                  { "id": "ah2", "text": "Açık hava basıncı artar", "isCorrect": false },
+                  { "id": "ah3", "text": "Değişmez, 76 cmHg sabit kalır", "isCorrect": false },
+                  { "id": "ah4", "text": "Önce artar sonra sıfır olur", "isCorrect": false }
+                ]
+              },
+              {
+                "id": "lgs-q-sv4",
+                "type": "true_false",
+                "prompt": "Sıvılar sıkıştırılabilir mi?",
+                "statement": "Sıvılar pratik olarak sıkıştırılamaz kabul edilir; bu nedenle üzerlerine uygulanan basıncı her doğrultuda eşit büyüklükte iletirler.",
+                "correctAnswer": true,
+                "explanation": "Doğrudur! Sıvıların sıkıştırılamama özelliği ve basıncı iletmesi Pascal prensibinin temelini oluşturur."
+              }
+            ]
+          }
+        ]
       }
     ]
   },
@@ -2779,6 +4004,412 @@ export const COURSES: Course[] = [
                 "statement": "'In spite of' ve 'Despite' bağlaçlarından sonra cümle değil, bir isim (noun) veya isim fiil (V-ing) gelir.",
                 "correctAnswer": true,
                 "explanation": "Doğrudur! 'Although / Even though' tam cümle alırken, 'In spite of / Despite' isim öbeği alır (Despite the rain)."
+              }
+            ]
+          }
+        ]
+      },
+{
+        "id": "dil-u3",
+        "number": 3,
+        "title": "Past Simple: Geçmiş Zaman & Düzensiz Fiiller",
+        "description": "Did / Didn't soru ve olumsuz kalıpları, en sık kullanılan düzensiz fiiller (went, saw, took)",
+        "color": "#1cb0f6",
+        "lessons": [
+          {
+            "id": "dil-u3-l1",
+            "unitId": "dil-u3",
+            "title": "Geçmiş Zaman & Düzensiz Fiiller (Irregular Verbs)",
+            "description": "Düzenli (-ed) ve düzensiz (go ➔ went, see ➔ saw) fiil ayrımları.",
+            "xpReward": 25,
+            "gemReward": 6,
+            "type": "lesson",
+            "summaryNotes": [
+              "Düzenli fiillerin sonuna -ed eklenir: play ➔ played, watch ➔ watched.",
+              "Düzensiz fiiller kökten değişir: go ➔ went, buy ➔ bought, eat ➔ ate, see ➔ saw.",
+              "Olumsuz cümlelerde: didn't + V1 (fiilin yalın hali) kullanılır: I didn't go.",
+              "Soru cümlelerinde: Did + özne + V1: Did you see him?"
+            ],
+            "questions": [
+              {
+                "id": "dil-q-ps1",
+                "type": "multiple_choice",
+                "prompt": "'I _____ (see) an exciting movie yesterday and I _____ (go) to bed late.' boşluklarına sırasıyla hangileri gelmelidir?",
+                "difficulty": "orta",
+                "explanation": "See fiilinin 2. hali 'saw', go fiilinin 2. hali ise 'went' şeklindedir.",
+                "options": [
+                  { "id": "ps1_a", "text": "saw / went", "isCorrect": true },
+                  { "id": "ps1_b", "text": "seed / goed", "isCorrect": false },
+                  { "id": "ps1_c", "text": "see / went", "isCorrect": false },
+                  { "id": "ps1_d", "text": "saw / gone", "isCorrect": false }
+                ]
+              },
+              {
+                "id": "dil-q-ps2",
+                "type": "matching",
+                "prompt": "Fiillerin 1. hallerini (V1) 2. halleriyle (V2) eşleştiriniz:",
+                "difficulty": "kolay",
+                "explanation": "buy-bought, write-wrote, take-took, eat-ate.",
+                "pairs": [
+                  { "id": "vp1", "left": "buy (satın almak)", "right": "bought" },
+                  { "id": "vp2", "left": "write (yazmak)", "right": "wrote" },
+                  { "id": "vp3", "left": "take (almak / götürmek)", "right": "took" }
+                ]
+              },
+              {
+                "id": "dil-q-ps3",
+                "type": "multiple_choice",
+                "prompt": "Aşağıdaki cümlelerin hangisinde Past Simple kuralına uygun DOĞRU bir kullanım vardır?",
+                "difficulty": "orta",
+                "hint": "didn't sonrasında fiil 1. haline (yalın) döner.",
+                "explanation": "'She didn't go to school yesterday.' doğrudur. 'didn't went' kullanımı gramer hatasıdır.",
+                "options": [
+                  { "id": "gr1", "text": "She didn't go to school yesterday.", "isCorrect": true },
+                  { "id": "gr2", "text": "She didn't went to school yesterday.", "isCorrect": false },
+                  { "id": "gr3", "text": "She doesn't went to school yesterday.", "isCorrect": false },
+                  { "id": "gr4", "text": "She did not goes to school yesterday.", "isCorrect": false }
+                ]
+              },
+              {
+                "id": "dil-q-ps4",
+                "type": "true_false",
+                "prompt": "Geçmiş zaman olumsuz cümlede 'didn't' sonrası fiil yalın mı kalır?",
+                "statement": "Past Simple olumsuz cümlelerde (didn't) ve sorularda (Did...?) asıl fiil 2. haline değil, 1. (yalın) haline döner.",
+                "correctAnswer": true,
+                "explanation": "Doğrudur! Geçmiş zaman anlamını 'did' üstlendiği için fiil yalın halde kalır (Did you sleep well?)."
+              }
+            ]
+          },
+          {
+            "id": "dil-u3-l2",
+            "unitId": "dil-u3",
+            "title": "Past Simple Sorular & Zaman Zarfları",
+            "description": "Where did you go? kalıbı, yesterday, ago, last night zaman zarfları.",
+            "xpReward": 30,
+            "gemReward": 8,
+            "type": "lesson",
+            "summaryNotes": [
+              "Soru kalıbı: Soru Kelimesi (Wh-) + did + özne + V1 (yalın)",
+              "Yesterday (dün), last week (geçen hafta), three days ago (üç gün önce).",
+              "'Ago' sürenin sonuna gelir: ten minutes ago (on dakika önce).",
+              "Kısa yanıtlar: Yes, I did. / No, I didn't."
+            ],
+            "questions": [
+              {
+                "id": "dil-q-pq1",
+                "type": "multiple_choice",
+                "prompt": "'Where _____ you _____ on your summer vacation last year?' boşluklarına ne gelmelidir?",
+                "difficulty": "kolay",
+                "explanation": "Past Simple soru yapısı 'Where did you go' şeklindedir.",
+                "options": [
+                  { "id": "pq1_a", "text": "did / go", "isCorrect": true },
+                  { "id": "pq1_b", "text": "did / went", "isCorrect": false },
+                  { "id": "pq1_c", "text": "do / went", "isCorrect": false },
+                  { "id": "pq1_d", "text": "were / go", "isCorrect": false }
+                ]
+              },
+              {
+                "id": "dil-q-pq2",
+                "type": "matching",
+                "prompt": "Zaman zarflarını Türkçe anlamlarıyla eşleştiriniz:",
+                "difficulty": "kolay",
+                "explanation": "yesterday dün, last year geçen yıl, two weeks ago iki hafta önce demektir.",
+                "pairs": [
+                  { "id": "zp1", "left": "yesterday", "right": "dün" },
+                  { "id": "zp2", "left": "two weeks ago", "right": "iki hafta önce" },
+                  { "id": "zp3", "left": "last night", "right": "dün gece" }
+                ]
+              },
+              {
+                "id": "dil-q-pq3",
+                "type": "multiple_choice",
+                "prompt": "'Did you finish your homework?' sorusuna verilecek DOĞRU kısa olumlu yanıt hangisidir?",
+                "difficulty": "kolay",
+                "explanation": "Did ile sorulan soruya 'Yes, I did.' şeklinde yanıt verilir.",
+                "options": [
+                  { "id": "an1", "text": "Yes, I did.", "isCorrect": true },
+                  { "id": "an2", "text": "Yes, I do.", "isCorrect": false },
+                  { "id": "an3", "text": "Yes, I finished.", "isCorrect": false },
+                  { "id": "an4", "text": "Yes, I was.", "isCorrect": false }
+                ]
+              },
+              {
+                "id": "dil-q-pq4",
+                "type": "true_false",
+                "prompt": "'Ago' kelimesi süreden önce mi sonra mı gelir?",
+                "statement": "İngilizcede 'ago' (önce) zaman zarfı sürenin SONUNA gelir (örneğin: 'two years ago', 'five minutes ago').",
+                "correctAnswer": true,
+                "explanation": "Doğrudur! 'Ago two years' denmez, daima 'two years ago' denir."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "dil-u4",
+        "number": 4,
+        "title": "Seyahat & Günlük Pratik İngilizce (Airport & Restaurant)",
+        "description": "Havalimanı check-in, otel rezervasyonu ve restoranda sipariş diyalogları",
+        "color": "#1cb0f6",
+        "lessons": [
+          {
+            "id": "dil-u4-l1",
+            "unitId": "dil-u4",
+            "title": "Airport & Flight Dialogues (Havalimanı)",
+            "description": "Uçuş kartı, pasaport kontrolü, bagaj teslimi ve anonslar.",
+            "xpReward": 25,
+            "gemReward": 6,
+            "type": "lesson",
+            "summaryNotes": [
+              "Boarding pass: Uçağa biniş kartı, Gate: Uçuş kapısı, Baggage claim: Bagaj alanı.",
+              "Window seat: Pencere kenarı koltuk, Aisle seat: Koridor tarafı koltuk.",
+              "One-way ticket: Tek yön bilet, Round-trip: Gidiş-dönüş bileti.",
+              "Flight attendant: Kabin memuru / hostes."
+            ],
+            "questions": [
+              {
+                "id": "dil-q-ap1",
+                "type": "multiple_choice",
+                "prompt": "Havalimanında check-in görevlisi 'Would you prefer a window seat or an aisle seat?' diye sorduğunda neyi sormaktadır?",
+                "difficulty": "kolay",
+                "explanation": "Pencere kenarı (window) mı yoksa koridor tarafı (aisle) mı koltuk tercih ettiğinizi sorar.",
+                "options": [
+                  { "id": "ap1_a", "text": "Pencere kenarı mı koridor kenarı mı koltuk istediğinizi", "isCorrect": true },
+                  { "id": "ap1_b", "text": "Uçakta yemek yemek isteyip istemediğinizi", "isCorrect": false },
+                  { "id": "ap1_c", "text": "Fazla bagajınızın olup olmadığını", "isCorrect": false },
+                  { "id": "ap1_d", "text": "Dönüş biletinizi ne zaman alacağınızı", "isCorrect": false }
+                ]
+              },
+              {
+                "id": "dil-q-ap2",
+                "type": "matching",
+                "prompt": "Havalimanı terimlerini Türkçe karşılıklarıyla eşleştiriniz:",
+                "difficulty": "orta",
+                "explanation": "Boarding pass biniş kartıdır, Baggage claim bagaj teslimidir, Customs gümrüktür.",
+                "pairs": [
+                  { "id": "air1", "left": "Boarding pass", "right": "Uçuş biniş kartı" },
+                  { "id": "air2", "left": "Baggage claim", "right": "Bagaj teslim alanı" },
+                  { "id": "air3", "left": "Gate", "right": "Uçağa biniş kapısı" }
+                ]
+              },
+              {
+                "id": "dil-q-ap3",
+                "type": "multiple_choice",
+                "prompt": "Güvenlik kontrolündeki görevlinin 'Do you have any liquids or sharp objects?' sorusuna uygun yanıt hangisidir?",
+                "difficulty": "orta",
+                "explanation": "'No, I don't have any liquids in my backpack.' uygun ve doğru cevaptır.",
+                "options": [
+                  { "id": "sec1", "text": "No, I don't have any liquids in my backpack.", "isCorrect": true },
+                  { "id": "sec2", "text": "Yes, I am going to London.", "isCorrect": false },
+                  { "id": "sec3", "text": "Here is my passport.", "isCorrect": false },
+                  { "id": "sec4", "text": "Flight number is TK1980.", "isCorrect": false }
+                ]
+              },
+              {
+                "id": "dil-q-ap4",
+                "type": "true_false",
+                "prompt": "'Aisle' kelimesindeki 's' harfi okunur mu?",
+                "statement": "İngilizcede 'aisle' (koridor) kelimesi 'ayl' şeklinde telaffuz edilir; 's' harfi sessizdir (okunmaz).",
+                "correctAnswer": true,
+                "explanation": "Doğrudur! 'Aisle' kelimesinde 's' harfi okunmaz, telaffuzu /aɪl/ şeklindedir."
+              }
+            ]
+          },
+          {
+            "id": "dil-u4-l2",
+            "unitId": "dil-u4",
+            "title": "Restoranda Sipariş Verme (Dining Out)",
+            "description": "Menü inceleme, sipariş verme kalıpları, hesap isteme ve bahşiş.",
+            "xpReward": 30,
+            "gemReward": 8,
+            "type": "lesson",
+            "summaryNotes": [
+              "I'd like to have...: ... almak istiyorum (kibar sipariş kalıbı).",
+              "Could we have the bill / check, please?: Hesabı alabilir miyiz?",
+              "Keep the change: Üstü kalsın.",
+              "Main course: Ana yemek, Dessert: Tatlı, Appetizer: Başlangıç."
+            ],
+            "questions": [
+              {
+                "id": "dil-q-rs1",
+                "type": "multiple_choice",
+                "prompt": "Restoranda garsona en kibar şekilde hesap istemek için hangi cümle kullanılır?",
+                "difficulty": "kolay",
+                "explanation": "'Could we have the bill, please?' (veya check) standart ve nazik hesap isteme kalıbıdır.",
+                "options": [
+                  { "id": "rs1_a", "text": "Could we have the bill, please?", "isCorrect": true },
+                  { "id": "rs1_b", "text": "Give me the money now!", "isCorrect": false },
+                  { "id": "rs1_c", "text": "Where is my wallet?", "isCorrect": false },
+                  { "id": "rs1_d", "text": "We are leaving now.", "isCorrect": false }
+                ]
+              },
+              {
+                "id": "dil-q-rs2",
+                "type": "matching",
+                "prompt": "Restoran kalıplarını anlamlarıyla eşleştiriniz:",
+                "difficulty": "orta",
+                "explanation": "Are you ready to order: siparişe hazır mısınız, Keep the change: üstü kalsın, Table for two: 2 kişilik masa.",
+                "pairs": [
+                  { "id": "rest1", "left": "Are you ready to order?", "right": "Sipariş vermeye hazır mısınız?" },
+                  { "id": "rest2", "left": "Keep the change.", "right": "Para üstü kalsın (bahşiş)." },
+                  { "id": "rest3", "left": "I would like to have the grilled chicken.", "right": "Izgara tavuk almak istiyorum." }
+                ]
+              },
+              {
+                "id": "dil-q-rs3",
+                "type": "multiple_choice",
+                "prompt": "'I am vegetarian. Does this soup contain any meat?' diyen bir müşteri ne demek istemektedir?",
+                "difficulty": "kolay",
+                "explanation": "Müşteri vejetaryen olduğunu ve çorbanın içinde et bulunup bulunmadığını sormaktadır.",
+                "options": [
+                  { "id": "veg1", "text": "Vejetaryen olduğunu ve çorbada et olup olmadığını sormaktadır", "isCorrect": true },
+                  { "id": "veg2", "text": "Çorbanın çok sıcak olduğunu söylemektedir", "isCorrect": false },
+                  { "id": "veg3", "text": "Daha fazla ekmek istemektedir", "isCorrect": false },
+                  { "id": "veg4", "text": "Hesabı ödemek istemektedir", "isCorrect": false }
+                ]
+              },
+              {
+                "id": "dil-q-rs4",
+                "type": "true_false",
+                "prompt": "Amerikan İngilizcesinde 'check', İngiliz İngilizcesinde 'bill' mi denir?",
+                "statement": "Restoranda hesap isterken İngiliz İngilizcesinde yaygın olarak 'bill', Amerikan İngilizcesinde ise 'check' kullanılır.",
+                "correctAnswer": true,
+                "explanation": "Doğrudur! Her iki kullanım da uluslararası düzeyde anlaşılır ve doğrudur."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "dil-u5",
+        "number": 5,
+        "title": "Gelecek Zaman & Kipler (Will vs Be Going To)",
+        "description": "Planlanmış gelecek (be going to), anlık kararlar (will) ve can/could/must kipleri",
+        "color": "#1cb0f6",
+        "lessons": [
+          {
+            "id": "dil-u5-l1",
+            "unitId": "dil-u5",
+            "title": "Will vs Be Going To Ayrımı",
+            "description": "Konuşma anında verilen ani kararlar (will) ve önceden planlanmış hedefler (going to).",
+            "xpReward": 25,
+            "gemReward": 6,
+            "type": "lesson",
+            "summaryNotes": [
+              "Will: Konuşma anında verilen ani kararlar, sözler ve teklifler: 'I will help you!'",
+              "Be going to: Önceden planlanmış niyetler veya kanıta dayalı tahminler: 'It is going to rain.'",
+              "Will olumsuzu: won't (will not).",
+              "Her iki yapıda da ana fiil yalın halde (V1) kullanılır."
+            ],
+            "questions": [
+              {
+                "id": "dil-q-wl1",
+                "type": "multiple_choice",
+                "prompt": "Telefonun çaldığını duyup 'I _____ answer it!' dediğinizde konuşma anında verilen ani karar için hangisi uygundur?",
+                "difficulty": "kolay",
+                "explanation": "Konuşma anında verilen ani kararlarda 'will' kullanılır: 'I will answer it!'",
+                "options": [
+                  { "id": "wl1_a", "text": "will", "isCorrect": true },
+                  { "id": "wl1_b", "text": "am going to", "isCorrect": false },
+                  { "id": "wl1_c", "text": "did", "isCorrect": false },
+                  { "id": "wl1_d", "text": "have", "isCorrect": false }
+                ]
+              },
+              {
+                "id": "dil-q-wl2",
+                "type": "matching",
+                "prompt": "Gelecek zaman kalıplarını doğru durumlarla eşleştiriniz:",
+                "difficulty": "orta",
+                "explanation": "Going to önceden plan veya kanıt, Will ani karar veya söz vermedir.",
+                "pairs": [
+                  { "id": "wp1", "left": "Look at those dark clouds! It is going to rain.", "right": "Gözle görülür kanıta dayalı güçlü tahmin" },
+                  { "id": "wp2", "left": "Don't worry, I will keep your secret.", "right": "Söz verme (Promise)" },
+                  { "id": "wp3", "left": "We are going to visit Paris next month.", "right": "Önceden planlanmış seyahat" }
+                ]
+              },
+              {
+                "id": "dil-q-wl3",
+                "type": "multiple_choice",
+                "prompt": "'They _____ (not / come) to the party because they are sick.' cümlesinde 'will' olumsuzu hangisidir?",
+                "difficulty": "kolay",
+                "explanation": "Will not kısaltması 'won't' şeklindedir: 'They won't come to the party.'",
+                "options": [
+                  { "id": "wnt1", "text": "won't come", "isCorrect": true },
+                  { "id": "wnt2", "text": "don't come", "isCorrect": false },
+                  { "id": "wnt3", "text": "didn't came", "isCorrect": false },
+                  { "id": "wnt4", "text": "aren't came", "isCorrect": false }
+                ]
+              },
+              {
+                "id": "dil-q-wl4",
+                "type": "true_false",
+                "prompt": "'Will' tüm öznelerde aynı mıdır?",
+                "statement": "'Will' modal yardımcı fiili I, you, he, she, we, they gibi tüm öznelerde aynı şekilde kullanılır; -s takısı almaz.",
+                "correctAnswer": true,
+                "explanation": "Doğrudur! He will, she will, they will hepsi aynıdır."
+              }
+            ]
+          },
+          {
+            "id": "dil-u5-l2",
+            "unitId": "dil-u5",
+            "title": "Modal Verbs (Can, Must, Should)",
+            "description": "Yetenek (can), zorunluluk (must), yasak (mustn't) ve tavsiye (should).",
+            "xpReward": 30,
+            "gemReward": 8,
+            "type": "lesson",
+            "summaryNotes": [
+              "Must: Güçlü zorunluluk / gereklilik: 'You must stop at red light.'",
+              "Mustn't: Kesin yasak: 'You mustn't smoke here.'",
+              "Should: Tavsiye / öneri: 'You should drink more water.'",
+              "Modal fiillerden sonra gelen asıl fiil daima YALIN (V1) haldedir."
+            ],
+            "questions": [
+              {
+                "id": "dil-q-md1",
+                "type": "multiple_choice",
+                "prompt": "'You look very tired. You _____ take a rest and sleep early.' cümlesindeki tavsiye için hangisi gelmelidir?",
+                "difficulty": "kolay",
+                "explanation": "Tavsiye ve öğüt bildirmek için 'should' kullanılır: 'You should take a rest.'",
+                "options": [
+                  { "id": "md1_a", "text": "should", "isCorrect": true },
+                  { "id": "md1_b", "text": "mustn't", "isCorrect": false },
+                  { "id": "md1_c", "text": "can't", "isCorrect": false },
+                  { "id": "md1_d", "text": "have to not", "isCorrect": false }
+                ]
+              },
+              {
+                "id": "dil-q-md2",
+                "type": "matching",
+                "prompt": "Modal fiilleri işlevleriyle eşleştiriniz:",
+                "difficulty": "orta",
+                "explanation": "Must zorunluluk, Mustn't yasak, Should tavsiye, Can yetenek bildirir.",
+                "pairs": [
+                  { "id": "mp1", "left": "must", "right": "Zorunluluk ve kesin kural" },
+                  { "id": "mp2", "left": "mustn't", "right": "Kesin yasaklama" },
+                  { "id": "mp3", "left": "should", "right": "Tavsiye ve öğüt" }
+                ]
+              },
+              {
+                "id": "dil-q-md3",
+                "type": "multiple_choice",
+                "prompt": "'You _____ use your phone during the takeoff and landing of the airplane! It is forbidden.' cümlesine hangisi gelmelidir?",
+                "difficulty": "orta",
+                "explanation": "Uçakta telefon kullanımı katı bir yasaktır; bu nedenle 'mustn't' (yasak) kullanılır.",
+                "options": [
+                  { "id": "mst1", "text": "mustn't", "isCorrect": true },
+                  { "id": "mst2", "text": "should", "isCorrect": false },
+                  { "id": "mst3", "text": "can", "isCorrect": false },
+                  { "id": "mst4", "text": "don't have to", "isCorrect": false }
+                ]
+              },
+              {
+                "id": "dil-q-md4",
+                "type": "true_false",
+                "prompt": "Modal fiillerden sonra gelen fiile 'to' veya '-ing' gelir mi?",
+                "statement": "Must, should, can gibi modal yardımcı fiillerinden sonra gelen ana fiil 'to' veya '-ing' almaz; doğrudan yalın halde (bare infinitive) kullanılır.",
+                "correctAnswer": true,
+                "explanation": "Doğrudur! 'You must to go' yanlıştır, 'You must go' doğrudur."
               }
             ]
           }

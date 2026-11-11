@@ -157,6 +157,13 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const saved = localStorage.getItem('akademi_user_stats');
       if (saved) {
         const parsed = JSON.parse(saved);
+        // Clear any old 'Ali' or 'ali@gmail.com' demo account from previous versions
+        if (parsed.username === 'Ali' || parsed.email === 'ali@gmail.com' || parsed.email === 'demo@knowza.app' || !parsed.email) {
+          parsed.isLoggedIn = false;
+          parsed.email = undefined;
+          parsed.username = 'Öğrenci';
+          parsed.hasCompletedOnboarding = false;
+        }
         // Automatically migrate old default avatar to Knowza Ayıcık
         const avatar = (parsed.avatar === 'owl' || !parsed.avatar) ? 'haribo' : parsed.avatar;
         return { ...DEFAULT_STATS, ...parsed, avatar };

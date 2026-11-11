@@ -35,6 +35,7 @@ const KnowzaAppContent: React.FC = () => {
   const [activeQuizSubject, setActiveQuizSubject] = useState<string | null>(null);
   const [showLevelUpModal, setShowLevelUpModal] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
+  const [authInitialMode, setAuthInitialMode] = useState<'google' | 'email'>('google');
   const [showOnboarding, setShowOnboarding] = useState(false);
 
   // User must authenticate / login first before entering main app
@@ -45,11 +46,22 @@ const KnowzaAppContent: React.FC = () => {
       <div className="h-[100dvh] w-full bg-[#FFFDF7] flex justify-center items-center overflow-hidden">
         <div className="w-full max-w-md h-full md:h-auto md:max-h-[860px] md:my-6 md:rounded-[40px] md:shadow-2xl md:border md:border-amber-200/50 bg-[#FFFDF7] overflow-hidden flex flex-col justify-between relative">
           <KnowzaSplash
-            onStartGoogle={() => setShowAuthModal(true)}
-            onOpenEmailAuth={() => setShowAuthModal(true)}
+            onStartGoogle={() => {
+              setAuthInitialMode('google');
+              setShowAuthModal(true);
+            }}
+            onOpenEmailAuth={() => {
+              setAuthInitialMode('email');
+              setShowAuthModal(true);
+            }}
+            onGuestStart={() => {
+              setAuthInitialMode('google');
+              setShowAuthModal(true);
+            }}
           />
           {showAuthModal && (
             <AuthModal
+              initialMode={authInitialMode}
               onClose={() => setShowAuthModal(false)}
             />
           )}

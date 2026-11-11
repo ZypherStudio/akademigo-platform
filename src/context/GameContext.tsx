@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { CourseCategory, Lesson, UserStats, LeaderboardUser, StudyNote, AppTheme, UserAvatar, MistakeItem, KnowzaCostume, AchievementToastData } from '../types';
+import { CourseCategory, Lesson, UserStats, LeaderboardUser, StudyNote, AppTheme, UserAvatar, MistakeItem, KnowzaCostume, AchievementToastData, AvatarFrameId } from '../types';
 import { KNOWZA_COSTUMES } from '../data/costumesData';
+import { AVATAR_FRAMES, getFrame } from '../data/framesData';
 import { sound } from '../utils/audio';
 import confetti from 'canvas-confetti';
 
@@ -37,6 +38,8 @@ interface GameContextType {
   logoutUser: () => void;
   buyCostume: (costumeId: KnowzaCostume) => boolean;
   selectCostume: (costumeId: KnowzaCostume) => void;
+  equipFrame: (frameId: AvatarFrameId) => void;
+  buyFrameWithGems: (frameId: AvatarFrameId) => boolean;
   addXpAndGems: (xp: number, gems: number) => void;
   upgradeToPro: () => void;
   completeOnboarding: (data: {
@@ -119,7 +122,9 @@ const DEFAULT_STATS: UserStats = {
   currentLevel: 1,
   levelProgress: 0,
   streakBonusMultiplier: 1,
-  achievementBadges: []
+  achievementBadges: [],
+  equippedAvatarFrame: 'none' as AvatarFrameId,
+  unlockedAvatarFrames: ['none', 'gold_flame'] as AvatarFrameId[],
 };
 
 const DEFAULT_NOTES: StudyNote[] = [];
@@ -168,7 +173,13 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
 
         const avatar = (parsed.avatar === 'owl' || !parsed.avatar) ? 'haribo' : parsed.avatar;
-        return { ...DEFAULT_STATS, ...parsed, avatar };
+        return {
+          ...DEFAULT_STATS,
+          ...parsed,
+          avatar,
+          equippedAvatarFrame: parsed.equippedAvatarFrame ?? 'none',
+          unlockedAvatarFrames: parsed.unlockedAvatarFrames ?? ['none', 'gold_flame'],
+        };
       }
       return DEFAULT_STATS;
     } catch {
@@ -666,6 +677,38 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }));
   };
 
+  /** Equip an already-unlocked avatar frame */
+  const equipFrame = (frameId: AvatarFrameId) => {
+    const unlocked = (stats.unlockedAvatarFrames ?? ['none', 'gold_flame']);
+    if (!unlocked.includes(frameId)) return;
+    sound.playClick();
+    setStats(prev => ({ ...prev, equippedAvatarFrame: frameId }));
+  };
+
+  /** Buy a frame with gems and immediately equip it */
+  const buyFrameWithGems = (frameId: AvatarFrameId): boolean => {
+    const frame = getFrame(frameId);
+    if (!frame || frame.isPremium) return false;
+    const unlocked = (stats.unlockedAvatarFrames ?? ['none', 'gold_flame']);
+    if (unlocked.includes(frameId)) {
+      equipFrame(frameId);
+      return true;
+    }
+    if (stats.gems < frame.priceGems) {
+      sound.playWrong();
+      return false;
+    }
+    sound.playVictory();
+    confetti({ particleCount: 60, spread: 70, colors: [frame.glowColor, '#fbbf24'] });
+    setStats(prev => ({
+      ...prev,
+      gems: prev.gems - frame.priceGems,
+      unlockedAvatarFrames: [...(prev.unlockedAvatarFrames ?? ['none', 'gold_flame']), frameId],
+      equippedAvatarFrame: frameId,
+    }));
+    return true;
+  };
+
   const addXpAndGems = (xp: number, gems: number) => {
     setStats(prev => ({
       ...prev,
@@ -786,6 +829,8 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
         logoutUser,
         buyCostume,
         selectCostume,
+        equipFrame,
+        buyFrameWithGems,
         addXpAndGems,
         upgradeToPro,
         completeOnboarding,

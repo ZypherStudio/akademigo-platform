@@ -1,5 +1,39 @@
 export type CourseCategory = 'yks' | 'lgs' | 'kpss' | 'kodlama' | 'dil';
 
+// ─── Avatar Çerçeve/Dekorasyon Sistemi (Discord-style) ───────────────────────
+export type AvatarFrameId =
+  | 'none'
+  | 'gold_flame'
+  | 'cyber_neon'
+  | 'cosmic_stars'
+  | 'royal_crown'
+  | 'dark_wings'
+  | 'lightning_bolt'
+  | 'cherry_blossom'
+  | 'nature_leaf'
+  | 'blood_web'
+  | 'dragon_fire';
+
+export type FrameRarity = 'common' | 'rare' | 'epic' | 'legendary';
+export type FrameAnimationType = 'static' | 'pulse' | 'spin' | 'sparkle' | 'shake';
+
+export interface AvatarFrameInfo {
+  id: AvatarFrameId;
+  name: string;
+  description: string;
+  rarity: FrameRarity;
+  priceGems: number;        // 0 = ücretsiz
+  realPriceTL?: number;     // Gerçek para ile satış (₺)
+  isPremium: boolean;
+  glowColor: string;        // CSS color (hex/rgba)
+  glowColor2?: string;      // İkinci renk (gradient için)
+  badge: string;            // Emoji rozet
+  animationType: FrameAnimationType;
+  rarityLabel: string;
+  unlockCondition?: string; // Açıklama: nasıl kazanılır
+}
+// ─────────────────────────────────────────────────────────────────────────────
+
 export type AppTheme = 'duo' | 'dark' | 'cyber' | 'gold' | 'ocean';
 
 export type UserAvatar = 'haribo' | 'owl' | 'fox' | 'robot' | 'astronaut' | 'wizard' | 'coder_cat';
@@ -184,6 +218,8 @@ export interface UserStats {
   levelProgress: number;
   streakBonusMultiplier: number;
   achievementBadges: string[];
+  equippedAvatarFrame: AvatarFrameId;
+  unlockedAvatarFrames: AvatarFrameId[];
 }
 
 export interface AchievementToastData {

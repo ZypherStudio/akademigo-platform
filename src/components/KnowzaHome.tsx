@@ -101,7 +101,7 @@ export const KnowzaHome: React.FC<KnowzaHomeProps> = ({
           className="flex items-center gap-2.5 cursor-pointer group active:scale-95 transition-all"
         >
           <div className="flex-shrink-0">
-            <KnowzaAvatar size="md" costume={stats.selectedCostume} />
+            <KnowzaAvatar size="md" costume={stats.selectedCostume} frameId={stats.equippedAvatarFrame ?? 'none'} />
           </div>
           <div className="min-w-0 max-w-[130px] sm:max-w-[180px]">
             <span className="text-[10px] font-bold text-[#8C7A5E] block leading-none truncate">

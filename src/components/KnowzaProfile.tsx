@@ -76,7 +76,7 @@ export const KnowzaProfile: React.FC<KnowzaProfileProps> = ({
         <div className="flex flex-col items-center text-center pt-2">
           {/* Avatar with dynamic costume badge from Shop */}
           <div className="relative mb-3 filter drop-shadow-md">
-            <KnowzaAvatar size="2xl" costume={stats.selectedCostume} animate="dance" />
+            <KnowzaAvatar size="2xl" costume={stats.selectedCostume} frameId={stats.equippedAvatarFrame ?? 'none'} animate="dance" />
             {/* Verified badge */}
             <div className="absolute -bottom-1 -right-1 w-7 h-7 rounded-full bg-[#FFB800] border-2 border-white flex items-center justify-center shadow-md">
               <Check className="w-4 h-4 text-slate-900 stroke-[3]" />

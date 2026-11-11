@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useGame } from '../context/GameContext';
 import { KNOWZA_COSTUMES } from '../data/costumesData';
-import { KnowzaCostume } from '../types';
+import { AVATAR_FRAMES } from '../data/framesData';
+import { KnowzaCostume, AvatarFrameId } from '../types';
 import { KnowzaAvatar } from './KnowzaAvatar';
 import {
   ShoppingBag,
@@ -15,14 +16,15 @@ import {
   Coins,
   ShieldCheck,
   Flame,
-  ArrowRight
+  ArrowRight,
+  Frame
 } from 'lucide-react';
 import { sound } from '../utils/audio';
 import confetti from 'canvas-confetti';
 
 export const Shop: React.FC = () => {
-  const { stats, buyShopItem, buyCostume, selectCostume, addXpAndGems, upgradeToPro } = useGame();
-  const [activeTab, setActiveTab] = useState<'pro' | 'ads' | 'costumes' | 'boosters'>('pro');
+  const { stats, buyShopItem, buyCostume, selectCostume, addXpAndGems, upgradeToPro, equipFrame, buyFrameWithGems } = useGame();
+  const [activeTab, setActiveTab] = useState<'pro' | 'ads' | 'costumes' | 'frames' | 'boosters'>('pro');
   const [feedback, setFeedback] = useState<string | null>(null);
   const [watchingAd, setWatchingAd] = useState<{ active: boolean; secondsLeft: number; rewardType: 'gems' | 'heart' } | null>(null);
 
@@ -206,6 +208,21 @@ export const Shop: React.FC = () => {
         >
           <Sparkles className="w-4 h-4 text-purple-600" />
           <span>Kostümler</span>
+        </button>
+
+        <button
+          onClick={() => {
+            sound.playClick();
+            setActiveTab('frames');
+          }}
+          className={`py-2 rounded-xl text-xs font-black transition flex flex-col items-center gap-0.5 ${
+            activeTab === 'frames'
+              ? 'bg-[#FFB800] text-slate-900 shadow-sm'
+              : 'text-slate-600 hover:bg-amber-50'
+          }`}
+        >
+          <Crown className="w-4 h-4 text-orange-500" />
+          <span>Çerçeveler</span>
         </button>
 
         <button
@@ -397,6 +414,142 @@ export const Shop: React.FC = () => {
               </div>
             );
           })}
+        </div>
+      )}
+
+      {/* TAB: AVATAR ÇERÇEVELERİ */}
+      {activeTab === 'frames' && (
+        <div className="space-y-4 animate-fade">
+          {/* Header */}
+          <div className="bg-gradient-to-r from-purple-500 to-indigo-600 rounded-2xl p-4 text-white">
+            <div className="flex items-center gap-2 mb-1">
+              <Crown className="w-5 h-5 text-yellow-300" />
+              <span className="font-black text-sm">Avatar Dekorasyon Mağazası</span>
+            </div>
+            <p className="text-xs text-purple-100">Maskotuna özel çerçeve tak ve öne çık! Discord tarzı animasyonlu çerçeveler.</p>
+          </div>
+
+          {/* Rarity legend */}
+          <div className="flex gap-2 flex-wrap">
+            {[
+              { label: 'Yaygın', color: 'bg-gray-100 text-gray-600' },
+              { label: 'Nadir', color: 'bg-blue-100 text-blue-700' },
+              { label: 'Epik', color: 'bg-purple-100 text-purple-700' },
+              { label: 'Efsanevi', color: 'bg-amber-100 text-amber-700' },
+            ].map(r => (
+              <span key={r.label} className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${r.color}`}>{r.label}</span>
+            ))}
+          </div>
+
+          {/* Frame grid */}
+          <div className="grid grid-cols-2 gap-3">
+            {AVATAR_FRAMES.map((frame) => {
+              const unlockedFrames = stats.unlockedAvatarFrames ?? ['none', 'gold_flame'];
+              const isOwned = unlockedFrames.includes(frame.id as AvatarFrameId);
+              const isEquipped = (stats.equippedAvatarFrame ?? 'none') === frame.id;
+              const isFree = frame.priceGems === 0 && !frame.isPremium;
+              const canAfford = stats.gems >= frame.priceGems;
+
+              const rarityBg: Record<string, string> = {
+                common: 'from-gray-50 to-gray-100 border-gray-200',
+                rare: 'from-blue-50 to-indigo-50 border-blue-200',
+                epic: 'from-purple-50 to-violet-50 border-purple-300',
+                legendary: 'from-amber-50 to-orange-50 border-amber-400',
+              };
+              const rarityText: Record<string, string> = {
+                common: 'text-gray-600',
+                rare: 'text-blue-700',
+                epic: 'text-purple-700',
+                legendary: 'text-amber-700',
+              };
+
+              return (
+                <div
+                  key={frame.id}
+                  className={`relative rounded-2xl border-2 bg-gradient-to-b p-3 flex flex-col items-center gap-2 ${rarityBg[frame.rarity]}`}
+                  style={isEquipped ? { boxShadow: `0 0 14px ${frame.glowColor}66` } : undefined}
+                >
+                  {/* Equipped badge */}
+                  {isEquipped && (
+                    <div className="absolute -top-2 -right-2 bg-green-500 text-white text-[9px] font-black rounded-full px-1.5 py-0.5 z-10">
+                      ✓ Aktif
+                    </div>
+                  )}
+                  {/* Premium badge */}
+                  {frame.isPremium && (
+                    <div className="absolute -top-2 -left-2 bg-gradient-to-r from-orange-500 to-red-500 text-white text-[9px] font-black rounded-full px-1.5 py-0.5 z-10">
+                      ÖZEL
+                    </div>
+                  )}
+
+                  {/* Avatar preview with frame */}
+                  <KnowzaAvatar
+                    size="lg"
+                    frameId={frame.id as AvatarFrameId}
+                    showFrameGlow={true}
+                    animate={false}
+                  />
+
+                  {/* Frame name */}
+                  <div className="text-center">
+                    <div className={`text-xs font-black ${rarityText[frame.rarity]}`}>
+                      {frame.badge} {frame.name}
+                    </div>
+                    <div className={`text-[9px] font-semibold ${rarityText[frame.rarity]} opacity-70`}>
+                      {frame.rarityLabel}
+                    </div>
+                  </div>
+
+                  {/* Action button */}
+                  {isEquipped ? (
+                    <div className="w-full bg-green-100 text-green-700 text-[10px] font-black py-1.5 rounded-xl text-center">
+                      ✓ Kuşanıldı
+                    </div>
+                  ) : isOwned ? (
+                    <button
+                      onClick={() => {
+                        equipFrame(frame.id as AvatarFrameId);
+                        setFeedback(`${frame.badge} "${frame.name}" çerçevesi takıldı!`);
+                        setTimeout(() => setFeedback(null), 3000);
+                      }}
+                      className="w-full bg-gradient-to-r from-purple-500 to-indigo-600 text-white text-[10px] font-black py-1.5 rounded-xl"
+                    >
+                      Tak
+                    </button>
+                  ) : frame.isPremium ? (
+                    <button
+                      onClick={() => {
+                        setFeedback(`💎 "${frame.name}" premium çerçeve yakında! ₺${frame.realPriceTL} ile satın alınabilecek.`);
+                        setTimeout(() => setFeedback(null), 4000);
+                      }}
+                      className="w-full bg-gradient-to-r from-orange-500 to-red-500 text-white text-[10px] font-black py-1.5 rounded-xl"
+                    >
+                      ₺{frame.realPriceTL} Satın Al
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => {
+                        const success = buyFrameWithGems(frame.id as AvatarFrameId);
+                        if (success) {
+                          setFeedback(`🎉 "${frame.name}" çerçevesi açıldı ve takıldı!`);
+                        } else {
+                          setFeedback(`❌ Yetersiz elmas! ${frame.priceGems} 💎 gerekli, sende ${stats.gems} var.`);
+                        }
+                        setTimeout(() => setFeedback(null), 3500);
+                      }}
+                      className={`w-full text-[10px] font-black py-1.5 rounded-xl ${
+                        canAfford
+                          ? 'bg-gradient-to-r from-cyan-500 to-blue-600 text-white'
+                          : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                      }`}
+                    >
+                      {frame.priceGems === 0 ? 'Ücretsiz Al' : `💎 ${frame.priceGems}`}
+                    </button>
+                  )}
+                </div>
+              );
+            })}
+          </div>
         </div>
       )}
 

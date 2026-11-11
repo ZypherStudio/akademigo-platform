@@ -130,55 +130,41 @@ export const KnowzaSplash: React.FC<KnowzaSplashProps> = ({
         </p>
       </div>
 
-      {/* ================= 2. 3D MASCOT STAGE ================= */}
-      <div className="w-full max-w-sm flex flex-col items-center justify-center relative z-10 my-auto py-1">
+      {/* ================= 2. 3D MASCOT STAGE (PERFECTLY CENTERED FOR MOBILE) ================= */}
+      <div className="w-full max-w-sm flex flex-col items-center justify-center relative z-10 my-auto py-2">
         
-        <div className="relative w-full flex items-center justify-center">
+        {/* Centered Mascot Container */}
+        <div className="relative w-full flex flex-col items-center justify-center">
           
-          {/* Floating Badge 1 - Left */}
-          <div className="absolute left-2 sm:left-4 top-4 z-20 bg-white/95 backdrop-blur-md px-2.5 py-1.5 rounded-2xl border border-amber-200 shadow-md flex items-center gap-1.5 animate-bounceSubtle">
-            <div className="w-5 h-5 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center font-black text-xs">
-              ✓
-            </div>
-            <div className="text-left">
-              <span className="text-[9px] font-black uppercase text-emerald-600 block leading-tight">Müfredat</span>
-              <span className="text-[11px] font-black text-slate-800 leading-tight">2026 Hazır</span>
-            </div>
-          </div>
-
-          {/* Floating Badge 2 - Right */}
-          <div className="absolute right-2 sm:right-4 top-8 z-20 bg-white/95 backdrop-blur-md px-2.5 py-1.5 rounded-2xl border border-indigo-200 shadow-md flex items-center gap-1.5 animate-bounceSubtle" style={{ animationDelay: '1s' }}>
-            <div className="w-5 h-5 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center">
-              <Sparkles className="w-3 h-3" />
-            </div>
-            <div className="text-left">
-              <span className="text-[9px] font-black uppercase text-indigo-600 block leading-tight">Yapay Zekâ</span>
-              <span className="text-[11px] font-black text-slate-800 leading-tight">Gemini Koç</span>
-            </div>
-          </div>
-
           {/* 3D Glowing Radial Stage Pedestal Beneath Mascot */}
-          <div className="absolute -bottom-2 w-48 sm:w-56 h-14 bg-gradient-to-r from-amber-300/40 via-yellow-300/80 to-amber-300/40 rounded-[100%] blur-[2px] border-2 border-amber-300/60 shadow-[0_12px_28px_rgba(245,158,11,0.35)]" />
-          <div className="absolute bottom-1 w-36 h-7 bg-amber-500/25 rounded-[100%] blur-[3px]" />
+          <div className="absolute bottom-2 w-52 sm:w-60 h-12 bg-gradient-to-r from-amber-400/30 via-yellow-300/80 to-amber-400/30 rounded-[100%] blur-[2px] border-2 border-amber-300/60 shadow-[0_12px_28px_rgba(245,158,11,0.35)] pointer-events-none" />
+          <div className="absolute bottom-4 w-36 h-6 bg-amber-500/25 rounded-[100%] blur-[3px] pointer-events-none" />
 
-          {/* Mascot Character - Properly Centered */}
-          <div className="relative z-10 w-44 sm:w-52 max-h-[30vh] flex items-center justify-center filter drop-shadow-[0_14px_22px_rgba(245,158,11,0.3)] hover:scale-105 transition-transform duration-300">
+          {/* Mascot Character - 100% Dead Centered & Heroic */}
+          <div className="relative z-10 w-48 sm:w-56 max-h-[30vh] flex items-center justify-center filter drop-shadow-[0_16px_28px_rgba(245,158,11,0.38)] animate-bounceSubtle">
             <img 
               src="/assets/knowza_main.png" 
-              alt="Knowza Ayıcığı Maskotu" 
-              className="w-full h-auto max-h-[29vh] object-contain"
+              alt="Knowza 3D Ayıcık Maskotu" 
+              className="w-full h-auto max-h-[29vh] object-contain mx-auto"
             />
           </div>
 
-          {/* Floating Badge 3 - Bottom Center */}
-          <div className="absolute -bottom-3 z-20 bg-gradient-to-r from-amber-500 to-yellow-500 text-slate-950 font-black text-[11px] px-3.5 py-1 rounded-full shadow-md flex items-center gap-1.5 border border-amber-200">
-            <Flame className="w-3.5 h-3.5 fill-amber-950 text-amber-950" />
-            <span>Günlük Seri & Başarı Puanı</span>
+          {/* Balanced Symmetrical Pills Directly Below Pedestal */}
+          <div className="flex items-center justify-center gap-2 mt-3 z-20">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/95 backdrop-blur-md border border-amber-200/80 shadow-xs text-[11px] font-black text-slate-800">
+              <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-[10px] font-black">✓</span>
+              <span>2026 Maarif Müfredatı</span>
+            </div>
+
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/95 backdrop-blur-md border border-indigo-200/80 shadow-xs text-[11px] font-black text-slate-800">
+              <Sparkles className="w-3.5 h-3.5 text-indigo-500 fill-indigo-400" />
+              <span>Gemini AI Koç</span>
+            </div>
           </div>
         </div>
 
         {/* ================= 3. INTERACTIVE FEATURE CARD CAROUSEL ================= */}
-        <div className="w-full mt-6 bg-white/95 backdrop-blur-md rounded-2xl border border-amber-200/80 p-3 shadow-md">
+        <div className="w-full mt-4 bg-white/95 backdrop-blur-md rounded-2xl border border-amber-200/80 p-3 shadow-md">
           <div className="flex items-center gap-3">
             <div className={`w-10 h-10 rounded-xl ${feat.iconBg} ${feat.iconColor} flex items-center justify-center flex-shrink-0 shadow-inner`}>
               <IconComp className="w-5 h-5 stroke-[2.5]" />

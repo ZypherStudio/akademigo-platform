@@ -868,8 +868,8 @@ export const COURSES: Course[] = [
       {
         "id": "yks-u4",
         "number": 4,
-        "title": "AYT Matematik: Fonksiyonlar & Parabol",
-        "description": "Fonksiyon grafikleri, bileşke, ters fonksiyon ve parabol tepe noktası",
+        "title": "AYT Matematik: Trigonometri & Analitik Temeller",
+        "description": "Birim çember, trigonometrik oranlar ve özdeşliklerin analitik incelemesi.",
         "color": "#af72ff",
         "lessons": [
           {
@@ -3009,11 +3009,32 @@ export const COURSES: Course[] = [
               },
               {
                 "id": "kpss-g4",
-                "type": "true_false",
-                "prompt": "Gordion Antik Kenti Türkiye'nin UNESCO Dünya Miras Listesi'ndeki 20. mirası mıdır?",
-                "statement": "Ankara'nın Polatlı ilçesinde bulunan Frig uygarlığının başkenti Gordion Antik Kenti, Türkiye'nin UNESCO Dünya Mirası Listesi'ndeki 20. varlığıdır.",
-                "correctAnswer": true,
-                "explanation": "Kesinlikle doğru! Eylül 2023'te 20. mirasımız olarak tescil edilmiştir."
+                "type": "multiple_choice",
+                "prompt": "UNESCO Dünya Mirası Komitesi kararıyla Türkiye nin UNESCO Dünya Miras Listesi ndeki 21. mirası olarak tescil edilen varlığımız hangisidir?",
+                "explanation": "Gordion 20. mirasımızdır; hemen ardından tescil edilen Anadolu nun Ahşap Direkli Camileri Türkiye nin 21. UNESCO Dünya Mirasıdır.",
+                "hint": "Gordion 20. sıradaydı; 21. miras ahşap mimarisiyle öne çıkar.",
+                "options": [
+                  {
+                    "id": "opt-1",
+                    "text": "Anadolu nun Orta Çağ Ahşap Direkli ve Kirişli Camileri",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "opt-2",
+                    "text": "Gordion Antik Kenti (20. Miras)",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "opt-3",
+                    "text": "Arslantepe Höyüğü",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "opt-4",
+                    "text": "Göbeklitepe",
+                    "isCorrect": false
+                  }
+                ]
               }
             ]
           }
@@ -3775,39 +3796,61 @@ export const COURSES: Course[] = [
               {
                 "id": "kpss-q-gn3",
                 "type": "multiple_choice",
-                "prompt": "Ocak 2024'te Uluslararası Uzay İstasyonu'na (ISS) giderek Türkiye'nin İLK astronotu olan bilim insanı kimdir?",
+                "prompt": "Temmuz 2024 te SpaceX Falcon 9 roketiyle uzaya fırlatılan, Türkiye nin İLK yerli ve milli haberleşme uydusu hangisidir?",
                 "difficulty": "kolay",
-                "explanation": "Alper Gezeravcı, Ax-3 misyonu ile uzaya çıkan ilk Türk astronot olmuştur.",
+                "explanation": "TÜRKSAT 6A, 9 Temmuz 2024 te uzaya fırlatılan Türkiye nin ilk yerli ve milli haberleşme uydusudur.",
                 "options": [
                   {
-                    "id": "ast1",
-                    "text": "Alper Gezeravcı",
+                    "id": "opt-1",
+                    "text": "TÜRKSAT 6A",
                     "isCorrect": true
                   },
                   {
-                    "id": "ast2",
-                    "text": "Tuva Cihangir Atasever",
+                    "id": "opt-2",
+                    "text": "TÜRKSAT 5B",
                     "isCorrect": false
                   },
                   {
-                    "id": "ast3",
-                    "text": "Umut Yıldız",
+                    "id": "opt-3",
+                    "text": "İMECE",
                     "isCorrect": false
                   },
                   {
-                    "id": "ast4",
-                    "text": "Aziz Sancar",
+                    "id": "opt-4",
+                    "text": "GÖKTÜRK-2",
                     "isCorrect": false
                   }
-                ]
+                ],
+                "hint": "TÜBİTAK UZAY ve ASELSAN ortaklığıyla üretilen milli uydumuz."
               },
               {
                 "id": "kpss-q-gn4",
-                "type": "true_false",
-                "prompt": "AİHM Avrupa Birliği'nin bir organı mıdır?",
-                "statement": "Avrupa İnsan Hakları Mahkemesi (AİHM), Avrupa Birliği'nin değil, 1949'da kurulan ve Türkiye'nin de kurucu üyeleri arasında olduğu Avrupa Konseyi'nin yargı organıdır.",
-                "correctAnswer": true,
-                "explanation": "Doğrudur! AİHM Avrupa Konseyi'ne bağlıdır; Avrupa Birliği Adalet Divanı ile karıştırılmamalıdır."
+                "type": "multiple_choice",
+                "prompt": "2024 Paris Olimpiyatları nda 10 metre havalı tabancada gümüş madalya kazanarak Türkiye ye atıcılık tarihindeki ilk olimpiyat madalyasını kazandıran sporcumuz kimdir?",
+                "explanation": "Yusuf Dikeç ve Şevval İlayda Tarhan, 2024 Paris te 10m havalı tabanca karma takımda gümüş madalya kazanarak Türkiye atıcılık tarihindeki ilk olimpiyat madalyasını getirmiştir.",
+                "hint": "Ekipmansız rahat atış stiliyle dünya çapında viral olan milli atıcımız.",
+                "options": [
+                  {
+                    "id": "opt-1",
+                    "text": "Yusuf Dikeç - Şevval İlayda Tarhan",
+                    "isCorrect": true
+                  },
+                  {
+                    "id": "opt-2",
+                    "text": "Mete Gazoz",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "opt-3",
+                    "text": "Taha Akgül",
+                    "isCorrect": false
+                  },
+                  {
+                    "id": "opt-4",
+                    "text": "Rıza Kayaalp",
+                    "isCorrect": false
+                  }
+                ]
               }
             ]
           }
@@ -4108,7 +4151,7 @@ export const COURSES: Course[] = [
       {
         "id": "lgs-u1",
         "number": 1,
-        "title": "Matematik: Çarpanlar ve Katlar",
+        "title": "LGS 2026 Maarif Modeli: Çarpanlar & Katlar (EBOB-EKOK)",
         "description": "EBOB-EKOK problemleri ve yeni nesil soru mantığı",
         "color": "#ff4b4b",
         "lessons": [

@@ -39,6 +39,18 @@ interface GameContextType {
   selectCostume: (costumeId: KnowzaCostume) => void;
   addXpAndGems: (xp: number, gems: number) => void;
   upgradeToPro: () => void;
+  completeOnboarding: (data: {
+    username: string;
+    city: string;
+    targetGoal: CourseCategory;
+    dailyGoalQuestions?: number;
+  }) => void;
+  updateUserPreferences: (data: {
+    username?: string;
+    city?: string;
+    targetGoal?: CourseCategory;
+    dailyGoalQuestions?: number;
+  }) => void;
 }
 
 const DEFAULT_MISTAKES: MistakeItem[] = [
@@ -98,7 +110,11 @@ const DEFAULT_STATS: UserStats = {
     completedLessonsToday: 2,
     xpGainedToday: 65,
     perfectLessonsToday: 1
-  }
+  },
+  city: 'İstanbul',
+  targetGoal: 'yks',
+  dailyGoalQuestions: 25,
+  hasCompletedOnboarding: false
 };
 
 const DEFAULT_NOTES: StudyNote[] = [
@@ -521,6 +537,55 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }));
   };
 
+  const completeOnboarding = (data: {
+    username: string;
+    city: string;
+    targetGoal: CourseCategory;
+    dailyGoalQuestions?: number;
+  }) => {
+    sound.playVictory();
+    confetti({ particleCount: 90, spread: 80 });
+
+    const goalTitles: Record<CourseCategory, string> = {
+      yks: 'YKS Derece Adayı 🎓',
+      lgs: 'LGS Şampiyonu 📚',
+      kpss: 'KPSS Memur Adayı 🏛️',
+      kodlama: 'Geleceğin Yazılımcısı 💻',
+      dil: 'Global Dil Kaşifi 🌐'
+    };
+
+    setStats(prev => ({
+      ...prev,
+      username: data.username.trim() || 'Öğrenci',
+      city: data.city || 'İstanbul',
+      targetGoal: data.targetGoal,
+      selectedCourseId: data.targetGoal,
+      dailyGoalQuestions: data.dailyGoalQuestions || 25,
+      title: goalTitles[data.targetGoal] || prev.title,
+      hasCompletedOnboarding: true
+    }));
+    localStorage.setItem('knowza_has_started', 'true');
+  };
+
+  const updateUserPreferences = (data: {
+    username?: string;
+    city?: string;
+    targetGoal?: CourseCategory;
+    dailyGoalQuestions?: number;
+  }) => {
+    setStats(prev => {
+      const updated = { ...prev };
+      if (data.username) updated.username = data.username.trim();
+      if (data.city) updated.city = data.city;
+      if (data.targetGoal) {
+        updated.targetGoal = data.targetGoal;
+        updated.selectedCourseId = data.targetGoal;
+      }
+      if (data.dailyGoalQuestions) updated.dailyGoalQuestions = data.dailyGoalQuestions;
+      return updated;
+    });
+  };
+
   // User Level & XP calculation
   const userLevel = Math.floor(stats.xp / 100) + 1;
   const levelProgress = stats.xp % 100;
@@ -574,7 +639,9 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
         buyCostume,
         selectCostume,
         addXpAndGems,
-        upgradeToPro
+        upgradeToPro,
+        completeOnboarding,
+        updateUserPreferences
       }}
     >
       {children}

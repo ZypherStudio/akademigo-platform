@@ -20,6 +20,7 @@ import { ReelsQuestions } from './components/ReelsQuestions';
 import { AiCoach } from './components/AiCoach';
 import { AuthModal } from './components/AuthModal';
 import { Shop } from './components/Shop';
+import { KnowzaOnboarding } from './components/KnowzaOnboarding';
 import { ArrowLeft, Smartphone, Monitor } from 'lucide-react';
 import { soundSystem } from './utils/audio';
 
@@ -34,10 +35,10 @@ const KnowzaAppContent: React.FC = () => {
   const [activeQuizSubject, setActiveQuizSubject] = useState<string | null>(null);
   const [showLevelUpModal, setShowLevelUpModal] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
+  const [showOnboarding, setShowOnboarding] = useState(false);
 
   const handleStartFromSplash = () => {
-    localStorage.setItem('knowza_has_started', 'true');
-    setHasStarted(true);
+    setShowOnboarding(true);
     soundSystem.playClick();
   };
 
@@ -51,10 +52,23 @@ const KnowzaAppContent: React.FC = () => {
     return (
       <div className="h-[100dvh] w-full bg-[#FFFDF7] flex justify-center items-center overflow-hidden">
         <div className="w-full max-w-md h-full md:h-auto md:max-h-[860px] md:my-6 md:rounded-[40px] md:shadow-2xl md:border md:border-amber-200/50 bg-[#FFFDF7] overflow-hidden flex flex-col justify-between">
-          <KnowzaSplash
-            onStart={handleStartFromSplash}
-            onLogin={handleOpenLogin}
-          />
+          {showOnboarding ? (
+            <KnowzaOnboarding
+              onComplete={() => {
+                setHasStarted(true);
+                setShowOnboarding(false);
+              }}
+              onSkip={() => {
+                setHasStarted(true);
+                setShowOnboarding(false);
+              }}
+            />
+          ) : (
+            <KnowzaSplash
+              onStart={handleStartFromSplash}
+              onLogin={handleOpenLogin}
+            />
+          )}
           {showAuthModal && (
             <AuthModal
               onClose={() => {
@@ -108,6 +122,7 @@ const KnowzaAppContent: React.FC = () => {
               onOpenLevelUp={() => setShowLevelUpModal(true)}
               onOpenSettings={() => setCurrentTab('profile')}
               onNavigateTab={(tab) => setCurrentTab(tab)}
+              onOpenOnboarding={() => setShowOnboarding(true)}
             />
           )}
 
@@ -145,6 +160,7 @@ const KnowzaAppContent: React.FC = () => {
             <KnowzaProfile
               onBack={() => setCurrentTab('home')}
               onOpenAuth={() => setShowAuthModal(true)}
+              onOpenOnboarding={() => setShowOnboarding(true)}
             />
           )}
 
@@ -361,6 +377,18 @@ const KnowzaAppContent: React.FC = () => {
         {/* Account / Auth Modal */}
         {showAuthModal && (
           <AuthModal onClose={() => setShowAuthModal(false)} />
+        )}
+
+        {/* Change Goal & City Onboarding Modal */}
+        {showOnboarding && (
+          <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-0 md:p-4 backdrop-blur-sm animate-fade">
+            <div className="w-full max-w-md h-full md:h-auto md:max-h-[860px] md:rounded-[40px] bg-[#FFFDF7] overflow-hidden shadow-2xl border-2 border-amber-200">
+              <KnowzaOnboarding
+                onComplete={() => setShowOnboarding(false)}
+                onSkip={() => setShowOnboarding(false)}
+              />
+            </div>
+          </div>
         )}
       </div>
     </div>

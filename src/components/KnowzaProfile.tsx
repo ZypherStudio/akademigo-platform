@@ -13,7 +13,10 @@ import {
   Sparkles,
   Check,
   Edit3,
-  Download
+  Download,
+  MapPin,
+  Compass,
+  GraduationCap
 } from 'lucide-react';
 import { soundSystem } from '../utils/audio';
 import { KnowzaAvatar } from './KnowzaAvatar';
@@ -21,11 +24,13 @@ import { KnowzaAvatar } from './KnowzaAvatar';
 interface KnowzaProfileProps {
   onBack?: () => void;
   onOpenAuth?: () => void;
+  onOpenOnboarding?: () => void;
 }
 
 export const KnowzaProfile: React.FC<KnowzaProfileProps> = ({
   onBack,
-  onOpenAuth
+  onOpenAuth,
+  onOpenOnboarding
 }) => {
   const { stats, updateUsername, logoutUser } = useGame();
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
@@ -106,9 +111,18 @@ export const KnowzaProfile: React.FC<KnowzaProfileProps> = ({
             </button>
           )}
 
-          <p className="text-sm font-semibold text-slate-500 mb-3">
-            Seviye {currentLevel}
-          </p>
+          <div className="flex items-center gap-1.5 text-xs font-bold text-slate-500 mb-2">
+            <span>Seviye {currentLevel}</span>
+            <span>•</span>
+            <span className="flex items-center gap-0.5 text-amber-700">
+              <MapPin className="w-3 h-3 text-amber-600" />
+              {stats.city || 'İstanbul'}
+            </span>
+            <span>•</span>
+            <span className="text-amber-800 font-extrabold uppercase">
+              {stats.targetGoal || 'YKS'}
+            </span>
+          </div>
 
           {/* XP Progress Bar (720 / 1.000 XP) */}
           <div className="w-full max-w-xs space-y-1">
@@ -126,6 +140,32 @@ export const KnowzaProfile: React.FC<KnowzaProfileProps> = ({
 
         {/* Menu Items matching Screen 8 */}
         <div className="bg-white rounded-3xl p-2 shadow-sm border border-amber-100/70 divide-y divide-amber-50">
+          {/* Hedef ve Şehir Değiştirme */}
+          {onOpenOnboarding && (
+            <button
+              onClick={onOpenOnboarding}
+              className="w-full flex items-center justify-between p-3.5 hover:bg-amber-50/60 rounded-2xl transition text-left group"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-[#FFB800] to-amber-400 text-slate-900 flex items-center justify-center shadow-xs">
+                  <Compass className="w-5 h-5 text-slate-900" />
+                </div>
+                <div>
+                  <span className="text-sm font-black text-slate-900 block">Hedefim & Şehrim</span>
+                  <span className="text-[11px] font-bold text-amber-800">
+                    📍 {stats.city || 'İstanbul'} • {stats.targetGoal?.toUpperCase() || 'YKS'}
+                  </span>
+                </div>
+              </div>
+              <div className="flex items-center gap-1">
+                <span className="text-[11px] font-bold text-amber-600 bg-amber-100 px-2 py-0.5 rounded-full">
+                  Değiştir
+                </span>
+                <ChevronRight className="w-5 h-5 text-slate-400 group-hover:translate-x-0.5 transition-transform" />
+              </div>
+            </button>
+          )}
+
           {/* Profil Bilgileri */}
           <button
             onClick={() => setActiveModal('profileInfo')}
@@ -325,10 +365,35 @@ export const KnowzaProfile: React.FC<KnowzaProfileProps> = ({
                   </button>
                 </div>
               </div>
+            ) : activeModal === 'profileInfo' ? (
+              <div className="space-y-2.5 mb-5 text-xs text-slate-700 bg-amber-50/60 p-4 rounded-2xl border border-amber-200/60">
+                <div className="flex justify-between py-1 border-b border-amber-200/40">
+                  <span className="font-bold text-slate-500">Öğrenci Adı:</span>
+                  <span className="font-black text-slate-900">{stats.username || 'Öğrenci'}</span>
+                </div>
+                <div className="flex justify-between py-1 border-b border-amber-200/40">
+                  <span className="font-bold text-slate-500">Şehir:</span>
+                  <span className="font-black text-slate-900">📍 {stats.city || 'İstanbul'}</span>
+                </div>
+                <div className="flex justify-between py-1 border-b border-amber-200/40">
+                  <span className="font-bold text-slate-500">Öncelikli Hedef:</span>
+                  <span className="font-black text-amber-900">{stats.targetGoal?.toUpperCase() || 'YKS'}</span>
+                </div>
+                <div className="flex justify-between py-1 border-b border-amber-200/40">
+                  <span className="font-bold text-slate-500">Günlük Hedef:</span>
+                  <span className="font-black text-amber-800">{stats.dailyGoalQuestions || 25} Soru / gün</span>
+                </div>
+                <div className="flex justify-between py-1 border-b border-amber-200/40">
+                  <span className="font-bold text-slate-500">Toplam XP & Seviye:</span>
+                  <span className="font-black text-slate-900">{stats.xp} XP • Seviye {currentLevel}</span>
+                </div>
+                <div className="flex justify-between py-1">
+                  <span className="font-bold text-slate-500">Günlük Seri:</span>
+                  <span className="font-black text-amber-600">🔥 {stats.streak} Gün</span>
+                </div>
+              </div>
             ) : (
               <p className="text-sm text-slate-600 mb-5 leading-relaxed">
-                {activeModal === 'profileInfo' &&
-                  `Kullanıcı adınız: ${stats.username || 'Alp'}. Günlük seri: ${stats.streak} gün. Seviye: ${currentLevel}. Toplam XP: ${stats.xp}.`}
                 {activeModal === 'languages' &&
                   'Knowza üzerinde Türkçe, İngilizce, Almanca ve Fransızca dilleri arasında pratik yapabilirsiniz.'}
                 {activeModal === 'help' &&

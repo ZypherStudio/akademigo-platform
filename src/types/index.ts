@@ -176,6 +176,11 @@ export interface UserStats {
     xpGainedToday: number;
     perfectLessonsToday: number;
   };
+  city?: string;
+  targetGoal?: CourseCategory;
+  gradeOrTarget?: string;
+  dailyGoalQuestions?: number;
+  hasCompletedOnboarding?: boolean;
 }
 
 export interface LeaderboardUser {

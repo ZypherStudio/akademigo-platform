@@ -22,7 +22,9 @@ import {
   Gem,
   Music,
   VolumeX,
-  ShoppingBag
+  ShoppingBag,
+  MapPin,
+  Compass
 } from 'lucide-react';
 import { sound } from '../utils/audio';
 import { KnowzaTab } from './KnowzaBottomNav';
@@ -33,13 +35,15 @@ interface KnowzaHomeProps {
   onOpenLevelUp: () => void;
   onOpenSettings: () => void;
   onNavigateTab: (tab: KnowzaTab) => void;
+  onOpenOnboarding?: () => void;
 }
 
 export const KnowzaHome: React.FC<KnowzaHomeProps> = ({
   onStartQuiz,
   onOpenLevelUp,
   onOpenSettings,
-  onNavigateTab
+  onNavigateTab,
+  onOpenOnboarding
 }) => {
   const { stats, selectedCourseId, setSelectedCourseId, startLesson } = useGame();
   const [showAllCategoriesModal, setShowAllCategoriesModal] = useState(false);
@@ -54,12 +58,26 @@ export const KnowzaHome: React.FC<KnowzaHomeProps> = ({
     { id: 'dil', name: 'İngilizce & YDS', icon: '🌐', badge: 'A1 - B2', color: 'from-cyan-500 to-blue-600' }
   ];
 
+  // User's target category takes priority in ordering!
+  const userTargetGoal = stats.targetGoal || 'yks';
+  const prioritizedCategories = [...categories].sort((a, b) => {
+    if (a.id === userTargetGoal) return -1;
+    if (b.id === userTargetGoal) return 1;
+    return 0;
+  });
+
   // Active course data from coursesData
   const currentCourse = COURSES.find((c) => c.id === selectedCourseId) || COURSES[0];
   const allUnits = currentCourse?.units || [];
+  
+  // Real playable lessons with actual questions (ZERO 0-question lessons!)
   const primaryUnit = allUnits[0];
-  const primaryLesson: Lesson | undefined = primaryUnit?.lessons[0];
-  const otherLessons: Lesson[] = allUnits.flatMap((u) => u.lessons).slice(1, 5);
+  const playableLessons: Lesson[] = allUnits
+    .flatMap((u) => u.lessons)
+    .filter((l) => l.questions && l.questions.length > 0);
+  
+  const primaryLesson: Lesson | undefined = playableLessons[0];
+  const otherLessons: Lesson[] = playableLessons.slice(1, 7);
 
   const handleLaunchLesson = (lesson: Lesson) => {
     sound.playClick();
@@ -78,10 +96,13 @@ export const KnowzaHome: React.FC<KnowzaHomeProps> = ({
           <div className="flex-shrink-0">
             <KnowzaAvatar size="md" costume={stats.selectedCostume} />
           </div>
-          <div className="min-w-0 max-w-[100px] sm:max-w-[140px]">
-            <span className="text-[10px] font-bold text-[#8C7A5E] block leading-none truncate">Merhaba!</span>
-            <h2 className="text-base sm:text-lg font-black text-[#2A1E00] flex items-center gap-1 leading-snug truncate">
-              <span className="truncate">{stats.username || 'Alp'}</span>
+          <div className="min-w-0 max-w-[120px] sm:max-w-[160px]">
+            <span className="text-[10px] font-bold text-[#8C7A5E] block leading-none truncate flex items-center gap-1">
+              <MapPin className="w-2.5 h-2.5 text-amber-600 flex-shrink-0" />
+              <span className="truncate">{stats.city || 'İstanbul'}</span>
+            </span>
+            <h2 className="text-base sm:text-lg font-black text-[#2A1E00] flex items-center gap-1 leading-snug truncate mt-0.5">
+              <span className="truncate">{stats.username || 'Öğrenci'}</span>
               <span className="text-xs">👑</span>
             </h2>
           </div>
@@ -168,27 +189,47 @@ export const KnowzaHome: React.FC<KnowzaHomeProps> = ({
       {/* Sınav & Kategori Seçici Haplar (YKS, LGS, KPSS, Kodlama, Dil) */}
       <div className="space-y-2">
         <div className="flex items-center justify-between">
-          <span className="text-xs font-black uppercase text-[#8C7A5E] tracking-wider flex items-center gap-1.5">
-            <GraduationCap className="w-4 h-4 text-[#FFB800]" />
-            Hedef Sınavını Seç
-          </span>
-          <button
-            onClick={() => setShowAllCategoriesModal(true)}
-            className="text-xs font-black text-[#FFB800] hover:underline cursor-pointer"
-          >
-            Tümünü Gör
-          </button>
+          <div className="flex items-center gap-1.5 min-w-0">
+            <span className="text-xs font-black uppercase text-[#8C7A5E] tracking-wider flex items-center gap-1.5 truncate">
+              <GraduationCap className="w-4 h-4 text-[#FFB800] flex-shrink-0" />
+              Hedef Sınavını Seç
+            </span>
+            {stats.targetGoal && (
+              <span className="text-[9px] font-black bg-amber-100 text-amber-900 border border-amber-300 px-2 py-0.5 rounded-full whitespace-nowrap">
+                {categories.find(c => c.id === stats.targetGoal)?.badge || 'Seçildi'}
+              </span>
+            )}
+          </div>
+          <div className="flex items-center gap-2">
+            {onOpenOnboarding && (
+              <button
+                onClick={onOpenOnboarding}
+                className="text-xs font-black text-[#FFB800] hover:underline cursor-pointer flex items-center gap-1"
+                title="Şehir ve Hedef Tercihlerini Değiştir"
+              >
+                <Compass className="w-3.5 h-3.5" />
+                <span>Hedefi Değiştir</span>
+              </button>
+            )}
+            <button
+              onClick={() => setShowAllCategoriesModal(true)}
+              className="text-xs font-bold text-slate-500 hover:text-slate-800"
+            >
+              Tümü
+            </button>
+          </div>
         </div>
 
-        {/* Category Horizontal Scroll Pills with clean screen edge padding */}
+        {/* Category Horizontal Scroll Pills with user's priority first */}
         <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-none -mx-4 px-4 pr-4">
-          {categories.map((cat) => {
+          {prioritizedCategories.map((cat) => {
             const isSelected = selectedCourseId === cat.id;
+            const isTarget = stats.targetGoal === cat.id;
             return (
               <button
                 key={cat.id}
                 onClick={() => setSelectedCourseId(cat.id)}
-                className={`flex items-center gap-2 px-3.5 py-2 rounded-2xl whitespace-nowrap text-xs font-black transition-all active:scale-95 border-2 ${
+                className={`flex items-center gap-2 px-3.5 py-2 rounded-2xl whitespace-nowrap text-xs font-black transition-all active:scale-95 border-2 relative ${
                   isSelected
                     ? 'bg-[#FFB800] border-[#D99000] text-[#2A1E00] shadow-sm'
                     : 'bg-white border-[#F2E8D5] text-[#70685A] hover:bg-[#FFFDF7]'
@@ -196,6 +237,13 @@ export const KnowzaHome: React.FC<KnowzaHomeProps> = ({
               >
                 <span>{cat.icon}</span>
                 <span>{cat.name}</span>
+                {isTarget && (
+                  <span className={`text-[8px] font-black px-1 rounded uppercase ${
+                    isSelected ? 'bg-black/20 text-[#2A1E00]' : 'bg-amber-100 text-amber-900'
+                  }`}>
+                    Hedef
+                  </span>
+                )}
               </button>
             );
           })}

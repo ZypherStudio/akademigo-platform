@@ -270,11 +270,46 @@ export const COURSES: Course[] = [
             "id": "yks-u1-chest",
             "unitId": "yks-u1",
             "title": "Sayılar Sandığı 🎁",
-            "description": "Matematik temellerini sağlamlaştırdığın için ödül sandığı!",
+            "description": "Matematik temellerini pekiştiren özel bonus ödül soruları!",
             "xpReward": 50,
             "gemReward": 25,
-            "type": "chest",
-            "questions": []
+            "type": "lesson",
+            "questions": [
+              {
+                "id": "yks-chest-q1",
+                "type": "multiple_choice",
+                "prompt": "Ardışık 5 tek sayının toplamı 85 olduğuna göre, bu sayıların en büyüğü kaçtır?",
+                "difficulty": "orta",
+                "explanation": "Ortanca sayı 85 / 5 = 17'dir. Sayılar: 13, 15, 17, 19, 21. En büyüğü 21'dir.",
+                "options": [
+                  { "id": "co1", "text": "21", "isCorrect": true },
+                  { "id": "co2", "text": "19", "isCorrect": false },
+                  { "id": "co3", "text": "23", "isCorrect": false },
+                  { "id": "co4", "text": "25", "isCorrect": false }
+                ]
+              },
+              {
+                "id": "yks-chest-q2",
+                "type": "true_false",
+                "prompt": "İki basamaklı en küçük asal sayı ile en büyük asal sayının toplamı 108'dir.",
+                "statement": "En küçük iki basamaklı asal (11) ile en büyüğünün (97) toplamı 108 eder.",
+                "correctAnswer": true,
+                "explanation": "Doğru! 11 + 97 = 108."
+              },
+              {
+                "id": "yks-chest-q3",
+                "type": "multiple_choice",
+                "prompt": "x ve y birer tam sayıdır. (2x + 1) . y çarpımı tek sayı olduğuna göre, y için hangisi kesinlikle doğrudur?",
+                "difficulty": "kolay",
+                "explanation": "(2x + 1) daima tek sayıdır. Tek bir sayı ile y çarpımı tek ise, y de kesinlikle TEK sayıdır.",
+                "options": [
+                  { "id": "cy1", "text": "y daima tek sayıdır", "isCorrect": true },
+                  { "id": "cy2", "text": "y daima çift sayıdır", "isCorrect": false },
+                  { "id": "cy3", "text": "y pozitiftir", "isCorrect": false },
+                  { "id": "cy4", "text": "x tektir", "isCorrect": false }
+                ]
+              }
+            ]
           },
           {
             "id": "yks-u1-boss",
@@ -1415,11 +1450,46 @@ export const COURSES: Course[] = [
             "id": "kod-u1-chest",
             "unitId": "kod-u1",
             "title": "Geliştirici Sandığı 🎁",
-            "description": "İlk kodlama adımlarını başarıyla tamamladın!",
+            "description": "Python mantık ve kodlama pratik bonus soruları!",
             "xpReward": 50,
             "gemReward": 30,
-            "type": "chest",
-            "questions": []
+            "type": "lesson",
+            "questions": [
+              {
+                "id": "kod-chest-q1",
+                "type": "multiple_choice",
+                "prompt": "Python'da 7 // 2 işleminin sonucu nedir?",
+                "difficulty": "kolay",
+                "explanation": "// operatörü tam bölme yapar (taban bölme). 7 // 2 = 3 sonucunu verir.",
+                "options": [
+                  { "id": "kc1", "text": "3", "isCorrect": true },
+                  { "id": "kc2", "text": "3.5", "isCorrect": false },
+                  { "id": "kc3", "text": "4", "isCorrect": false },
+                  { "id": "kc4", "text": "1", "isCorrect": false }
+                ]
+              },
+              {
+                "id": "kod-chest-q2",
+                "type": "true_false",
+                "prompt": "Python'da listeler (list) değiştirilebilir (mutable) veri tipleridir.",
+                "statement": "Listeler oluşturulduktan sonra elemanları güncellenebilir veya silinebilir.",
+                "correctAnswer": true,
+                "explanation": "Doğrudur! Listeler mutable (değiştirilebilir), tuple (demet) ise immutable (değiştirilemez) tiptir."
+              },
+              {
+                "id": "kod-chest-q3",
+                "type": "multiple_choice",
+                "prompt": "len('Knowza') ifadesinin çıktısı nedir?",
+                "difficulty": "kolay",
+                "explanation": "'Knowza' kelimesi 6 karakterden oluşur, bu yüzden len fonksiyonu 6 döner.",
+                "options": [
+                  { "id": "kl1", "text": "6", "isCorrect": true },
+                  { "id": "kl2", "text": "5", "isCorrect": false },
+                  { "id": "kl3", "text": "7", "isCorrect": false },
+                  { "id": "kl4", "text": "None", "isCorrect": false }
+                ]
+              }
+            ]
           }
         ]
       },

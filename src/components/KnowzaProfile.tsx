@@ -47,9 +47,9 @@ export const KnowzaProfile: React.FC<KnowzaProfileProps> = ({
     }
   };
 
-  const currentLevel = Math.max(13, Math.floor((stats.xp || 1200) / 100));
-  const currentXp = stats.xp || 720;
-  const targetXp = 1000;
+  const currentLevel = Math.max(1, Math.floor((stats.xp || 0) / 100) + 1);
+  const currentXp = (stats.xp || 0) % 100;
+  const targetXp = 100;
   const xpPercent = Math.min(100, Math.round((currentXp / targetXp) * 100));
 
   return (

@@ -81,63 +81,41 @@ const DEFAULT_STATS: UserStats = {
   authProvider: 'guest',
   selectedCostume: 'classic',
   unlockedCostumes: ['classic'],
-  xp: 260,
-  gems: 280,
+  xp: 0,
+  gems: 0,
   hearts: 5,
   maxHearts: 5,
-  streak: 6,
+  streak: 0,
   lastActiveDate: new Date().toISOString().split('T')[0],
-  completedLessons: ['yks-u1-l1', 'kod-u1-l1'],
+  completedLessons: [],
   openedChests: [],
   selectedCourseId: 'yks',
-  theme: 'duo',
+  theme: 'gold',
   avatar: 'haribo',
-  title: 'YKS Derece Adayı 🎓',
-  bannerColor: 'from-emerald-500 to-green-600',
-  totalQuestionsAnswered: 35,
-  totalStudyMinutes: 65,
-  eloRating: 1240,
-  duelWins: 3,
-  duelLosses: 1,
-  errorList: DEFAULT_MISTAKES,
+  title: '2026 Sınav Adayı 🎓',
+  bannerColor: 'from-amber-500 to-yellow-600',
+  totalQuestionsAnswered: 0,
+  totalStudyMinutes: 0,
+  eloRating: 1000,
+  duelWins: 0,
+  duelLosses: 0,
+  errorList: [],
   inventory: {
-    streakFreeze: 1,
+    streakFreeze: 0,
     heartRefillCount: 0,
     doubleXpMinutes: 0
   },
   dailyQuestProgress: {
-    completedLessonsToday: 2,
-    xpGainedToday: 65,
-    perfectLessonsToday: 1
+    completedLessonsToday: 0,
+    xpGainedToday: 0,
+    perfectLessonsToday: 0
   },
   targetGoal: 'yks',
-  dailyGoalQuestions: 25,
+  dailyGoalQuestions: 20,
   hasCompletedOnboarding: false
 };
 
-const DEFAULT_NOTES: StudyNote[] = [
-  {
-    id: 'note-1',
-    category: 'yks',
-    title: 'TYT Tek/Çift Sayı Taktikleri',
-    content: 'T ± T = Ç, T × T = T. Çarpanlardan biri çiftse sonuç daima çift!',
-    createdAt: 'Bugün, 14:30'
-  },
-  {
-    id: 'note-2',
-    category: 'kodlama',
-    title: 'Python List Metodları',
-    content: '.append(x) sona ekler, .pop() son elemanı silip döner, len(list) eleman sayısını verir.',
-    createdAt: 'Dün, 19:15'
-  },
-  {
-    id: 'note-3',
-    category: 'kpss',
-    title: '2026 Güncel Bilgiler',
-    content: 'Alper Gezeravcı: İlk Türk Astronot (Ax-3 Misyonu). Gordion Antik Kenti (Ankara): UNESCO 20. Dünya Mirası.',
-    createdAt: 'Bugün, 11:20'
-  }
-];
+const DEFAULT_NOTES: StudyNote[] = [];
 
 export const AVATAR_MAP: Record<UserAvatar, { emoji: string; name: string }> = {
   haribo: { emoji: '🍯', name: 'Knowza 3D Maskot (Özel Maskot)' },
@@ -164,6 +142,20 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
           parsed.username = 'Öğrenci';
           parsed.hasCompletedOnboarding = false;
         }
+
+        // Flush any hardcoded legacy demo stats (streak 6, xp 260, gems 280, fake lessons)
+        if (parsed.streak === 6 && parsed.xp === 260) {
+          parsed.streak = 0;
+          parsed.xp = 0;
+          parsed.gems = 0;
+          parsed.completedLessons = [];
+          parsed.totalQuestionsAnswered = 0;
+          parsed.totalStudyMinutes = 0;
+          parsed.errorList = [];
+          parsed.duelWins = 0;
+          parsed.duelLosses = 0;
+        }
+
         // Automatically migrate old default avatar to Knowza Ayıcık
         const avatar = (parsed.avatar === 'owl' || !parsed.avatar) ? 'haribo' : parsed.avatar;
         return { ...DEFAULT_STATS, ...parsed, avatar };

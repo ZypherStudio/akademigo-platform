@@ -233,7 +233,7 @@ export const KahootArena: React.FC = () => {
             </div>
             
             <h1 className="text-3xl sm:text-4xl font-black tracking-tight">
-              Kahoot<span className="text-amber-300">GO</span> Yarışması 🏆
+              Knowza <span className="text-amber-300">Soru Arenası</span> 🏆
             </h1>
             <p className="text-white/80 text-xs sm:text-sm font-semibold max-w-lg mx-auto mt-1">
               Herkes aynı anda yarışır, soruları 15 saniyede en hızlı cevaplayan podyumun 1. basamağına tırmanır!
@@ -616,7 +616,7 @@ export const KahootArena: React.FC = () => {
             <div className="text-5xl mb-2 animate-bounce">👑</div>
             <h1 className="text-3xl sm:text-4xl font-black">ŞAMPİYONLAR PODYUMU!</h1>
             <p className="text-white/90 text-xs sm:text-sm font-semibold max-w-md mx-auto mt-1">
-              KahootGO arenasında tüm sorular tamamlandı! İşte zirvedeki efsanevi ayıcıklar:
+              Knowza arenasında tüm sorular tamamlandı! İşte zirvedeki efsanevi ayıcıklar:
             </p>
           </div>
 

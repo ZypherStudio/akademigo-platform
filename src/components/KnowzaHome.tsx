@@ -23,7 +23,8 @@ import {
   Music,
   VolumeX,
   ShoppingBag,
-  Compass
+  Compass,
+  ArrowRight
 } from 'lucide-react';
 import { sound } from '../utils/audio';
 import { KnowzaTab } from './KnowzaBottomNav';
@@ -48,16 +49,19 @@ export const KnowzaHome: React.FC<KnowzaHomeProps> = ({
   const [showAllCategoriesModal, setShowAllCategoriesModal] = useState(false);
   const [isMusicPlaying, setIsMusicPlaying] = useState(() => sound.getBgmEnabled());
 
+  // Dynamic user level calculation (Starts at Level 1 with 0 XP)
+  const userLevel = Math.max(1, Math.floor((stats.xp || 0) / 100) + 1);
+
   // Available categories with metadata
   const categories: { id: CourseCategory; name: string; icon: string; badge: string; color: string }[] = [
     { id: 'yks', name: 'YKS (TYT - AYT)', icon: '🎓', badge: 'ÖSYM', color: 'from-amber-500 to-orange-500' },
     { id: 'lgs', name: '8. Sınıf LGS', icon: '📚', badge: 'MEB', color: 'from-blue-500 to-indigo-500' },
     { id: 'kpss', name: 'KPSS 2026', icon: '🏛️', badge: 'Memurluk', color: 'from-emerald-500 to-teal-600' },
-    { id: 'kodlama', name: 'Kodlama / Python', icon: '💻', badge: 'Junior Mod', color: 'from-purple-500 to-pink-500' },
-    { id: 'dil', name: 'İngilizce & YDS', icon: '🌐', badge: 'A1 - B2', color: 'from-cyan-500 to-blue-600' }
+    { id: 'kodlama', name: 'Kodlama / Python', icon: '💻', badge: 'Yazılım', color: 'from-purple-500 to-pink-500' },
+    { id: 'dil', name: 'İngilizce & Dil', icon: '🌐', badge: 'A1 - B2', color: 'from-cyan-500 to-blue-600' }
   ];
 
-  // User's target category takes priority in ordering!
+  // User's target category takes priority in ordering
   const userTargetGoal = stats.targetGoal || 'yks';
   const prioritizedCategories = [...categories].sort((a, b) => {
     if (a.id === userTargetGoal) return -1;
@@ -69,7 +73,7 @@ export const KnowzaHome: React.FC<KnowzaHomeProps> = ({
   const currentCourse = COURSES.find((c) => c.id === selectedCourseId) || COURSES[0];
   const allUnits = currentCourse?.units || [];
   
-  // Real playable lessons with actual questions (ZERO 0-question lessons!)
+  // Real playable lessons with actual questions (Zero 0-question lessons!)
   const primaryUnit = allUnits[0];
   const playableLessons: Lesson[] = allUnits
     .flatMap((u) => u.lessons)
@@ -83,9 +87,13 @@ export const KnowzaHome: React.FC<KnowzaHomeProps> = ({
     startLesson(lesson);
   };
 
+  const currentStreak = stats.streak ?? 0;
+  const currentGems = stats.gems ?? 0;
+
   return (
-    <div className="flex-1 w-full px-4 py-4 space-y-5 pb-36 select-none animate-fade overflow-x-hidden">
-      {/* Top Header Bar */}
+    <div className="flex-1 w-full px-4 py-4 space-y-4 pb-36 select-none animate-fade overflow-x-hidden">
+      
+      {/* ================= TOP HEADER BAR ================= */}
       <div className="flex items-center justify-between pt-1">
         {/* User Profile Pill */}
         <div
@@ -106,7 +114,7 @@ export const KnowzaHome: React.FC<KnowzaHomeProps> = ({
           </div>
         </div>
 
-        {/* Right Action Icons: Gems/Shop, Streak, Music & Settings */}
+        {/* Right Action Icons: Gems, Streak, Music & Settings */}
         <div className="flex items-center gap-1.5 sm:gap-2">
           {/* Gems & Direct Shop Pill */}
           <button
@@ -118,13 +126,13 @@ export const KnowzaHome: React.FC<KnowzaHomeProps> = ({
             title="Knowza Mağaza & Elmaslar"
           >
             <Gem className="w-3.5 h-3.5 fill-[#1CB0F6] text-[#1CB0F6]" />
-            <span>{stats.gems || 280}</span>
+            <span>{currentGems}</span>
           </button>
 
           {/* Daily Streak Pill */}
           <div className="flex items-center gap-1 bg-[#FFF2D6] border border-[#FFE2A3] px-2.5 py-1.5 rounded-2xl text-[#D96B00] font-black text-xs shadow-xs">
             <Flame className="w-3.5 h-3.5 fill-[#FF8A00] text-[#FF8A00] animate-bounceSubtle" />
-            <span>{stats.streak || 6}g</span>
+            <span>{currentStreak}g</span>
           </div>
 
           {/* Music Toggle */}
@@ -157,34 +165,89 @@ export const KnowzaHome: React.FC<KnowzaHomeProps> = ({
         </div>
       </div>
 
-      {/* Card 1: Günlük Serin Kartı */}
-      <div className="bg-gradient-to-r from-[#FFF8E7] via-[#FFF2D6] to-[#FFEABF] rounded-3xl p-5 border border-[#FFE2A3] shadow-[0_8px_20px_rgba(255,184,0,0.12)] flex items-center justify-between relative overflow-hidden">
-        <div className="space-y-1 relative z-10">
-          <span className="text-xs font-black uppercase text-[#8C7A5E] tracking-wider">
-            Günlük Serin
-          </span>
-          <div className="flex items-center gap-2">
-            <Flame className="w-6 h-6 fill-[#FF8A00] text-[#FF8A00]" />
-            <h3 className="text-2xl font-black text-[#2A1E00]">
-              {stats.streak || 6} gün
-            </h3>
+      {/* ================= BESPOKE 3D MASCOT HERO CARD ================= */}
+      <div className="bg-gradient-to-br from-[#FFFDF6] via-[#FFF5DE] to-[#FFEAB6] rounded-[28px] p-4 sm:p-5 border-2 border-[#FFDA85] shadow-[0_10px_26px_rgba(255,184,0,0.18)] relative overflow-hidden">
+        
+        {/* Soft Background Radial Light */}
+        <div className="absolute -top-12 -right-12 w-44 h-44 bg-amber-400/20 rounded-full blur-2xl pointer-events-none" />
+
+        <div className="flex items-center justify-between gap-3 relative z-10">
+          
+          {/* Left Column: Companion Speech & Progress */}
+          <div className="flex-1 space-y-2">
+            
+            {/* Top Companion Pill */}
+            <div className="inline-flex items-center gap-1.5 bg-white/90 border border-amber-300/80 px-2.5 py-0.5 rounded-full text-[10px] font-black text-amber-900 shadow-xs">
+              <Sparkles className="w-3 h-3 text-amber-600 fill-amber-400" />
+              <span>2026 Sınav Koçun Yanında</span>
+            </div>
+
+            {/* Mascot Speech Bubble */}
+            <div className="bg-white/95 rounded-2xl p-2.5 border border-amber-200 shadow-xs text-left relative">
+              <p className="text-xs font-black text-slate-800 leading-snug">
+                {currentStreak === 0
+                  ? `Selam ${stats.username || 'Öğrenci'}! 🎓 Bugün senin ilk günün. İlk testini çözüp serini 1 güne çıkaralım mı?`
+                  : `Harikasın ${stats.username || 'Öğrenci'}! 🔥 ${currentStreak} gündür aralıksız çalışıyorsun. Bugünün hedefini tamamla!`
+                }
+              </p>
+            </div>
+
+            {/* Daily Real Progress & Action */}
+            <div className="flex items-center gap-2 pt-0.5">
+              {primaryLesson && (
+                <button
+                  onClick={() => handleLaunchLesson(primaryLesson)}
+                  className="px-3 py-2 bg-gradient-to-r from-[#FFC700] via-[#FFB800] to-[#FFA000] text-slate-950 font-black text-xs rounded-xl border-b-3 border-[#D99000] active:border-b-0 active:translate-y-0.5 shadow-sm transition flex items-center gap-1.5"
+                >
+                  <Play className="w-3.5 h-3.5 fill-slate-950" />
+                  <span>{currentStreak === 0 ? 'İlk Testi Çöz 🚀' : 'Dersine Başla ⚡'}</span>
+                </button>
+              )}
+
+              <button
+                onClick={() => onNavigateTab('aicoach')}
+                className="px-2.5 py-2 bg-white/90 hover:bg-white text-slate-800 font-extrabold text-[11px] rounded-xl border border-amber-200 shadow-xs transition flex items-center gap-1"
+              >
+                <Bot className="w-3.5 h-3.5 text-indigo-600" />
+                <span>AI Koç</span>
+              </button>
+            </div>
+
           </div>
-          <p className="text-xs font-bold text-[#D98200]">
-            Devam et! Yarın serin {(stats.streak || 6) + 1} gün olacak.
-          </p>
+
+          {/* Right Column: 3D Mascot with Illuminated Golden Pedestal */}
+          <div className="relative w-28 sm:w-32 flex flex-col items-center justify-center flex-shrink-0">
+            
+            {/* 3D Illuminated Golden Stage Base */}
+            <div className="absolute bottom-0 w-24 sm:w-28 h-8 bg-gradient-to-r from-amber-400/40 via-yellow-300/80 to-amber-400/40 rounded-[100%] blur-[1px] border border-amber-300/60 shadow-[0_6px_16px_rgba(245,158,11,0.3)]" />
+            <div className="absolute bottom-1 w-20 h-4 bg-amber-500/20 rounded-[100%] blur-[2px]" />
+
+            {/* Mascot Character with Clean Float & Shadow */}
+            <div 
+              onClick={() => onNavigateTab('aicoach')}
+              className="relative z-10 w-24 sm:w-28 filter drop-shadow-[0_8px_16px_rgba(245,158,11,0.25)] hover:scale-105 active:scale-95 transition-transform duration-200 cursor-pointer"
+              title="3D Knowza Ayıcığı - Tıkla ve Koçuna Soru Sor!"
+            >
+              <img
+                src="/assets/knowza_reading.png"
+                alt="Knowza 3D Maskot"
+                className="w-full h-auto object-contain animate-float"
+              />
+            </div>
+
+            {/* Real Streak Badge Pill */}
+            <div className="relative z-20 -mt-2 bg-slate-900 text-amber-400 font-black text-[9px] px-2 py-0.5 rounded-full border border-amber-400/50 shadow-xs flex items-center gap-1">
+              <Flame className="w-2.5 h-2.5 fill-amber-400 text-amber-400" />
+              <span>{currentStreak} Gün Seri</span>
+            </div>
+
+          </div>
+
         </div>
 
-        {/* Mascot on Cloud (Clean isolated transparent PNG) */}
-        <div className="w-24 sm:w-28 filter drop-shadow-md relative z-10 -mr-1">
-          <img
-            src="/assets/knowza_reading.png"
-            alt="Knowza Maskot"
-            className="w-full h-auto object-contain animate-float"
-          />
-        </div>
       </div>
 
-      {/* Sınav & Kategori Seçici Haplar (YKS, LGS, KPSS, Kodlama, Dil) */}
+      {/* ================= SINA VE KATEGORİ SEÇİCİ ================= */}
       <div className="space-y-2">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-1.5 min-w-0">
@@ -203,7 +266,7 @@ export const KnowzaHome: React.FC<KnowzaHomeProps> = ({
               <button
                 onClick={onOpenOnboarding}
                 className="text-xs font-black text-[#FFB800] hover:underline cursor-pointer flex items-center gap-1"
-                title="Şehir ve Hedef Tercihlerini Değiştir"
+                title="Hedef Tercihlerini Değiştir"
               >
                 <Compass className="w-3.5 h-3.5" />
                 <span>Hedefi Değiştir</span>
@@ -218,7 +281,7 @@ export const KnowzaHome: React.FC<KnowzaHomeProps> = ({
           </div>
         </div>
 
-        {/* Category Horizontal Scroll Pills with user's priority first */}
+        {/* Category Horizontal Scroll Pills */}
         <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-none -mx-4 px-4 pr-4">
           {prioritizedCategories.map((cat) => {
             const isSelected = selectedCourseId === cat.id;
@@ -227,7 +290,7 @@ export const KnowzaHome: React.FC<KnowzaHomeProps> = ({
               <button
                 key={cat.id}
                 onClick={() => setSelectedCourseId(cat.id)}
-                className={`flex items-center gap-2 px-3.5 py-2 rounded-2xl whitespace-nowrap text-xs font-black transition-all active:scale-95 border-2 relative ${
+                className={`flex items-center gap-1.5 px-3 py-2 rounded-2xl whitespace-nowrap text-xs font-black transition-all active:scale-95 border-2 relative ${
                   isSelected
                     ? 'bg-[#FFB800] border-[#D99000] text-[#2A1E00] shadow-sm'
                     : 'bg-white border-[#F2E8D5] text-[#70685A] hover:bg-[#FFFDF7]'
@@ -248,8 +311,8 @@ export const KnowzaHome: React.FC<KnowzaHomeProps> = ({
         </div>
       </div>
 
-      {/* Section: Bugünün Dersleri & Aktif Kategori Testleri */}
-      <div className="space-y-3">
+      {/* ================= BUGÜNÜN DERSLERİ & GERÇEK TESTLER ================= */}
+      <div className="space-y-2.5">
         <div className="flex items-center justify-between gap-2">
           <div className="min-w-0 flex-1">
             <h3 className="text-base font-black text-[#2A1E00] truncate">
@@ -271,10 +334,10 @@ export const KnowzaHome: React.FC<KnowzaHomeProps> = ({
         {primaryLesson ? (
           <div
             onClick={() => handleLaunchLesson(primaryLesson)}
-            className="bg-white rounded-3xl p-4 sm:p-5 border-2 border-[#FFE2A3] hover:border-[#FFB800] shadow-[0_8px_24px_rgba(255,184,0,0.1)] flex items-center justify-between cursor-pointer active:scale-98 transition-all group"
+            className="bg-white rounded-3xl p-4 border-2 border-[#FFE2A3] hover:border-[#FFB800] shadow-[0_8px_24px_rgba(255,184,0,0.1)] flex items-center justify-between cursor-pointer active:scale-98 transition-all group"
           >
             <div className="flex items-center gap-3.5 min-w-0 flex-1 pr-2">
-              <div className="w-13 h-13 sm:w-14 sm:h-14 rounded-2xl bg-[#FFF8E7] border border-[#FFE2A3] flex items-center justify-center text-3xl shadow-inner group-hover:scale-105 transition-transform flex-shrink-0">
+              <div className="w-12 h-12 rounded-2xl bg-[#FFF8E7] border border-[#FFE2A3] flex items-center justify-center text-2xl shadow-inner group-hover:scale-105 transition-transform flex-shrink-0">
                 {currentCourse.icon}
               </div>
               <div className="min-w-0 flex-1">
@@ -282,39 +345,39 @@ export const KnowzaHome: React.FC<KnowzaHomeProps> = ({
                   <Sparkles className="w-3 h-3 text-[#FFB800]" />
                   <span>+{primaryLesson.xpReward} XP</span>
                 </div>
-                <h4 className="text-sm sm:text-base font-black text-[#2A1E00] line-clamp-2 leading-snug">
+                <h4 className="text-sm font-black text-[#2A1E00] line-clamp-2 leading-snug">
                   {primaryLesson.title}
                 </h4>
-                <p className="text-[11px] font-bold text-[#8C7A5E] truncate mt-0.5">
+                <p className="text-[10px] font-bold text-[#8C7A5E] truncate mt-0.5">
                   {primaryUnit?.title || 'Temel Seviye'}
                 </p>
               </div>
             </div>
 
             {/* Golden Circle Play Button */}
-            <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-gradient-to-tr from-[#FFB800] to-[#FFD54F] border-b-4 border-[#D99000] flex items-center justify-center text-[#2A1E00] shadow-md group-hover:scale-110 active:border-b-0 active:translate-y-1 transition-all flex-shrink-0">
-              <Play className="w-5 h-5 fill-[#2A1E00] ml-0.5" />
+            <div className="w-11 h-11 rounded-full bg-gradient-to-tr from-[#FFB800] to-[#FFD54F] border-b-4 border-[#D99000] flex items-center justify-center text-[#2A1E00] shadow-md group-hover:scale-110 active:border-b-0 active:translate-y-1 transition-all flex-shrink-0">
+              <Play className="w-4 h-4 fill-[#2A1E00] ml-0.5" />
             </div>
           </div>
         ) : null}
 
-        {/* Secondary Real Lessons Grid from current course */}
-        <div className="grid grid-cols-2 gap-2.5">
+        {/* Secondary Real Lessons Grid */}
+        <div className="grid grid-cols-2 gap-2">
           {otherLessons.slice(0, 4).map((lesson, idx) => (
             <button
               key={lesson.id}
               onClick={() => handleLaunchLesson(lesson)}
-              className="bg-white p-3.5 rounded-2xl border border-[#F2E8D5] hover:border-[#FFB800] hover:bg-[#FFFDF7] shadow-sm flex flex-col justify-between text-left transition-all active:scale-95 h-24"
+              className="bg-white p-3 rounded-2xl border border-[#F2E8D5] hover:border-[#FFB800] hover:bg-[#FFFDF7] shadow-xs flex flex-col justify-between text-left transition-all active:scale-95 h-22"
             >
               <div>
-                <span className="text-[10px] font-black text-[#FFB800] uppercase tracking-wider block">
+                <span className="text-[9px] font-black text-[#FFB800] uppercase tracking-wider block">
                   Bölüm {idx + 2} • +{lesson.xpReward} XP
                 </span>
-                <span className="font-black text-xs text-[#2A1E00] line-clamp-2 mt-0.5 leading-snug">
+                <span className="font-black text-xs text-[#2A1E00] line-clamp-2 mt-0.5 leading-tight">
                   {lesson.title}
                 </span>
               </div>
-              <div className="flex items-center justify-between text-[11px] font-bold text-amber-600 mt-1">
+              <div className="flex items-center justify-between text-[10px] font-bold text-amber-600 mt-1">
                 <span>{lesson.questions.length} Soru</span>
                 <span className="text-xs">Çöz ►</span>
               </div>
@@ -323,145 +386,114 @@ export const KnowzaHome: React.FC<KnowzaHomeProps> = ({
         </div>
       </div>
 
-      {/* Card 2: Seviye Atlama Zamanı! */}
-      <div
-        onClick={() => {
-          sound.playVictory();
-          onOpenLevelUp();
-        }}
-        className="bg-gradient-to-r from-[#FFF8E7] to-[#FFF0CC] rounded-3xl p-4 sm:p-5 border-2 border-[#FFE2A3] hover:border-[#FFB800] shadow-[0_8px_20px_rgba(255,184,0,0.12)] flex items-center justify-between cursor-pointer active:scale-98 transition-all group"
-      >
-        <div className="space-y-1">
-          <div className="inline-flex items-center gap-1.5 bg-[#FFB800]/20 px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase text-[#D98200]">
-            <Sparkles className="w-3 h-3 text-[#FFB800]" />
-            Yeni Bölüm Açıldı
-          </div>
-          <h4 className="text-base sm:text-lg font-black text-[#2A1E00]">
-            Seviye Atlama Zamanı!
-          </h4>
-          <p className="text-xs font-bold text-[#8C7A5E]">
-            Seviye 13'e geçmek için tıkla ve kutla!
-          </p>
-        </div>
-
-        {/* Clean isolated cheering bear */}
-        <div className="w-20 sm:w-24 filter drop-shadow-md group-hover:scale-110 transition-transform flex-shrink-0">
-          <img
-            src="/assets/knowza_cheering.png"
-            alt="Knowza Seviye Atlama"
-            className="w-full h-auto object-contain"
-          />
-        </div>
-      </div>
-
-      {/* Popüler Yarışma & Eğitici Odalar Hub */}
-      <div className="space-y-3 pt-1">
-        <h3 className="text-base font-black text-[#2A1E00] flex items-center gap-2">
+      {/* ================= CANLI YARIŞMA & PRATİK ODALARI ================= */}
+      <div className="space-y-2.5 pt-1">
+        <h3 className="text-sm font-black text-[#2A1E00] flex items-center gap-1.5">
           <Sparkles className="w-4 h-4 text-[#FFB800]" />
-          <span>Canlı Yarışma & Pratik Odaları</span>
+          <span>Canlı Yarışma & Pratik Arenaları</span>
         </h3>
 
-        <div className="grid grid-cols-2 gap-3">
-          {/* KahootGO Card */}
+        <div className="grid grid-cols-2 gap-2.5">
+          {/* Canlı Soru Arenası (Rebranded from KahootGO) */}
           <button
             onClick={() => onNavigateTab('kahoot')}
-            className="bg-gradient-to-br from-purple-500 to-indigo-600 rounded-3xl p-4 text-white shadow-md text-left flex flex-col justify-between h-28 relative overflow-hidden group active:scale-95 transition-all"
+            className="bg-gradient-to-br from-purple-600 to-indigo-700 rounded-2xl p-3.5 text-white shadow-md text-left flex flex-col justify-between h-26 relative overflow-hidden group active:scale-95 transition-all"
           >
             <div>
-              <span className="text-[10px] font-black uppercase bg-white/20 px-2 py-0.5 rounded-md inline-block mb-1">
-                Grup Oyunu
+              <span className="text-[9px] font-black uppercase bg-white/20 px-2 py-0.5 rounded-md inline-block mb-1">
+                Canlı Yarışma
               </span>
-              <h5 className="font-black text-sm sm:text-base leading-tight">KahootGO 🏆</h5>
-              <p className="text-[10px] text-white/80 font-bold mt-0.5">PIN ile Çok Oyunculu</p>
+              <h5 className="font-black text-sm leading-tight">Soru Arenası 🏆</h5>
+              <p className="text-[10px] text-white/80 font-bold mt-0.5">Çok Oyunculu Bilgi Ligi</p>
             </div>
-            <span className="text-xl self-end">▲ ◆ ● ■</span>
+            <span className="text-lg self-end">▲ ◆ ● ■</span>
           </button>
 
-          {/* 1v1 Bilgi Düellosu Card */}
+          {/* 1v1 Bilgi Düellosu */}
           <button
             onClick={() => onNavigateTab('duel')}
-            className="bg-gradient-to-br from-rose-500 to-orange-500 rounded-3xl p-4 text-white shadow-md text-left flex flex-col justify-between h-28 relative overflow-hidden group active:scale-95 transition-all"
+            className="bg-gradient-to-br from-rose-500 to-orange-500 rounded-2xl p-3.5 text-white shadow-md text-left flex flex-col justify-between h-26 relative overflow-hidden group active:scale-95 transition-all"
           >
             <div>
-              <span className="text-[10px] font-black uppercase bg-white/20 px-2 py-0.5 rounded-md inline-block mb-1">
+              <span className="text-[9px] font-black uppercase bg-white/20 px-2 py-0.5 rounded-md inline-block mb-1">
                 Anlık Kapışma
               </span>
-              <h5 className="font-black text-sm sm:text-base leading-tight">1v1 Düello ⚔️</h5>
+              <h5 className="font-black text-sm leading-tight">1v1 Düello ⚔️</h5>
               <p className="text-[10px] text-white/80 font-bold mt-0.5">ELO Puanı Kazan</p>
             </div>
-            <span className="text-xs font-black self-end bg-black/20 px-2 py-1 rounded-lg">
-              👑 {stats.eloRating || 1240} ELO
+            <span className="text-xs font-black self-end bg-black/20 px-2 py-0.5 rounded-md">
+              👑 {stats.eloRating || 1000} ELO
             </span>
           </button>
 
           {/* Soru Kaydır (Reels) */}
           <button
             onClick={() => onNavigateTab('reels')}
-            className="bg-gradient-to-br from-orange-500 to-amber-500 rounded-3xl p-4 text-white shadow-md text-left flex flex-col justify-between h-28 relative overflow-hidden group active:scale-95 transition-all"
+            className="bg-gradient-to-br from-amber-500 to-yellow-600 rounded-2xl p-3.5 text-white shadow-md text-left flex flex-col justify-between h-26 relative overflow-hidden group active:scale-95 transition-all"
           >
             <div>
-              <span className="text-[10px] font-black uppercase bg-white/20 px-2 py-0.5 rounded-md inline-block mb-1">
-                Seri Çözüm
+              <span className="text-[9px] font-black uppercase bg-white/20 px-2 py-0.5 rounded-md inline-block mb-1">
+                Hızlı Çözüm
               </span>
-              <h5 className="font-black text-sm sm:text-base leading-tight">Soru Kaydır 🔥</h5>
-              <p className="text-[10px] text-white/80 font-bold mt-0.5">TikTok / Reels Modu</p>
+              <h5 className="font-black text-sm leading-tight">Soru Kaydır 🔥</h5>
+              <p className="text-[10px] text-white/80 font-bold mt-0.5">Dikey Soru Akışı</p>
             </div>
-            <span className="text-xl self-end">🎯</span>
+            <span className="text-lg self-end">🎯</span>
           </button>
 
-          {/* Deneme Sınavları (ÖSYM) */}
+          {/* Deneme Sınavları (ÖSYM & MEB) */}
           <button
             onClick={() => onNavigateTab('exams')}
-            className="bg-gradient-to-br from-emerald-600 to-teal-700 rounded-3xl p-4 text-white shadow-md text-left flex flex-col justify-between h-28 relative overflow-hidden group active:scale-95 transition-all"
+            className="bg-gradient-to-br from-emerald-600 to-teal-700 rounded-2xl p-3.5 text-white shadow-md text-left flex flex-col justify-between h-26 relative overflow-hidden group active:scale-95 transition-all"
           >
             <div>
-              <span className="text-[10px] font-black uppercase bg-white/20 px-2 py-0.5 rounded-md inline-block mb-1">
-                Gerçek Format
+              <span className="text-[9px] font-black uppercase bg-white/20 px-2 py-0.5 rounded-md inline-block mb-1">
+                2026 Formatı
               </span>
-              <h5 className="font-black text-sm sm:text-base leading-tight">Denemeler 📝</h5>
+              <h5 className="font-black text-sm leading-tight">Denemeler 📝</h5>
               <p className="text-[10px] text-white/80 font-bold mt-0.5">TYT / KPSS / LGS</p>
             </div>
-            <span className="text-xl self-end">⏱️</span>
+            <span className="text-lg self-end">⏱️</span>
           </button>
         </div>
       </div>
 
-      {/* Ekstra Odalar (AI Koç, Sınav Sayacı, Hata Defteri, Kod Lab) */}
+      {/* ================= EKSTRA ARAÇLAR ================= */}
       <div className="grid grid-cols-4 gap-2 pt-1">
         <button
           onClick={() => onNavigateTab('aicoach')}
-          className="bg-white p-2.5 rounded-2xl border border-amber-200/70 shadow-sm flex flex-col items-center text-center active:scale-95 transition"
+          className="bg-white p-2.5 rounded-2xl border border-amber-200/70 shadow-xs flex flex-col items-center text-center active:scale-95 transition"
         >
           <Bot className="w-5 h-5 text-amber-600 mb-1" />
-          <span className="text-[11px] font-bold text-slate-800">AI Koç</span>
+          <span className="text-[10px] font-black text-slate-800">AI Koç</span>
         </button>
 
         <button
           onClick={() => onNavigateTab('countdown')}
-          className="bg-white p-2.5 rounded-2xl border border-amber-200/70 shadow-sm flex flex-col items-center text-center active:scale-95 transition"
+          className="bg-white p-2.5 rounded-2xl border border-amber-200/70 shadow-xs flex flex-col items-center text-center active:scale-95 transition"
         >
           <Clock className="w-5 h-5 text-indigo-600 mb-1" />
-          <span className="text-[11px] font-bold text-slate-800">Sayaç</span>
+          <span className="text-[10px] font-black text-slate-800">Sayaç</span>
         </button>
 
         <button
           onClick={() => onNavigateTab('errors')}
-          className="bg-white p-2.5 rounded-2xl border border-amber-200/70 shadow-sm flex flex-col items-center text-center active:scale-95 transition"
+          className="bg-white p-2.5 rounded-2xl border border-amber-200/70 shadow-xs flex flex-col items-center text-center active:scale-95 transition"
         >
           <CheckCircle2 className="w-5 h-5 text-rose-500 mb-1" />
-          <span className="text-[11px] font-bold text-slate-800">Hatalarım</span>
+          <span className="text-[10px] font-black text-slate-800">Hatalarım</span>
         </button>
 
         <button
           onClick={() => onNavigateTab('codelab')}
-          className="bg-white p-2.5 rounded-2xl border border-amber-200/70 shadow-sm flex flex-col items-center text-center active:scale-95 transition"
+          className="bg-white p-2.5 rounded-2xl border border-amber-200/70 shadow-xs flex flex-col items-center text-center active:scale-95 transition"
         >
           <Code2 className="w-5 h-5 text-purple-600 mb-1" />
-          <span className="text-[11px] font-bold text-slate-800">Kod Lab</span>
+          <span className="text-[10px] font-black text-slate-800">Kod Lab</span>
         </button>
       </div>
 
-      {/* Knowza Mağaza & PRO VIP Pass Banner */}
+      {/* ================= KNOWZA MAĞAZA BANNER ================= */}
       <div
         onClick={() => {
           sound.playClick();
@@ -470,18 +502,18 @@ export const KnowzaHome: React.FC<KnowzaHomeProps> = ({
         className="bg-gradient-to-r from-[#2B1B06] via-[#3D2608] to-[#1C1204] rounded-3xl p-4 text-white shadow-lg border border-amber-500/40 flex items-center justify-between cursor-pointer active:scale-98 transition group relative overflow-hidden"
       >
         <div className="space-y-1 relative z-10">
-          <div className="inline-flex items-center gap-1.5 bg-amber-400 text-slate-900 text-[10px] font-black px-2.5 py-0.5 rounded-full uppercase tracking-wider shadow-xs">
+          <div className="inline-flex items-center gap-1.5 bg-amber-400 text-slate-900 text-[9px] font-black px-2.5 py-0.5 rounded-full uppercase tracking-wider shadow-xs">
             <span>VIP MAĞAZA</span>
             <span>💎</span>
           </div>
-          <h4 className="text-base font-black text-amber-200 group-hover:text-amber-100 transition">
+          <h4 className="text-sm font-black text-amber-200 group-hover:text-amber-100 transition">
             Knowza Mağaza & PRO Pass
           </h4>
-          <p className="text-xs text-amber-100/70 font-semibold">
-            Sınırsız can, 2X XP, ödüllü reklam ve 3D kostümler!
+          <p className="text-[11px] text-amber-100/70 font-semibold">
+            Sınırsız can, 2X XP desteği ve özel 3D kostümler!
           </p>
         </div>
-        <div className="w-14 h-14 relative z-10 flex-shrink-0 group-hover:scale-110 transition filter drop-shadow-md">
+        <div className="w-12 h-12 relative z-10 flex-shrink-0 group-hover:scale-110 transition filter drop-shadow-md">
           <img
             src="/assets/knowza_avatar_circle.png"
             alt="Knowza Mağaza"
@@ -490,7 +522,7 @@ export const KnowzaHome: React.FC<KnowzaHomeProps> = ({
         </div>
       </div>
 
-      {/* Full Categories & All Tests Modal ("Tümünü Gör") */}
+      {/* ================= TÜM DERSLER MODALI ================= */}
       {showAllCategoriesModal && (
         <div
           className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-sm p-0 sm:p-4 animate-fade"
@@ -507,7 +539,7 @@ export const KnowzaHome: React.FC<KnowzaHomeProps> = ({
                   🎓
                 </div>
                 <div>
-                  <h3 className="font-black text-slate-900 text-lg">Tüm Sınavlar & Testler</h3>
+                  <h3 className="font-black text-slate-900 text-base">Tüm Sınavlar & Testler</h3>
                   <p className="text-xs text-slate-500 font-semibold">Hedefine göre dersini seç ve hemen çöz</p>
                 </div>
               </div>
@@ -531,7 +563,7 @@ export const KnowzaHome: React.FC<KnowzaHomeProps> = ({
                 return (
                   <div
                     key={course.id}
-                    className={`p-4 rounded-3xl border-2 transition-all ${
+                    className={`p-3.5 rounded-3xl border-2 transition-all ${
                       isSelected
                         ? 'border-[#FFB800] bg-amber-50/70 shadow-sm'
                         : 'border-slate-100 hover:border-amber-200 bg-white'
@@ -542,9 +574,9 @@ export const KnowzaHome: React.FC<KnowzaHomeProps> = ({
                         <span className="text-3xl">{course.icon}</span>
                         <div>
                           <div className="flex items-center gap-2">
-                            <h4 className="font-black text-base text-slate-900">{course.name}</h4>
+                            <h4 className="font-black text-sm text-slate-900">{course.name}</h4>
                             {course.badge && (
-                              <span className="text-[10px] font-black bg-amber-200/70 text-amber-900 px-2 py-0.5 rounded-md">
+                              <span className="text-[9px] font-black bg-amber-200/70 text-amber-900 px-2 py-0.5 rounded-md">
                                 {course.badge}
                               </span>
                             )}
@@ -555,7 +587,7 @@ export const KnowzaHome: React.FC<KnowzaHomeProps> = ({
                     </div>
 
                     {/* Units & Quick Start */}
-                    <div className="mt-3 pt-3 border-t border-slate-100 flex items-center justify-between">
+                    <div className="mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between">
                       <span className="text-xs font-bold text-slate-600">
                         {course.units.length} Bölüm • {totalQuestions} Soru
                       </span>
@@ -569,7 +601,7 @@ export const KnowzaHome: React.FC<KnowzaHomeProps> = ({
                             handleLaunchLesson(firstLesson);
                           }
                         }}
-                        className="px-4 py-2 bg-[#FFB800] hover:bg-[#FFA500] text-slate-900 font-black text-xs rounded-xl shadow-sm transition active:scale-95 flex items-center gap-1.5"
+                        className="px-3.5 py-1.5 bg-[#FFB800] hover:bg-[#FFA500] text-slate-900 font-black text-xs rounded-xl shadow-xs transition active:scale-95 flex items-center gap-1.5"
                       >
                         <Play className="w-3.5 h-3.5 fill-slate-900" />
                         <span>Hemen Başla</span>
@@ -582,6 +614,7 @@ export const KnowzaHome: React.FC<KnowzaHomeProps> = ({
           </div>
         </div>
       )}
+
     </div>
   );
 };

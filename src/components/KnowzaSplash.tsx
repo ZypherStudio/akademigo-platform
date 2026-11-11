@@ -173,7 +173,7 @@ export const KnowzaSplash: React.FC<KnowzaSplashProps> = ({
           {/* Floating Badge 3 - Bottom Center */}
           <div className="absolute -bottom-3 z-20 bg-gradient-to-r from-amber-500 to-yellow-500 text-slate-950 font-black text-[11px] px-3.5 py-1 rounded-full shadow-md flex items-center gap-1.5 border border-amber-200">
             <Flame className="w-3.5 h-3.5 fill-amber-950 text-amber-950" />
-            <span>Duolingo Tarzı Günlük Seri & XP</span>
+            <span>Günlük Seri & Başarı Puanı</span>
           </div>
         </div>
 

@@ -11,7 +11,7 @@ import { AuthModal } from './AuthModal';
 import { sound } from '../utils/audio';
 
 const THEMES: { id: AppTheme; name: string; bg: string; border: string; accent: string }[] = [
-  { id: 'duo', name: 'Duolingo Yeşili', bg: 'bg-[#58cc02]', border: 'border-[#46a302]', accent: '#58cc02' },
+  { id: 'duo', name: 'Zümrüt Yeşili', bg: 'bg-[#58cc02]', border: 'border-[#46a302]', accent: '#58cc02' },
   { id: 'dark', name: 'Gece Modu (Dark)', bg: 'bg-gray-900', border: 'border-gray-800', accent: '#1f2937' },
   { id: 'cyber', name: 'Siberpunk Mor', bg: 'bg-[#af72ff]', border: 'border-[#9047ff]', accent: '#af72ff' },
   { id: 'gold', name: 'Altın Şampiyon', bg: 'bg-[#ffc800]', border: 'border-[#e5b300]', accent: '#ffc800' },
@@ -25,7 +25,7 @@ const AVAILABLE_TITLES = [
   'Hafıza Şampiyonu 🧠',
   'Soru Canavarı ⚡',
   'Efsanevi Kaşif 🚀',
-  'Kahoot Şampiyonu 🏆'
+  'Arena Şampiyonu 🏆'
 ];
 
 const BANNERS = [
@@ -336,7 +336,7 @@ export const Profile: React.FC = () => {
                 Knowza Ayıcık Kostüm Dolabın
               </h3>
               <p className="text-xs text-gray-500 dark:text-gray-400 font-medium">
-                Sahip olduğun özel kostümlerden birini seç, Kahoot ve düellolarda bu kostümle dans et!
+                Sahip olduğun özel kostümlerden birini seç, arena ve düellolarda bu kostümle boy göster!
               </p>
             </div>
 
@@ -526,7 +526,7 @@ export const Profile: React.FC = () => {
                   <div>
                     <h4 className="font-black text-sm text-amber-900 dark:text-amber-100">Misafir Modundasın</h4>
                     <p className="text-xs text-amber-800 dark:text-amber-300 font-semibold">
-                      Ders ve Kahoot çözebilirsin fakat tarayıcı çerezleri silinirse puanların kaybolabilir.
+                      Ders ve test çözebilirsin fakat oturum açmazsan puanların cihazında kalır.
                     </p>
                   </div>
                 </div>

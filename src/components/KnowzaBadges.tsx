@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useGame } from '../context/GameContext';
 import {
   ArrowLeft,
   Award,
@@ -44,8 +45,14 @@ interface BadgeItem {
 }
 
 export const KnowzaBadges: React.FC<KnowzaBadgesProps> = ({ onBack, onNavigateToQuiz }) => {
+  const { stats } = useGame();
   const [selectedBadge, setSelectedBadge] = useState<BadgeItem | null>(null);
   const [filterCategory, setFilterCategory] = useState<string>('all');
+
+  const completedCount = stats.completedLessons?.length || 0;
+  const currentStreak = stats.streak || 0;
+  const currentLevel = Math.max(1, Math.floor((stats.xp || 0) / 100) + 1);
+  const totalQuestions = stats.totalQuestionsAnswered || 0;
 
   const badges: BadgeItem[] = [
     {
@@ -57,47 +64,50 @@ export const KnowzaBadges: React.FC<KnowzaBadgesProps> = ({ onBack, onNavigateTo
       gradient: 'from-emerald-400 via-teal-500 to-emerald-600',
       borderGlow: 'border-emerald-300 shadow-emerald-500/20',
       accentColor: '#10B981',
-      unlocked: true,
-      unlockedDate: '3 gün önce',
+      unlocked: completedCount >= 1,
+      unlockedDate: completedCount >= 1 ? 'Tamamlandı' : undefined,
+      progress: { current: Math.min(1, completedCount), total: 1 },
       tier: 1
     },
     {
       id: 'streak_master',
       title: 'Günlük Seri Ustası',
-      desc: 'Üst üste 7 gün boyunca her gün en az 1 ders çözerek serini korudun.',
+      desc: 'Üst üste 7 gün boyunca her gün en az 1 ders çözerek serini koru.',
       category: 'Seri',
       icon: Flame,
       gradient: 'from-amber-400 via-orange-500 to-amber-600',
       borderGlow: 'border-orange-300 shadow-orange-500/20',
       accentColor: '#F59E0B',
-      unlocked: true,
-      unlockedDate: 'Dün',
+      unlocked: currentStreak >= 7,
+      unlockedDate: currentStreak >= 7 ? 'Kazanıldı' : undefined,
+      progress: { current: Math.min(7, currentStreak), total: 7 },
       tier: 2
     },
     {
       id: 'level_5',
       title: '5 Seviye Atlama',
-      desc: 'Bilgini katlayarak Knowza evreninde 5. seviyeye ulaştın.',
+      desc: 'Bilgini katlayarak Knowza evreninde 5. seviyeye ulaş.',
       category: 'Başlangıç',
       icon: Star,
       gradient: 'from-yellow-300 via-amber-400 to-yellow-500',
       borderGlow: 'border-yellow-200 shadow-yellow-500/30',
       accentColor: '#EAB308',
-      unlocked: true,
-      unlockedDate: 'Geçen hafta',
+      unlocked: currentLevel >= 5,
+      unlockedDate: currentLevel >= 5 ? 'Kazanıldı' : undefined,
+      progress: { current: Math.min(5, currentLevel), total: 5 },
       tier: 1
     },
     {
       id: 'lang_expert',
       title: 'Dil Uzmanı',
-      desc: 'YDS & İngilizce testlerinde 100 kelimeyi hatasız tamamla.',
+      desc: 'İngilizce ve Dil testlerinde pratik yaparak dersleri tamamla.',
       category: 'Uzmanlık',
       icon: Globe,
       gradient: 'from-sky-400 via-blue-500 to-indigo-600',
       borderGlow: 'border-sky-300 shadow-blue-500/20',
       accentColor: '#0EA5E9',
-      unlocked: true,
-      unlockedDate: 'Bugün',
+      unlocked: (stats.completedLessons || []).some(id => id.startsWith('dil')),
+      progress: { current: (stats.completedLessons || []).filter(id => id.startsWith('dil')).length, total: 3 },
       tier: 2
     },
     {
@@ -109,34 +119,34 @@ export const KnowzaBadges: React.FC<KnowzaBadgesProps> = ({ onBack, onNavigateTo
       gradient: 'from-cyan-400 via-teal-500 to-cyan-600',
       borderGlow: 'border-cyan-300 shadow-cyan-500/20',
       accentColor: '#06B6D4',
-      unlocked: true,
-      unlockedDate: 'Bugün',
+      unlocked: totalQuestions >= 50,
+      progress: { current: Math.min(50, totalQuestions), total: 50 },
       tier: 2
     },
     {
       id: 'knowza_legend',
       title: 'Knowza Efsanesi',
-      desc: '10. seviyeyi geç ve haftalık lig tablosunda ilk 3 e gir!',
+      desc: '1.000 XP barajını aşarak lig tablosunda zirveye yerleş!',
       category: 'Uzmanlık',
       icon: Crown,
       gradient: 'from-amber-300 via-yellow-500 to-amber-700',
       borderGlow: 'border-amber-300 shadow-amber-500/40',
       accentColor: '#D97706',
-      unlocked: true,
-      unlockedDate: 'Yeni!',
+      unlocked: (stats.xp || 0) >= 1000,
+      progress: { current: Math.min(1000, stats.xp || 0), total: 1000 },
       tier: 3
     },
     {
-      id: 'kahoot_champion',
-      title: 'Kahoot Fatihi',
-      desc: 'Canlı KahootGO yarışmasında rakiplerini geride bırakıp 1. ol.',
+      id: 'arena_champion',
+      title: 'Canlı Arena Şampiyonu',
+      desc: 'Canlı Soru Arenası yarışmasında rakiplerini geride bırakıp 1. ol.',
       category: 'Düello',
       icon: Trophy,
       gradient: 'from-purple-500 via-indigo-600 to-purple-800',
       borderGlow: 'border-purple-300 shadow-purple-500/20',
       accentColor: '#8B5CF6',
-      unlocked: false,
-      progress: { current: 3, total: 5 },
+      unlocked: (stats.duelWins || 0) >= 1,
+      progress: { current: Math.min(3, stats.duelWins || 0), total: 3 },
       tier: 2
     },
     {

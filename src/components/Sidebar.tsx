@@ -12,7 +12,7 @@ interface SidebarProps {
 export const Sidebar: React.FC<SidebarProps> = ({ currentTab, onSelectTab }) => {
   const menuItems = [
     { id: 'learn', label: 'ÖĞREN', icon: Map, color: 'text-green-500' },
-    { id: 'kahoot', label: 'KAHOOT ARENA 🏆', icon: Trophy, color: 'text-purple-500' },
+    { id: 'kahoot', label: 'SORU ARENASI 🏆', icon: Trophy, color: 'text-purple-500' },
     { id: 'reels', label: 'SORU KAYDIR 🔥', icon: Flame, color: 'text-orange-500' },
     { id: 'duel', label: '1v1 DÜELLO', icon: Swords, color: 'text-red-500' },
     { id: 'aicoach', label: 'KNOWZA AI KOÇ', icon: Bot, color: 'text-amber-500' },

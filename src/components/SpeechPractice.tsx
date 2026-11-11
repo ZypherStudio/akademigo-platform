@@ -146,7 +146,7 @@ export const SpeechPractice: React.FC = () => {
           </div>
           <h2 className="text-2xl sm:text-3xl font-black">Sesli Telaffuz & Konuşma Pratiği</h2>
           <p className="text-white/90 text-xs sm:text-sm font-semibold mt-1">
-            Mikrofona konuşarak telaffuzunu anlık test et, Duolingo tarzı doğruluk puanı kazan!
+            Mikrofona konuşarak telaffuzunu anlık test et, yapay zekâ doğruluk puanı kazan!
           </p>
         </div>
         <div className="text-5xl animate-bounceSubtle">🎙️</div>

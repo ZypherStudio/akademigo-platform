@@ -31,7 +31,6 @@ const KnowzaAppContent: React.FC = () => {
     return localStorage.getItem('knowza_has_started') === 'true';
   });
 
-  const [isExpandedWebMode, setIsExpandedWebMode] = useState(false);
   const [activeQuizSubject, setActiveQuizSubject] = useState<string | null>(null);
   const [showLevelUpModal, setShowLevelUpModal] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
@@ -87,36 +86,8 @@ const KnowzaAppContent: React.FC = () => {
 
   return (
     <div className="min-h-[100dvh] w-full bg-[#FFFDF7] flex justify-center items-start text-slate-900 select-none antialiased relative">
-      {/* Desktop Responsive Test Mode Toggle (Only visible on wide desktop screens) */}
-      <div className="hidden lg:flex fixed top-4 right-4 z-50 items-center gap-1.5 bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-full border border-amber-200/80 shadow-md text-xs font-bold text-slate-700">
-        <button
-          onClick={() => setIsExpandedWebMode(false)}
-          className={`flex items-center gap-1 px-2.5 py-1 rounded-full transition ${
-            !isExpandedWebMode ? 'bg-[#FFB800] text-slate-900 font-black shadow-sm' : 'hover:bg-amber-50'
-          }`}
-          title="Play Store Mobil Boyutu (448px)"
-        >
-          <Smartphone className="w-3.5 h-3.5" />
-          <span>Mobil (448px)</span>
-        </button>
-        <button
-          onClick={() => setIsExpandedWebMode(true)}
-          className={`flex items-center gap-1 px-2.5 py-1 rounded-full transition ${
-            isExpandedWebMode ? 'bg-[#FFB800] text-slate-900 font-black shadow-sm' : 'hover:bg-amber-50'
-          }`}
-          title="Geniş Web Görünümü"
-        >
-          <Monitor className="w-3.5 h-3.5" />
-          <span>Geniş Web</span>
-        </button>
-      </div>
-
-      {/* Main App Container */}
-      <div
-        className={`w-full min-h-[100dvh] relative bg-[#FFFDF7] md:shadow-2xl md:border md:border-amber-100 flex flex-col transition-all duration-300 ${
-          isExpandedWebMode ? 'max-w-2xl md:my-4 md:rounded-[36px]' : 'max-w-md md:my-4 md:rounded-[36px]'
-        }`}
-      >
+      {/* Play Store Mobile App Container */}
+      <div className="w-full max-w-md min-h-[100dvh] relative bg-[#FFFDF7] md:my-3 md:rounded-[40px] md:shadow-2xl md:border md:border-amber-200/50 flex flex-col overflow-hidden">
         {/* Main Tab Views */}
         <main className="flex-1 w-full flex flex-col">
           {currentTab === 'home' && (
@@ -178,7 +149,7 @@ const KnowzaAppContent: React.FC = () => {
                   <ArrowLeft className="w-4 h-4" />
                   <span>Ana Sayfa</span>
                 </button>
-                <span className="text-sm font-black tracking-wide">KahootGO 🏆</span>
+                <span className="text-sm font-black tracking-wide">Soru Arenası 🏆</span>
                 <div className="w-12" />
               </div>
               <div className="flex-1 pb-24">
@@ -372,7 +343,7 @@ const KnowzaAppContent: React.FC = () => {
         {/* Level Up Celebration Modal (Screen 7) */}
         {showLevelUpModal && (
           <KnowzaLevelUpModal
-            level={Math.max(13, Math.floor((stats.xp || 1200) / 100))}
+            level={Math.max(1, Math.floor((stats.xp || 0) / 100) + 1)}
             onClose={() => setShowLevelUpModal(false)}
           />
         )}

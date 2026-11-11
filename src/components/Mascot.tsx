@@ -21,7 +21,7 @@ const KNOWZA_QUOTES = [
   "Hata yapmaktan korkma, Knowza ile pratik yaparak öğrenirsin! 🚀",
   "Bugün harika bir odaklanma günündesin! Hadi dersini tamamla! 🧠",
   "Kepini takmaya hazır mısın? Bilgini katla ve rozetleri topla! 👑",
-  "1v1 Düelloda ve KahootGO'da arkadaşlarına meydan oku! ⚔️"
+  "1v1 Düelloda ve Soru Arenasında arkadaşlarına meydan oku! ⚔️"
 ];
 
 export const Mascot: React.FC<MascotProps> = ({

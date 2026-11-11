@@ -148,7 +148,7 @@ class SoundSystem {
     }
   }
 
-  // Duolingo-style signature "Correct" chime (bright ascending chord)
+  // Signature "Correct" chime (bright ascending chord)
   public playCorrect() {
     if (!this.sfxEnabled) return;
     this.initCtx();
@@ -175,7 +175,7 @@ class SoundSystem {
     });
   }
 
-  // Duolingo-style soft "Wrong" buzzer
+  // Soft "Wrong" buzzer
   public playWrong() {
     if (!this.sfxEnabled) return;
     this.initCtx();

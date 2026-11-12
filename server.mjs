@@ -3,6 +3,9 @@ import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
 import { fileURLToPath } from 'node:url';
+import pkg from 'pg';
+
+const { Pool } = pkg;
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -11,6 +14,7 @@ const PORT = Number(process.env.PORT || 3000);
 const DIST_DIR = path.join(__dirname, 'dist');
 const DATA_DIR = path.join(__dirname, 'data');
 const DB_FILE = path.join(DATA_DIR, 'knowza_db.json');
+const DATABASE_URL = (process.env.DATABASE_URL || '').trim();
 
 const BLOCKED_FAKE_EMAILS = new Set([
   'ali@gmail.com',
@@ -65,6 +69,51 @@ function loadDb() {
 }
 
 let db = loadDb();
+let pgPool = null;
+let pgPersistChain = Promise.resolve();
+
+async function initDatabase() {
+  if (!DATABASE_URL) {
+    console.log('[Knowza DB] DATABASE_URL ayarlı değil; yerel JSON deposu kullanılıyor.');
+    return;
+  }
+
+  try {
+    const isLocal = DATABASE_URL.includes('localhost') || DATABASE_URL.includes('127.0.0.1');
+    pgPool = new Pool({
+      connectionString: DATABASE_URL,
+      ssl: isLocal ? false : { rejectUnauthorized: false },
+    });
+
+    await pgPool.query(`
+      CREATE TABLE IF NOT EXISTS knowza_store (
+        id TEXT PRIMARY KEY,
+        payload JSONB NOT NULL,
+        updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      )
+    `);
+
+    const result = await pgPool.query('SELECT payload FROM knowza_store WHERE id = $1', ['main']);
+    if (result.rows.length > 0 && result.rows[0].payload) {
+      const remote = result.rows[0].payload;
+      db = {
+        accounts: remote.accounts && typeof remote.accounts === 'object' ? remote.accounts : {},
+        sessions: remote.sessions && typeof remote.sessions === 'object' ? remote.sessions : {},
+        duelRooms: remote.duelRooms && typeof remote.duelRooms === 'object' ? remote.duelRooms : {},
+      };
+      console.log(`[Knowza DB] PostgreSQL bağlandı (${Object.keys(db.accounts).length} hesap yüklendi).`);
+    } else {
+      await pgPool.query(
+        'INSERT INTO knowza_store (id, payload, updated_at) VALUES ($1, $2::jsonb, NOW()) ON CONFLICT (id) DO UPDATE SET payload = EXCLUDED.payload, updated_at = NOW()',
+        ['main', JSON.stringify(db)]
+      );
+      console.log('[Knowza DB] PostgreSQL ilk tablo ve veri kaydı oluşturuldu.');
+    }
+  } catch (err) {
+    console.error('[Knowza DB Warning] PostgreSQL bağlantısı başarısız, yerel JSON ile devam ediliyor:', err.message);
+    pgPool = null;
+  }
+}
 
 function persistDb() {
   try {
@@ -76,6 +125,20 @@ function persistDb() {
     fs.renameSync(tmpFile, DB_FILE);
   } catch (err) {
     console.error('[DB Persist Warning]', err.message);
+  }
+
+  if (pgPool) {
+    const snapshot = JSON.stringify(db);
+    pgPersistChain = pgPersistChain
+      .then(() =>
+        pgPool.query(
+          'INSERT INTO knowza_store (id, payload, updated_at) VALUES ($1, $2::jsonb, NOW()) ON CONFLICT (id) DO UPDATE SET payload = EXCLUDED.payload, updated_at = NOW()',
+          ['main', snapshot]
+        )
+      )
+      .catch((err) => {
+        console.error('[PostgreSQL Persist Warning]', err.message);
+      });
   }
 }
 
@@ -192,7 +255,11 @@ function cleanupExpiredDuelRooms() {
 async function handleApi(req, res, pathname, urlObj) {
   // Health & Config
   if (req.method === 'GET' && pathname === '/api/health') {
-    return sendJson(res, 200, { ok: true, accounts: Object.keys(db.accounts).length });
+    return sendJson(res, 200, {
+      ok: true,
+      storage: pgPool ? 'postgresql' : 'local-json',
+      accounts: Object.keys(db.accounts).length,
+    });
   }
 
   if (req.method === 'GET' && pathname === '/api/config') {
@@ -580,6 +647,8 @@ const server = http.createServer(async (req, res) => {
   }
 });
 
-server.listen(PORT, () => {
-  console.log(`Knowza server listening on port ${PORT}`);
+initDatabase().then(() => {
+  server.listen(PORT, () => {
+    console.log(`Knowza server listening on port ${PORT}`);
+  });
 });

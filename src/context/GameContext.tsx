@@ -183,7 +183,7 @@ export const AVATAR_MAP: Record<UserAvatar, { emoji: string; name: string }> = {
   coder_cat: { emoji: '🐱', name: 'Kodcu Kedi' }
 };
 
-const KNOWZA_STORAGE_VERSION = 'knowza_v2026_real_v4';
+const KNOWZA_STORAGE_VERSION = 'knowza_v2026_real_v5';
 
 const GameContext = createContext<GameContextType | undefined>(undefined);
 

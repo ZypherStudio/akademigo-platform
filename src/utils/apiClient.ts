@@ -23,6 +23,7 @@ const SESSION_TOKEN_KEY = 'knowza_session_token';
 
 export interface AuthResponse {
   ok: boolean;
+  redirecting?: boolean;
   error?: string;
   isNewAccount?: boolean;
   email?: string;
@@ -103,6 +104,9 @@ async function postJson(url: string, body: unknown, token?: string): Promise<{ s
 
 export async function authenticateWithFirebaseGoogle(): Promise<AuthResponse> {
   const res = await signInWithFirebaseGoogle();
+  if (res.redirecting) {
+    return { ok: true, redirecting: true };
+  }
   if (!res.ok || !res.email) {
     return { ok: false, error: res.error || 'Google ile giriş yapılamadı.' };
   }

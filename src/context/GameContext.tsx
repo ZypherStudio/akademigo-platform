@@ -30,7 +30,7 @@ import {
   setSessionToken,
   syncAccountToServer
 } from '../utils/apiClient';
-import { signOutFirebase } from '../utils/firebaseClient';
+import { completeFirebaseRedirectSignIn, signOutFirebase } from '../utils/firebaseClient';
 import { sound } from '../utils/audio';
 import confetti from 'canvas-confetti';
 
@@ -767,6 +767,26 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     localStorage.setItem('knowza_has_started', 'true');
     refreshLeaderboard();
   };
+
+  // Complete mobile Google signInWithRedirect return flow automatically on startup
+  useEffect(() => {
+    let active = true;
+    completeFirebaseRedirectSignIn().then((res) => {
+      if (!active || !res || !res.ok || !res.email) return;
+      loginUser('google', res.email, {
+        username: res.displayName || '',
+        firebaseUid: res.uid,
+        googleSub: res.uid,
+        avatarUrl: res.photoURL,
+        existingStats: res.stats ?? null,
+        existingNotes: res.notes ?? [],
+        isNewAccount: res.isNewAccount,
+      });
+    });
+    return () => {
+      active = false;
+    };
+  }, []);
 
   const logoutUser = () => {
     sound.playClick();

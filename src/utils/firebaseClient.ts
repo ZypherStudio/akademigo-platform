@@ -1,8 +1,12 @@
-import { initializeApp, getApps, getApp, FirebaseApp } from 'firebase/app';
+import { initializeApp, getApps, FirebaseApp } from 'firebase/app';
 import {
   getAuth,
   GoogleAuthProvider,
   signInWithPopup,
+  signInWithRedirect,
+  getRedirectResult,
+  setPersistence,
+  browserLocalPersistence,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut,
@@ -38,9 +42,21 @@ export interface FirebaseWebConfig {
   storageBucket?: string;
   messagingSenderId?: string;
   appId: string;
+  measurementId?: string;
 }
 
 const FIREBASE_CONFIG_STORAGE_KEY = 'knowza_firebase_config_v1';
+
+// Built-in Knowza Firebase Web + Mobile WebView/PWA Config (knowza-d6f66)
+const DEFAULT_FIREBASE_CONFIG: FirebaseWebConfig = {
+  apiKey: 'AIzaSyBm_Zk8xRiMZlQ5njlZVMHFWYf2A9o1Tnk',
+  authDomain: 'knowza-d6f66.firebaseapp.com',
+  projectId: 'knowza-d6f66',
+  storageBucket: 'knowza-d6f66.firebasestorage.app',
+  messagingSenderId: '323680176995',
+  appId: '1:323680176995:web:1a9acdeb39552daa60a156',
+  measurementId: 'G-P2EK02TCM3',
+};
 
 let cachedApp: FirebaseApp | null = null;
 let cachedAuth: Auth | null = null;
@@ -118,7 +134,7 @@ export function getEnvFirebaseConfig(): FirebaseWebConfig | null {
 }
 
 export function resolveFirebaseConfig(): FirebaseWebConfig | null {
-  return getSavedFirebaseConfig() || getEnvFirebaseConfig();
+  return getSavedFirebaseConfig() || getEnvFirebaseConfig() || DEFAULT_FIREBASE_CONFIG;
 }
 
 export function isFirebaseConfigured(): boolean {
@@ -205,6 +221,7 @@ function getFirebaseInstances(): { app: FirebaseApp; auth: Auth; db: Firestore }
 
 export interface FirebaseAuthResult {
   ok: boolean;
+  redirecting?: boolean;
   error?: string;
   uid?: string;
   email?: string;
@@ -307,7 +324,43 @@ function mapFirebaseError(err: unknown): string {
   }
 }
 
-/** Real Firebase Google Account Picker Sign-In */
+function isMobileOrStandaloneWebView(): boolean {
+  if (typeof window === 'undefined' || typeof navigator === 'undefined') return false;
+  const ua = navigator.userAgent || '';
+  const isMobileUa = /Android|iPhone|iPad|iPod|Mobile|wv/i.test(ua);
+  const isStandalone =
+    window.matchMedia?.('(display-mode: standalone)').matches ||
+    (navigator as unknown as { standalone?: boolean }).standalone === true;
+  return isMobileUa || isStandalone;
+}
+
+/**
+ * Handles return from mobile Google `signInWithRedirect` flow.
+ * Call once on app startup so mobile Chrome/Safari/PWA users land directly logged in.
+ */
+export async function completeFirebaseRedirectSignIn(): Promise<FirebaseAuthResult | null> {
+  const instances = getFirebaseInstances();
+  if (!instances) return null;
+
+  try {
+    await setPersistence(instances.auth, browserLocalPersistence).catch(() => {});
+    const result = await getRedirectResult(instances.auth);
+    if (!result?.user?.email) return null;
+
+    return await loadOrInitializeFirestoreProfile({
+      db: instances.db,
+      uid: result.user.uid,
+      email: result.user.email,
+      displayName: result.user.displayName || '',
+      photoURL: result.user.photoURL || undefined,
+      authProvider: 'google',
+    });
+  } catch (err) {
+    return { ok: false, error: mapFirebaseError(err) };
+  }
+}
+
+/** Real Firebase Google Account Picker Sign-In (Desktop Popup + Mobile Redirect Support) */
 export async function signInWithFirebaseGoogle(): Promise<FirebaseAuthResult> {
   const instances = getFirebaseInstances();
   if (!instances) {
@@ -315,10 +368,16 @@ export async function signInWithFirebaseGoogle(): Promise<FirebaseAuthResult> {
   }
 
   try {
+    await setPersistence(instances.auth, browserLocalPersistence).catch(() => {});
     const provider = new GoogleAuthProvider();
     provider.addScope('email');
     provider.addScope('profile');
     provider.setCustomParameters({ prompt: 'select_account' });
+
+    if (isMobileOrStandaloneWebView()) {
+      await signInWithRedirect(instances.auth, provider);
+      return { ok: true, redirecting: true };
+    }
 
     const cred = await signInWithPopup(instances.auth, provider);
     const user = cred.user;
@@ -335,6 +394,22 @@ export async function signInWithFirebaseGoogle(): Promise<FirebaseAuthResult> {
       authProvider: 'google',
     });
   } catch (err) {
+    const code = String((err as { code?: string })?.code || '');
+    if (
+      code === 'auth/popup-blocked' ||
+      code === 'auth/operation-not-supported-in-this-environment'
+    ) {
+      try {
+        const provider = new GoogleAuthProvider();
+        provider.addScope('email');
+        provider.addScope('profile');
+        provider.setCustomParameters({ prompt: 'select_account' });
+        await signInWithRedirect(instances.auth, provider);
+        return { ok: true, redirecting: true };
+      } catch (redirectErr) {
+        return { ok: false, error: mapFirebaseError(redirectErr) };
+      }
+    }
     return { ok: false, error: mapFirebaseError(err) };
   }
 }

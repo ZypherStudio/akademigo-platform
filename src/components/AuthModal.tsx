@@ -112,18 +112,24 @@ export const AuthModal: React.FC<AuthModalProps> = ({
       return;
     }
 
+    let didRedirect = false;
     try {
       setIsGoogleLoading(true);
       setGoogleLoadingMessage('Google hesap seçici açılıyor...');
       sound.playClick();
 
       const res = await authenticateWithFirebaseGoogle();
+      if (res.redirecting) {
+        didRedirect = true;
+        setGoogleLoadingMessage('Google hesap seçiciye yönlendiriliyor...');
+        return;
+      }
       finishAuthLogin('google', res);
     } catch (err: any) {
       sound.playWrong();
       setFeedback(err?.message || 'Google ile giriş tamamlanamadı.');
     } finally {
-      setIsGoogleLoading(false);
+      if (!didRedirect) setIsGoogleLoading(false);
     }
   };
 

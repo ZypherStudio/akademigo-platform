@@ -15,6 +15,7 @@ import {
 } from '../utils/apiClient';
 import {
   clearSavedFirebaseConfig,
+  getFirebaseAuthorizedDomainsSettingsUrl,
   isFirebaseConfigured,
   parseAndSaveFirebaseConfig,
 } from '../utils/firebaseClient';
@@ -37,6 +38,9 @@ import {
   Settings,
   CheckCircle2,
   Sparkles,
+  Copy,
+  ExternalLink,
+  ShieldAlert,
 } from 'lucide-react';
 
 interface AuthModalProps {
@@ -71,6 +75,15 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   const [password, setPassword] = useState('');
   const [isEmailLoading, setIsEmailLoading] = useState(false);
   const [feedback, setFeedback] = useState<string | null>(null);
+  const [feedbackCode, setFeedbackCode] = useState<string | null>(null);
+  const [domainCopied, setDomainCopied] = useState(false);
+
+  const isUnauthorizedDomain =
+    feedbackCode === 'auth/unauthorized-domain' ||
+    (Boolean(feedback) && feedback!.includes('Authorized domains'));
+  const currentHostname =
+    typeof window !== 'undefined' ? window.location.hostname : 'akademigo-platform.onrender.com';
+  const firebaseSettingsUrl = getFirebaseAuthorizedDomainsSettingsUrl();
 
   useEffect(() => {
     resolveGoogleClientId().then((id) => {
@@ -85,6 +98,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     if (!res.ok || !res.email) {
       sound.playWrong();
       setFeedback(res.error || 'Giriş yapılamadı.');
+      setFeedbackCode(res.errorCode || null);
       return;
     }
 
@@ -103,6 +117,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   // Real Firebase Google Account Picker Sign-In (Priority) or GSI OAuth
   const handleFirebaseGoogleLogin = async () => {
     setFeedback(null);
+    setFeedbackCode(null);
     if (!firebaseReady) {
       if (googleClientId) {
         return handleGoogleOAuthLogin();
@@ -128,6 +143,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     } catch (err: any) {
       sound.playWrong();
       setFeedback(err?.message || 'Google ile giriş tamamlanamadı.');
+      setFeedbackCode((err as { code?: string })?.code || null);
     } finally {
       if (!didRedirect) setIsGoogleLoading(false);
     }
@@ -243,10 +259,12 @@ export const AuthModal: React.FC<AuthModalProps> = ({
       onClick={() => onClose && onClose()}
     >
       <div
-        className="relative w-full max-w-sm bg-white rounded-3xl p-5 sm:p-6 shadow-2xl border border-amber-200/80 text-slate-800 animate-scale-up overflow-y-auto max-h-[92dvh]"
+        className="relative w-full max-w-sm bg-white rounded-3xl p-5 sm:p-6 shadow-2xl border border-amber-200/80 text-slate-800 animate-scale-up overflow-y-auto overflow-x-hidden max-h-[92dvh] no-scrollbar"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="absolute -top-16 -right-16 w-36 h-36 bg-amber-400/10 rounded-full blur-2xl pointer-events-none" />
+        <div className="absolute inset-0 overflow-hidden pointer-events-none rounded-3xl">
+          <div className="absolute -top-16 -right-16 w-36 h-36 bg-amber-400/10 rounded-full blur-2xl" />
+        </div>
 
         {onClose && (
           <button
@@ -547,11 +565,85 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                   </div>
                 )}
 
-                {feedback && (
+                {isUnauthorizedDomain ? (
+                  <div className="p-3.5 rounded-2xl bg-rose-50 border-2 border-rose-200 text-left space-y-2.5 animate-pop">
+                    <div className="flex items-start gap-2">
+                      <ShieldAlert className="w-4 h-4 text-rose-600 flex-shrink-0 mt-0.5" />
+                      <div className="min-w-0">
+                        <h4 className="text-xs font-black text-rose-900 leading-snug">
+                          Son 1 Adım: Alan Adını Firebase'e Ekle
+                        </h4>
+                        <p className="text-[10px] font-bold text-rose-700 leading-tight mt-0.5">
+                          Google güvenlik kuralı: Bu sitenin adresi Firebase projenin izinli listesine 1 kez eklenmelidir.
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-1.5 bg-white p-2 rounded-xl border border-rose-200">
+                      <code className="flex-1 text-[11px] font-black text-slate-800 truncate select-all font-mono">
+                        {currentHostname}
+                      </code>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          sound.playClick();
+                          navigator.clipboard.writeText(currentHostname);
+                          setDomainCopied(true);
+                          setTimeout(() => setDomainCopied(false), 2500);
+                        }}
+                        className="px-2.5 py-1 rounded-lg bg-rose-100 hover:bg-rose-200 text-rose-900 font-black text-[10px] flex items-center gap-1 transition flex-shrink-0 active:scale-95"
+                      >
+                        {domainCopied ? (
+                          <>
+                            <CheckCircle2 className="w-3 h-3 text-emerald-600" />
+                            <span>Kopyalandı!</span>
+                          </>
+                        ) : (
+                          <>
+                            <Copy className="w-3 h-3" />
+                            <span>Kopyala</span>
+                          </>
+                        )}
+                      </button>
+                    </div>
+
+                    <div className="space-y-1.5 pt-0.5 text-[10px] font-bold text-rose-800">
+                      <p className="flex items-center gap-1">
+                        <span>1.</span>
+                        <a
+                          href={firebaseSettingsUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-blue-700 underline font-black flex items-center gap-1 hover:text-blue-900"
+                        >
+                          Firebase Console Ayarlarını Aç <ExternalLink className="w-3 h-3" />
+                        </a>
+                      </p>
+                      <p>2. "Authorized domains" sekmesinde "Add domain" deyip yapıştır.</p>
+                    </div>
+
+                    <div className="pt-1 border-t border-rose-200/60">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          sound.playClick();
+                          setActiveTab('email');
+                          setFeedback(null);
+                          setFeedbackCode(null);
+                        }}
+                        className="w-full py-2 bg-white hover:bg-slate-50 text-slate-800 font-black text-xs rounded-xl border border-slate-200 shadow-xs flex items-center justify-center gap-1.5 transition active:scale-95"
+                      >
+                        <Mail className="w-3.5 h-3.5 text-amber-600" />
+                        <span>Veya Şimdilik E-posta & Şifre ile Gir / Kaydol</span>
+                        <ArrowRight className="w-3 h-3" />
+                      </button>
+                    </div>
+                  </div>
+                ) : feedback ? (
                   <div className="text-[11px] font-bold text-rose-600 bg-rose-50 border border-rose-200 p-2.5 rounded-xl text-center">
                     {feedback}
                   </div>
-                )}
+                ) : null}
               </>
             )}
           </div>

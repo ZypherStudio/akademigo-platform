@@ -25,6 +25,7 @@ export interface AuthResponse {
   ok: boolean;
   redirecting?: boolean;
   error?: string;
+  errorCode?: string;
   isNewAccount?: boolean;
   email?: string;
   firebaseUid?: string;
@@ -108,7 +109,7 @@ export async function authenticateWithFirebaseGoogle(): Promise<AuthResponse> {
     return { ok: true, redirecting: true };
   }
   if (!res.ok || !res.email) {
-    return { ok: false, error: res.error || 'Google ile giriş yapılamadı.' };
+    return { ok: false, error: res.error || 'Google ile giriş yapılamadı.', errorCode: res.errorCode };
   }
   return {
     ok: true,

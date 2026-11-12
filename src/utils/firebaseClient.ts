@@ -137,6 +137,12 @@ export function resolveFirebaseConfig(): FirebaseWebConfig | null {
   return getSavedFirebaseConfig() || getEnvFirebaseConfig() || DEFAULT_FIREBASE_CONFIG;
 }
 
+export function getFirebaseAuthorizedDomainsSettingsUrl(): string {
+  const config = resolveFirebaseConfig();
+  const projectId = config?.projectId || 'knowza-d6f66';
+  return `https://console.firebase.google.com/project/${projectId}/authentication/settings`;
+}
+
 export function isFirebaseConfigured(): boolean {
   return resolveFirebaseConfig() !== null;
 }
@@ -223,6 +229,7 @@ export interface FirebaseAuthResult {
   ok: boolean;
   redirecting?: boolean;
   error?: string;
+  errorCode?: string;
   uid?: string;
   email?: string;
   displayName?: string;
@@ -356,7 +363,8 @@ export async function completeFirebaseRedirectSignIn(): Promise<FirebaseAuthResu
       authProvider: 'google',
     });
   } catch (err) {
-    return { ok: false, error: mapFirebaseError(err) };
+    const code = String((err as { code?: string })?.code || '');
+    return { ok: false, error: mapFirebaseError(err), errorCode: code };
   }
 }
 
@@ -364,7 +372,7 @@ export async function completeFirebaseRedirectSignIn(): Promise<FirebaseAuthResu
 export async function signInWithFirebaseGoogle(): Promise<FirebaseAuthResult> {
   const instances = getFirebaseInstances();
   if (!instances) {
-    return { ok: false, error: 'Firebase henüz yapılandırılmadı.' };
+    return { ok: false, error: 'Firebase henüz yapılandırılmadı.', errorCode: 'auth/not-configured' };
   }
 
   try {
@@ -382,7 +390,7 @@ export async function signInWithFirebaseGoogle(): Promise<FirebaseAuthResult> {
     const cred = await signInWithPopup(instances.auth, provider);
     const user = cred.user;
     if (!user.email) {
-      return { ok: false, error: 'Google hesabından e-posta bilgisi alınamadı.' };
+      return { ok: false, error: 'Google hesabından e-posta bilgisi alınamadı.', errorCode: 'auth/no-email' };
     }
 
     return await loadOrInitializeFirestoreProfile({
@@ -407,16 +415,17 @@ export async function signInWithFirebaseGoogle(): Promise<FirebaseAuthResult> {
         await signInWithRedirect(instances.auth, provider);
         return { ok: true, redirecting: true };
       } catch (redirectErr) {
-        return { ok: false, error: mapFirebaseError(redirectErr) };
+        const rCode = String((redirectErr as { code?: string })?.code || '');
+        return { ok: false, error: mapFirebaseError(redirectErr), errorCode: rCode };
       }
     }
-    return { ok: false, error: mapFirebaseError(err) };
+    return { ok: false, error: mapFirebaseError(err), errorCode: code };
   }
 }
 
 export async function registerWithFirebaseEmail(email: string, password: string): Promise<FirebaseAuthResult> {
   const instances = getFirebaseInstances();
-  if (!instances) return { ok: false, error: 'Firebase yapılandırılmadı.' };
+  if (!instances) return { ok: false, error: 'Firebase yapılandırılmadı.', errorCode: 'auth/not-configured' };
 
   try {
     const cred = await createUserWithEmailAndPassword(instances.auth, normalizeEmail(email), password);
@@ -428,13 +437,14 @@ export async function registerWithFirebaseEmail(email: string, password: string)
       authProvider: 'email',
     });
   } catch (err) {
-    return { ok: false, error: mapFirebaseError(err) };
+    const code = String((err as { code?: string })?.code || '');
+    return { ok: false, error: mapFirebaseError(err), errorCode: code };
   }
 }
 
 export async function loginWithFirebaseEmail(email: string, password: string): Promise<FirebaseAuthResult> {
   const instances = getFirebaseInstances();
-  if (!instances) return { ok: false, error: 'Firebase yapılandırılmadı.' };
+  if (!instances) return { ok: false, error: 'Firebase yapılandırılmadı.', errorCode: 'auth/not-configured' };
 
   try {
     const cred = await signInWithEmailAndPassword(instances.auth, normalizeEmail(email), password);
@@ -447,7 +457,8 @@ export async function loginWithFirebaseEmail(email: string, password: string): P
       authProvider: 'email',
     });
   } catch (err) {
-    return { ok: false, error: mapFirebaseError(err) };
+    const code = String((err as { code?: string })?.code || '');
+    return { ok: false, error: mapFirebaseError(err), errorCode: code };
   }
 }
 

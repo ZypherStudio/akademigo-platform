@@ -92,6 +92,15 @@ export const QUICK_TOOLS: QuickToolMeta[] = [
     badge: 'Yazılım',
     gradient: 'from-slate-700 to-slate-900',
   },
+  {
+    id: 'widgets',
+    title: "Ana Ekran Widget'ları",
+    shortTitle: 'Widgetlar',
+    subtitle: 'Canlı seri, ders ve seviye widgetları',
+    emoji: '📱',
+    badge: 'Yeni ✨',
+    gradient: 'from-amber-500 via-orange-500 to-amber-600',
+  },
 ];
 
 export const QUICK_TOOL_MAP: Record<QuickToolId, QuickToolMeta> = Object.fromEntries(

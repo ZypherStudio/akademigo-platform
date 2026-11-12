@@ -259,6 +259,14 @@ export const KnowzaOnboarding: React.FC<KnowzaOnboardingProps> = ({ onComplete, 
                 );
               })}
             </div>
+
+            {/* Reassurance note: target or course can be changed freely anytime */}
+            <div className="w-full max-w-sm bg-amber-50/90 border border-amber-200/80 rounded-2xl p-2.5 flex items-center gap-2 text-left shadow-xs">
+              <Sparkles className="w-4 h-4 text-amber-600 flex-shrink-0" />
+              <p className="text-[11px] font-bold text-amber-950 leading-tight">
+                İstediğiniz zaman hedefinizi veya dersinizi değiştirebilir, tüm ders içeriklerini dilediğiniz gibi kullanabilirsiniz.
+              </p>
+            </div>
           </div>
         )}
 

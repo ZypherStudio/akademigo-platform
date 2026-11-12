@@ -181,7 +181,8 @@ export type QuickToolId =
   | 'reels'
   | 'countdown'
   | 'errors'
-  | 'codelab';
+  | 'codelab'
+  | 'widgets';
 
 export interface DuelMatchRecord {
   id: string;

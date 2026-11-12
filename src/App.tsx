@@ -22,6 +22,7 @@ import { AuthModal } from './components/AuthModal';
 import { Shop } from './components/Shop';
 import { KnowzaOnboarding } from './components/KnowzaOnboarding';
 import { AchievementToast } from './components/AchievementToast';
+import { KnowzaWidgetHub } from './components/KnowzaWidgetHub';
 import { ArrowLeft, Smartphone, Monitor } from 'lucide-react';
 import { soundSystem } from './utils/audio';
 
@@ -313,6 +314,17 @@ const KnowzaAppContent: React.FC = () => {
               <div className="flex-1 pb-24">
                 <LearnPath />
               </div>
+            </div>
+          )}
+
+          {/* Knowza Widget Stüdyosu & Galerisi */}
+          {currentTab === 'widgets' && (
+            <div className="flex-1 flex flex-col">
+              <KnowzaWidgetHub
+                onBack={() => setCurrentTab('home')}
+                onNavigateTab={(tab) => setCurrentTab(tab)}
+                onStartLesson={(subject) => setActiveQuizSubject(subject)}
+              />
             </div>
           )}
         </main>

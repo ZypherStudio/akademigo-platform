@@ -16,7 +16,8 @@ export type KnowzaTab =
   | 'countdown'
   | 'errors'
   | 'codelab'
-  | 'learn';
+  | 'learn'
+  | 'widgets';
 
 interface KnowzaBottomNavProps {
   currentTab: KnowzaTab;

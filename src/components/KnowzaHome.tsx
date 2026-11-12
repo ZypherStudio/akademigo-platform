@@ -125,6 +125,8 @@ export const KnowzaHome: React.FC<KnowzaHomeProps> = ({
         return `${stats.errorList?.length || 0} Kayıtlı Soru`;
       case 'countdown':
         return 'Gün & Saat Sayacı';
+      case 'widgets':
+        return 'Canlı Seri & Ders Widgetları';
       default:
         return QUICK_TOOL_MAP[toolId]?.subtitle || 'Hızlı Giriş';
     }
@@ -395,6 +397,14 @@ export const KnowzaHome: React.FC<KnowzaHomeProps> = ({
             );
           })}
         </div>
+
+        {/* Reassuring Note for Category / Course Selection */}
+        <div className="mt-2.5 bg-gradient-to-r from-amber-50/90 to-orange-50/80 rounded-2xl p-2.5 border border-amber-200/70 flex items-center gap-2 shadow-xs">
+          <Sparkles className="w-4 h-4 text-amber-600 flex-shrink-0" />
+          <p className="text-[11px] font-bold text-amber-950 leading-tight">
+            İstediğiniz zaman hedefinizi veya dersinizi değiştirebilir, tüm ders içeriklerini dilediğiniz gibi özgürce kullanabilirsiniz.
+          </p>
+        </div>
       </div>
 
       {/* ================= BUGÜNÜN DERSLERİ & GERÇEK TESTLER ================= */}
@@ -577,6 +587,35 @@ export const KnowzaHome: React.FC<KnowzaHomeProps> = ({
           <Code2 className="w-5 h-5 text-purple-600 mb-1" />
           <span className="text-[10px] font-black text-slate-800">Kod Lab</span>
         </button>
+      </div>
+
+      {/* ================= KNOWZA WIDGET STÜDYOSU BANNER ================= */}
+      <div
+        onClick={() => {
+          sound.playClick();
+          onNavigateTab('widgets');
+        }}
+        className="bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 rounded-3xl p-4 text-white shadow-lg border-2 border-amber-300/40 flex items-center justify-between cursor-pointer active:scale-98 transition group relative overflow-hidden"
+      >
+        <div className="space-y-1 relative z-10 max-w-[70%]">
+          <div className="inline-flex items-center gap-1.5 bg-white/25 backdrop-blur-xs text-white text-[9px] font-black px-2.5 py-0.5 rounded-full uppercase tracking-wider shadow-xs">
+            <span>YENİ ÖZELLİK</span>
+            <span>📱</span>
+          </div>
+          <h4 className="text-sm font-black text-white group-hover:text-amber-100 transition">
+            Knowza Widget Stüdyosu ✨
+          </h4>
+          <p className="text-[11px] text-white/90 font-bold leading-snug">
+            Canlı serini, derslerini ve seviyeni telefonunun ana ekranına ekle!
+          </p>
+        </div>
+        <div className="relative w-16 h-16 flex-shrink-0 group-hover:scale-110 transition-transform">
+          <img
+            src="/assets/knowza_avatar_3d.png"
+            alt="Knowza Widget"
+            className="w-full h-full object-contain filter drop-shadow-md animate-bounceSubtle"
+          />
+        </div>
       </div>
 
       {/* ================= KNOWZA MAĞAZA BANNER ================= */}

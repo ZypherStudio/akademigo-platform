@@ -1,4 +1,13 @@
-export type CourseCategory = 'yks' | 'lgs' | 'kpss' | 'kodlama' | 'dil';
+export type CourseCategory =
+  | 'yks'
+  | 'lgs'
+  | 'kpss'
+  | 'kodlama'
+  | 'dil'
+  | 'dil_alm'
+  | 'dil_fra'
+  | 'dil_isp'
+  | 'dil_bos';
 
 // ─── Avatar Çerçeve/Dekorasyon Sistemi (Discord-style) ───────────────────────
 export type AvatarFrameId =
@@ -12,10 +21,21 @@ export type AvatarFrameId =
   | 'cherry_blossom'
   | 'nature_leaf'
   | 'blood_web'
-  | 'dragon_fire';
+  | 'dragon_fire'
+  | 'moon_reverie'
+  | 'deadpool_hearts'
+  | 'eous_astronaut';
 
 export type FrameRarity = 'common' | 'rare' | 'epic' | 'legendary';
-export type FrameAnimationType = 'static' | 'pulse' | 'spin' | 'sparkle' | 'shake';
+export type FrameAnimationType = 'static' | 'pulse' | 'spin' | 'sparkle' | 'shake' | 'float';
+
+export interface CustomBearConfig {
+  furColor: 'bal_sarisi' | 'kar_beyazi' | 'cikolata' | 'gece_siyahi' | 'pembe_seker' | 'siber_neon' | 'kraliyet_altini';
+  headwear: 'none' | 'graduate_cap' | 'royal_crown' | 'cyber_visor' | 'party_hat' | 'astronaut_helmet' | 'wizard_hat' | 'beanie';
+  eyewear: 'none' | 'sunshades' | 'professor' | 'neon_visor' | 'star_glasses';
+  outfit: 'hoodie' | 'royal_cape' | 'cyber_suit' | 'graduate_robe' | 'space_suit' | 'tuxedo';
+  heldItem: 'book' | 'wand' | 'trophy' | 'diploma' | 'torch';
+}
 
 export interface AvatarFrameInfo {
   id: AvatarFrameId;
@@ -104,7 +124,7 @@ export interface BaseQuestion {
   type: QuestionType;
   prompt: string;
   explanation: string;
-  difficulty?: 'kolay' | 'orta' | 'zor';
+  difficulty?: 'kolay' | 'orta' | 'zor' | 'sampiyon';
   hint?: string;
   tags?: string[];
 }
@@ -160,6 +180,7 @@ export interface Unit {
   description: string;
   color: string;
   lessons: Lesson[];
+  isPremiumOnly?: boolean;
 }
 
 export interface MistakeItem {
@@ -251,6 +272,11 @@ export interface UserStats {
   achievementBadges: string[];
   equippedAvatarFrame: AvatarFrameId;
   unlockedAvatarFrames: AvatarFrameId[];
+  isFounder?: boolean;
+  founderBadge?: string;
+  hasAdFree?: boolean;
+  hasAiPackage?: boolean;
+  customBear?: CustomBearConfig;
 }
 
 export interface AchievementToastData {

@@ -57,10 +57,14 @@ export const KnowzaHome: React.FC<KnowzaHomeProps> = ({
   // Available categories with metadata
   const categories: { id: CourseCategory; name: string; icon: string; badge: string; color: string }[] = [
     { id: 'yks', name: 'YKS (TYT - AYT)', icon: '🎓', badge: 'ÖSYM', color: 'from-amber-500 to-orange-500' },
+    { id: 'dil', name: 'İngilizce (A1-C2)', icon: '🇬🇧', badge: 'Küresel Dil', color: 'from-cyan-500 to-blue-600' },
+    { id: 'dil_alm', name: 'Almanca (A1-C2)', icon: '🇩🇪', badge: 'Avrupa', color: 'from-yellow-500 to-amber-600' },
+    { id: 'dil_fra', name: 'Fransızca (A1-C2)', icon: '🇫🇷', badge: 'Diplomasi', color: 'from-indigo-500 to-blue-600' },
+    { id: 'dil_isp', name: 'İspanyolca (A1-C2)', icon: '🇪🇸', badge: 'Popüler', color: 'from-orange-500 to-red-600' },
+    { id: 'dil_bos', name: 'Boşnakça (A1-C2)', icon: '🇧🇦', badge: 'Balkanlar', color: 'from-blue-600 to-indigo-700' },
     { id: 'lgs', name: '8. Sınıf LGS', icon: '📚', badge: 'MEB', color: 'from-blue-500 to-indigo-500' },
     { id: 'kpss', name: 'KPSS 2026', icon: '🏛️', badge: 'Memurluk', color: 'from-emerald-500 to-teal-600' },
-    { id: 'kodlama', name: 'Kodlama / Python', icon: '💻', badge: 'Yazılım', color: 'from-purple-500 to-pink-500' },
-    { id: 'dil', name: 'İngilizce & Dil', icon: '🌐', badge: 'A1 - B2', color: 'from-cyan-500 to-blue-600' }
+    { id: 'kodlama', name: 'Kodlama / Python', icon: '💻', badge: 'Yazılım', color: 'from-purple-500 to-pink-500' }
   ];
 
   // User's target category takes priority in ordering
@@ -146,9 +150,16 @@ export const KnowzaHome: React.FC<KnowzaHomeProps> = ({
             <KnowzaAvatar size="md" costume={stats.selectedCostume} frameId={stats.equippedAvatarFrame ?? 'none'} />
           </div>
           <div className="min-w-0 max-w-[130px] sm:max-w-[180px]">
-            <span className="text-[10px] font-bold text-[#8C7A5E] block leading-none truncate">
-              {displayIdentity.secondary || (stats.authProvider === 'google' ? 'Google Hesabı' : 'Kayıtlı Hesap')}
-            </span>
+            <div className="flex items-center gap-1">
+              <span className="text-[10px] font-bold text-[#8C7A5E] block leading-none truncate">
+                {displayIdentity.secondary || (stats.authProvider === 'google' ? 'Google Hesabı' : 'Kayıtlı Hesap')}
+              </span>
+              {stats.isFounder && (
+                <span className="bg-gradient-to-r from-amber-400 to-yellow-300 text-slate-950 text-[8px] font-black px-1.5 py-0.2 rounded-full uppercase tracking-wider shadow-xs animate-pulse">
+                  KURUCU
+                </span>
+              )}
+            </div>
             <h2 className="text-base sm:text-lg font-black text-[#2A1E00] flex items-center gap-1 leading-snug truncate mt-0.5">
               <span className="truncate">{displayIdentity.primary}</span>
               <span className="text-xs">👑</span>

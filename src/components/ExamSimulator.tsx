@@ -22,6 +22,8 @@ interface ExamTrial {
   durationMinutes: number;
   category: string;
   questions: ExamQuestion[];
+  difficulty?: 'kolay' | 'orta' | 'zor' | 'sampiyon';
+  isProOnly?: boolean;
 }
 
 const EXAM_DATA: ExamTrial[] = [
@@ -277,12 +279,93 @@ const EXAM_DATA: ExamTrial[] = [
         solution: 'Stack (Yığın) LIFO mantığıyla çalışır (örn. tarayıcı geri butonu veya tabak dizisi).'
       }
     ]
+  },
+  // 5. 2026 TYT Derece Seviyesi Çeldiricili Deneme (Zor - PRO)
+  {
+    id: 'tyt-zor-pro',
+    title: '2026 TYT Matematik Derece Seviyesi (Zor - PRO)',
+    badge: 'Derece Hedefleyenler 🔥',
+    durationMinutes: 25,
+    category: 'YKS / TYT',
+    difficulty: 'zor',
+    isProOnly: true,
+    questions: [
+      {
+        id: 1,
+        subject: 'Matematik',
+        topic: 'Modüler Aritmetik & Fonksiyonlar',
+        question: 'f(x) fonksiyonu her n pozitif tam sayısı için f(n+1) = f(n) + 2n bağıntısını sağlamaktadır. f(1) = 3 olduğuna göre f(10) değeri kaçtır?',
+        options: [
+          { id: 'A', text: '91' },
+          { id: 'B', text: '93' },
+          { id: 'C', text: '95' },
+          { id: 'D', text: '101' }
+        ],
+        correctOption: 'B',
+        solution: 'Taraf tarafa toplama yapıldığında: f(10) - f(1) = 2(1 + 2 + ... + 9) = 2 × 45 = 90. f(10) = 90 + 3 = 93 bulunur.'
+      },
+      {
+        id: 2,
+        subject: 'Matematik',
+        topic: 'Olasılık & Kombinasyon',
+        question: '5 farklı anahtar bir anahtarlığa dairesel olarak sıralanacaktır. Belirli iki anahtarın daima yan yana gelme olasılığı kaçtır?',
+        options: [
+          { id: 'A', text: '1/4' },
+          { id: 'B', text: '1/2' },
+          { id: 'C', text: '2/5' },
+          { id: 'D', text: '3/4' }
+        ],
+        correctOption: 'B',
+        solution: 'Tüm durum: (5-1)! = 4! = 24. İki anahtar bir kabul edilirse 4 nesne dairesel (4-1)! = 3! = 6 ve anahtarlar kendi arasında 2! = 12. Olasılık: 12/24 = 1/2.'
+      }
+    ]
+  },
+  // 6. YDS & İngilizce C2 Usta Seviye Denemesi (Şampiyon - VIP)
+  {
+    id: 'yds-c2-pro',
+    title: 'YDS / YÖKDİL C2 Usta Seviye Sınavı (Şampiyon - VIP)',
+    badge: 'C2 Master 👑',
+    durationMinutes: 20,
+    category: 'Yabancı Dil',
+    difficulty: 'sampiyon',
+    isProOnly: true,
+    questions: [
+      {
+        id: 1,
+        subject: 'İngilizce C2',
+        topic: 'Advanced Inversion & Discourse',
+        question: 'Seldom ______ such an overwhelming consensus among the international scientific community.',
+        options: [
+          { id: 'A', text: 'has there been' },
+          { id: 'B', text: 'there has been' },
+          { id: 'C', text: 'there was' },
+          { id: 'D', text: 'was there being' }
+        ],
+        correctOption: 'A',
+        solution: 'Cümle olumsuz bir sıklık zarfı olan "Seldom" ile başladığında inverted (devrik) yapı gerektirir: "has there been".'
+      },
+      {
+        id: 2,
+        subject: 'İngilizce C2',
+        topic: 'Nuanced Idioms & Collocations',
+        question: 'The young politician was criticized for being completely ______ from the same cloth as his corrupt predecessor.',
+        options: [
+          { id: 'A', text: 'stitched' },
+          { id: 'B', text: 'cut' },
+          { id: 'C', text: 'woven' },
+          { id: 'D', text: 'tailored' }
+        ],
+        correctOption: 'B',
+        solution: 'İngilizce sabit deyim "cut from the same cloth" (aynı kumaştan kesilmiş / birbirinin aynısı) şeklindedir.'
+      }
+    ]
   }
 ];
 
 export const ExamSimulator: React.FC = () => {
-  const { completeLesson } = useGame();
+  const { completeLesson, stats } = useGame();
   const [selectedExam, setSelectedExam] = useState<ExamTrial>(EXAM_DATA[0]);
+  const [difficultyFilter, setDifficultyFilter] = useState<'all' | 'kolay' | 'orta' | 'zor' | 'sampiyon'>('all');
   const [currentQIndex, setCurrentQIndex] = useState(0);
   const [userAnswers, setUserAnswers] = useState<Record<number, string>>({});
   const [examActive, setExamActive] = useState(false);
@@ -306,6 +389,10 @@ export const ExamSimulator: React.FC = () => {
 
   const handleStartExam = (exam: ExamTrial) => {
     sound.playClick();
+    if (exam.isProOnly && !stats.isPro && !stats.isFounder) {
+      alert("🔒 Bu ileri düzey zorluk seviyesi Knowza PRO & Kurucu üyelere özeldir! Ücretsiz denemeleri çözebilir veya Mağaza'dan PRO'ya geçebilirsiniz.");
+      return;
+    }
     setSelectedExam(exam);
     setCurrentQIndex(0);
     setUserAnswers({});
@@ -383,10 +470,34 @@ export const ExamSimulator: React.FC = () => {
           <div className="text-5xl animate-bounceSubtle">📝</div>
         </div>
 
+        {/* Difficulty Filter Tabs */}
+        {!examActive && !isFinished && (
+          <div className="flex flex-wrap gap-1.5 mt-4 pt-3 border-t border-white/20">
+            {[
+              { id: 'all', label: 'Tümü' },
+              { id: 'orta', label: 'ÖSYM Standart' },
+              { id: 'zor', label: 'Zor (PRO) 🔥' },
+              { id: 'sampiyon', label: 'Şampiyon (VIP) 👑' },
+            ].map(f => (
+              <button
+                key={f.id}
+                onClick={() => setDifficultyFilter(f.id as any)}
+                className={`px-3 py-1 rounded-xl text-xs font-black transition ${
+                  difficultyFilter === f.id
+                    ? 'bg-amber-400 text-slate-950 shadow-sm'
+                    : 'bg-white/15 text-white hover:bg-white/25'
+                }`}
+              >
+                {f.label}
+              </button>
+            ))}
+          </div>
+        )}
+
         {/* Exam Selectors if not actively in exam */}
         {!examActive && !isFinished && (
-          <div className="flex flex-wrap gap-2 mt-5 pt-4 border-t border-white/20">
-            {EXAM_DATA.map((exam) => (
+          <div className="flex flex-wrap gap-2 mt-3">
+            {EXAM_DATA.filter(e => difficultyFilter === 'all' || e.difficulty === difficultyFilter || (!e.difficulty && difficultyFilter === 'orta')).map((exam) => (
               <button
                 key={exam.id}
                 onClick={() => setSelectedExam(exam)}

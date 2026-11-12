@@ -1546,6 +1546,97 @@ export const COURSES: Course[] = [
             ]
           }
         ]
+      },
+      {
+        "id": "dil-u6",
+        "number": 6,
+        "title": "İleri Düzey Akademik & C1 Yetkinlik (PRO)",
+        "description": "Inversion, Cleft Sentences ve Karmaşık Akademik Metinler",
+        "color": "#1cb0f6",
+        "isPremiumOnly": true,
+        "lessons": [
+          {
+            "id": "dil-u6-l1",
+            "unitId": "dil-u6",
+            "title": "Inversion (Devrik Cümleler)",
+            "description": "Hardly had I, Seldom do we, Under no circumstances kuralları.",
+            "xpReward": 35,
+            "gemReward": 10,
+            "type": "lesson",
+            "summaryNotes": [
+              "'Seldom / Rarely' başa geldiğinde devrik yapı kurulur: Seldom have I seen such beauty.",
+              "'Hardly ... when' ve 'No sooner ... than' geçmişte art arda olan iki eylemi bağlar.",
+              "'Under no circumstances' güvenlik ve kesin yasak cümlelerinde kullanılır."
+            ],
+            "questions": [
+              {
+                "id": "dil-c1-q1",
+                "type": "multiple_choice",
+                "prompt": "Choose the grammatically correct inverted sentence:",
+                "difficulty": "zor",
+                "explanation": "Cümle 'Hardly' gibi olumsuz bir zarfla başladığında yardımcı fiil özneden önce gelir: 'Hardly had we arrived...'",
+                "options": [
+                  { "id": "c1o1", "text": "Hardly had we arrived at the station when the train pulled in.", "isCorrect": true },
+                  { "id": "c1o2", "text": "Hardly we had arrived at the station when the train pulled in.", "isCorrect": false },
+                  { "id": "c1o3", "text": "Hardly did we arrived at the station when the train pulled in.", "isCorrect": false },
+                  { "id": "c1o4", "text": "Hardly we arrived at the station when the train pulled in.", "isCorrect": false }
+                ]
+              },
+              {
+                "id": "dil-c1-q2",
+                "type": "multiple_choice",
+                "prompt": "'Under no circumstances ______ the alarm code to anyone.' Boşluğa ne gelmelidir?",
+                "difficulty": "zor",
+                "explanation": "'Under no circumstances' başa geldiğinde devriklik gerektirir: 'should you reveal'.",
+                "options": [
+                  { "id": "c1o21", "text": "should you reveal", "isCorrect": true },
+                  { "id": "c1o22", "text": "you should reveal", "isCorrect": false },
+                  { "id": "c1o23", "text": "you reveal", "isCorrect": false },
+                  { "id": "c1o24", "text": "have you to reveal", "isCorrect": false }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "dil-u7",
+        "number": 7,
+        "title": "C2 Usta & Edebi Dil Hakimiyeti (PRO)",
+        "description": "Subjunctive Mood, İleri Düzey Deyimler ve Nüanslar",
+        "color": "#1cb0f6",
+        "isPremiumOnly": true,
+        "lessons": [
+          {
+            "id": "dil-u7-l1",
+            "unitId": "dil-u7",
+            "title": "Subjunctive Mood & Formal Discourse",
+            "description": "'It is imperative that he be present', 'Lest they forget' yapıları.",
+            "xpReward": 40,
+            "gemReward": 15,
+            "type": "lesson",
+            "summaryNotes": [
+              "Subjunctive yapılarda özne ne olursa olsun fiilin yalın hali (be, do, go) kullanılır.",
+              "'Lest' = ... olmasın diye / korkusuyla (Lest he fail the exam...)",
+              "'Be that as it may' = Öyle olsa bile / Ne olursa olsun anlamına gelen edebi bir bağlaçtır."
+            ],
+            "questions": [
+              {
+                "id": "dil-c2-q1",
+                "type": "multiple_choice",
+                "prompt": "'The committee insisted that the CEO ______ immediately.' Boşluğa hangi seçenek uygundur?",
+                "difficulty": "sampiyon",
+                "explanation": "İngilizce subjunctive (dilek/şart) yapısında 'insist that' sonrasında fiil yalın (bare infinitive) 'resign' kullanılır.",
+                "options": [
+                  { "id": "c2o1", "text": "resign", "isCorrect": true },
+                  { "id": "c2o2", "text": "resigns", "isCorrect": false },
+                  { "id": "c2o3", "text": "resigned", "isCorrect": false },
+                  { "id": "c2o4", "text": "was resigning", "isCorrect": false }
+                ]
+              }
+            ]
+          }
+        ]
       }
     ]
   },
@@ -5425,7 +5516,7 @@ export const COURSES: Course[] = [
   },
   {
     "id": "dil",
-    "name": "İngilizce (A1 - B2)",
+    "name": "İngilizce (A1 - C2)",
     "subTitle": "Konuşma, Gramer & YDS/YÖKDİL Kelimeleri",
     "icon": "🌍",
     "badge": "Küresel Dil",
@@ -6423,4 +6514,717 @@ export const COURSES: Course[] = [
       }
     ]
   }
+,
+{
+  "id": "dil_alm",
+  "name": "Almanca (A1 - C2)",
+  "subTitle": "Goethe & Telc Hazırlık, Gramer & Günlük Konuşma",
+  "icon": "🇩🇪",
+  "badge": "Avrupa Dili",
+  "color": "#eab308",
+  "accentColor": "#ca8a04",
+  "units": [
+    {
+      "id": "alm-u1",
+      "number": 1,
+      "title": "A1: Begrüßung & Sich Vorstellen",
+      "description": "Almanca selamlaşma, kendini tanıtma, sayılar ve artikeller (der, die, das)",
+      "color": "#eab308",
+      "lessons": [
+        {
+          "id": "alm-u1-l1",
+          "unitId": "alm-u1",
+          "title": "Hallo! Wie geht's?",
+          "description": "Temel diyaloglar ve kişisel zamirler.",
+          "xpReward": 20,
+          "gemReward": 5,
+          "type": "lesson",
+          "summaryNotes": [
+            "'Guten Tag' = İyi günler, 'Auf Wiedersehen' = Hoşça kalın (resmi).",
+            "'Wie heißen Sie?' = İsminiz nedir? (Resmi), 'Ich heiße...' = Benim adım...",
+            "Artikeller: der (eril), die (dişil), das (nötr)."
+          ],
+          "questions": [
+            {
+              "id": "alm-q1",
+              "type": "multiple_choice",
+              "prompt": "'Wie geht es Ihnen?' sorusuna resmi ve kibar bir karşılık hangisidir?",
+              "difficulty": "kolay",
+              "explanation": "'Danke, mir geht es gut. Und Ihnen?' = Teşekkürler, iyiyim. Ya siz?",
+              "options": [
+                {
+                  "id": "ao1",
+                  "text": "Danke, mir geht es gut. Und Ihnen?",
+                  "isCorrect": true
+                },
+                {
+                  "id": "ao2",
+                  "text": "Ich bin zwanzig Jahre alt.",
+                  "isCorrect": false
+                },
+                {
+                  "id": "ao3",
+                  "text": "Auf Wiedersehen!",
+                  "isCorrect": false
+                },
+                {
+                  "id": "ao4",
+                  "text": "Nein, danke.",
+                  "isCorrect": false
+                }
+              ]
+            },
+            {
+              "id": "alm-q2",
+              "type": "matching",
+              "prompt": "Almanca artikelleri doğru cinsiyetle eşleştirin:",
+              "difficulty": "kolay",
+              "explanation": "der = eril (maskulin), die = dişil (feminin), das = nötr (neutral).",
+              "pairs": [
+                {
+                  "id": "ap1",
+                  "left": "der Tisch (Masa)",
+                  "right": "Eril (Maskulin)"
+                },
+                {
+                  "id": "ap2",
+                  "left": "die Sonne (Güneş)",
+                  "right": "Dişil (Feminin)"
+                },
+                {
+                  "id": "ap3",
+                  "left": "das Buch (Kitap)",
+                  "right": "Nötr (Neutral)"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "alm-u2",
+      "number": 2,
+      "title": "B1 - B2: Konjunktiv II & Berufsleben",
+      "description": "Dilek kipi (wäre/hätte), Passiv cümleler ve iş hayatı",
+      "color": "#ca8a04",
+      "lessons": [
+        {
+          "id": "alm-u2-l1",
+          "unitId": "alm-u2",
+          "title": "Konjunktiv II: Wenn ich Zeit hätte...",
+          "description": "Keşkeler, hayali durumlar ve nazik ricalar.",
+          "xpReward": 30,
+          "gemReward": 8,
+          "type": "lesson",
+          "summaryNotes": [
+            "'Wenn ich mehr Zeit hätte, würde ich mehr reisen.' = Daha çok zamanım olsaydı, daha çok seyahat ederdim.",
+            "'Könnten Sie mir bitte helfen?' = Bana yardımcı olabilir miydiniz lütfen?"
+          ],
+          "questions": [
+            {
+              "id": "alm-b1-q1",
+              "type": "multiple_choice",
+              "prompt": "'Wenn ich reich ______, ______ ich eine Weltreise machen.' Cümlesini tamamlayın:",
+              "difficulty": "orta",
+              "explanation": "sein fiilinin Konjunktiv II hali 'wäre', yapmak fiilinin yardımcı kalıbı 'würde' kullanılır.",
+              "options": [
+                {
+                  "id": "bo1",
+                  "text": "wäre / würde",
+                  "isCorrect": true
+                },
+                {
+                  "id": "bo2",
+                  "text": "bin / werde",
+                  "isCorrect": false
+                },
+                {
+                  "id": "bo3",
+                  "text": "hätte / würde",
+                  "isCorrect": false
+                },
+                {
+                  "id": "bo4",
+                  "text": "war / hatte",
+                  "isCorrect": false
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "alm-u3",
+      "number": 3,
+      "title": "C1 - C2: Nomen-Verb-Verbindungen & Usta Seviye (PRO)",
+      "description": "Akademik metinler, üst düzey kalıp fiiller ve ileri dil bilgisi",
+      "color": "#a16207",
+      "isPremiumOnly": true,
+      "lessons": [
+        {
+          "id": "alm-u3-l1",
+          "unitId": "alm-u3",
+          "title": "Feste Wendungen & Stilistik",
+          "description": "'Zur Verfügung stehen', 'In Betracht ziehen' gibi C1/C2 kalıpları.",
+          "xpReward": 40,
+          "gemReward": 15,
+          "type": "lesson",
+          "summaryNotes": [
+            "'In Betracht ziehen' = Göz önünde bulundurmak / Dikkate almak (berücksichtigen).",
+            "'Zur Verfügung stehen' = Kullanıma hazır olmak."
+          ],
+          "questions": [
+            {
+              "id": "alm-c1-q1",
+              "type": "multiple_choice",
+              "prompt": "'Wir müssen alle Möglichkeiten in Betracht ______.' Boşluğa hangi fiil gelir?",
+              "difficulty": "zor",
+              "explanation": "'in Betracht ziehen' sabit bir kalıp fiildir (Nomen-Verb-Verbindung).",
+              "options": [
+                {
+                  "id": "co1",
+                  "text": "ziehen",
+                  "isCorrect": true
+                },
+                {
+                  "id": "co2",
+                  "text": "nehmen",
+                  "isCorrect": false
+                },
+                {
+                  "id": "co3",
+                  "text": "bringen",
+                  "isCorrect": false
+                },
+                {
+                  "id": "co4",
+                  "text": "stellen",
+                  "isCorrect": false
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+},
+{
+  "id": "dil_fra",
+  "name": "Fransızca (A1 - C2)",
+  "subTitle": "DELF & DALF Hazırlık, Akıcı Telaffuz & Kültür",
+  "icon": "🇫🇷",
+  "badge": "Diplomasi Dili",
+  "color": "#6366f1",
+  "accentColor": "#4f46e5",
+  "units": [
+    {
+      "id": "fra-u1",
+      "number": 1,
+      "title": "A1: Bonjour & Premiers Pas",
+      "description": "Fransızca tanışma, être/avoir fiilleri ve temel diyaloglar",
+      "color": "#6366f1",
+      "lessons": [
+        {
+          "id": "fra-u1-l1",
+          "unitId": "fra-u1",
+          "title": "Salutations & Présentation",
+          "description": "Bonjour, Enchanté, Je m'appelle ve temel selamlaşmalar.",
+          "xpReward": 20,
+          "gemReward": 5,
+          "type": "lesson",
+          "summaryNotes": [
+            "'Enchanté(e)' = Tanıştığıma memnun oldum.",
+            "'Comment allez-vous ?' = Nasılsınız? (Resmi), 'Ça va ?' = Nasıl gidiyor? (Samimi).",
+            "Être (olmak): Je suis, Tu es, Il/Elle est."
+          ],
+          "questions": [
+            {
+              "id": "fra-q1",
+              "type": "multiple_choice",
+              "prompt": "'Comment vous appelez-vous ?' sorusuna doğru yanıt hangisidir?",
+              "difficulty": "kolay",
+              "explanation": "'Je m'appelle...' = Benim adım...",
+              "options": [
+                {
+                  "id": "fo1",
+                  "text": "Je m'appelle Lucas.",
+                  "isCorrect": true
+                },
+                {
+                  "id": "fo2",
+                  "text": "J'ai vingt ans.",
+                  "isCorrect": false
+                },
+                {
+                  "id": "fo3",
+                  "text": "Je suis français.",
+                  "isCorrect": false
+                },
+                {
+                  "id": "fo4",
+                  "text": "Très bien, merci.",
+                  "isCorrect": false
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "fra-u2",
+      "number": 2,
+      "title": "B1 - B2: Le Subjonctif & L'Argumentation",
+      "description": "Dilek kipi, tartışma teknikleri ve bağlaçlar",
+      "color": "#4f46e5",
+      "lessons": [
+        {
+          "id": "fra-u2-l1",
+          "unitId": "fra-u2",
+          "title": "Le Subjonctif Présent",
+          "description": "İstek, şüphe ve zorunluluk bildiren kipler.",
+          "xpReward": 30,
+          "gemReward": 8,
+          "type": "lesson",
+          "summaryNotes": [
+            "'Il faut que tu fasses tes devoirs.' = Ödevlerini yapman gerekir.",
+            "'Bien que' bağlacı her zaman subjonctif gerektirir."
+          ],
+          "questions": [
+            {
+              "id": "fra-b1-q1",
+              "type": "multiple_choice",
+              "prompt": "'Il est important que vous ______ à l'heure.' (être fiili)",
+              "difficulty": "orta",
+              "explanation": "Subjonctif 'vous' çekimi: soyez.",
+              "options": [
+                {
+                  "id": "fbo1",
+                  "text": "soyez",
+                  "isCorrect": true
+                },
+                {
+                  "id": "fbo2",
+                  "text": "êtes",
+                  "isCorrect": false
+                },
+                {
+                  "id": "fbo3",
+                  "text": "serez",
+                  "isCorrect": false
+                },
+                {
+                  "id": "fbo4",
+                  "text": "étiez",
+                  "isCorrect": false
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "fra-u3",
+      "number": 3,
+      "title": "C1 - C2: DALF & Style Soutenu (PRO)",
+      "description": "Edebi anlatım, ileri retorik ve atasözleri",
+      "color": "#3730a3",
+      "isPremiumOnly": true,
+      "lessons": [
+        {
+          "id": "fra-u3-l1",
+          "unitId": "fra-u3",
+          "title": "Le Passé Simple & Subjonctif Imparfait",
+          "description": "Edebi metinlerde kullanılan yüksek seviye zamanlar.",
+          "xpReward": 40,
+          "gemReward": 15,
+          "type": "lesson",
+          "summaryNotes": [
+            "Fût-ce = öyle olsa bile (yüksek edebi stil).",
+            "'Avoir le cœur sur la main' = Çok cömert olmak."
+          ],
+          "questions": [
+            {
+              "id": "fra-c1-q1",
+              "type": "multiple_choice",
+              "prompt": "'Avoir le cœur sur la main' deyimi ne anlama gelir?",
+              "difficulty": "zor",
+              "explanation": "Fransızcada 'kalbi avucunda olmak', son derece cömert ve yardımsever insanları tanımlar.",
+              "options": [
+                {
+                  "id": "fco1",
+                  "text": "Çok cömert ve iyiliksever olmak",
+                  "isCorrect": true
+                },
+                {
+                  "id": "fco2",
+                  "text": "Çok korkak olmak",
+                  "isCorrect": false
+                },
+                {
+                  "id": "fco3",
+                  "text": "Kalp hastası olmak",
+                  "isCorrect": false
+                },
+                {
+                  "id": "fco4",
+                  "text": "Aceleci davranmak",
+                  "isCorrect": false
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+},
+{
+  "id": "dil_isp",
+  "name": "İspanyolca (A1 - C2)",
+  "subTitle": "DELE Hazırlık, Latin Amerika & İspanya Kültürü",
+  "icon": "🇪🇸",
+  "badge": "Popüler Dil",
+  "color": "#ea580c",
+  "accentColor": "#c2410c",
+  "units": [
+    {
+      "id": "isp-u1",
+      "number": 1,
+      "title": "A1: ¡Hola! & Primeros Pasos",
+      "description": "İspanyolca selamlaşma, Ser ve Estar farkı, günlük kelimeler",
+      "color": "#ea580c",
+      "lessons": [
+        {
+          "id": "isp-u1-l1",
+          "unitId": "isp-u1",
+          "title": "Saludos & Presentaciones",
+          "description": "¡Hola! ¿Cómo estás?, Mucho gusto kalıpları.",
+          "xpReward": 20,
+          "gemReward": 5,
+          "type": "lesson",
+          "summaryNotes": [
+            "'Mucho gusto' = Tanıştığıma çok memnun oldum.",
+            "'Ser' kalıcı özellikleri (kimlik, milliyet), 'Estar' geçici durumları (ruh hali, konum) ifade eder.",
+            "¿De dónde eres? = Nerelisin? (Soy de Turquía)."
+          ],
+          "questions": [
+            {
+              "id": "isp-q1",
+              "type": "multiple_choice",
+              "prompt": "'¿Cómo estás?' sorusuna en doğal yanıt hangisidir?",
+              "difficulty": "kolay",
+              "explanation": "'Muy bien, gracias. ¿Y tú?' = Çok iyiyim teşekkürler. Ya sen?",
+              "options": [
+                {
+                  "id": "io1",
+                  "text": "Muy bien, gracias. ¿Y tú?",
+                  "isCorrect": true
+                },
+                {
+                  "id": "io2",
+                  "text": "Me llamo Carlos.",
+                  "isCorrect": false
+                },
+                {
+                  "id": "io3",
+                  "text": "Tengo veinte años.",
+                  "isCorrect": false
+                },
+                {
+                  "id": "io4",
+                  "text": "Adiós.",
+                  "isCorrect": false
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "isp-u2",
+      "number": 2,
+      "title": "B1 - B2: Subjuntivo & Cláusulas con Si",
+      "description": "Dilek kipi, varsayımlar ve akıcı sohbet",
+      "color": "#c2410c",
+      "lessons": [
+        {
+          "id": "isp-u2-l1",
+          "unitId": "isp-u2",
+          "title": "Subjuntivo Presente",
+          "description": "Duygular, istekler ve belirsizlikler (Ojalá, Quiero que...).",
+          "xpReward": 30,
+          "gemReward": 8,
+          "type": "lesson",
+          "summaryNotes": [
+            "'Espero que tengas un buen día.' = Umarım güzel bir gün geçirirsin.",
+            "'Ojalá' = İnşallah / Keşke (Subjuntivo ile kullanılır)."
+          ],
+          "questions": [
+            {
+              "id": "isp-b1-q1",
+              "type": "multiple_choice",
+              "prompt": "'Quiero que tú ______ a mi fiesta.' (venir fiili)",
+              "difficulty": "orta",
+              "explanation": "'querer que' yapısından sonra subjuntivo 'vengas' gelir.",
+              "options": [
+                {
+                  "id": "ibo1",
+                  "text": "vengas",
+                  "isCorrect": true
+                },
+                {
+                  "id": "ibo2",
+                  "text": "vienes",
+                  "isCorrect": false
+                },
+                {
+                  "id": "ibo3",
+                  "text": "vendrás",
+                  "isCorrect": false
+                },
+                {
+                  "id": "ibo4",
+                  "text": "veniste",
+                  "isCorrect": false
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "isp-u3",
+      "number": 3,
+      "title": "C1 - C2: Maestría & Refranes (PRO)",
+      "description": "Deyimsel ustalık, edebiyat ve anadil seviyesi nüanslar",
+      "color": "#9a3412",
+      "isPremiumOnly": true,
+      "lessons": [
+        {
+          "id": "isp-u3-l1",
+          "unitId": "isp-u3",
+          "title": "Refranes & Giros Lingüísticos",
+          "description": "İleri İspanyolca atasözleri ve edebi ifadeler.",
+          "xpReward": 40,
+          "gemReward": 15,
+          "type": "lesson",
+          "summaryNotes": [
+            "'Más vale pájaro en mano que ciento volando' = Eldeki bir kuş daldaki yüz kuştan iyidir.",
+            "'Estar en las nubes' = Dalgın olmak / Hayal aleminde olmak."
+          ],
+          "questions": [
+            {
+              "id": "isp-c1-q1",
+              "type": "multiple_choice",
+              "prompt": "'Estar en las nubes' deyimi hangi anlamda kullanılır?",
+              "difficulty": "zor",
+              "explanation": "İspanyolcada bulutlarda olmak dalgın, aklı başka yerde olan kişileri tanımlar.",
+              "options": [
+                {
+                  "id": "ico1",
+                  "text": "Dalgın veya hayallere dalmış olmak",
+                  "isCorrect": true
+                },
+                {
+                  "id": "ico2",
+                  "text": "Çok zengin olmak",
+                  "isCorrect": false
+                },
+                {
+                  "id": "ico3",
+                  "text": "Uçak yolculuğu yapmak",
+                  "isCorrect": false
+                },
+                {
+                  "id": "ico4",
+                  "text": "Çok sinirli olmak",
+                  "isCorrect": false
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+},
+{
+  "id": "dil_bos",
+  "name": "Boşnakça (A1 - C2)",
+  "subTitle": "Balkan Dilleri, Günlük Konuşma & Gramer",
+  "icon": "🇧🇦",
+  "badge": "Balkan Dili",
+  "color": "#2563eb",
+  "accentColor": "#1d4ed8",
+  "units": [
+    {
+      "id": "bos-u1",
+      "number": 1,
+      "title": "A1: Dobar Dan & Upoznavanje",
+      "description": "Boşnakça selamlaşma, kendini tanıtma ve temel kalıplar",
+      "color": "#2563eb",
+      "lessons": [
+        {
+          "id": "bos-u1-l1",
+          "unitId": "bos-u1",
+          "title": "Pozdravi & Osnovne Rečenice",
+          "description": "Dobar dan, Kako ste, Hvala lijepa kalıpları.",
+          "xpReward": 20,
+          "gemReward": 5,
+          "type": "lesson",
+          "summaryNotes": [
+            "'Dobar dan' = İyi günler, 'Dobro jutro' = Günaydın.",
+            "'Kako ste?' = Nasılsınız? (Resmi), 'Kako si?' = Nasılsın? (Samimi).",
+            "'Drago mi je' = Memnun oldum."
+          ],
+          "questions": [
+            {
+              "id": "bos-q1",
+              "type": "multiple_choice",
+              "prompt": "'Kako ste?' sorusuna en yaygın ve nazik yanıt hangisidir?",
+              "difficulty": "kolay",
+              "explanation": "'Dobro sam, hvala. A vi?' = İyiyim, teşekkürler. Ya siz?",
+              "options": [
+                {
+                  "id": "bo1",
+                  "text": "Dobro sam, hvala. A vi?",
+                  "isCorrect": true
+                },
+                {
+                  "id": "bo2",
+                  "text": "Zovem se Mirza.",
+                  "isCorrect": false
+                },
+                {
+                  "id": "bo3",
+                  "text": "Doviđenja!",
+                  "isCorrect": false
+                },
+                {
+                  "id": "bo4",
+                  "text": "Nema na čemu.",
+                  "isCorrect": false
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "bos-u2",
+      "number": 2,
+      "title": "B1 - B2: Padeži & Složene Rečenice",
+      "description": "Boşnakça 7 ismin hali (padeži) ve akıcı konuşma",
+      "color": "#1d4ed8",
+      "lessons": [
+        {
+          "id": "bos-u2-l1",
+          "unitId": "bos-u2",
+          "title": "7 Padeža (İsmin Halleri)",
+          "description": "Nominativ, Genitiv, Dativ, Akuzativ, Vokativ, Instrumental, Lokativ.",
+          "xpReward": 30,
+          "gemReward": 8,
+          "type": "lesson",
+          "summaryNotes": [
+            "Vokativ = Seslenme halidir: Prijatelj -> Prijatelju! (Ey dostum / Arkadaşım!).",
+            "Lokativ yer bildirmede 'u' veya 'na' edatlarıyla kullanılır: u Sarajevu."
+          ],
+          "questions": [
+            {
+              "id": "bos-b1-q1",
+              "type": "multiple_choice",
+              "prompt": "'Sarajevo' kelimesi 'Sarajevo\\'da yaşıyorum' derken Lokativ halinde nasıl çekimlenir?",
+              "difficulty": "orta",
+              "explanation": "Boşnakçada Lokativ halinde 'Živim u Sarajevu' denir.",
+              "options": [
+                {
+                  "id": "bbo1",
+                  "text": "u Sarajevu",
+                  "isCorrect": true
+                },
+                {
+                  "id": "bbo2",
+                  "text": "u Sarajevo",
+                  "isCorrect": false
+                },
+                {
+                  "id": "bbo3",
+                  "text": "sa Sarajevom",
+                  "isCorrect": false
+                },
+                {
+                  "id": "bbo4",
+                  "text": "od Sarajeva",
+                  "isCorrect": false
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "bos-u3",
+      "number": 3,
+      "title": "C1 - C2: Majstorski Jezik & Idiomi (PRO)",
+      "description": "İleri Balkan edebiyatı, atasözleri ve usta seviye",
+      "color": "#1e40af",
+      "isPremiumOnly": true,
+      "lessons": [
+        {
+          "id": "bos-u3-l1",
+          "unitId": "bos-u3",
+          "title": "Idiomi & Mudrosti",
+          "description": "Boşnakça zengin deyim ve felsefi deyişler.",
+          "xpReward": 40,
+          "gemReward": 15,
+          "type": "lesson",
+          "summaryNotes": [
+            "'Gledati kroz prste' = Hoşgörmek / Kusurları görmezden gelmek.",
+            "'Biti na konju' = İşi yoluna koymuş, başarılı olmak."
+          ],
+          "questions": [
+            {
+              "id": "bos-c1-q1",
+              "type": "multiple_choice",
+              "prompt": "'Gledati kroz prste' deyimi Boşnakçada ne anlama gelir?",
+              "difficulty": "zor",
+              "explanation": "Parmakların arasından bakmak, hataları görmezden gelip hoşgörmek anlamına gelir.",
+              "options": [
+                {
+                  "id": "bco1",
+                  "text": "Kusurları hoşgörmek / Görmezden gelmek",
+                  "isCorrect": true
+                },
+                {
+                  "id": "bco2",
+                  "text": "Çok dikkatli incelemek",
+                  "isCorrect": false
+                },
+                {
+                  "id": "bco3",
+                  "text": "Utanıp yüzünü kapatmak",
+                  "isCorrect": false
+                },
+                {
+                  "id": "bco4",
+                  "text": "Korkarak bakmak",
+                  "isCorrect": false
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
 ];

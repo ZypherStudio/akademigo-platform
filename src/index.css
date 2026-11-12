@@ -41,3 +41,82 @@
   -ms-overflow-style: none !important;
   scrollbar-width: none !important;
 }
+
+/* Discord Nitro-Style Animated Avatar Decorations */
+@keyframes floatHearts {
+  0% {
+    transform: translateY(6px) scale(0.7) rotate(-5deg);
+    opacity: 0;
+  }
+  30% {
+    opacity: 0.95;
+    transform: translateY(0px) scale(1) rotate(5deg);
+  }
+  70% {
+    opacity: 0.85;
+    transform: translateY(-8px) scale(1.05) rotate(-3deg);
+  }
+  100% {
+    transform: translateY(-16px) scale(0.6) rotate(6deg);
+    opacity: 0;
+  }
+}
+
+@keyframes cloudFloat {
+  0%, 100% {
+    transform: translateX(0px) translateY(0px);
+  }
+  50% {
+    transform: translateX(3px) translateY(-2px);
+  }
+}
+
+@keyframes celestialSpin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes pulseAura {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.75;
+  }
+  50% {
+    transform: scale(1.06);
+    opacity: 1;
+  }
+}
+
+@keyframes crownGleam {
+  0%, 100% {
+    transform: scale(1) rotate(0deg);
+    filter: drop-shadow(0 0 4px #f59e0b);
+  }
+  50% {
+    transform: scale(1.12) rotate(2deg);
+    filter: drop-shadow(0 0 10px #fbbf24);
+  }
+}
+
+.animate-float-hearts {
+  animation: floatHearts 2.4s infinite ease-out;
+}
+.animate-float-hearts-delayed {
+  animation: floatHearts 2.8s infinite ease-out 1.2s;
+}
+.animate-cloud-float {
+  animation: cloudFloat 4s infinite ease-in-out;
+}
+.animate-celestial-spin {
+  animation: celestialSpin 14s infinite linear;
+}
+.animate-pulse-aura {
+  animation: pulseAura 2.2s infinite ease-in-out;
+}
+.animate-crown-gleam {
+  animation: crownGleam 2.5s infinite ease-in-out;
+}

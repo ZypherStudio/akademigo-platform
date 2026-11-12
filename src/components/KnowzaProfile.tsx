@@ -39,6 +39,7 @@ export const KnowzaProfile: React.FC<KnowzaProfileProps> = ({
   const [sfxOn, setSfxOn] = useState(() => soundSystem.getSfxEnabled());
   const [isEditingName, setIsEditingName] = useState(false);
   const [nameInput, setNameInput] = useState(stats.username || '');
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [activeModal, setActiveModal] = useState<string | null>(null);
 
   const handleSaveName = () => {
@@ -108,6 +109,15 @@ export const KnowzaProfile: React.FC<KnowzaProfileProps> = ({
               <span>{displayIdentity.primary}</span>
               <Edit3 className="w-4 h-4 text-slate-400 group-hover:text-amber-500 transition" />
             </button>
+          )}
+
+          {/* Founder Badge */}
+          {stats.isFounder && (
+            <div className="inline-flex items-center gap-1.5 bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 text-slate-950 text-xs font-black px-3 py-1 rounded-full shadow-md border border-amber-200 mb-2 animate-pulse">
+              <span>👑</span>
+              <span>Kurucu Üye & VIP</span>
+              <span>✨</span>
+            </div>
           )}
 
           <div className="flex items-center gap-1.5 text-xs font-bold text-slate-500 mb-2">
@@ -258,8 +268,8 @@ export const KnowzaProfile: React.FC<KnowzaProfileProps> = ({
         {stats.isLoggedIn ? (
           <button
             onClick={() => {
-              logoutUser();
               soundSystem.playClick();
+              setShowLogoutConfirm(true);
             }}
             className="w-full py-3 rounded-2xl bg-rose-50 hover:bg-rose-100 text-rose-600 font-bold text-xs flex items-center justify-center gap-2 transition"
           >
@@ -409,6 +419,51 @@ export const KnowzaProfile: React.FC<KnowzaProfileProps> = ({
             >
               Tamam
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* Discord-style Logout Confirmation Modal */}
+      {showLogoutConfirm && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 animate-fade">
+          <div className="bg-[#FFFDF7] rounded-3xl p-5 max-w-sm w-full border-2 border-amber-300 shadow-2xl text-center space-y-3.5 relative">
+            <div className="w-20 h-20 mx-auto filter drop-shadow-md">
+              <img
+                src="/assets/knowza_avatar_3d.png"
+                alt="Knowza Maskot"
+                className="w-full h-full object-contain animate-bounceSubtle"
+              />
+            </div>
+            <div>
+              <h3 className="text-lg font-black text-slate-900 leading-tight">
+                Ayrılmak İstediğine Emin misin? 🥺
+              </h3>
+              <p className="text-xs font-bold text-slate-600 mt-1 leading-snug">
+                Bugünkü serin <span className="text-orange-600 font-black">🔥 {stats.streak} gün</span> olarak devam ediyor. Eğer çıkarsan bugünkü çalışma ritmin ve hedefin yarım kalabilir!
+              </p>
+            </div>
+
+            <div className="space-y-2 pt-1">
+              <button
+                onClick={() => {
+                  soundSystem.playClick();
+                  setShowLogoutConfirm(false);
+                }}
+                className="w-full py-3 rounded-2xl bg-gradient-to-r from-amber-400 to-[#FFB800] text-slate-950 font-black text-sm shadow-md active:scale-95 transition"
+              >
+                Çalışmaya Devam Et ⚡
+              </button>
+              <button
+                onClick={() => {
+                  setShowLogoutConfirm(false);
+                  logoutUser();
+                  soundSystem.playClick();
+                }}
+                className="w-full py-2.5 rounded-2xl bg-rose-50 hover:bg-rose-100 text-rose-600 font-bold text-xs transition"
+              >
+                Yine de Çıkış Yap
+              </button>
+            </div>
           </div>
         </div>
       )}

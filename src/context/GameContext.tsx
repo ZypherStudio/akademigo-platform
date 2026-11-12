@@ -12,7 +12,8 @@ import {
   AchievementToastData,
   AvatarFrameId,
   QuickToolId,
-  DuelMatchRecord
+  DuelMatchRecord,
+  CustomBearConfig
 } from '../types';
 import { KNOWZA_COSTUMES } from '../data/costumesData';
 import { getFrame } from '../data/framesData';
@@ -22,7 +23,10 @@ import {
   listSavedAccounts,
   loadAccountRecord,
   normalizeEmail,
-  saveAccountRecord
+  saveAccountRecord,
+  applyFounderPrivileges,
+  isFounderAccount,
+  FOUNDER_EMAILS
 } from '../utils/accountStorage';
 import {
   fetchServerLeaderboard,
@@ -82,6 +86,7 @@ interface GameContextType {
   buyFrameWithGems: (frameId: AvatarFrameId) => boolean;
   addXpAndGems: (xp: number, gems: number) => void;
   upgradeToPro: () => void;
+  updateCustomBear: (config: CustomBearConfig) => void;
   completeOnboarding: (data: {
     username?: string;
     targetGoal: CourseCategory;
@@ -205,7 +210,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
           const parsed = JSON.parse(saved);
           if (parsed?.email && !isBlockedFakeAccount(parsed.email, parsed.username)) {
             const cleanedName = parsed.username === 'Öğrenci' ? '' : (parsed.username || '');
-            return {
+            return applyFounderPrivileges({
               ...DEFAULT_STATS,
               ...parsed,
               username: cleanedName,
@@ -213,7 +218,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
               unlockedAvatarFrames: parsed.unlockedAvatarFrames ?? ['none', 'gold_flame'],
               preferredQuickTools: parsed.preferredQuickTools ?? ['tests', 'duel', 'exams', 'aicoach'],
               duelHistory: Array.isArray(parsed.duelHistory) ? parsed.duelHistory : [],
-            };
+            });
           }
         }
         localStorage.removeItem('akademi_user_stats');
@@ -234,7 +239,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
         const avatar = (parsed.avatar === 'owl' || !parsed.avatar) ? 'haribo' : parsed.avatar;
         const cleanedName = parsed.username === 'Öğrenci' ? '' : (parsed.username || '');
-        return {
+        return applyFounderPrivileges({
           ...DEFAULT_STATS,
           ...parsed,
           username: cleanedName,
@@ -243,7 +248,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
           unlockedAvatarFrames: parsed.unlockedAvatarFrames ?? ['none', 'gold_flame'],
           preferredQuickTools: parsed.preferredQuickTools ?? ['tests', 'duel', 'exams', 'aicoach'],
           duelHistory: Array.isArray(parsed.duelHistory) ? parsed.duelHistory : [],
-        };
+        });
       }
       return DEFAULT_STATS;
     } catch {
@@ -725,7 +730,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (savedStats && !options?.isNewAccount) {
       // Restore full existing account progress (XP, gems, streak, duel ELO, frames, preferences)
       const cleanedSavedName = savedStats.username === 'Öğrenci' ? '' : (savedStats.username || '');
-      const nextStats: UserStats = {
+      const nextStats: UserStats = applyFounderPrivileges({
         ...DEFAULT_STATS,
         ...savedStats,
         email: cleanEmail,
@@ -741,13 +746,13 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
         preferredQuickTools: savedStats.preferredQuickTools ?? ['tests', 'duel', 'exams', 'aicoach'],
         duelHistory: Array.isArray(savedStats.duelHistory) ? savedStats.duelHistory : [],
         hasCompletedOnboarding: Boolean(savedStats.hasCompletedOnboarding),
-      };
+      });
       setStats(nextStats);
       setNotes(savedNotes);
       saveAccountRecord(nextStats, savedNotes);
     } else {
       // Brand new account: start fresh and ALWAYS go through Onboarding Questions
-      const initialStats: UserStats = {
+      const initialStats: UserStats = applyFounderPrivileges({
         ...DEFAULT_STATS,
         isLoggedIn: true,
         authProvider: provider,
@@ -758,7 +763,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
         username: options?.username?.trim() || '',
         uniqueTag: '#DOĞRULANDI',
         hasCompletedOnboarding: false,
-      };
+      });
       setStats(initialStats);
       setNotes(DEFAULT_NOTES);
       saveAccountRecord(initialStats, DEFAULT_NOTES);
@@ -882,10 +887,23 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setStats(prev => ({
       ...prev,
       isPro: true,
-      hearts: 5,
-      maxHearts: 5,
-      gems: prev.gems + 500
+      hearts: 9999,
+      maxHearts: 9999,
+      hasAdFree: true,
+      hasAiPackage: true,
+      gems: prev.gems + 1000
     }));
+  };
+
+  const updateCustomBear = (config: CustomBearConfig) => {
+    sound.playClick();
+    setStats(prev => {
+      const next = {
+        ...prev,
+        customBear: config,
+      };
+      return isFounderAccount(prev.email) ? applyFounderPrivileges(next) : next;
+    });
   };
 
   const completeOnboarding = (data: {
@@ -903,7 +921,11 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
       lgs: 'LGS Şampiyonu 📚',
       kpss: 'KPSS Memur Adayı 🏛️',
       kodlama: 'Geleceğin Yazılımcısı 💻',
-      dil: 'Global Dil Kaşifi 🌐'
+      dil: 'İngilizce Kaşifi 🇬🇧',
+      dil_alm: 'Almanca Ustası 🇩🇪',
+      dil_fra: 'Fransızca Hatibi 🇫🇷',
+      dil_isp: 'İspanyolca Seyyahı 🇪🇸',
+      dil_bos: 'Boşnakça Dostu 🇧🇦',
     };
 
     const defaultToolsByGoal: Record<CourseCategory, QuickToolId[]> = {
@@ -912,6 +934,10 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
       kpss: ['tests', 'exams', 'countdown', 'errors'],
       kodlama: ['tests', 'codelab', 'duel', 'aicoach'],
       dil: ['tests', 'reels', 'aicoach', 'duel'],
+      dil_alm: ['tests', 'reels', 'aicoach', 'duel'],
+      dil_fra: ['tests', 'reels', 'aicoach', 'duel'],
+      dil_isp: ['tests', 'reels', 'aicoach', 'duel'],
+      dil_bos: ['tests', 'reels', 'aicoach', 'duel'],
     };
 
     setStats(prev => {
@@ -1055,6 +1081,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
         buyFrameWithGems,
         addXpAndGems,
         upgradeToPro,
+        updateCustomBear,
         completeOnboarding,
         updateUserPreferences,
         activeAchievement,

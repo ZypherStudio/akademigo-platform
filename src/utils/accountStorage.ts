@@ -1,7 +1,65 @@
-import { CourseCategory, QuickToolId, StudyNote, UserStats } from '../types';
+import { CourseCategory, QuickToolId, StudyNote, UserStats, AvatarFrameId, HariboCostume } from '../types';
 
 const ACCOUNT_VAULT_KEY = 'knowza_account_vault_v1';
 const REGISTERED_USERS_KEY = 'knowza_registered_users';
+
+export const FOUNDER_EMAILS = new Set([
+  'zypherstudio330@gmail.com',
+  'emirhanfif@gmail.com',
+]);
+
+export const isFounderAccount = (email?: string): boolean => {
+  if (!email) return false;
+  return FOUNDER_EMAILS.has(normalizeEmail(email));
+};
+
+export const applyFounderPrivileges = (stats: UserStats): UserStats => {
+  if (!stats.email || !isFounderAccount(stats.email)) return stats;
+
+  const allFrames: AvatarFrameId[] = [
+    'none',
+    'gold_flame',
+    'lightning_bolt',
+    'cyber_neon',
+    'nature_leaf',
+    'cherry_blossom',
+    'royal_crown',
+    'blood_web',
+    'cosmic_stars',
+    'dark_wings',
+    'dragon_fire',
+    'moon_reverie',
+    'deadpool_hearts',
+    'eous_astronaut',
+  ];
+  const allCostumes: HariboCostume[] = ['classic', 'king', 'cyber', 'party', 'graduate', 'astronaut'];
+
+  return {
+    ...stats,
+    isPro: true,
+    isFounder: true,
+    founderBadge: '👑 Kurucu Üye',
+    title: stats.title && stats.title !== 'Acemi Savaşçı' ? stats.title : '👑 Kurucu Mimar & VIP',
+    maxHearts: 999999,
+    hearts: 999999,
+    gems: Math.max(stats.gems || 0, 99999),
+    hasAdFree: true,
+    hasAiPackage: true,
+    unlockedAvatarFrames: Array.from(new Set([...(stats.unlockedAvatarFrames || []), ...allFrames])),
+    unlockedCostumes: Array.from(new Set([...(stats.unlockedCostumes || []), ...allCostumes])),
+    equippedAvatarFrame: stats.equippedAvatarFrame && stats.equippedAvatarFrame !== 'none'
+      ? stats.equippedAvatarFrame
+      : 'royal_crown',
+    selectedCostume: stats.selectedCostume || 'king',
+    customBear: stats.customBear || {
+      furColor: 'kraliyet_altini',
+      headwear: 'royal_crown',
+      eyewear: 'sunshades',
+      outfit: 'royal_cape',
+      heldItem: 'trophy',
+    },
+  };
+};
 
 const BLOCKED_FAKE_EMAILS = new Set([
   'ali@gmail.com',
@@ -104,12 +162,16 @@ export const saveAccountRecord = (stats: UserStats, notes: StudyNote[]): void =>
   const key = normalizeEmail(stats.email);
   if (!key || BLOCKED_FAKE_EMAILS.has(key)) return;
 
+  const finalStats = applyFounderPrivileges({
+    ...stats,
+    email: key,
+  });
+
   const vault = readVault();
   const nowIso = new Date().toISOString();
   vault[key] = {
     stats: {
-      ...stats,
-      email: key,
+      ...finalStats,
       lastSavedAt: nowIso,
     },
     notes,
@@ -123,7 +185,12 @@ export const loadAccountRecord = (email: string): StoredAccountRecord | null => 
   const key = normalizeEmail(email);
   if (!key || BLOCKED_FAKE_EMAILS.has(key)) return null;
   const vault = readVault();
-  return vault[key] ?? null;
+  const record = vault[key] ?? null;
+  if (!record) return null;
+  return {
+    ...record,
+    stats: applyFounderPrivileges(record.stats),
+  };
 };
 
 /** List all real saved accounts on this device, most recently updated first */

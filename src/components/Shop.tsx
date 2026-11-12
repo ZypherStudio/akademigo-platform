@@ -699,11 +699,16 @@ export const Shop: React.FC = () => {
       {activeTab === 'frames' && (
         <div className="space-y-4 animate-fade">
           <div className="bg-gradient-to-r from-purple-50 to-indigo-50 border border-purple-200/80 rounded-2xl p-3 text-xs font-bold text-purple-950 flex items-center justify-between">
-            <span>✨ Tıklayarak Discord tarzı canlı animasyon önizlemesini açabilirsin!</span>
-            <span className="text-base">🌙</span>
+            <span className="flex items-center gap-1.5">
+              <Sparkles className="w-4 h-4 text-purple-600" />
+              <span>Özel Discord Nitro animasyonları & 3D Knowza maskotu!</span>
+            </span>
+            <span className="text-[10px] bg-purple-200/80 text-purple-900 px-2 py-0.5 rounded-full font-black">
+              Zero Emoji • Full Vector
+            </span>
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 gap-3.5">
             {AVATAR_FRAMES.map((frame) => {
               const unlockedFrames = stats.unlockedAvatarFrames ?? ['none', 'gold_flame'];
               const isOwned = stats.isFounder || unlockedFrames.includes(frame.id as AvatarFrameId);
@@ -716,29 +721,32 @@ export const Shop: React.FC = () => {
                     sound.playClick();
                     setPreviewFrame(frame);
                   }}
-                  className={`relative rounded-3xl border-2 bg-white p-3.5 flex flex-col items-center gap-2 cursor-pointer transition-all hover:scale-102 active:scale-98 ${
+                  className={`relative rounded-3xl border-2 bg-white p-4 flex flex-col items-center gap-2.5 cursor-pointer transition-all hover:scale-102 active:scale-98 overflow-visible ${
                     isEquipped ? 'border-[#FFB800] shadow-md ring-2 ring-[#FFB800]/30' : 'border-slate-200 hover:border-amber-300'
                   }`}
                 >
                   {isEquipped && (
-                    <div className="absolute -top-2 -right-2 bg-emerald-500 text-white text-[9px] font-black rounded-full px-2 py-0.5 z-10 shadow-xs">
+                    <div className="absolute -top-2.5 -right-2 bg-emerald-500 text-white text-[9px] font-black rounded-full px-2 py-0.5 z-30 shadow-xs">
                       ✓ Aktif
                     </div>
                   )}
 
-                  <div className="w-16 h-16 relative flex items-center justify-center my-1">
+                  {/* Frame Decoration Stage with ample breathing room */}
+                  <div className="w-20 h-20 relative flex items-center justify-center my-2">
                     <KnowzaAvatar
-                      size="lg"
+                      size="xl"
                       frameId={frame.id as AvatarFrameId}
                       showFrameGlow={true}
+                      customBear={stats.customBear}
+                      costume={stats.selectedCostume}
                     />
                   </div>
 
                   <div className="text-center w-full">
                     <h5 className="text-xs font-black text-slate-900 truncate">
-                      {frame.badge} {frame.name}
+                      {frame.name}
                     </h5>
-                    <span className="text-[10px] font-bold text-amber-700 block">
+                    <span className="text-[10px] font-bold text-amber-700 block mt-0.5">
                       {frame.rarityLabel}
                     </span>
                   </div>
@@ -753,7 +761,7 @@ export const Shop: React.FC = () => {
                         setPreviewFrame(frame);
                       }
                     }}
-                    className={`w-full py-1.5 rounded-xl font-black text-xs transition ${
+                    className={`w-full py-2 rounded-xl font-black text-xs transition ${
                       isEquipped
                         ? 'bg-emerald-100 text-emerald-800'
                         : isOwned
@@ -942,20 +950,26 @@ export const Shop: React.FC = () => {
             </div>
 
             {/* Discord Avatar Showcase Card */}
-            <div className="bg-gradient-to-b from-slate-900 to-black p-5 rounded-2xl border border-white/10 flex flex-col items-center justify-center relative overflow-hidden">
-              <div className="w-24 h-24 relative flex items-center justify-center filter drop-shadow-xl my-2">
+            <div className="bg-gradient-to-b from-slate-900 to-black p-6 rounded-2xl border border-white/10 flex flex-col items-center justify-center relative overflow-hidden">
+              <div className="w-28 h-28 relative flex items-center justify-center filter drop-shadow-2xl my-2">
                 <KnowzaAvatar
                   size="2xl"
                   frameId={previewFrame.id}
                   showFrameGlow={true}
                   customBear={stats.customBear}
+                  costume={stats.selectedCostume}
                 />
               </div>
 
               {/* Discord Chat Bubble Preview */}
-              <div className="mt-3 bg-[#2B2D31] text-white px-3 py-2 rounded-2xl border border-white/10 text-left w-full flex items-center gap-2.5 shadow-sm">
-                <div className="w-7 h-7 rounded-full overflow-hidden flex-shrink-0">
-                  <KnowzaAvatar size="xs" frameId={previewFrame.id} />
+              <div className="mt-4 bg-[#2B2D31] text-white px-3.5 py-2.5 rounded-2xl border border-white/10 text-left w-full flex items-center gap-3 shadow-md">
+                <div className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0">
+                  <KnowzaAvatar
+                    size="sm"
+                    frameId={previewFrame.id}
+                    customBear={stats.customBear}
+                    costume={stats.selectedCostume}
+                  />
                 </div>
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-1.5">

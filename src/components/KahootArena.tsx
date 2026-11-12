@@ -3,6 +3,7 @@ import { useGame } from '../context/GameContext';
 import { KAHOOT_QUIZ_SETS, MOCK_BOT_PLAYERS, KahootQuizSet } from '../data/kahootData';
 import { KahootQuestion, KahootPlayer, KahootCategory } from '../types';
 import { KnowzaAvatar } from './KnowzaAvatar';
+import { getDisplayIdentity } from '../utils/accountStorage';
 import { sound } from '../utils/audio';
 import confetti from 'canvas-confetti';
 import { 
@@ -15,12 +16,14 @@ type ArenaPhase = 'lobby' | 'question' | 'round_result' | 'podium';
 export const KahootArena: React.FC = () => {
   const { stats, updateUsername, addXpAndGems } = useGame();
 
+  const displayIdentity = getDisplayIdentity(stats);
+
   // Arena setup
   const [activeTab, setActiveTab] = useState<'join' | 'host'>('join');
   const [selectedSetId, setSelectedSetId] = useState<KahootCategory>('matematik');
   const [roomPin, setRoomPin] = useState('582 910');
   const [inputPin, setInputPin] = useState('582 910');
-  const [nicknameInput, setNicknameInput] = useState(stats.username || 'Öğrenci');
+  const [nicknameInput, setNicknameInput] = useState(displayIdentity.handle);
   const [pinCopied, setPinCopied] = useState(false);
   const [nameWarning, setNameWarning] = useState<string | null>(null);
 
@@ -53,7 +56,7 @@ export const KahootArena: React.FC = () => {
 
     const me: KahootPlayer = {
       id: 'me',
-      name: stats.username || 'Öğrenci',
+      name: getDisplayIdentity(stats).handle,
       costume: stats.selectedCostume || 'classic',
       score: 0,
       streak: 0,

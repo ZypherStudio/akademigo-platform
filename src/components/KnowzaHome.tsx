@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { useGame } from '../context/GameContext';
 import { COURSES } from '../data/coursesData';
-import { CourseCategory, Lesson } from '../types';
+import { CourseCategory, Lesson, QuickToolId } from '../types';
+import { getDisplayIdentity } from '../utils/accountStorage';
+import { QUICK_TOOL_MAP } from '../data/quickToolsData';
 import {
   Flame,
   Settings,
@@ -89,6 +91,44 @@ export const KnowzaHome: React.FC<KnowzaHomeProps> = ({
 
   const currentStreak = stats.streak ?? 0;
   const currentGems = stats.gems ?? 0;
+  const displayIdentity = getDisplayIdentity(stats);
+
+  const preferredToolIds: QuickToolId[] =
+    stats.preferredQuickTools && stats.preferredQuickTools.length > 0
+      ? stats.preferredQuickTools.slice(0, 4)
+      : ['tests', 'duel', 'exams', 'aicoach'];
+
+  const handleQuickToolPress = (toolId: QuickToolId) => {
+    sound.playClick();
+    if (toolId === 'tests') {
+      if (primaryLesson) {
+        handleLaunchLesson(primaryLesson);
+      } else {
+        onStartQuiz(currentCourse.name);
+      }
+      return;
+    }
+    onNavigateTab(toolId);
+  };
+
+  const getQuickToolSubtext = (toolId: QuickToolId): string => {
+    switch (toolId) {
+      case 'tests':
+        return primaryLesson ? `${primaryLesson.questions.length} Soru • Hazır` : 'Hemen Başla';
+      case 'duel':
+        return `${stats.eloRating || 1200} ELO • Canlı`;
+      case 'exams':
+        return 'MEB & ÖSYM Simülasyon';
+      case 'aicoach':
+        return '7/24 AI Destek';
+      case 'errors':
+        return `${stats.errorList?.length || 0} Kayıtlı Soru`;
+      case 'countdown':
+        return 'Gün & Saat Sayacı';
+      default:
+        return QUICK_TOOL_MAP[toolId]?.subtitle || 'Hızlı Giriş';
+    }
+  };
 
   return (
     <div className="flex-1 w-full px-4 py-4 space-y-4 pb-36 select-none animate-fade overflow-x-hidden">
@@ -105,10 +145,10 @@ export const KnowzaHome: React.FC<KnowzaHomeProps> = ({
           </div>
           <div className="min-w-0 max-w-[130px] sm:max-w-[180px]">
             <span className="text-[10px] font-bold text-[#8C7A5E] block leading-none truncate">
-              {stats.email ? stats.email : 'Merhaba!'}
+              {displayIdentity.secondary || (stats.authProvider === 'google' ? 'Google Hesabı' : 'Kayıtlı Hesap')}
             </span>
             <h2 className="text-base sm:text-lg font-black text-[#2A1E00] flex items-center gap-1 leading-snug truncate mt-0.5">
-              <span className="truncate">{stats.username || 'Öğrenci'}</span>
+              <span className="truncate">{displayIdentity.primary}</span>
               <span className="text-xs">👑</span>
             </h2>
           </div>
@@ -186,8 +226,8 @@ export const KnowzaHome: React.FC<KnowzaHomeProps> = ({
             <div className="bg-white/95 rounded-2xl p-2.5 border border-amber-200 shadow-xs text-left relative">
               <p className="text-xs font-black text-slate-800 leading-snug">
                 {currentStreak === 0
-                  ? `Selam ${stats.username || 'Öğrenci'}! 🎓 Bugün senin ilk günün. İlk testini çözüp serini 1 güne çıkaralım mı?`
-                  : `Harikasın ${stats.username || 'Öğrenci'}! 🔥 ${currentStreak} gündür aralıksız çalışıyorsun. Bugünün hedefini tamamla!`
+                  ? `Selam ${displayIdentity.handle}! 🎓 Bugün senin ilk günün. İlk testini çözüp serini 1 güne çıkaralım mı?`
+                  : `Harikasın ${displayIdentity.handle}! 🔥 ${currentStreak} gündür aralıksız çalışıyorsun. Bugünün hedefini tamamla!`
                 }
               </p>
             </div>
@@ -245,6 +285,52 @@ export const KnowzaHome: React.FC<KnowzaHomeProps> = ({
 
         </div>
 
+      </div>
+
+      {/* ================= SENİN İÇİN HIZLI GİRİŞ ================= */}
+      <div className="space-y-2">
+        <div className="flex items-center justify-between px-1">
+          <h3 className="text-[11px] font-black text-slate-600 uppercase tracking-wider flex items-center gap-1.5">
+            <Sparkles size={13} className="text-amber-500" />
+            Senin İçin Hızlı Giriş
+          </h3>
+          {onOpenOnboarding && (
+            <button
+              onClick={() => {
+                sound.playClick();
+                onOpenOnboarding();
+              }}
+              className="text-[11px] font-black text-amber-600 flex items-center gap-0.5 hover:underline"
+            >
+              Özelleştir <ChevronRight size={13} />
+            </button>
+          )}
+        </div>
+
+        <div className="grid grid-cols-2 gap-2.5">
+          {preferredToolIds.map((toolId) => {
+            const meta = QUICK_TOOL_MAP[toolId];
+            if (!meta) return null;
+            return (
+              <button
+                key={toolId}
+                onClick={() => handleQuickToolPress(toolId)}
+                className={`relative overflow-hidden rounded-[22px] p-3 text-left text-white shadow-md active:scale-95 transition-all bg-gradient-to-br ${meta.gradient}`}
+              >
+                <div className="flex items-start justify-between gap-2 mb-1.5">
+                  <span className="text-2xl leading-none drop-shadow-xs">{meta.emoji}</span>
+                  <span className="px-2 py-0.5 rounded-full bg-white/20 backdrop-blur-xs text-[9px] font-black uppercase tracking-wider">
+                    {meta.badge}
+                  </span>
+                </div>
+                <p className="text-sm font-black leading-tight truncate">{meta.title}</p>
+                <p className="text-[10px] font-bold text-white/85 truncate mt-0.5">
+                  {getQuickToolSubtext(toolId)}
+                </p>
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       {/* ================= SINA VE KATEGORİ SEÇİCİ ================= */}

@@ -2,6 +2,7 @@ import React from 'react';
 import { useGame } from '../context/GameContext';
 import { ArrowLeft, Flame, Check, Trophy, Share2, TrendingUp, Target, BookOpen, Star } from 'lucide-react';
 import { sound } from '../utils/audio';
+import { getDisplayIdentity } from '../utils/accountStorage';
 
 interface KnowzaStatsProps {
   onBack: () => void;
@@ -77,7 +78,7 @@ export const KnowzaStats: React.FC<KnowzaStatsProps> = ({ onBack }) => {
         </div>
 
         <div className="flex-1 min-w-0">
-          <h2 className="text-lg font-black text-[#2A1E00] truncate">{stats.username || 'Öğrenci'}</h2>
+          <h2 className="text-lg font-black text-[#2A1E00] truncate">{getDisplayIdentity(stats).primary}</h2>
           <div className="text-xs font-black text-[#D98200] mt-0.5">Seviye {userLevel}</div>
 
           {/* Level Progress Bar */}

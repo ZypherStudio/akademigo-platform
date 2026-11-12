@@ -172,10 +172,36 @@ export interface MistakeItem {
   addedAt: string;
 }
 
+export type QuickToolId =
+  | 'tests'
+  | 'duel'
+  | 'exams'
+  | 'aicoach'
+  | 'kahoot'
+  | 'reels'
+  | 'countdown'
+  | 'errors'
+  | 'codelab';
+
+export interface DuelMatchRecord {
+  id: string;
+  opponentName: string;
+  opponentElo: number;
+  userScore: number;
+  opponentScore: number;
+  eloDelta: number;
+  won: boolean;
+  mode: 'solo' | 'room';
+  roomCode?: string;
+  playedAt: string;
+}
+
 export interface UserStats {
   username: string;
   uniqueTag: string;
   email?: string;
+  googleSub?: string;
+  avatarUrl?: string;
   isLoggedIn: boolean;
   authProvider?: 'google' | 'email' | 'guest';
   isPro?: boolean;
@@ -213,7 +239,10 @@ export interface UserStats {
   targetGoal?: CourseCategory;
   gradeOrTarget?: string;
   dailyGoalQuestions?: number;
+  preferredQuickTools?: QuickToolId[];
+  duelHistory?: DuelMatchRecord[];
   hasCompletedOnboarding?: boolean;
+  lastSavedAt?: string;
   currentLevel: number;
   levelProgress: number;
   streakBonusMultiplier: number;

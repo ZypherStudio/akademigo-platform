@@ -1,10 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { useGame, AVATAR_MAP } from '../context/GameContext';
-import { Swords, Trophy, Shield, Zap, Timer, Flame, CheckCircle2, XCircle, RotateCcw, Sparkles, Users, Share2, Copy, KeyRound, Play } from 'lucide-react';
+import { useGame } from '../context/GameContext';
+import { Swords, Trophy, Timer, CheckCircle2, Users, Share2, Copy, KeyRound, Play, Bot, ShieldCheck, History } from 'lucide-react';
 import { sound } from '../utils/audio';
 import confetti from 'canvas-confetti';
-import { Mascot } from './Mascot';
 import { KnowzaAvatar } from './KnowzaAvatar';
+import { getDisplayIdentity } from '../utils/accountStorage';
+import {
+  createLiveDuelRoom,
+  fetchLiveDuelRoom,
+  joinLiveDuelRoom,
+  LiveDuelRoom,
+  submitLiveDuelScore,
+} from '../utils/apiClient';
 
 interface DuelQuestion {
   id: number;
@@ -192,17 +199,28 @@ const DUEL_QUESTIONS: DuelQuestion[] = [
   }
 ];
 
-const BOT_OPPONENTS = [
-  { name: 'Mert_YKS_2026', avatar: '👨‍💻', elo: 1250 },
-  { name: 'Zeynep_Kpss_Derece', avatar: '👩‍🎓', elo: 1290 },
-  { name: 'Berk_PythonMaster', avatar: '🚀', elo: 1220 },
-  { name: 'Elif_Lgs_Sampiyon', avatar: '⚡', elo: 1270 }
+interface DuelOpponent {
+  name: string;
+  avatar: string;
+  elo: number;
+  isBot: boolean;
+}
+
+const getTrainingOpponents = (userElo: number): DuelOpponent[] => [
+  { name: 'Knowza Bot • Hızlı Çırak', avatar: '🤖', elo: Math.max(800, userElo - 35), isBot: true },
+  { name: 'Knowza Bot • Odaklı Uzman', avatar: '🧠', elo: userElo + 15, isBot: true },
+  { name: 'Knowza Bot • Stratejist', avatar: '⚡', elo: userElo + 45, isBot: true },
+  { name: 'Knowza Bot • Akademi Ustası', avatar: '🎓', elo: Math.max(900, userElo - 10), isBot: true },
 ];
 
 export const QuizDuel: React.FC = () => {
   const { stats, updateElo } = useGame();
+  const displayIdentity = getDisplayIdentity(stats);
+  const trainingPool = getTrainingOpponents(stats.eloRating);
+
   const [phase, setPhase] = useState<'lobby' | 'matchmaking' | 'room_lobby' | 'battle' | 'result'>('lobby');
-  const [opponent, setOpponent] = useState(BOT_OPPONENTS[0]);
+  const [opponent, setOpponent] = useState<DuelOpponent>(trainingPool[0]);
+  const [duelMode, setDuelMode] = useState<'bot' | 'live_room'>('bot');
   const [activeQuestions, setActiveQuestions] = useState<DuelQuestion[]>(() => DUEL_QUESTIONS.slice(0, 5));
   const [currentRound, setCurrentRound] = useState(0);
   const [userScore, setUserScore] = useState(0);
@@ -212,9 +230,13 @@ export const QuizDuel: React.FC = () => {
   const [roundStatus, setRoundStatus] = useState<'answering' | 'revealed'>('answering');
   const [eloDelta, setEloDelta] = useState(0);
 
-  // Private Room State
-  const [roomCode, setRoomCode] = useState('GO-742');
+  // Live Multiplayer Room State
+  const [roomCode, setRoomCode] = useState('');
+  const [roomRole, setRoomRole] = useState<'host' | 'guest'>('host');
+  const [liveRoom, setLiveRoom] = useState<LiveDuelRoom | null>(null);
   const [joinCodeInput, setJoinCodeInput] = useState('');
+  const [roomError, setRoomError] = useState('');
+  const [roomBusy, setRoomBusy] = useState(false);
   const [roomCopied, setRoomCopied] = useState(false);
   const [roomFriendJoined, setRoomFriendJoined] = useState(false);
 
@@ -245,12 +267,44 @@ export const QuizDuel: React.FC = () => {
     };
   }, [phase, roundStatus, roundTimeLeft]);
 
-  // Start Matchmaking
+  // Poll live room for friend join & live opponent score
+  useEffect(() => {
+    if (!roomCode || (phase !== 'room_lobby' && phase !== 'battle' && phase !== 'result')) return;
+    if (duelMode !== 'live_room') return;
+
+    const interval = setInterval(async () => {
+      const updated = await fetchLiveDuelRoom(roomCode);
+      if (!updated) return;
+      setLiveRoom(updated);
+      if (updated.guest) {
+        if (!roomFriendJoined) {
+          sound.playCorrect();
+        }
+        setRoomFriendJoined(true);
+        const remoteOpponent = roomRole === 'host' ? updated.guest : updated.host;
+        setOpponent({
+          name: remoteOpponent.name,
+          avatar: '🧑',
+          elo: remoteOpponent.elo,
+          isBot: false,
+        });
+        setOpponentScore(remoteOpponent.score);
+      }
+    }, 1500);
+
+    return () => clearInterval(interval);
+  }, [roomCode, phase, duelMode, roomRole, roomFriendJoined]);
+
+  // Start Solo AI Sparring Matchmaking
   const handleStartMatchmaking = () => {
     sound.playClick();
+    setDuelMode('bot');
+    setRoomCode('');
+    setLiveRoom(null);
     setPhase('matchmaking');
-    const randomBot = BOT_OPPONENTS[Math.floor(Math.random() * BOT_OPPONENTS.length)];
-    setOpponent(randomBot);
+    const pool = getTrainingOpponents(stats.eloRating);
+    const chosen = pool[Math.floor(Math.random() * pool.length)];
+    setOpponent(chosen);
     const shuffled = [...DUEL_QUESTIONS].sort(() => 0.5 - Math.random()).slice(0, 5);
     setActiveQuestions(shuffled);
 
@@ -263,33 +317,70 @@ export const QuizDuel: React.FC = () => {
       setRoundTimeLeft(10);
       setSelectedOption(null);
       setRoundStatus('answering');
-    }, 1800);
+    }, 1500);
   };
 
-  // Create Private Room
-  const handleCreateRoom = () => {
+  // Create Real Server-Backed Live Room
+  const handleCreateRoom = async () => {
     sound.playClick();
-    const randomCode = 'GO-' + Math.floor(100 + Math.random() * 900);
-    setRoomCode(randomCode);
+    setRoomError('');
+    setRoomBusy(true);
+    setRoomRole('host');
     setRoomFriendJoined(false);
-    setPhase('room_lobby');
 
-    // Simulate friend joining after 4 seconds
-    setTimeout(() => {
-      setRoomFriendJoined(true);
-      sound.playCorrect();
-    }, 3500);
+    const created = await createLiveDuelRoom({
+      playerId: stats.email || stats.googleSub || 'local',
+      playerName: displayIdentity.primary,
+      playerElo: stats.eloRating,
+      frameId: stats.equippedAvatarFrame || 'none',
+      questionPoolSize: DUEL_QUESTIONS.length,
+    });
+
+    setRoomBusy(false);
+
+    if (created) {
+      setDuelMode('live_room');
+      setLiveRoom(created);
+      setRoomCode(created.code);
+      setPhase('room_lobby');
+      return;
+    }
+
+    // Offline fallback code
+    const fallbackCode = 'GO-' + Math.floor(100 + Math.random() * 900);
+    setDuelMode('bot');
+    setRoomCode(fallbackCode);
+    setPhase('room_lobby');
   };
 
-  const handleStartRoomBattle = (opponentName?: string) => {
+  const handleStartRoomBattle = (overrideQuestions?: DuelQuestion[], customOpponent?: DuelOpponent, mode: 'bot' | 'live_room' = duelMode) => {
     sound.playVictory();
-    const shuffled = [...DUEL_QUESTIONS].sort(() => 0.5 - Math.random()).slice(0, 5);
-    setActiveQuestions(shuffled);
-    setOpponent({
-      name: opponentName || 'Arkadaşın (Oda: ' + roomCode + ')',
-      avatar: '🧑‍🎓',
-      elo: stats.eloRating + 10
-    });
+    const qs =
+      overrideQuestions ||
+      (liveRoom?.questionIndices?.length
+        ? liveRoom.questionIndices.map((idx) => DUEL_QUESTIONS[idx] || DUEL_QUESTIONS[0])
+        : [...DUEL_QUESTIONS].sort(() => 0.5 - Math.random()).slice(0, 5));
+
+    setActiveQuestions(qs);
+    if (customOpponent) {
+      setOpponent(customOpponent);
+    } else if (liveRoom) {
+      const remote = roomRole === 'host' ? liveRoom.guest : liveRoom.host;
+      setOpponent({
+        name: remote?.name || `Knowza Bot (${roomCode})`,
+        avatar: remote ? '🧑' : '🤖',
+        elo: remote?.elo ?? stats.eloRating,
+        isBot: !remote,
+      });
+    } else {
+      setOpponent({
+        name: `Knowza Antrenman Botu (${roomCode})`,
+        avatar: '🤖',
+        elo: stats.eloRating,
+        isBot: true,
+      });
+    }
+    setDuelMode(mode);
     setPhase('battle');
     setCurrentRound(0);
     setUserScore(0);
@@ -299,10 +390,44 @@ export const QuizDuel: React.FC = () => {
     setRoundStatus('answering');
   };
 
-  const handleJoinWithCode = () => {
-    if (!joinCodeInput.trim()) return;
+  const handleJoinWithCode = async () => {
+    const cleanCode = joinCodeInput.trim().toUpperCase();
+    if (!cleanCode) return;
     sound.playClick();
-    handleStartRoomBattle('Oda Sahibi (' + joinCodeInput.toUpperCase() + ')');
+    setRoomError('');
+    setRoomBusy(true);
+
+    const res = await joinLiveDuelRoom({
+      code: cleanCode,
+      playerId: stats.email || stats.googleSub || 'local',
+      playerName: displayIdentity.primary,
+      playerElo: stats.eloRating,
+      frameId: stats.equippedAvatarFrame || 'none',
+    });
+
+    setRoomBusy(false);
+
+    if (res.error || !res.room) {
+      setRoomError(res.error || 'Oda bulunamadı. Oda kodunu kontrol edip tekrar dene.');
+      return;
+    }
+
+    const joinedRoom = res.room;
+    setRoomRole('guest');
+    setRoomCode(joinedRoom.code);
+    setLiveRoom(joinedRoom);
+    setRoomFriendJoined(true);
+    const sharedQs = joinedRoom.questionIndices.map((idx) => DUEL_QUESTIONS[idx] || DUEL_QUESTIONS[0]);
+    handleStartRoomBattle(
+      sharedQs,
+      {
+        name: joinedRoom.host.name,
+        avatar: '🧑',
+        elo: joinedRoom.host.elo,
+        isBot: false,
+      },
+      'live_room'
+    );
   };
 
   const handleCopyRoomLink = () => {
@@ -322,16 +447,32 @@ export const QuizDuel: React.FC = () => {
     const isCorrect = opt === q.correctAnswer;
     const timeBonus = roundTimeLeft * 10;
     const addedUserScore = isCorrect ? 100 + timeBonus : 0;
-
-    // Simulate opponent answer
-    const botCorrect = Math.random() > 0.3;
-    const addedBotScore = botCorrect ? 100 + Math.floor(Math.random() * 60) : 0;
+    const nextUserScore = userScore + addedUserScore;
 
     if (isCorrect) sound.playCorrect();
     else sound.playWrong();
 
-    setUserScore(s => s + addedUserScore);
-    setOpponentScore(s => s + addedBotScore);
+    setUserScore(nextUserScore);
+
+    let nextBotScore = opponentScore;
+    if (duelMode === 'live_room' && roomCode) {
+      submitLiveDuelScore({
+        code: roomCode,
+        role: roomRole,
+        score: nextUserScore,
+        finished: currentRound + 1 >= activeQuestions.length,
+      }).then((updated) => {
+        if (updated) {
+          const remote = roomRole === 'host' ? updated.guest : updated.host;
+          if (remote) setOpponentScore(remote.score);
+        }
+      });
+    } else {
+      const botCorrect = Math.random() > 0.3;
+      const addedBotScore = botCorrect ? 100 + Math.floor(Math.random() * 60) : 0;
+      nextBotScore = opponentScore + addedBotScore;
+      setOpponentScore(nextBotScore);
+    }
 
     // Advance to next round or finish
     setTimeout(() => {
@@ -341,7 +482,7 @@ export const QuizDuel: React.FC = () => {
         setRoundTimeLeft(10);
         setRoundStatus('answering');
       } else {
-        finishDuel(userScore + addedUserScore, opponentScore + addedBotScore);
+        finishDuel(nextUserScore, duelMode === 'live_room' ? opponentScore : nextBotScore);
       }
     }, 1800);
   };
@@ -349,6 +490,14 @@ export const QuizDuel: React.FC = () => {
   const handleTimeOut = () => {
     setRoundStatus('revealed');
     sound.playWrong();
+    if (duelMode === 'live_room' && roomCode) {
+      submitLiveDuelScore({
+        code: roomCode,
+        role: roomRole,
+        score: userScore,
+        finished: currentRound + 1 >= activeQuestions.length,
+      });
+    }
     setTimeout(() => {
       if (currentRound + 1 < activeQuestions.length) {
         setCurrentRound(r => r + 1);
@@ -361,12 +510,20 @@ export const QuizDuel: React.FC = () => {
     }, 1500);
   };
 
-  const finishDuel = (finalUser: number, finalBot: number) => {
+  const finishDuel = (finalUser: number, finalOpponent: number) => {
     setPhase('result');
-    const won = finalUser >= finalBot;
+    const won = finalUser >= finalOpponent;
     const delta = won ? 32 : -18;
     setEloDelta(delta);
-    updateElo(delta, won);
+    updateElo(delta, won, {
+      opponentName: opponent.name,
+      opponentElo: opponent.elo,
+      userScore: finalUser,
+      opponentScore: finalOpponent,
+      eloDelta: delta,
+      won,
+      mode: duelMode === 'live_room' ? 'room' : 'solo',
+    });
 
     if (won) {
       sound.playTestComplete();
@@ -398,17 +555,26 @@ export const QuizDuel: React.FC = () => {
           {/* Rating Profile Card */}
           <div className="bg-white dark:bg-[#1a2c35] rounded-3xl p-4 sm:p-5 border-2 border-gray-200 dark:border-[#2b3d45] shadow-sm flex flex-col gap-4 transition-colors duration-300">
             <div className="flex items-center gap-3.5">
-              <div className="w-16 h-16 rounded-2xl bg-amber-50 border-2 border-amber-300 flex items-center justify-center shadow-inner overflow-hidden flex-shrink-0">
-                <img
-                  src="/assets/knowza_icon.png"
-                  alt="Profil"
-                  className="w-full h-full object-cover"
-                />
+              <div className="flex-shrink-0">
+                <KnowzaAvatar size="lg" costume={stats.selectedCostume} frameId={stats.equippedAvatarFrame ?? 'none'} />
               </div>
               <div className="min-w-0 flex-1">
-                <span className={`text-[10px] font-black uppercase px-2 py-0.5 rounded-md border ${currentTier.color}`}>
-                  {currentTier.title}
-                </span>
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  <span className={`text-[10px] font-black uppercase px-2 py-0.5 rounded-md border ${currentTier.color}`}>
+                    {currentTier.title}
+                  </span>
+                  <span className="text-[10px] font-black px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center gap-1">
+                    <ShieldCheck className="w-3 h-3" /> Kayıtlı Hesap
+                  </span>
+                </div>
+                <p className="text-xs font-black text-slate-800 dark:text-slate-100 truncate mt-1">
+                  {displayIdentity.primary}
+                </p>
+                {stats.email && (
+                  <p className="text-[10px] font-bold text-slate-400 truncate">
+                    {stats.email}
+                  </p>
+                )}
                 <h3 className="text-xl font-black text-gray-800 dark:text-gray-100 mt-0.5">{stats.eloRating} ELO</h3>
                 <div className="text-xs font-bold text-gray-500 dark:text-gray-400 mt-0.5">
                   Galibiyet: <span className="text-green-600 font-black">{stats.duelWins}</span> | Mağlubiyet: <span className="text-red-500 font-black">{stats.duelLosses}</span>
@@ -421,8 +587,8 @@ export const QuizDuel: React.FC = () => {
               onClick={handleStartMatchmaking}
               className="w-full bg-[#ff9600] hover:bg-[#e08300] text-white font-black text-sm py-3.5 rounded-2xl border-b-4 border-[#e08300] active:border-b-0 active:translate-y-1 transition-all flex items-center justify-center gap-2 shadow-md"
             >
-              <Swords className="w-4 h-4" />
-              <span>HIZLI RAKİP BUL & KAPIŞ</span>
+              <Bot className="w-4 h-4" />
+              <span>HIZLI ELO DÜELLOSU (ANTRENMAN BOTU)</span>
             </button>
           </div>
 
@@ -434,20 +600,21 @@ export const QuizDuel: React.FC = () => {
               <div>
                 <div className="flex items-center gap-1.5 text-[11px] font-black uppercase tracking-wider text-blue-200">
                   <Users className="w-3.5 h-3.5" />
-                  Özel Oda Oluştur
+                  Gerçek Arkadaş Odası
                 </div>
                 <h3 className="text-lg font-black mt-1">Arkadaşına Meydan Oku</h3>
                 <p className="text-xs text-blue-100 mt-1 leading-relaxed">
-                  Tek tıkla 4 haneli özel oda kodu oluştur. Kodu WhatsApp'tan arkadaşına gönder, anında kapışın!
+                  Özel oda kodu oluştur ve arkadaşına gönder. İkiniz de kendi hesabınızla aynı sorularda canlı yarışın!
                 </p>
               </div>
 
               <button
                 onClick={handleCreateRoom}
-                className="w-full bg-white hover:bg-gray-100 text-blue-700 font-black py-2.5 rounded-2xl border-b-4 border-blue-200 active:border-b-0 active:translate-y-1 transition-all flex items-center justify-center gap-2 text-xs uppercase shadow-sm"
+                disabled={roomBusy}
+                className="w-full bg-white hover:bg-gray-100 disabled:opacity-60 text-blue-700 font-black py-2.5 rounded-2xl border-b-4 border-blue-200 active:border-b-0 active:translate-y-1 transition-all flex items-center justify-center gap-2 text-xs uppercase shadow-sm"
               >
                 <KeyRound className="w-3.5 h-3.5" />
-                <span>ODA KUR & KOD AL</span>
+                <span>{roomBusy ? 'ODA OLUŞTURULUYOR...' : 'ODA KUR & KOD AL'}</span>
               </button>
             </div>
 
@@ -460,22 +627,31 @@ export const QuizDuel: React.FC = () => {
                 </div>
                 <h3 className="text-lg font-black text-gray-800 dark:text-gray-100 mt-1">Oda Koduyla Katıl</h3>
                 <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">
-                  Arkadaşının paylaştığı 4 haneli kodu girerek odasına anında bağlan.
+                  Arkadaşının paylaştığı oda kodunu girerek gerçek zamanlı odasına katıl.
                 </p>
               </div>
+
+              {roomError && (
+                <div className="text-xs font-bold text-rose-600 bg-rose-50 border border-rose-200 rounded-xl px-3 py-2">
+                  {roomError}
+                </div>
+              )}
 
               <div className="flex items-center gap-2 w-full">
                 <input
                   type="text"
                   value={joinCodeInput}
-                  onChange={(e) => setJoinCodeInput(e.target.value.toUpperCase())}
+                  onChange={(e) => {
+                    setJoinCodeInput(e.target.value.toUpperCase());
+                    if (roomError) setRoomError('');
+                  }}
                   placeholder="Örn: GO-742"
                   maxLength={8}
                   className="min-w-0 flex-1 bg-gray-100 dark:bg-gray-800 border-2 border-gray-200 dark:border-[#2b3d45] rounded-2xl px-3 py-2 text-xs sm:text-sm font-black text-gray-800 dark:text-gray-100 uppercase tracking-widest text-center focus:outline-none focus:border-amber-500"
                 />
                 <button
                   onClick={handleJoinWithCode}
-                  disabled={!joinCodeInput.trim()}
+                  disabled={!joinCodeInput.trim() || roomBusy}
                   className="flex-shrink-0 bg-emerald-500 hover:bg-emerald-600 disabled:opacity-50 text-white font-black px-4 py-2.5 rounded-2xl border-b-4 border-emerald-700 active:border-b-0 active:translate-y-1 transition-all text-xs flex items-center gap-1 shadow-sm"
                 >
                   <Play className="w-3.5 h-3.5 fill-white" />
@@ -484,6 +660,48 @@ export const QuizDuel: React.FC = () => {
               </div>
             </div>
 
+          </div>
+
+          {/* Account-Bound Duel Match History */}
+          <div className="bg-white dark:bg-[#1a2c35] border-2 border-gray-200 dark:border-[#2b3d45] rounded-3xl p-4 sm:p-5 shadow-sm space-y-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <History className="w-4 h-4 text-amber-500" />
+                <h4 className="text-sm font-black text-gray-800 dark:text-gray-100">Hesap Düello Geçmişin</h4>
+              </div>
+              <span className="text-[10px] font-black text-slate-400">
+                {(stats.duelHistory || []).length} Maç Kayıtlı
+              </span>
+            </div>
+
+            {stats.duelHistory && stats.duelHistory.length > 0 ? (
+              <div className="space-y-2">
+                {stats.duelHistory.slice(0, 5).map((match) => (
+                  <div
+                    key={match.id}
+                    className="flex items-center justify-between gap-2 rounded-2xl px-3 py-2.5 bg-slate-50 dark:bg-[#202f36] border border-slate-200/80 dark:border-[#2b3d45]"
+                  >
+                    <div className="min-w-0">
+                      <p className="text-xs font-black text-slate-800 dark:text-slate-100 truncate">
+                        {match.won ? '🏆 Galibiyet' : '💥 Mağlubiyet'} • {match.opponentName}
+                      </p>
+                      <p className="text-[10px] font-bold text-slate-400">
+                        Skor: {match.userScore} - {match.opponentScore} • {match.mode === 'room' ? 'Canlı Oda' : 'Antrenman'}
+                      </p>
+                    </div>
+                    <span className={`text-xs font-black px-2 py-1 rounded-xl flex-shrink-0 ${
+                      match.eloDelta >= 0 ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'
+                    }`}>
+                      {match.eloDelta >= 0 ? `+${match.eloDelta}` : match.eloDelta} ELO
+                    </span>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-xs font-bold text-slate-400 text-center py-2">
+                Henüz kayıtlı düello maçın yok. İlk maçını oynadığında sonuçlar ve ELO puanın hesabına kaydedilecek.
+              </p>
+            )}
           </div>
 
         </div>
@@ -549,13 +767,21 @@ export const QuizDuel: React.FC = () => {
                 <span>ARKADAŞINLA DÜELLOYU BAŞLAT!</span>
               </button>
             ) : (
-              <button
-                onClick={handleCopyRoomLink}
-                className="w-full bg-green-500 hover:bg-green-600 text-white font-black py-3.5 rounded-2xl border-b-4 border-green-700 active:border-b-0 active:translate-y-1 transition-all flex items-center justify-center gap-2 text-xs uppercase"
-              >
-                <Share2 className="w-4 h-4" />
-                <span>WHATSAPP'TA ARKADAŞINA GÖNDER</span>
-              </button>
+              <>
+                <button
+                  onClick={handleCopyRoomLink}
+                  className="w-full bg-green-500 hover:bg-green-600 text-white font-black py-3.5 rounded-2xl border-b-4 border-green-700 active:border-b-0 active:translate-y-1 transition-all flex items-center justify-center gap-2 text-xs uppercase"
+                >
+                  <Share2 className="w-4 h-4" />
+                  <span>WHATSAPP'TA ARKADAŞINA GÖNDER</span>
+                </button>
+                <button
+                  onClick={() => handleStartRoomBattle(undefined, undefined, 'bot')}
+                  className="w-full bg-slate-100 hover:bg-slate-200 dark:bg-[#202f36] text-slate-700 dark:text-slate-200 font-black py-2.5 rounded-2xl text-xs transition-all"
+                >
+                  Beklemeden Bot ile Alıştırma Yap
+                </button>
+              </>
             )}
 
             <button
@@ -577,9 +803,9 @@ export const QuizDuel: React.FC = () => {
           </div>
 
           <div>
-            <h3 className="text-2xl font-black text-gray-800 dark:text-gray-100">Rakip Aranıyor...</h3>
+            <h3 className="text-2xl font-black text-gray-800 dark:text-gray-100">Antrenman Düellosu Hazırlanıyor...</h3>
             <p className="text-xs font-bold text-gray-500 dark:text-gray-400 mt-1">
-              Senin ELO seviyene ({stats.eloRating} ± 50) uygun öğrenci eşleştiriliyor.
+              Senin ELO seviyene ({stats.eloRating} ± 50) uygun yapay zeka rakibi ayarlanıyor.
             </p>
           </div>
 
@@ -597,11 +823,13 @@ export const QuizDuel: React.FC = () => {
           <div className="grid grid-cols-2 gap-2 sm:gap-3 bg-gray-900 text-white p-3 sm:p-4 rounded-3xl border-2 border-gray-800 shadow-lg">
             {/* Player */}
             <div className="flex items-center gap-2 sm:gap-3 min-w-0">
-              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-blue-600/30 border border-blue-400 flex items-center justify-center text-xl sm:text-2xl flex-shrink-0 p-1">
-                {(stats.avatar === 'haribo' || stats.avatar === 'owl' || !stats.avatar) ? <KnowzaAvatar size="sm" /> : (AVATAR_MAP[stats.avatar]?.emoji || '⚔️')}
+              <div className="flex-shrink-0">
+                <KnowzaAvatar size="sm" costume={stats.selectedCostume} frameId={stats.equippedAvatarFrame ?? 'none'} />
               </div>
               <div className="min-w-0">
-                <div className="text-[10px] sm:text-xs font-black text-blue-400 truncate">SEN ({stats.eloRating})</div>
+                <div className="text-[10px] sm:text-xs font-black text-blue-400 truncate">
+                  {displayIdentity.handle} ({stats.eloRating})
+                </div>
                 <div className="text-lg sm:text-2xl font-black">{userScore} Puan</div>
               </div>
             </div>

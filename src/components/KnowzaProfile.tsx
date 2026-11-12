@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import { soundSystem } from '../utils/audio';
 import { KnowzaAvatar } from './KnowzaAvatar';
+import { getDisplayIdentity } from '../utils/accountStorage';
 
 interface KnowzaProfileProps {
   onBack?: () => void;
@@ -32,19 +33,18 @@ export const KnowzaProfile: React.FC<KnowzaProfileProps> = ({
   onOpenOnboarding
 }) => {
   const { stats, updateUsername, logoutUser } = useGame();
+  const displayIdentity = getDisplayIdentity(stats);
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
   const [bgmOn, setBgmOn] = useState(() => soundSystem.getBgmEnabled());
   const [sfxOn, setSfxOn] = useState(() => soundSystem.getSfxEnabled());
   const [isEditingName, setIsEditingName] = useState(false);
-  const [nameInput, setNameInput] = useState(stats.username || 'Öğrenci');
+  const [nameInput, setNameInput] = useState(stats.username || '');
   const [activeModal, setActiveModal] = useState<string | null>(null);
 
   const handleSaveName = () => {
-    if (nameInput.trim()) {
-      updateUsername(nameInput.trim());
-      setIsEditingName(false);
-      soundSystem.playCorrect();
-    }
+    updateUsername(nameInput.trim());
+    setIsEditingName(false);
+    soundSystem.playCorrect();
   };
 
   const currentLevel = Math.max(1, Math.floor((stats.xp || 0) / 100) + 1);
@@ -105,7 +105,7 @@ export const KnowzaProfile: React.FC<KnowzaProfileProps> = ({
               onClick={() => setIsEditingName(true)}
               className="group flex items-center gap-1.5 text-xl font-extrabold text-slate-900 hover:text-amber-600 transition"
             >
-              <span>{stats.username || 'Öğrenci'}</span>
+              <span>{displayIdentity.primary}</span>
               <Edit3 className="w-4 h-4 text-slate-400 group-hover:text-amber-500 transition" />
             </button>
           )}
@@ -114,7 +114,7 @@ export const KnowzaProfile: React.FC<KnowzaProfileProps> = ({
             <span>Seviye {currentLevel}</span>
             <span>•</span>
             <span className="text-amber-700 font-bold truncate max-w-[140px]">
-              {stats.email || 'Öğrenci'}
+              {stats.email || 'Kayıtlı Hesap'}
             </span>
             <span>•</span>
             <span className="text-amber-800 font-extrabold uppercase">
@@ -366,8 +366,8 @@ export const KnowzaProfile: React.FC<KnowzaProfileProps> = ({
             ) : activeModal === 'profileInfo' ? (
               <div className="space-y-2.5 mb-5 text-xs text-slate-700 bg-amber-50/60 p-4 rounded-2xl border border-amber-200/60">
                 <div className="flex justify-between py-1 border-b border-amber-200/40">
-                  <span className="font-bold text-slate-500">Öğrenci Adı:</span>
-                  <span className="font-black text-slate-900">{stats.username || 'Öğrenci'}</span>
+                  <span className="font-bold text-slate-500">Hesap Kimliği:</span>
+                  <span className="font-black text-slate-900">{displayIdentity.primary}</span>
                 </div>
                 <div className="flex justify-between py-1 border-b border-amber-200/40">
                   <span className="font-bold text-slate-500">Hesap E-postası:</span>

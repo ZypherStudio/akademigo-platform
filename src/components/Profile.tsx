@@ -9,6 +9,7 @@ import {
 import { KnowzaAvatar } from './KnowzaAvatar';
 import { AuthModal } from './AuthModal';
 import { sound } from '../utils/audio';
+import { getDisplayIdentity } from '../utils/accountStorage';
 
 const THEMES: { id: AppTheme; name: string; bg: string; border: string; accent: string }[] = [
   { id: 'duo', name: 'Zümrüt Yeşili', bg: 'bg-[#58cc02]', border: 'border-[#46a302]', accent: '#58cc02' },
@@ -44,7 +45,7 @@ export const Profile: React.FC = () => {
   
   const [activeTab, setActiveTab] = useState<'stats' | 'themes' | 'avatar' | 'account'>('stats');
   const [isEditingName, setIsEditingName] = useState(false);
-  const [tempName, setTempName] = useState(stats.username || 'Öğrenci');
+  const [tempName, setTempName] = useState(getDisplayIdentity(stats).primary);
   const [nameNotice, setNameNotice] = useState<string | null>(null);
   const [showAuthModal, setShowAuthModal] = useState(false);
 

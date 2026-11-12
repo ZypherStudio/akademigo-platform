@@ -247,7 +247,7 @@ export const KnowzaSplash: React.FC<KnowzaSplashProps> = ({
               }}
               className="text-[11px] font-black text-amber-800 hover:text-amber-950 underline underline-offset-2 transition"
             >
-              Giriş yapmadan misafir olarak göz at →
+              Mevcut hesabınla hızlı giriş yap →
             </button>
           </div>
         )}

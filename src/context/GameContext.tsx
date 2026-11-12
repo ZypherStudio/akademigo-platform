@@ -1,9 +1,46 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import { CourseCategory, Lesson, UserStats, LeaderboardUser, StudyNote, AppTheme, UserAvatar, MistakeItem, KnowzaCostume, AchievementToastData, AvatarFrameId } from '../types';
+import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
+import {
+  CourseCategory,
+  Lesson,
+  UserStats,
+  LeaderboardUser,
+  StudyNote,
+  AppTheme,
+  UserAvatar,
+  MistakeItem,
+  KnowzaCostume,
+  AchievementToastData,
+  AvatarFrameId,
+  QuickToolId,
+  DuelMatchRecord
+} from '../types';
 import { KNOWZA_COSTUMES } from '../data/costumesData';
-import { AVATAR_FRAMES, getFrame } from '../data/framesData';
+import { getFrame } from '../data/framesData';
+import {
+  getDisplayIdentity,
+  isBlockedFakeAccount,
+  listSavedAccounts,
+  loadAccountRecord,
+  normalizeEmail,
+  saveAccountRecord
+} from '../utils/accountStorage';
+import {
+  fetchServerLeaderboard,
+  ServerLeaderboardPlayer,
+  setSessionToken,
+  syncAccountToServer
+} from '../utils/apiClient';
 import { sound } from '../utils/audio';
 import confetti from 'canvas-confetti';
+
+export interface LoginUserOptions {
+  username?: string;
+  googleSub?: string;
+  avatarUrl?: string;
+  existingStats?: UserStats | null;
+  existingNotes?: StudyNote[];
+  isNewAccount?: boolean;
+}
 
 interface GameContextType {
   stats: UserStats;
@@ -23,18 +60,19 @@ interface GameContextType {
   soundMuted: boolean;
   toggleSound: () => void;
   leaderboard: LeaderboardUser[];
+  refreshLeaderboard: () => Promise<void>;
   setTheme: (theme: AppTheme) => void;
   setAvatar: (avatar: UserAvatar) => void;
   setTitle: (title: string) => void;
   setBannerColor: (color: string) => void;
   userLevel: number;
   levelProgress: number;
-  updateElo: (delta: number, won: boolean) => void;
+  updateElo: (delta: number, won: boolean, matchRecord?: Omit<DuelMatchRecord, 'id' | 'playedAt'>) => void;
   addMistake: (mistake: MistakeItem) => void;
   removeMistake: (id: string) => void;
   clearAllMistakes: () => void;
   updateUsername: (newUsername: string) => { success: boolean; finalUsername: string; error?: string };
-  loginUser: (provider: 'google' | 'email', email?: string, username?: string) => void;
+  loginUser: (provider: 'google' | 'email', email?: string, options?: LoginUserOptions) => void;
   logoutUser: () => void;
   buyCostume: (costumeId: KnowzaCostume) => boolean;
   selectCostume: (costumeId: KnowzaCostume) => void;
@@ -43,15 +81,17 @@ interface GameContextType {
   addXpAndGems: (xp: number, gems: number) => void;
   upgradeToPro: () => void;
   completeOnboarding: (data: {
-    username: string;
+    username?: string;
     targetGoal: CourseCategory;
     dailyGoalQuestions?: number;
+    preferredQuickTools?: QuickToolId[];
     email?: string;
   }) => void;
   updateUserPreferences: (data: {
     username?: string;
     targetGoal?: CourseCategory;
     dailyGoalQuestions?: number;
+    preferredQuickTools?: QuickToolId[];
   }) => void;
   activeAchievement: AchievementToastData | null;
   dismissAchievement: () => void;
@@ -80,9 +120,11 @@ const DEFAULT_MISTAKES: MistakeItem[] = [
 ];
 
 const DEFAULT_STATS: UserStats = {
-  username: 'Öğrenci',
+  username: '',
   uniqueTag: '#2026',
   email: undefined,
+  googleSub: undefined,
+  avatarUrl: undefined,
   isLoggedIn: false,
   authProvider: 'guest',
   selectedCostume: 'classic',
@@ -105,6 +147,7 @@ const DEFAULT_STATS: UserStats = {
   eloRating: 1000,
   duelWins: 0,
   duelLosses: 0,
+  duelHistory: [],
   errorList: [],
   inventory: {
     streakFreeze: 0,
@@ -117,7 +160,8 @@ const DEFAULT_STATS: UserStats = {
     perfectLessonsToday: 0
   },
   targetGoal: 'yks',
-  dailyGoalQuestions: 20,
+  dailyGoalQuestions: 25,
+  preferredQuickTools: ['tests', 'duel', 'exams', 'aicoach'],
   hasCompletedOnboarding: false,
   currentLevel: 1,
   levelProgress: 0,
@@ -139,46 +183,64 @@ export const AVATAR_MAP: Record<UserAvatar, { emoji: string; name: string }> = {
   coder_cat: { emoji: '🐱', name: 'Kodcu Kedi' }
 };
 
-const KNOWZA_STORAGE_VERSION = 'knowza_v2026_real_v3';
+const KNOWZA_STORAGE_VERSION = 'knowza_v2026_real_v4';
 
 const GameContext = createContext<GameContextType | undefined>(undefined);
 
 export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [activeAchievement, setActiveAchievement] = useState<AchievementToastData | null>(null);
+  const [serverPlayers, setServerPlayers] = useState<ServerLeaderboardPlayer[]>([]);
 
   const [stats, setStats] = useState<UserStats>(() => {
     try {
       const version = localStorage.getItem('knowza_storage_version');
+      const saved = localStorage.getItem('akademi_user_stats');
+
       if (version !== KNOWZA_STORAGE_VERSION) {
+        localStorage.setItem('knowza_storage_version', KNOWZA_STORAGE_VERSION);
+        // Preserve legitimate real accounts across version migration, wipe fake demo data
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (parsed?.email && !isBlockedFakeAccount(parsed.email, parsed.username)) {
+            const cleanedName = parsed.username === 'Öğrenci' ? '' : (parsed.username || '');
+            return {
+              ...DEFAULT_STATS,
+              ...parsed,
+              username: cleanedName,
+              equippedAvatarFrame: parsed.equippedAvatarFrame ?? 'none',
+              unlockedAvatarFrames: parsed.unlockedAvatarFrames ?? ['none', 'gold_flame'],
+              preferredQuickTools: parsed.preferredQuickTools ?? ['tests', 'duel', 'exams', 'aicoach'],
+              duelHistory: Array.isArray(parsed.duelHistory) ? parsed.duelHistory : [],
+            };
+          }
+        }
         localStorage.removeItem('akademi_user_stats');
         localStorage.removeItem('knowza_has_started');
-        localStorage.setItem('knowza_storage_version', KNOWZA_STORAGE_VERSION);
         return DEFAULT_STATS;
       }
 
-      const saved = localStorage.getItem('akademi_user_stats');
       if (saved) {
         const parsed = JSON.parse(saved);
-        // Wipe out any stale 'Ali' or demo streak/gems values
+        // Wipe out any stale fake account values
         if (
-          parsed.username === 'Ali' ||
-          parsed.email === 'ali@gmail.com' ||
-          parsed.email === 'demo@knowza.app' ||
           !parsed.email ||
-          parsed.streak === 6 ||
-          parsed.gems === 280
+          isBlockedFakeAccount(parsed.email, parsed.username)
         ) {
           localStorage.removeItem('akademi_user_stats');
           return DEFAULT_STATS;
         }
 
         const avatar = (parsed.avatar === 'owl' || !parsed.avatar) ? 'haribo' : parsed.avatar;
+        const cleanedName = parsed.username === 'Öğrenci' ? '' : (parsed.username || '');
         return {
           ...DEFAULT_STATS,
           ...parsed,
+          username: cleanedName,
           avatar,
           equippedAvatarFrame: parsed.equippedAvatarFrame ?? 'none',
           unlockedAvatarFrames: parsed.unlockedAvatarFrames ?? ['none', 'gold_flame'],
+          preferredQuickTools: parsed.preferredQuickTools ?? ['tests', 'duel', 'exams', 'aicoach'],
+          duelHistory: Array.isArray(parsed.duelHistory) ? parsed.duelHistory : [],
         };
       }
       return DEFAULT_STATS;
@@ -198,9 +260,26 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const [activeLesson, setActiveLesson] = useState<Lesson | null>(null);
   const [soundMuted, setSoundMuted] = useState<boolean>(() => sound.getMuted());
+  const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const refreshLeaderboard = async () => {
+    const players = await fetchServerLeaderboard();
+    setServerPlayers(players);
+  };
+
+  useEffect(() => {
+    refreshLeaderboard();
+  }, []);
 
   useEffect(() => {
     localStorage.setItem('akademi_user_stats', JSON.stringify(stats));
+    if (stats.isLoggedIn && stats.email) {
+      saveAccountRecord(stats, notes);
+      if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
+      saveTimerRef.current = setTimeout(() => {
+        syncAccountToServer(stats, notes);
+      }, 600);
+    }
     if (stats.theme === 'dark' || stats.theme === 'cyber') {
       document.documentElement.classList.add('dark');
     } else {
@@ -211,6 +290,9 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   useEffect(() => {
     localStorage.setItem('akademi_notes', JSON.stringify(notes));
+    if (stats.isLoggedIn && stats.email) {
+      saveAccountRecord(stats, notes);
+    }
   }, [notes]);
 
   const toggleSound = () => {
@@ -540,15 +622,37 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setNotes(prev => prev.filter(n => n.id !== id));
   };
 
-  // ELO updates for Chess.com-style Quiz Duel
-  const updateElo = (delta: number, won: boolean) => {
-    setStats(prev => ({
-      ...prev,
-      eloRating: Math.max(800, prev.eloRating + delta),
-      duelWins: prev.duelWins + (won ? 1 : 0),
-      duelLosses: prev.duelLosses + (won ? 0 : 1),
-      xp: prev.xp + (won ? 25 : 10)
-    }));
+  // ELO updates for 1v1 Quiz Duel (saved per account)
+  const updateElo = (
+    delta: number,
+    won: boolean,
+    matchRecord?: Omit<DuelMatchRecord, 'id' | 'playedAt'>
+  ) => {
+    setStats(prev => {
+      const nextHistory: DuelMatchRecord[] = matchRecord
+        ? [
+            {
+              ...matchRecord,
+              id: `duel-${Date.now()}`,
+              playedAt: new Date().toISOString(),
+            },
+            ...(prev.duelHistory || []),
+          ].slice(0, 25)
+        : prev.duelHistory || [];
+
+      const newXp = prev.xp + (won ? 25 : 10);
+      return {
+        ...prev,
+        eloRating: Math.max(800, prev.eloRating + delta),
+        duelWins: prev.duelWins + (won ? 1 : 0),
+        duelLosses: prev.duelLosses + (won ? 0 : 1),
+        xp: newXp,
+        currentLevel: Math.floor(newXp / 100) + 1,
+        levelProgress: newXp % 100,
+        gems: prev.gems + (won ? 15 : 3),
+        duelHistory: nextHistory,
+      };
+    });
   };
 
   // Error Notebook actions
@@ -577,68 +681,98 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }));
   };
 
-  // Unique Username & Profile Nickname Management
+  // Optional Profile Nickname Management (empty allowed, never forces fake names)
   const updateUsername = (rawName: string) => {
     const trimmed = rawName.trim();
-    if (!trimmed || trimmed.length < 2) {
+    if (trimmed.length > 0 && trimmed.length < 2) {
       return { success: false, finalUsername: stats.username, error: 'Kullanıcı adı en az 2 karakter olmalıdır.' };
-    }
-    
-    // Check if name is taken in mock database / leaderboard
-    const takenNames = ['admin', 'zeynep', 'barış', 'mert', 'selin', 'kaan', 'elif', 'öğretmen', 'kurucu'];
-    const lower = trimmed.toLowerCase();
-    let finalName = trimmed;
-    let tag = stats.uniqueTag;
-
-    if (takenNames.includes(lower)) {
-      // Generate a unique derivative as requested by the user
-      const suffixes = ['_34', '_Knowza', '_Altın', '_Pro', '_Derece', '_2026'];
-      const randomSuffix = suffixes[Math.floor(Math.random() * suffixes.length)];
-      finalName = `${trimmed}${randomSuffix}`;
-      tag = '#' + Math.floor(1000 + Math.random() * 9000);
-    } else {
-      tag = '#' + Math.floor(1000 + Math.random() * 9000);
     }
 
     sound.playClick();
     setStats(prev => ({
       ...prev,
-      username: finalName,
-      uniqueTag: tag
+      username: trimmed,
+      uniqueTag: prev.uniqueTag && prev.uniqueTag !== '#2026' ? prev.uniqueTag : '#DOĞRULANDI'
     }));
 
-    return { success: true, finalUsername: finalName };
+    return { success: true, finalUsername: trimmed || getDisplayIdentity(stats).primary };
   };
 
-  // Google / Email Authentication
-  const loginUser = (provider: 'google' | 'email', email?: string, username?: string) => {
+  // Real Per-Account Google / Email Authentication
+  const loginUser = (provider: 'google' | 'email', email?: string, options?: LoginUserOptions) => {
+    const cleanEmail = email ? normalizeEmail(email) : '';
+    if (!cleanEmail || isBlockedFakeAccount(cleanEmail)) {
+      sound.playWrong();
+      return;
+    }
+
+    // Save any current logged-in session before switching
+    if (stats.isLoggedIn && stats.email && normalizeEmail(stats.email) !== cleanEmail) {
+      saveAccountRecord(stats, notes);
+    }
+
+    const localRecord = loadAccountRecord(cleanEmail);
+    const savedStats = options?.existingStats || localRecord?.stats || null;
+    const savedNotes = (options?.existingNotes && options.existingNotes.length > 0)
+      ? options.existingNotes
+      : localRecord?.notes || [];
+
     sound.playVictory();
     confetti({ particleCount: 50, spread: 70 });
-    const userEmail = email?.trim() || '';
-    const name = username?.trim() || (userEmail ? userEmail.split('@')[0] : 'Öğrenci');
 
-    setStats(prev => ({
-      ...prev,
-      isLoggedIn: true,
-      authProvider: provider,
-      username: name,
-      email: userEmail || undefined,
-      uniqueTag: '#DOĞRULANDI',
-      hasCompletedOnboarding: true
-    }));
+    if (savedStats && !options?.isNewAccount) {
+      // Restore full existing account progress (XP, gems, streak, duel ELO, frames, preferences)
+      const cleanedSavedName = savedStats.username === 'Öğrenci' ? '' : (savedStats.username || '');
+      const nextStats: UserStats = {
+        ...DEFAULT_STATS,
+        ...savedStats,
+        email: cleanEmail,
+        authProvider: provider,
+        isLoggedIn: true,
+        googleSub: options?.googleSub || savedStats.googleSub,
+        avatarUrl: options?.avatarUrl || savedStats.avatarUrl,
+        username: cleanedSavedName || (options?.username?.trim() || ''),
+        uniqueTag: '#DOĞRULANDI',
+        equippedAvatarFrame: savedStats.equippedAvatarFrame ?? 'none',
+        unlockedAvatarFrames: savedStats.unlockedAvatarFrames ?? ['none', 'gold_flame'],
+        preferredQuickTools: savedStats.preferredQuickTools ?? ['tests', 'duel', 'exams', 'aicoach'],
+        duelHistory: Array.isArray(savedStats.duelHistory) ? savedStats.duelHistory : [],
+        hasCompletedOnboarding: Boolean(savedStats.hasCompletedOnboarding),
+      };
+      setStats(nextStats);
+      setNotes(savedNotes);
+      saveAccountRecord(nextStats, savedNotes);
+    } else {
+      // Brand new account: start fresh and ALWAYS go through Onboarding Questions
+      const initialStats: UserStats = {
+        ...DEFAULT_STATS,
+        isLoggedIn: true,
+        authProvider: provider,
+        email: cleanEmail,
+        googleSub: options?.googleSub,
+        avatarUrl: options?.avatarUrl,
+        username: options?.username?.trim() || '',
+        uniqueTag: '#DOĞRULANDI',
+        hasCompletedOnboarding: false,
+      };
+      setStats(initialStats);
+      setNotes(DEFAULT_NOTES);
+      saveAccountRecord(initialStats, DEFAULT_NOTES);
+    }
+
     localStorage.setItem('knowza_has_started', 'true');
+    refreshLeaderboard();
   };
 
   const logoutUser = () => {
     sound.playClick();
-    setStats(prev => ({
-      ...prev,
-      isLoggedIn: false,
-      authProvider: 'guest',
-      email: undefined,
-      username: 'Öğrenci',
-      hasCompletedOnboarding: false
-    }));
+    if (stats.isLoggedIn && stats.email) {
+      saveAccountRecord(stats, notes);
+      syncAccountToServer(stats, notes);
+    }
+    setSessionToken('');
+    setStats(DEFAULT_STATS);
+    setNotes(DEFAULT_NOTES);
     localStorage.removeItem('knowza_has_started');
   };
 
@@ -730,9 +864,10 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const completeOnboarding = (data: {
-    username: string;
+    username?: string;
     targetGoal: CourseCategory;
     dailyGoalQuestions?: number;
+    preferredQuickTools?: QuickToolId[];
     email?: string;
   }) => {
     sound.playVictory();
@@ -746,17 +881,38 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
       dil: 'Global Dil Kaşifi 🌐'
     };
 
-    setStats(prev => ({
-      ...prev,
-      username: data.username.trim() || 'Öğrenci',
-      email: data.email || prev.email,
-      isLoggedIn: true,
-      targetGoal: data.targetGoal,
-      selectedCourseId: data.targetGoal,
-      dailyGoalQuestions: data.dailyGoalQuestions || 25,
-      title: goalTitles[data.targetGoal] || prev.title,
-      hasCompletedOnboarding: true
-    }));
+    const defaultToolsByGoal: Record<CourseCategory, QuickToolId[]> = {
+      yks: ['tests', 'exams', 'duel', 'countdown'],
+      lgs: ['tests', 'exams', 'duel', 'countdown'],
+      kpss: ['tests', 'exams', 'countdown', 'errors'],
+      kodlama: ['tests', 'codelab', 'duel', 'aicoach'],
+      dil: ['tests', 'reels', 'aicoach', 'duel'],
+    };
+
+    setStats(prev => {
+      const nextTools = (data.preferredQuickTools && data.preferredQuickTools.length > 0)
+        ? data.preferredQuickTools
+        : (prev.preferredQuickTools && prev.preferredQuickTools.length > 0
+            ? prev.preferredQuickTools
+            : defaultToolsByGoal[data.targetGoal]);
+
+      const nextName = data.username !== undefined
+        ? (data.username.trim() === 'Öğrenci' ? '' : data.username.trim())
+        : prev.username;
+
+      return {
+        ...prev,
+        username: nextName,
+        email: data.email || prev.email,
+        isLoggedIn: true,
+        targetGoal: data.targetGoal,
+        selectedCourseId: data.targetGoal,
+        dailyGoalQuestions: data.dailyGoalQuestions || 25,
+        preferredQuickTools: nextTools,
+        title: goalTitles[data.targetGoal] || prev.title,
+        hasCompletedOnboarding: true
+      };
+    });
     localStorage.setItem('knowza_has_started', 'true');
   };
 
@@ -764,15 +920,21 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     username?: string;
     targetGoal?: CourseCategory;
     dailyGoalQuestions?: number;
+    preferredQuickTools?: QuickToolId[];
   }) => {
     setStats(prev => {
       const updated = { ...prev };
-      if (data.username) updated.username = data.username.trim();
+      if (data.username !== undefined) {
+        updated.username = data.username.trim() === 'Öğrenci' ? '' : data.username.trim();
+      }
       if (data.targetGoal) {
         updated.targetGoal = data.targetGoal;
         updated.selectedCourseId = data.targetGoal;
       }
       if (data.dailyGoalQuestions) updated.dailyGoalQuestions = data.dailyGoalQuestions;
+      if (data.preferredQuickTools && data.preferredQuickTools.length > 0) {
+        updated.preferredQuickTools = data.preferredQuickTools;
+      }
       return updated;
     });
   };
@@ -781,18 +943,52 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const userLevel = Math.floor(stats.xp / 100) + 1;
   const levelProgress = stats.xp % 100;
 
-  // Dynamic Leaderboard
+  // Dynamic Real-Account Leaderboard (Zero fake users)
   const userEmoji = stats.avatar === 'haribo' ? '🍯' : (AVATAR_MAP[stats.avatar]?.emoji || '🎓');
-  const leaderboard: LeaderboardUser[] = ([
-    { id: 'lb-1', name: 'Zeynep Yılmaz', avatar: '👩‍🎓', xp: Math.max(480, stats.xp + 40), tier: 'diamond' as const },
-    { id: 'lb-user', name: `Sen (${stats.title})`, avatar: userEmoji, xp: stats.xp, tier: 'diamond' as const, isCurrentUser: true },
-    { id: 'lb-2', name: 'Barış Demir', avatar: '👨‍💻', xp: Math.max(310, stats.xp - 30), tier: 'diamond' as const },
-    { id: 'lb-3', name: 'Elif Kaya', avatar: '👩‍🏫', xp: Math.max(260, stats.xp - 60), tier: 'gold' as const },
-    { id: 'lb-4', name: 'Mert Aksoy', avatar: '🧑‍🔬', xp: 215, tier: 'gold' as const },
-    { id: 'lb-5', name: 'Selin Yıldız', avatar: '👩‍🎨', xp: 180, tier: 'silver' as const },
-    { id: 'lb-6', name: 'Kaan Çelik', avatar: '🚀', xp: 150, tier: 'silver' as const },
-    { id: 'lb-7', name: 'Ayşe Öztürk', avatar: '👩‍⚕️', xp: 110, tier: 'bronze' as const }
-  ] as LeaderboardUser[]).sort((a, b) => b.xp - a.xp);
+  const currentIdentity = getDisplayIdentity(stats);
+  const currentTier: LeaderboardUser['tier'] =
+    stats.xp >= 500 ? 'diamond' : stats.xp >= 250 ? 'gold' : stats.xp >= 100 ? 'silver' : 'bronze';
+
+  const localSaved = listSavedAccounts().filter(
+    (acc) => normalizeEmail(acc.email) !== normalizeEmail(stats.email || '')
+  );
+
+  const realEntries: LeaderboardUser[] = [
+    {
+      id: 'lb-user',
+      name: `${currentIdentity.primary} (${stats.eloRating} ELO)`,
+      avatar: userEmoji,
+      xp: stats.xp,
+      tier: currentTier,
+      isCurrentUser: true,
+    },
+    ...serverPlayers
+      .filter((p) => p.xp !== stats.xp || p.name !== currentIdentity.primary)
+      .slice(0, 15)
+      .map((p) => ({
+        id: p.id,
+        name: `${p.name} (${p.eloRating} ELO)`,
+        avatar: '🎓',
+        xp: p.xp,
+        tier: p.tier,
+      })),
+  ];
+
+  // Add other local saved accounts on this device if server list didn't already include them
+  if (realEntries.length <= 1 && localSaved.length > 0) {
+    localSaved.forEach((acc, idx) => {
+      const label = acc.username || acc.email.split('@')[0];
+      realEntries.push({
+        id: `local-${idx}`,
+        name: `${label} (${acc.eloRating} ELO)`,
+        avatar: '🐻',
+        xp: acc.xp,
+        tier: acc.xp >= 500 ? 'diamond' : acc.xp >= 250 ? 'gold' : acc.xp >= 100 ? 'silver' : 'bronze',
+      });
+    });
+  }
+
+  const leaderboard: LeaderboardUser[] = realEntries.sort((a, b) => b.xp - a.xp);
 
   return (
     <GameContext.Provider
@@ -814,6 +1010,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
         soundMuted,
         toggleSound,
         leaderboard,
+        refreshLeaderboard,
         setTheme,
         setAvatar,
         setTitle,

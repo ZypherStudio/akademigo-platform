@@ -252,50 +252,61 @@ async function loadOrInitializeFirestoreProfile(params: {
     return { ok: false, error: 'Geçersiz veya sahte hesap reddedildi.' };
   }
 
-  const userRef = doc(params.db, 'users', params.uid);
-  const snap = await getDoc(userRef);
   const localRec = loadAccountRecord(cleanEmail);
 
-  if (snap.exists()) {
-    const data = snap.data() as {
-      stats?: UserStats;
-      notes?: StudyNote[];
-      displayName?: string;
-      photoURL?: string;
-    };
-    const remoteStats = data.stats || null;
-    return {
-      ok: true,
-      uid: params.uid,
-      email: cleanEmail,
-      displayName: params.displayName || data.displayName || '',
-      photoURL: params.photoURL || data.photoURL,
-      isNewAccount: !remoteStats?.hasCompletedOnboarding && !localRec?.stats?.hasCompletedOnboarding,
-      stats: remoteStats || localRec?.stats || null,
-      notes: Array.isArray(data.notes) ? data.notes : localRec?.notes || [],
-    };
-  }
+  // Fast remote sync attempt (1.5 seconds max timeout so user never waits)
+  try {
+    const userRef = doc(params.db, 'users', params.uid);
+    const snapPromise = getDoc(userRef);
+    const timeoutPromise = new Promise<null>((resolve) => setTimeout(() => resolve(null), 1500));
+    const snap = await Promise.race([snapPromise, timeoutPromise]);
 
-  const nowIso = new Date().toISOString();
-  await setDoc(
-    userRef,
-    stripUndefinedDeep({
-      uid: params.uid,
-      email: cleanEmail,
-      displayName: params.displayName || '',
-      photoURL: params.photoURL || '',
-      authProvider: params.authProvider,
-      xp: localRec?.stats?.xp || 0,
-      eloRating: localRec?.stats?.eloRating || 1000,
-      duelWins: localRec?.stats?.duelWins || 0,
-      duelLosses: localRec?.stats?.duelLosses || 0,
-      streak: localRec?.stats?.streak || 0,
-      stats: localRec?.stats || null,
-      notes: localRec?.notes || [],
-      createdAt: nowIso,
-      updatedAt: nowIso,
-    })
-  );
+    if (snap && snap.exists()) {
+      const data = snap.data() as {
+        stats?: UserStats;
+        notes?: StudyNote[];
+        displayName?: string;
+        photoURL?: string;
+      };
+      const remoteStats = data.stats || null;
+      return {
+        ok: true,
+        uid: params.uid,
+        email: cleanEmail,
+        displayName: params.displayName || data.displayName || '',
+        photoURL: params.photoURL || data.photoURL,
+        isNewAccount: !remoteStats?.hasCompletedOnboarding && !localRec?.stats?.hasCompletedOnboarding,
+        stats: remoteStats || localRec?.stats || null,
+        notes: Array.isArray(data.notes) ? data.notes : localRec?.notes || [],
+      };
+    }
+
+    if (snap) {
+      const nowIso = new Date().toISOString();
+      setDoc(
+        userRef,
+        stripUndefinedDeep({
+          uid: params.uid,
+          email: cleanEmail,
+          displayName: params.displayName || '',
+          photoURL: params.photoURL || '',
+          authProvider: params.authProvider,
+          xp: localRec?.stats?.xp || 0,
+          eloRating: localRec?.stats?.eloRating || 1000,
+          duelWins: localRec?.stats?.duelWins || 0,
+          duelLosses: localRec?.stats?.duelLosses || 0,
+          streak: localRec?.stats?.streak || 0,
+          stats: localRec?.stats || null,
+          notes: localRec?.notes || [],
+          createdAt: nowIso,
+          updatedAt: nowIso,
+        })
+      ).catch((e) => console.warn('[Firestore SetDoc Background]', e));
+    }
+  } catch (err) {
+    console.warn('[Firestore Profile Fetch Warning - Continuing with Local Profile]', err);
+    // Never block authentication on Firestore connectivity issues!
+  }
 
   return {
     ok: true,

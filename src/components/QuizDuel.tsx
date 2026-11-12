@@ -12,6 +12,10 @@ import {
   LiveDuelRoom,
   submitLiveDuelScore,
 } from '../utils/apiClient';
+import {
+  isFirebaseConfigured,
+  subscribeFirestoreDuelRoom,
+} from '../utils/firebaseClient';
 
 interface DuelQuestion {
   id: number;
@@ -267,13 +271,12 @@ export const QuizDuel: React.FC = () => {
     };
   }, [phase, roundStatus, roundTimeLeft]);
 
-  // Poll live room for friend join & live opponent score
+  // Live room sync (Firestore onSnapshot when configured, or REST polling fallback)
   useEffect(() => {
     if (!roomCode || (phase !== 'room_lobby' && phase !== 'battle' && phase !== 'result')) return;
     if (duelMode !== 'live_room') return;
 
-    const interval = setInterval(async () => {
-      const updated = await fetchLiveDuelRoom(roomCode);
+    const applyRoomUpdate = (updated: LiveDuelRoom | null) => {
       if (!updated) return;
       setLiveRoom(updated);
       if (updated.guest) {
@@ -290,6 +293,16 @@ export const QuizDuel: React.FC = () => {
         });
         setOpponentScore(remoteOpponent.score);
       }
+    };
+
+    if (isFirebaseConfigured()) {
+      const unsubscribe = subscribeFirestoreDuelRoom(roomCode, applyRoomUpdate);
+      if (unsubscribe) return () => unsubscribe();
+    }
+
+    const interval = setInterval(async () => {
+      const updated = await fetchLiveDuelRoom(roomCode);
+      applyRoomUpdate(updated);
     }, 1500);
 
     return () => clearInterval(interval);

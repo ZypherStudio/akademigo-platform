@@ -200,6 +200,7 @@ export interface UserStats {
   username: string;
   uniqueTag: string;
   email?: string;
+  firebaseUid?: string;
   googleSub?: string;
   avatarUrl?: string;
   isLoggedIn: boolean;

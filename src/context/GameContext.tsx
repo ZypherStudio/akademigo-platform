@@ -30,11 +30,13 @@ import {
   setSessionToken,
   syncAccountToServer
 } from '../utils/apiClient';
+import { signOutFirebase } from '../utils/firebaseClient';
 import { sound } from '../utils/audio';
 import confetti from 'canvas-confetti';
 
 export interface LoginUserOptions {
   username?: string;
+  firebaseUid?: string;
   googleSub?: string;
   avatarUrl?: string;
   existingStats?: UserStats | null;
@@ -729,6 +731,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
         email: cleanEmail,
         authProvider: provider,
         isLoggedIn: true,
+        firebaseUid: options?.firebaseUid || savedStats.firebaseUid,
         googleSub: options?.googleSub || savedStats.googleSub,
         avatarUrl: options?.avatarUrl || savedStats.avatarUrl,
         username: cleanedSavedName || (options?.username?.trim() || ''),
@@ -749,6 +752,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
         isLoggedIn: true,
         authProvider: provider,
         email: cleanEmail,
+        firebaseUid: options?.firebaseUid,
         googleSub: options?.googleSub,
         avatarUrl: options?.avatarUrl,
         username: options?.username?.trim() || '',
@@ -771,6 +775,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
       syncAccountToServer(stats, notes);
     }
     setSessionToken('');
+    signOutFirebase();
     setStats(DEFAULT_STATS);
     setNotes(DEFAULT_NOTES);
     localStorage.removeItem('knowza_has_started');

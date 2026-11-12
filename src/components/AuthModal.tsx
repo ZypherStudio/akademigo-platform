@@ -7,11 +7,17 @@ import {
   SavedAccountSummary,
 } from '../utils/accountStorage';
 import {
+  authenticateWithFirebaseGoogle,
   authenticateWithGoogleEmail,
   authenticateWithGoogleToken,
   loginWithEmailPassword,
   registerWithEmailPassword,
 } from '../utils/apiClient';
+import {
+  clearSavedFirebaseConfig,
+  isFirebaseConfigured,
+  parseAndSaveFirebaseConfig,
+} from '../utils/firebaseClient';
 import {
   getCustomGoogleClientId,
   resolveGoogleClientId,
@@ -48,7 +54,10 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   const [activeTab, setActiveTab] = useState<'google' | 'email'>(initialMode);
   const [emailSubTab, setEmailSubTab] = useState<'login' | 'register'>('login');
 
-  // Google OAuth State
+  // Google / Firebase Auth State
+  const [firebaseReady, setFirebaseReady] = useState<boolean>(() => isFirebaseConfigured());
+  const [showFirebaseSetup, setShowFirebaseSetup] = useState<boolean>(false);
+  const [firebaseConfigDraft, setFirebaseConfigDraft] = useState<string>('');
   const [googleClientId, setGoogleClientId] = useState<string>('');
   const [showOAuthSetup, setShowOAuthSetup] = useState<boolean>(false);
   const [clientIdDraft, setClientIdDraft] = useState<string>(() => getCustomGoogleClientId());
@@ -81,6 +90,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
 
     loginUser(provider, res.email, {
       username: res.googleName || '',
+      firebaseUid: res.firebaseUid,
       googleSub: res.googleSub,
       avatarUrl: res.avatarUrl,
       existingStats: res.stats ?? null,
@@ -88,6 +98,48 @@ export const AuthModal: React.FC<AuthModalProps> = ({
       isNewAccount: res.isNewAccount,
     });
     if (onClose) onClose();
+  };
+
+  // Real Firebase Google Account Picker Sign-In (Priority) or GSI OAuth
+  const handleFirebaseGoogleLogin = async () => {
+    setFeedback(null);
+    if (!firebaseReady) {
+      if (googleClientId) {
+        return handleGoogleOAuthLogin();
+      }
+      setShowFirebaseSetup(true);
+      setFeedback('Gerçek Google hesap seçici penceresi için Firebase config kodunu aşağıya yapıştır.');
+      return;
+    }
+
+    try {
+      setIsGoogleLoading(true);
+      setGoogleLoadingMessage('Google hesap seçici açılıyor...');
+      sound.playClick();
+
+      const res = await authenticateWithFirebaseGoogle();
+      finishAuthLogin('google', res);
+    } catch (err: any) {
+      sound.playWrong();
+      setFeedback(err?.message || 'Google ile giriş tamamlanamadı.');
+    } finally {
+      setIsGoogleLoading(false);
+    }
+  };
+
+  const handleSaveFirebaseConfig = () => {
+    setFeedback(null);
+    const parsed = parseAndSaveFirebaseConfig(firebaseConfigDraft);
+    if (!parsed.ok) {
+      sound.playWrong();
+      setFeedback(parsed.error || 'Firebase kodu okunamadı.');
+      return;
+    }
+    sound.playCorrect();
+    setFirebaseReady(true);
+    setShowFirebaseSetup(false);
+    setFirebaseConfigDraft('');
+    setFeedback('Firebase bağlandı! Şimdi yukarıdaki Google ile Giriş Yap butonuna basıp hesabını seçebilirsin.');
   };
 
   // Real Google Identity Services OAuth Popup
@@ -336,42 +388,89 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                   </div>
                 )}
 
-                {/* Live Official Google OAuth Button (Active when GOOGLE_CLIENT_ID is configured) */}
-                {googleClientId ? (
-                  <button
-                    type="button"
-                    onClick={handleGoogleOAuthLogin}
-                    className="w-full py-3 bg-white hover:bg-slate-50 text-slate-900 font-black text-xs rounded-2xl border-2 border-blue-500 shadow-sm transition active:scale-98 flex items-center justify-center gap-2.5"
-                  >
-                    <svg className="w-4 h-4 flex-shrink-0" viewBox="0 0 24 24">
-                      <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
-                      <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
-                      <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" />
-                      <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" />
-                    </svg>
-                    <span>Google Hesabınla Giriş Yap</span>
+                {/* Official Google Account Chooser Button (Firebase Auth or GSI OAuth) */}
+                <button
+                  type="button"
+                  onClick={handleFirebaseGoogleLogin}
+                  className="w-full py-3 bg-white hover:bg-slate-50 text-slate-900 font-black text-xs rounded-2xl border-2 border-blue-500 shadow-sm transition active:scale-98 flex items-center justify-center gap-2.5"
+                >
+                  <svg className="w-4 h-4 flex-shrink-0" viewBox="0 0 24 24">
+                    <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+                    <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+                    <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" />
+                    <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" />
+                  </svg>
+                  <span>Google Hesabını Seç & Giriş Yap</span>
+                  {(firebaseReady || googleClientId) && (
                     <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-                  </button>
-                ) : (
+                  )}
+                </button>
+
+                {/* Firebase Setup Drawer */}
+                {(showFirebaseSetup || !firebaseReady) && (
+                  <div className="p-3 rounded-2xl bg-amber-50/70 border border-amber-200 space-y-2 text-[10px]">
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="font-black text-amber-950 flex items-center gap-1">
+                        🔥 Firebase (Google Hesap Seçici + Firestore)
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => setShowFirebaseSetup((v) => !v)}
+                        className="text-amber-800 font-black underline"
+                      >
+                        {showFirebaseSetup ? 'Gizle' : 'Firebase Bağla'}
+                      </button>
+                    </div>
+
+                    {showFirebaseSetup && (
+                      <div className="space-y-2">
+                        <p className="font-bold text-slate-700 leading-snug">
+                          Firebase Console → Proje Ayarları → Web App ekranındaki{' '}
+                          <code className="bg-white px-1 rounded">firebaseConfig</code> kodunu direkt buraya yapıştır:
+                        </p>
+                        <textarea
+                          rows={4}
+                          value={firebaseConfigDraft}
+                          onChange={(e) => setFirebaseConfigDraft(e.target.value)}
+                          placeholder={'const firebaseConfig = {\n  apiKey: "...",\n  authDomain: "...",\n  projectId: "...",\n  appId: "..."\n};'}
+                          className="w-full p-2 rounded-xl border border-amber-300 bg-white text-[10px] font-mono text-slate-800 outline-none focus:border-blue-500"
+                        />
+                        <div className="flex items-center gap-2">
+                          <button
+                            type="button"
+                            onClick={handleSaveFirebaseConfig}
+                            className="flex-1 py-2 bg-blue-600 hover:bg-blue-700 text-white font-black rounded-xl text-[11px]"
+                          >
+                            Firebase'i Aktif Et 🚀
+                          </button>
+                          {firebaseReady && (
+                            <button
+                              type="button"
+                              onClick={() => {
+                                clearSavedFirebaseConfig();
+                                setFirebaseReady(false);
+                              }}
+                              className="px-2.5 py-2 bg-white border border-rose-200 text-rose-600 font-black rounded-xl text-[10px]"
+                            >
+                              Sıfırla
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {!firebaseReady && !googleClientId && (
                   <div className="p-3.5 rounded-2xl bg-slate-50 border-2 border-slate-200 space-y-2.5">
                     <div className="flex items-center justify-between gap-2">
-                      <div className="flex items-center gap-2 min-w-0">
-                        <div className="w-8 h-8 rounded-full bg-white shadow-xs border border-slate-200 flex items-center justify-center flex-shrink-0">
-                          <svg className="w-4 h-4" viewBox="0 0 24 24">
-                            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
-                            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
-                            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" />
-                            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" />
-                          </svg>
-                        </div>
-                        <div className="min-w-0">
-                          <span className="text-xs font-black text-slate-900 block">
-                            Google E-posta ile Bağlan
-                          </span>
-                          <span className="text-[10px] font-bold text-slate-500 block">
-                            Kayıtların & düello ELO'n bu hesaba işlenir
-                          </span>
-                        </div>
+                      <div className="min-w-0">
+                        <span className="text-xs font-black text-slate-900 block">
+                          Veya E-postanı Yazarak Devam Et
+                        </span>
+                        <span className="text-[10px] font-bold text-slate-500 block">
+                          Kayıtların & düello ELO'n bu adrese bağlanır
+                        </span>
                       </div>
                       <button
                         type="button"
@@ -397,9 +496,9 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                     <button
                       type="button"
                       onClick={() => handleGoogleEmailLogin(googleEmail)}
-                      className="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-black text-xs rounded-xl shadow-sm transition active:scale-98 flex items-center justify-center gap-1.5"
+                      className="w-full py-2.5 bg-slate-800 hover:bg-slate-900 text-white font-black text-xs rounded-xl shadow-sm transition active:scale-98 flex items-center justify-center gap-1.5"
                     >
-                      <span>Hesaba Bağlan / Oluştur</span>
+                      <span>Bu E-posta ile Bağlan</span>
                       <ArrowRight className="w-3.5 h-3.5" />
                     </button>
                   </div>
@@ -419,8 +518,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                     ) : (
                       <div className="p-2.5 rounded-xl bg-blue-50/70 border border-blue-200 space-y-2 text-[10px]">
                         <p className="font-bold text-blue-900 leading-snug">
-                          Canlı Google OAuth Pop-up için Google Cloud Web Client ID girin (veya Render ortamına{' '}
-                          <code className="bg-white px-1 rounded">GOOGLE_CLIENT_ID</code> ekleyin):
+                          Alternatif: Direkt Google Cloud Web Client ID girin:
                         </p>
                         <div className="flex gap-1.5">
                           <input

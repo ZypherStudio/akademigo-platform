@@ -7,6 +7,17 @@ import {
   saveAccountRecord,
   verifyEmailAccount,
 } from './accountStorage';
+import {
+  createFirestoreDuelRoom,
+  fetchFirestoreLeaderboard,
+  isFirebaseConfigured,
+  joinFirestoreDuelRoom,
+  loginWithFirebaseEmail,
+  registerWithFirebaseEmail,
+  saveAccountToFirestore,
+  signInWithFirebaseGoogle,
+  submitFirestoreDuelScore,
+} from './firebaseClient';
 
 const SESSION_TOKEN_KEY = 'knowza_session_token';
 
@@ -15,6 +26,7 @@ export interface AuthResponse {
   error?: string;
   isNewAccount?: boolean;
   email?: string;
+  firebaseUid?: string;
   googleName?: string;
   googleSub?: string;
   avatarUrl?: string;
@@ -78,11 +90,33 @@ async function postJson(url: string, body: unknown, token?: string): Promise<{ s
       headers,
       body: JSON.stringify(body),
     });
-    const data = await res.json().catch(() => ({}));
+    if (res.status === 404) return null;
+    const contentType = res.headers.get('content-type') || '';
+    if (!contentType.includes('application/json')) return null;
+    const data = await res.json().catch(() => null);
+    if (!data) return null;
     return { status: res.status, data };
   } catch {
     return null;
   }
+}
+
+export async function authenticateWithFirebaseGoogle(): Promise<AuthResponse> {
+  const res = await signInWithFirebaseGoogle();
+  if (!res.ok || !res.email) {
+    return { ok: false, error: res.error || 'Google ile giriş yapılamadı.' };
+  }
+  return {
+    ok: true,
+    isNewAccount: res.isNewAccount,
+    email: res.email,
+    firebaseUid: res.uid,
+    googleSub: res.uid,
+    googleName: res.displayName || '',
+    avatarUrl: res.photoURL,
+    stats: res.stats ?? null,
+    notes: res.notes ?? [],
+  };
 }
 
 export async function authenticateWithGoogleToken(
@@ -168,6 +202,21 @@ export async function registerWithEmailPassword(rawEmail: string, password: stri
     return { ok: false, error: 'Şifreniz en az 6 karakter olmalıdır.' };
   }
 
+  if (isFirebaseConfigured()) {
+    const fb = await registerWithFirebaseEmail(cleanEmail, password);
+    if (!fb.ok || !fb.email) {
+      return { ok: false, error: fb.error || 'Kayıt başarısız.' };
+    }
+    return {
+      ok: true,
+      isNewAccount: true,
+      email: fb.email,
+      firebaseUid: fb.uid,
+      stats: fb.stats || null,
+      notes: fb.notes || [],
+    };
+  }
+
   const apiRes = await postJson('/api/auth/register', { email: cleanEmail, password });
   if (apiRes && apiRes.data) {
     if (!apiRes.data.ok) {
@@ -205,6 +254,23 @@ export async function loginWithEmailPassword(rawEmail: string, password: string)
     return { ok: false, error: 'Lütfen e-posta ve şifrenizi giriniz.' };
   }
 
+  if (isFirebaseConfigured()) {
+    const fb = await loginWithFirebaseEmail(cleanEmail, password);
+    if (!fb.ok || !fb.email) {
+      return { ok: false, error: fb.error || 'E-posta veya şifre hatalı.' };
+    }
+    return {
+      ok: true,
+      isNewAccount: fb.isNewAccount,
+      email: fb.email,
+      firebaseUid: fb.uid,
+      googleName: fb.displayName,
+      avatarUrl: fb.photoURL,
+      stats: fb.stats || null,
+      notes: fb.notes || [],
+    };
+  }
+
   const apiRes = await postJson('/api/auth/login', { email: cleanEmail, password });
   if (apiRes && apiRes.data) {
     if (!apiRes.data.ok) {
@@ -240,6 +306,10 @@ export async function syncAccountToServer(stats: UserStats, notes: StudyNote[]):
   // Always persist locally first
   saveAccountRecord(stats, notes);
 
+  if (isFirebaseConfigured() && stats.firebaseUid) {
+    await saveAccountToFirestore(stats, notes);
+  }
+
   const token = getSessionToken();
   if (!token || !stats.isLoggedIn || !stats.email) return;
 
@@ -251,6 +321,11 @@ export async function syncAccountToServer(stats: UserStats, notes: StudyNote[]):
 }
 
 export async function fetchServerLeaderboard(): Promise<ServerLeaderboardPlayer[]> {
+  if (isFirebaseConfigured()) {
+    const fbPlayers = await fetchFirestoreLeaderboard();
+    if (fbPlayers.length > 0) return fbPlayers;
+  }
+
   try {
     const res = await fetch('/api/leaderboard');
     if (!res.ok) return [];
@@ -268,6 +343,11 @@ export async function createLiveDuelRoom(params: {
   frameId: string;
   questionPoolSize: number;
 }): Promise<LiveDuelRoom | null> {
+  if (isFirebaseConfigured()) {
+    const fbRoom = await createFirestoreDuelRoom(params);
+    if (fbRoom) return fbRoom;
+  }
+
   const res = await postJson('/api/duel/room', params);
   if (res?.data?.ok && res.data.room) return res.data.room as LiveDuelRoom;
   return null;
@@ -280,6 +360,11 @@ export async function joinLiveDuelRoom(params: {
   playerElo: number;
   frameId: string;
 }): Promise<{ room?: LiveDuelRoom; error?: string }> {
+  if (isFirebaseConfigured()) {
+    const fbRes = await joinFirestoreDuelRoom(params);
+    if (fbRes) return fbRes;
+  }
+
   const res = await postJson('/api/duel/room/join', params);
   if (!res) return { error: 'Sunucuya bağlanılamadı.' };
   if (!res.data?.ok) return { error: res.data?.error || 'Odaya katılınamadı.' };
@@ -303,6 +388,11 @@ export async function submitLiveDuelScore(params: {
   score: number;
   finished?: boolean;
 }): Promise<LiveDuelRoom | null> {
+  if (isFirebaseConfigured()) {
+    const fbRoom = await submitFirestoreDuelScore(params);
+    if (fbRoom) return fbRoom;
+  }
+
   const res = await postJson('/api/duel/room/score', params);
   if (res?.data?.ok) return res.data.room as LiveDuelRoom;
   return null;

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useGame } from '../context/GameContext';
 import { COURSES } from '../data/coursesData';
-import { Check, Lock, Star, Gift, ShieldAlert, Sparkles, BookOpen, Play, Filter, Unlock, LockKeyhole } from 'lucide-react';
+import { Check, Lock, Star, Gift, ShieldAlert, Sparkles, BookOpen, Play, Filter, Unlock, LockKeyhole, ChevronDown } from 'lucide-react';
 import { Lesson, Unit } from '../types';
 import { Mascot } from './Mascot';
 import { sound } from '../utils/audio';
@@ -10,7 +10,11 @@ export const LearnPath: React.FC = () => {
   const { stats, selectedCourseId, startLesson, openChest, leaderboard } = useGame();
   const [selectedGuideUnit, setSelectedGuideUnit] = useState<Unit | null>(null);
   const [selectedDifficulty, setSelectedDifficulty] = useState<'all' | 'kolay' | 'orta' | 'zor'>('all');
-  const [freeMode, setFreeMode] = useState<boolean>(true); // Tüm dersler serbest pratik açık
+  const [freeMode, setFreeMode] = useState<boolean>(true);
+  const [questionLimit, setQuestionLimit] = useState<number>(10); // Default 10 soru
+  
+  // Lesson launch config modal
+  const [pendingLesson, setPendingLesson] = useState<Lesson | null>(null);
 
   const course = COURSES.find(c => c.id === selectedCourseId) || COURSES[0];
 
@@ -34,14 +38,29 @@ export const LearnPath: React.FC = () => {
   };
 
   const handleLaunchLesson = (rawLesson: Lesson) => {
-    let filteredQuestions = rawLesson.questions;
+    // Show config modal instead of starting directly
+    sound.playClick();
+    setPendingLesson(rawLesson);
+  };
+
+  const handleConfirmLaunch = () => {
+    if (!pendingLesson) return;
+    let filteredQuestions = pendingLesson.questions;
+    
+    // Apply difficulty filter
     if (selectedDifficulty !== 'all') {
-      const matched = rawLesson.questions.filter(q => q.difficulty === selectedDifficulty);
+      const matched = pendingLesson.questions.filter(q => q.difficulty === selectedDifficulty);
       if (matched.length > 0) {
         filteredQuestions = matched;
       }
     }
-    startLesson({ ...rawLesson, questions: filteredQuestions });
+
+    // Shuffle and limit question count
+    const shuffled = [...filteredQuestions].sort(() => Math.random() - 0.5);
+    const limited = shuffled.slice(0, Math.min(questionLimit, shuffled.length));
+    
+    setPendingLesson(null);
+    startLesson({ ...pendingLesson, questions: limited });
   };
 
   // Find the exact active lesson (the first unlocked but not completed lesson)
@@ -319,6 +338,102 @@ export const LearnPath: React.FC = () => {
               className="w-full bg-[#58cc02] hover:bg-[#46a302] text-white font-black py-3 rounded-2xl border-b-4 border-[#46a302] active:border-b-0 active:translate-y-1 transition-all"
             >
               ANLADIM, PRATİĞE BAŞLA!
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* ── Ders Başlatma Ayar Modalı ── */}
+      {pendingLesson && (
+        <div className="fixed inset-0 z-50 bg-black/70 flex items-end sm:items-center justify-center p-0 sm:p-4 backdrop-blur-sm animate-pop">
+          <div className="bg-white dark:bg-[#1a2c35] rounded-t-3xl sm:rounded-3xl max-w-md w-full p-6 shadow-2xl border-2 border-gray-200 dark:border-[#2b3d45]">
+            {/* Header */}
+            <div className="flex items-center justify-between mb-5">
+              <div>
+                <p className="text-xs font-black uppercase text-gray-400">Test Ayarları</p>
+                <h3 className="text-lg font-black text-gray-800 dark:text-gray-100">{pendingLesson.title}</h3>
+                <p className="text-xs text-gray-500">{pendingLesson.questions.length} soru mevcut</p>
+              </div>
+              <button
+                onClick={() => setPendingLesson(null)}
+                className="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center font-black text-gray-600"
+              >✕</button>
+            </div>
+
+            {/* Difficulty Filter */}
+            <div className="mb-5">
+              <p className="text-xs font-black text-gray-600 dark:text-gray-300 mb-2 flex items-center gap-1.5">
+                <Filter className="w-3.5 h-3.5" /> Zorluk Seviyesi
+              </p>
+              <div className="grid grid-cols-4 gap-2">
+                {[
+                  { id: 'all', label: '🌟 Hepsi', color: 'bg-gray-600' },
+                  { id: 'kolay', label: '🟢 Kolay', color: 'bg-green-500' },
+                  { id: 'orta', label: '🟡 Orta', color: 'bg-amber-500' },
+                  { id: 'zor', label: '🔴 Zor', color: 'bg-red-500' },
+                ].map(lvl => {
+                  const count = lvl.id === 'all'
+                    ? pendingLesson.questions.length
+                    : pendingLesson.questions.filter(q => q.difficulty === lvl.id).length;
+                  return (
+                    <button
+                      key={lvl.id}
+                      onClick={() => { sound.playClick(); setSelectedDifficulty(lvl.id as any); }}
+                      className={`py-2 px-1 rounded-xl text-[10px] font-black text-center transition-all border-2 ${
+                        selectedDifficulty === lvl.id
+                          ? `${lvl.color} text-white border-transparent shadow-md`
+                          : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 border-gray-200 dark:border-gray-700'
+                      }`}
+                    >
+                      {lvl.label}
+                      <span className="block text-[9px] mt-0.5 opacity-80">{count} soru</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Question Count */}
+            <div className="mb-6">
+              <p className="text-xs font-black text-gray-600 dark:text-gray-300 mb-2 flex items-center gap-1.5">
+                📝 Kaç Soru Çözmek İstiyorsun?
+              </p>
+              <div className="grid grid-cols-5 gap-2">
+                {[5, 10, 20, 30, 50].map(n => {
+                  const available = selectedDifficulty === 'all'
+                    ? pendingLesson.questions.length
+                    : pendingLesson.questions.filter(q => q.difficulty === selectedDifficulty).length;
+                  const disabled = n > available;
+                  return (
+                    <button
+                      key={n}
+                      disabled={disabled}
+                      onClick={() => { sound.playClick(); setQuestionLimit(n); }}
+                      className={`py-2.5 rounded-xl text-sm font-black transition-all border-2 ${
+                        disabled
+                          ? 'bg-gray-100 text-gray-300 border-gray-100 cursor-not-allowed'
+                          : questionLimit === n
+                          ? 'bg-[#FFB800] text-slate-900 border-amber-500 shadow-md'
+                          : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-700 hover:border-amber-400'
+                      }`}
+                    >
+                      {n}
+                    </button>
+                  );
+                })}
+              </div>
+              <p className="text-[10px] text-gray-400 mt-1.5 font-semibold">
+                💡 Rastgele seçilen {Math.min(questionLimit, pendingLesson.questions.length)} soru çözülecek
+              </p>
+            </div>
+
+            {/* Launch Button */}
+            <button
+              onClick={handleConfirmLaunch}
+              className="w-full bg-[#58cc02] hover:bg-[#46a302] text-white font-black py-4 rounded-2xl border-b-4 border-[#46a302] active:border-b-0 active:translate-y-1 transition-all text-base flex items-center justify-center gap-2"
+            >
+              <Play className="w-5 h-5" />
+              TESTE BAŞLA — {Math.min(questionLimit, pendingLesson.questions.length)} Soru
             </button>
           </div>
         </div>

@@ -14,31 +14,31 @@ interface CountdownTarget {
 
 const EXAMS: CountdownTarget[] = [
   {
-    id: 'yks-2026',
-    name: '2026 YKS (TYT - AYT)',
+    id: 'yks-2027',
+    name: '2027 YKS (TYT - AYT)',
     badge: 'Üniversite Sınavı',
-    targetDate: '2026-06-20T10:15:00',
+    targetDate: '2027-06-19T10:15:00',
     icon: '🎓'
   },
   {
-    id: 'lgs-2026',
-    name: '2026 LGS (8. Sınıf)',
+    id: 'lgs-2027',
+    name: '2027 LGS (8. Sınıf)',
     badge: 'Liselere Geçiş',
-    targetDate: '2026-06-07T09:30:00',
+    targetDate: '2027-06-06T09:30:00',
     icon: '📚'
   },
   {
-    id: 'kpss-2026',
-    name: '2026 KPSS (Lisans GY-GK)',
+    id: 'kpss-2027',
+    name: '2027 KPSS (Lisans GY-GK)',
     badge: 'Kamu Sınavı',
-    targetDate: '2026-07-12T10:15:00',
+    targetDate: '2027-07-11T10:15:00',
     icon: '🏛️'
   }
 ];
 
 export const ExamCountdown: React.FC = () => {
   const { stats } = useGame();
-  const [selectedExamId, setSelectedExamId] = useState<string>('yks-2026');
+  const [selectedExamId, setSelectedExamId] = useState<string>('yks-2027');
   const [timeLeft, setTimeLeft] = useState<{ days: number; hours: number; minutes: number; seconds: number }>({
     days: 0,
     hours: 0,
@@ -47,6 +47,7 @@ export const ExamCountdown: React.FC = () => {
   });
 
   const [dailyQuestionGoal, setDailyQuestionGoal] = useState<number>(30);
+  const [isExpired, setIsExpired] = useState<boolean>(false);
 
   const activeExam = EXAMS.find(e => e.id === selectedExamId) || EXAMS[0];
 
@@ -62,8 +63,10 @@ export const ExamCountdown: React.FC = () => {
         const minutes = Math.floor((difference / 1000 / 60) % 60);
         const seconds = Math.floor((difference / 1000) % 60);
         setTimeLeft({ days, hours, minutes, seconds });
+        setIsExpired(false);
       } else {
         setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+        setIsExpired(true);
       }
     };
 
@@ -128,25 +131,32 @@ export const ExamCountdown: React.FC = () => {
           <div className="grid grid-cols-4 gap-2 sm:gap-4 max-w-lg mx-auto mt-4 font-mono">
             {/* Days */}
             <div className="bg-purple-50 dark:bg-purple-950/40 border-2 border-purple-200 dark:border-purple-800 p-3 sm:p-4 rounded-2xl">
-              <div className="text-3xl sm:text-5xl font-black text-purple-700 dark:text-purple-300">{timeLeft.days}</div>
+              <div className="text-3xl sm:text-5xl font-black text-purple-700 dark:text-purple-300">{String(timeLeft.days).padStart(3,"0")}</div>
               <span className="text-[10px] sm:text-xs font-black text-purple-900 dark:text-purple-200 uppercase">GÜN</span>
             </div>
             {/* Hours */}
             <div className="bg-indigo-50 dark:bg-indigo-950/40 border-2 border-indigo-200 dark:border-indigo-800 p-3 sm:p-4 rounded-2xl">
-              <div className="text-3xl sm:text-5xl font-black text-indigo-700 dark:text-indigo-300">{timeLeft.hours}</div>
+              <div className="text-3xl sm:text-5xl font-black text-indigo-700 dark:text-indigo-300">{String(timeLeft.hours).padStart(2,"0")}</div>
               <span className="text-[10px] sm:text-xs font-black text-indigo-900 dark:text-indigo-200 uppercase">SAAT</span>
             </div>
             {/* Minutes */}
             <div className="bg-blue-50 dark:bg-blue-950/40 border-2 border-blue-200 dark:border-blue-800 p-3 sm:p-4 rounded-2xl">
-              <div className="text-3xl sm:text-5xl font-black text-blue-700 dark:text-blue-300">{timeLeft.minutes}</div>
+              <div className="text-3xl sm:text-5xl font-black text-blue-700 dark:text-blue-300">{String(timeLeft.minutes).padStart(2,"0")}</div>
               <span className="text-[10px] sm:text-xs font-black text-blue-900 dark:text-blue-200 uppercase">DAKİKA</span>
             </div>
             {/* Seconds */}
             <div className="bg-emerald-50 dark:bg-emerald-950/40 border-2 border-emerald-200 dark:border-emerald-800 p-3 sm:p-4 rounded-2xl animate-pulse">
-              <div className="text-3xl sm:text-5xl font-black text-emerald-700 dark:text-emerald-300">{timeLeft.seconds}</div>
+              <div className="text-3xl sm:text-5xl font-black text-emerald-700 dark:text-emerald-300">{String(timeLeft.seconds).padStart(2,'0')}</div>
               <span className="text-[10px] sm:text-xs font-black text-emerald-900 dark:text-emerald-200 uppercase">SANİYE</span>
             </div>
           </div>
+
+          {/* Expired warning */}
+          {isExpired && (
+            <div className="mt-4 bg-amber-50 border-2 border-amber-300 rounded-2xl p-4 text-center">
+              <p className="text-amber-800 font-black text-sm">⚠️ Bu sınav tarihi geçti! 2027 takvimi için diğer sınavları seç veya güncel tarihi bekle.</p>
+            </div>
+          )}
         </div>
       </div>
 

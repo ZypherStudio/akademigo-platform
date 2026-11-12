@@ -24,7 +24,8 @@ export const LessonModal: React.FC<LessonModalProps> = ({ lesson, onClose }) => 
   // Matching specific state
   const [selectedLeft, setSelectedLeft] = useState<string | null>(null);
   const [selectedRight, setSelectedRight] = useState<string | null>(null);
-  const [matchedPairs, setMatchedPairs] = useState<string[]>([]);
+  const [matchedPairs, setMatchedPairs] = useState<string[]>([]); // tracks matched pair.left values
+  const [shuffledRight, setShuffledRight] = useState<MatchingPair[]>([]); // shuffled right column
 
   // Code Fill specific state
   const [selectedFillOption, setSelectedFillOption] = useState<string | null>(null);
@@ -41,6 +42,14 @@ export const LessonModal: React.FC<LessonModalProps> = ({ lesson, onClose }) => 
     setSelectedRight(null);
     setMatchedPairs([]);
     setSelectedFillOption(null);
+    // Shuffle right column for matching questions
+    if (lesson.questions[currentIndex]?.type === 'matching') {
+      const pairs = (lesson.questions[currentIndex] as any).pairs as MatchingPair[];
+      const shuffled = [...pairs].sort(() => Math.random() - 0.5);
+      setShuffledRight(shuffled);
+    } else {
+      setShuffledRight([]);
+    }
   }, [currentIndex]);
 
   // Handle Matching logic
@@ -385,53 +394,57 @@ export const LessonModal: React.FC<LessonModalProps> = ({ lesson, onClose }) => 
 
             {/* 4. Matching */}
             {currentQ.type === 'matching' && (
-              <div className="grid grid-cols-2 gap-4 pt-2">
-                {/* Left Column */}
-                <div className="space-y-2">
-                  {currentQ.pairs.map((pair) => {
-                    const isMatched = matchedPairs.includes(pair.left);
-                    const isSelected = selectedLeft === pair.left;
-                    return (
-                      <button
-                        key={pair.id + '-left'}
-                        disabled={isMatched || status !== 'idle'}
-                        onClick={() => handleSelectMatchingLeft(pair.left)}
-                        className={`w-full p-3.5 rounded-2xl font-bold text-xs sm:text-sm border-2 text-left transition-all ${
-                          isMatched
-                            ? 'border-green-300 bg-green-50 text-green-700 opacity-60'
-                            : isSelected
-                            ? 'border-[#1cb0f6] bg-blue-50 text-[#1cb0f6]'
-                            : 'border-gray-200 hover:border-gray-300 text-gray-700'
-                        }`}
-                      >
-                        {pair.left}
-                      </button>
-                    );
-                  })}
-                </div>
+              <div className="space-y-3 pt-2">
+                <p className="text-xs text-gray-500 font-semibold text-center">Sol ve sağdan birer öğeye tıklayarak eşleştir</p>
+                <div className="grid grid-cols-2 gap-3">
+                  {/* Left Column — fixed order */}
+                  <div className="space-y-2">
+                    {currentQ.pairs.map((pair) => {
+                      const isMatched = matchedPairs.includes(pair.left);
+                      const isSelected = selectedLeft === pair.left;
+                      return (
+                        <button
+                          key={pair.id + '-left'}
+                          disabled={isMatched || status !== 'idle'}
+                          onClick={() => handleSelectMatchingLeft(pair.left)}
+                          className={`w-full p-3 rounded-2xl font-bold text-xs sm:text-sm border-2 text-left transition-all ${
+                            isMatched
+                              ? 'border-green-400 bg-green-50 text-green-700 opacity-70'
+                              : isSelected
+                              ? 'border-[#1cb0f6] bg-blue-50 text-[#1cb0f6] ring-2 ring-blue-300'
+                              : 'border-gray-200 hover:border-amber-400 text-gray-700 bg-white'
+                          }`}
+                        >
+                          {isMatched ? '✓ ' : ''}{pair.left}
+                        </button>
+                      );
+                    })}
+                  </div>
 
-                {/* Right Column (shuffled order or same) */}
-                <div className="space-y-2">
-                  {[...currentQ.pairs].reverse().map((pair) => {
-                    const isMatched = matchedPairs.includes(pair.left);
-                    const isSelected = selectedRight === pair.right;
-                    return (
-                      <button
-                        key={pair.id + '-right'}
-                        disabled={isMatched || status !== 'idle'}
-                        onClick={() => handleSelectMatchingRight(pair.right)}
-                        className={`w-full p-3.5 rounded-2xl font-bold text-xs sm:text-sm border-2 text-left transition-all ${
-                          isMatched
-                            ? 'border-green-300 bg-green-50 text-green-700 opacity-60'
-                            : isSelected
-                            ? 'border-[#1cb0f6] bg-blue-50 text-[#1cb0f6]'
-                            : 'border-gray-200 hover:border-gray-300 text-gray-700'
-                        }`}
-                      >
-                        {pair.right}
-                      </button>
-                    );
-                  })}
+                  {/* Right Column — shuffled */}
+                  <div className="space-y-2">
+                    {(shuffledRight.length > 0 ? shuffledRight : [...currentQ.pairs].sort(() => Math.random() - 0.5)).map((pair) => {
+                      // A right item is matched if the pair it belongs to has its left in matchedPairs
+                      const isMatched = matchedPairs.includes(pair.left);
+                      const isSelected = selectedRight === pair.right;
+                      return (
+                        <button
+                          key={pair.id + '-right'}
+                          disabled={isMatched || status !== 'idle'}
+                          onClick={() => handleSelectMatchingRight(pair.right)}
+                          className={`w-full p-3 rounded-2xl font-bold text-xs sm:text-sm border-2 text-left transition-all ${
+                            isMatched
+                              ? 'border-green-400 bg-green-50 text-green-700 opacity-70'
+                              : isSelected
+                              ? 'border-[#1cb0f6] bg-blue-50 text-[#1cb0f6] ring-2 ring-blue-300'
+                              : 'border-gray-200 hover:border-amber-400 text-gray-700 bg-white'
+                          }`}
+                        >
+                          {isMatched ? '✓ ' : ''}{pair.right}
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
               </div>
             )}

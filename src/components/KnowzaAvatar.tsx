@@ -883,6 +883,127 @@ export const AvatarFrameOverlay: React.FC<{
     );
   }
 
+  /* ── 14. Pençe Maskesi (Wolverine Sarı & Siyah) ── */
+  if (frameId === 'wolverine_claws') {
+    return (
+      <div className="absolute -inset-[24%] pointer-events-none z-20 flex items-center justify-center">
+        <svg viewBox="0 0 120 120" className="w-full h-full overflow-visible">
+          <defs>
+            <linearGradient id="wolvYellow" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#FEF08A" />
+              <stop offset="50%" stopColor="#FACC15" />
+              <stop offset="100%" stopColor="#CA8A04" />
+            </linearGradient>
+            <linearGradient id="wolvSteel" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#F8FAFC" />
+              <stop offset="50%" stopColor="#94A3B8" />
+              <stop offset="100%" stopColor="#475569" />
+            </linearGradient>
+          </defs>
+
+          {/* Outer Yellow & Black Combat Aura */}
+          <circle
+            cx="60"
+            cy="60"
+            r="43"
+            fill="none"
+            stroke="url(#wolvYellow)"
+            strokeWidth="4.5"
+            className="animate-pulse-aura origin-[60px_60px]"
+            filter="drop-shadow(0 0 8px rgba(250,204,21,0.8))"
+          />
+
+          {/* Signature Winged Mask Fins */}
+          <path
+            d="M28 42 L10 10 L38 25 Z"
+            fill="#18181B"
+            stroke="url(#wolvYellow)"
+            strokeWidth="2.2"
+            strokeLinejoin="round"
+          />
+          <path
+            d="M92 42 L110 10 L82 25 Z"
+            fill="#18181B"
+            stroke="url(#wolvYellow)"
+            strokeWidth="2.2"
+            strokeLinejoin="round"
+          />
+
+          {/* Glowing White Mask Eyes */}
+          <polygon points="34,26 44,31 38,34" fill="#FFFFFF" filter="drop-shadow(0 0 4px #FEF08A)" />
+          <polygon points="86,26 76,31 82,34" fill="#FFFFFF" filter="drop-shadow(0 0 4px #FEF08A)" />
+
+          {/* Triple Adamantium Claw Slash at Bottom-Right */}
+          <g className="animate-bounceSubtle origin-[90px_90px]">
+            <path d="M78 106 L96 82 L90 108 Z" fill="url(#wolvSteel)" stroke="#0F172A" strokeWidth="0.8" />
+            <path d="M88 108 L106 84 L100 110 Z" fill="url(#wolvSteel)" stroke="#0F172A" strokeWidth="0.8" />
+            <path d="M98 110 L114 88 L108 112 Z" fill="url(#wolvSteel)" stroke="#0F172A" strokeWidth="0.8" />
+          </g>
+        </svg>
+      </div>
+    );
+  }
+
+  /* ── 15. Karanlık Ay & Kargalar (Dark Moon Crows) ── */
+  if (frameId === 'dark_moon_crows') {
+    return (
+      <div className="absolute -inset-[24%] pointer-events-none z-20 flex items-center justify-center">
+        <svg viewBox="0 0 120 120" className="w-full h-full overflow-visible">
+          <defs>
+            <radialGradient id="dmMist" cx="50%" cy="50%" r="50%">
+              <stop offset="65%" stopColor="transparent" />
+              <stop offset="88%" stopColor="#4F46E5" stopOpacity="0.65" />
+              <stop offset="100%" stopColor="#0F172A" stopOpacity="0.9" />
+            </radialGradient>
+          </defs>
+
+          {/* Eerie Midnight Ring */}
+          <circle
+            cx="60"
+            cy="60"
+            r="43"
+            fill="none"
+            stroke="#6366F1"
+            strokeWidth="4"
+            strokeDasharray="12 4"
+            className="animate-spin-slow origin-[60px_60px]"
+            filter="drop-shadow(0 0 9px rgba(99,102,241,0.85))"
+          />
+
+          {/* Glowing Silver-Blue Full Moon at Top-Left */}
+          <circle cx="26" cy="24" r="10" fill="#E2E8F0" stroke="#94A3B8" strokeWidth="1" filter="drop-shadow(0 0 8px #818CF8)" />
+          <circle cx="23" cy="22" r="2.2" fill="#CBD5E1" />
+          <circle cx="29" cy="27" r="1.5" fill="#CBD5E1" />
+
+          {/* Flying Crow Silhouettes */}
+          <g className="animate-cloud-float origin-[92px_30px]">
+            <path
+              d="M84 26 Q90 19 95 25 Q100 18 106 25 Q98 27 95 30 Q92 27 84 26 Z"
+              fill="#09090B"
+              stroke="#818CF8"
+              strokeWidth="0.9"
+            />
+          </g>
+          <g className="animate-bounceSubtle origin-[24px_88px]">
+            <path
+              d="M14 88 Q20 82 25 87 Q30 81 35 87 Q28 89 25 91 Q22 89 14 88 Z"
+              fill="#09090B"
+              stroke="#818CF8"
+              strokeWidth="0.9"
+            />
+          </g>
+
+          {/* Bottom Mist */}
+          <path
+            d="M24 98 Q45 90 60 96 Q78 88 96 98 Q82 108 60 107 Q38 108 24 98 Z"
+            fill="#1E1B4B"
+            opacity="0.88"
+          />
+        </svg>
+      </div>
+    );
+  }
+
   /* ── Fallback SVG border ── */
   const frame = getFrame(frameId);
   return (

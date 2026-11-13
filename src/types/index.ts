@@ -24,7 +24,9 @@ export type AvatarFrameId =
   | 'dragon_fire'
   | 'moon_reverie'
   | 'deadpool_hearts'
-  | 'eous_astronaut';
+  | 'eous_astronaut'
+  | 'wolverine_claws'
+  | 'dark_moon_crows';
 
 export type FrameRarity = 'common' | 'rare' | 'epic' | 'legendary';
 export type FrameAnimationType = 'static' | 'pulse' | 'spin' | 'sparkle' | 'shake' | 'float';

@@ -31,6 +31,8 @@ export const applyFounderPrivileges = (stats: UserStats): UserStats => {
     'moon_reverie',
     'deadpool_hearts',
     'eous_astronaut',
+    'wolverine_claws',
+    'dark_moon_crows',
   ];
   const allCostumes: HariboCostume[] = ['classic', 'king', 'cyber', 'party', 'graduate', 'astronaut'];
 
@@ -246,7 +248,8 @@ export const loadAccountRecord = (email: string): StoredAccountRecord | null => 
       unlockedAvatarFrames: [
         'none', 'gold_flame', 'lightning_bolt', 'cyber_neon', 'nature_leaf',
         'cherry_blossom', 'royal_crown', 'blood_web', 'cosmic_stars', 'dark_wings',
-        'dragon_fire', 'moon_reverie', 'deadpool_hearts', 'eous_astronaut'
+        'dragon_fire', 'moon_reverie', 'deadpool_hearts', 'eous_astronaut',
+        'wolverine_claws', 'dark_moon_crows'
       ],
       equippedAvatarFrame: 'royal_crown',
       unlockedCostumes: ['classic', 'king', 'cyber', 'party', 'graduate', 'astronaut'],

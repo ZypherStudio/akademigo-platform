@@ -38,11 +38,12 @@ export const KnowzaWidgetHub: React.FC<KnowzaWidgetHubProps> = ({
   onNavigateTab,
   onStartLesson,
 }) => {
-  const { stats, selectedCourseId, startLesson } = useGame();
+  const { stats, selectedCourseId, setSelectedCourseId, startLesson } = useGame();
   const [activeTab, setActiveTab] = useState<HubView>('gallery');
   const [sizeFilter, setSizeFilter] = useState<WidgetSize>('all');
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [activeDayIndex, setActiveDayIndex] = useState<number>(3); // Default middle of the week
+  const [savedToast, setSavedToast] = useState<boolean>(false);
 
   const currentCourse = COURSES.find((c) => c.id === selectedCourseId) || COURSES[0];
 
@@ -233,6 +234,52 @@ export const KnowzaWidgetHub: React.FC<KnowzaWidgetHubProps> = ({
                   {f.label}
                 </button>
               ))}
+            </div>
+
+            {/* Ders & Kategori Seçimi (Widget İçin Özelleştir & Hesaba Kaydet) */}
+            <div className="bg-white rounded-3xl p-3.5 border-2 border-amber-200 shadow-sm space-y-2.5">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-1.5">
+                  <BookOpen className="w-4 h-4 text-amber-600" />
+                  <span className="text-xs font-black text-slate-900">
+                    Hangi Dersin Widget'ı Gösterilsin?
+                  </span>
+                </div>
+                {savedToast && (
+                  <span className="text-[10px] font-black text-emerald-600 flex items-center gap-1 animate-pop">
+                    <CheckCircle2 className="w-3.5 h-3.5" /> Hesaba Kaydedildi!
+                  </span>
+                )}
+              </div>
+
+              <div className="grid grid-cols-3 gap-1.5">
+                {COURSES.map((course) => {
+                  const isSelected = selectedCourseId === course.id;
+                  return (
+                    <button
+                      key={course.id}
+                      onClick={() => {
+                        sound.playClick();
+                        setSelectedCourseId(course.id as any);
+                        setSavedToast(true);
+                        setTimeout(() => setSavedToast(false), 2200);
+                      }}
+                      className={`p-2 rounded-2xl border text-center transition flex flex-col items-center gap-1 ${
+                        isSelected
+                          ? 'bg-amber-500 text-amber-950 border-amber-600 font-black shadow-sm ring-2 ring-amber-300'
+                          : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-amber-50 font-bold'
+                      }`}
+                    >
+                      <span className="text-base">{course.icon}</span>
+                      <span className="text-[10px] truncate max-w-full">{course.name}</span>
+                    </button>
+                  );
+                })}
+              </div>
+
+              <p className="text-[10px] font-bold text-slate-500 leading-tight">
+                💡 İstediğiniz ders veya sınav kategorisini seçebilirsiniz. Ana ekran widget'ınız seçtiğiniz dersin ilerlemesine göre anlık şekillenir ve hesabınıza otomatik kaydedilir.
+              </p>
             </div>
 
             {/* Reassurance notice */}

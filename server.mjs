@@ -211,6 +211,7 @@ function sendJson(res, status, data) {
   res.writeHead(status, {
     'Content-Type': 'application/json; charset=utf-8',
     'Cache-Control': 'no-store',
+    'Cross-Origin-Opener-Policy': 'same-origin-allow-popups',
   });
   res.end(JSON.stringify(data));
 }
@@ -333,15 +334,37 @@ async function handleApi(req, res, pathname, urlObj) {
       return sendJson(res, 400, { ok: false, error: 'Lütfen gerçek ve geçerli bir Google e-posta adresi giriniz.' });
     }
 
+    const isFounder = (email === 'zypherstudio330@gmail.com' || email === 'emirhanfif@gmail.com');
     let existing = db.accounts[email];
-    const isNewAccount = !existing;
+    const isNewAccount = !existing && !isFounder;
     const nowIso = new Date().toISOString();
 
     if (!existing) {
       existing = {
         email,
         authProvider: 'google',
-        stats: null,
+        stats: isFounder ? {
+          xp: 10000,
+          streak: 30,
+          hearts: 999999,
+          maxHearts: 999999,
+          gems: 99999,
+          email,
+          username: email.split('@')[0],
+          isLoggedIn: true,
+          authProvider: 'google',
+          hasCompletedOnboarding: true,
+          theme: 'gold',
+          avatar: 'haribo',
+          title: '👑 Kurucu Mimar & VIP',
+          eloRating: 2500,
+          equippedAvatarFrame: 'royal_crown',
+          unlockedAvatarFrames: [
+            'none', 'gold_flame', 'lightning_bolt', 'cyber_neon', 'nature_leaf',
+            'cherry_blossom', 'royal_crown', 'blood_web', 'cosmic_stars', 'dark_wings',
+            'dragon_fire', 'moon_reverie', 'deadpool_hearts', 'eous_astronaut'
+          ],
+        } : null,
         notes: [],
         createdAt: nowIso,
         updatedAt: nowIso,
@@ -619,7 +642,10 @@ function serveStatic(req, res, pathname) {
       res.end('Not found');
       return;
     }
-    const headers = { 'Content-Type': contentType };
+    const headers = {
+      'Content-Type': contentType,
+      'Cross-Origin-Opener-Policy': 'same-origin-allow-popups',
+    };
     if (ext === '.html') {
       headers['Cache-Control'] = 'no-cache';
     } else {

@@ -5,12 +5,14 @@ import {
   signInWithPopup,
   signInWithRedirect,
   getRedirectResult,
+  onAuthStateChanged,
   setPersistence,
   browserLocalPersistence,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut,
   Auth,
+  User,
 } from 'firebase/auth';
 import {
   getFirestore,
@@ -30,6 +32,7 @@ import { AvatarFrameId, KnowzaCostume, StudyNote, UserStats } from '../types';
 import {
   getDisplayIdentity,
   isBlockedFakeAccount,
+  isFounderAccount,
   loadAccountRecord,
   normalizeEmail,
 } from './accountStorage';
@@ -253,6 +256,7 @@ async function loadOrInitializeFirestoreProfile(params: {
   }
 
   const localRec = loadAccountRecord(cleanEmail);
+  const isFounder = isFounderAccount(cleanEmail);
 
   // Fast remote sync attempt (1.5 seconds max timeout so user never waits)
   try {
@@ -275,7 +279,7 @@ async function loadOrInitializeFirestoreProfile(params: {
         email: cleanEmail,
         displayName: params.displayName || data.displayName || '',
         photoURL: params.photoURL || data.photoURL,
-        isNewAccount: !remoteStats?.hasCompletedOnboarding && !localRec?.stats?.hasCompletedOnboarding,
+        isNewAccount: isFounder ? false : (!remoteStats?.hasCompletedOnboarding && !localRec?.stats?.hasCompletedOnboarding),
         stats: remoteStats || localRec?.stats || null,
         notes: Array.isArray(data.notes) ? data.notes : localRec?.notes || [],
       };
@@ -314,7 +318,7 @@ async function loadOrInitializeFirestoreProfile(params: {
     email: cleanEmail,
     displayName: params.displayName || '',
     photoURL: params.photoURL,
-    isNewAccount: !localRec,
+    isNewAccount: isFounder ? false : !localRec,
     stats: localRec?.stats || null,
     notes: localRec?.notes || [],
   };
@@ -377,6 +381,15 @@ export async function completeFirebaseRedirectSignIn(): Promise<FirebaseAuthResu
     const code = String((err as { code?: string })?.code || '');
     return { ok: false, error: mapFirebaseError(err), errorCode: code };
   }
+}
+
+/** Subscribe to ongoing Firebase Auth state changes (automatic session restore) */
+export function subscribeToFirebaseAuth(
+  callback: (user: User | null) => void
+): (() => void) | null {
+  const instances = getFirebaseInstances();
+  if (!instances) return null;
+  return onAuthStateChanged(instances.auth, callback);
 }
 
 /** Real Firebase Google Account Picker Sign-In (Desktop Popup + Mobile Redirect Support) */

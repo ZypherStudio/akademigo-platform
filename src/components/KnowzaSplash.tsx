@@ -15,11 +15,13 @@ import {
   CheckCircle2
 } from 'lucide-react';
 import { sound } from '../utils/audio';
+import { listSavedAccounts, SavedAccountSummary } from '../utils/accountStorage';
 
 interface KnowzaSplashProps {
   onStartGoogle: () => void;
   onOpenEmailAuth: () => void;
   onGuestStart?: () => void;
+  onSelectSavedAccount?: (acc: SavedAccountSummary) => void;
 }
 
 interface FeatureItem {
@@ -78,9 +80,12 @@ function GraduationCapIcon(props: any) {
 export const KnowzaSplash: React.FC<KnowzaSplashProps> = ({ 
   onStartGoogle, 
   onOpenEmailAuth,
-  onGuestStart 
+  onGuestStart,
+  onSelectSavedAccount,
 }) => {
   const [activeFeature, setActiveFeature] = useState(0);
+  const [savedAccounts] = useState<SavedAccountSummary[]>(() => listSavedAccounts());
+  const primaryAccount = savedAccounts[0] || null;
 
   // Auto rotate feature showcase every 4 seconds
   useEffect(() => {
@@ -207,6 +212,44 @@ export const KnowzaSplash: React.FC<KnowzaSplashProps> = ({
       {/* ================= 4. AUTHENTIC ACTION BUTTONS ================= */}
       <div className="w-full max-w-sm space-y-2 pb-1 relative z-10">
         
+        {/* Instant 1-Click Continue for Saved Account */}
+        {primaryAccount && (
+          <button
+            onClick={() => {
+              sound.playClick();
+              if (onSelectSavedAccount) {
+                onSelectSavedAccount(primaryAccount);
+              } else {
+                onStartGoogle();
+              }
+            }}
+            className="w-full p-3 bg-gradient-to-r from-amber-500 via-amber-600 to-amber-700 hover:brightness-105 text-white font-black text-xs rounded-2xl border-b-[4px] border-amber-900 shadow-md flex items-center justify-between gap-2.5 transition active:scale-98 group"
+          >
+            <div className="flex items-center gap-2.5 min-w-0">
+              {primaryAccount.avatarUrl ? (
+                <img
+                  src={primaryAccount.avatarUrl}
+                  alt={primaryAccount.email}
+                  className="w-8 h-8 rounded-full border border-white/60 object-cover flex-shrink-0"
+                />
+              ) : (
+                <div className="w-8 h-8 rounded-full bg-white/20 border border-white/40 flex items-center justify-center text-xs font-black flex-shrink-0">
+                  {primaryAccount.email.slice(0, 2).toUpperCase()}
+                </div>
+              )}
+              <div className="text-left min-w-0">
+                <span className="text-xs font-black block truncate leading-tight">
+                  {primaryAccount.username || primaryAccount.email.split('@')[0]} olarak Devam Et ⚡
+                </span>
+                <span className="text-[10px] font-bold text-amber-100 block truncate">
+                  {primaryAccount.email} • {primaryAccount.xp} XP • {primaryAccount.streak}g seri
+                </span>
+              </div>
+            </div>
+            <ChevronRight className="w-5 h-5 text-white/90 group-hover:translate-x-1 transition flex-shrink-0" />
+          </button>
+        )}
+
         {/* Google 1-Click Sign-in Button */}
         <button
           onClick={() => {

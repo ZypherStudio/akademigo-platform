@@ -36,8 +36,10 @@ export const applyFounderPrivileges = (stats: UserStats): UserStats => {
 
   return {
     ...stats,
+    isLoggedIn: true,
     isPro: true,
     isFounder: true,
+    hasCompletedOnboarding: true,
     founderBadge: '👑 Kurucu Üye',
     title: stats.title && stats.title !== 'Acemi Savaşçı' ? stats.title : '👑 Kurucu Mimar & VIP',
     maxHearts: 999999,
@@ -186,11 +188,90 @@ export const loadAccountRecord = (email: string): StoredAccountRecord | null => 
   if (!key || BLOCKED_FAKE_EMAILS.has(key)) return null;
   const vault = readVault();
   const record = vault[key] ?? null;
-  if (!record) return null;
-  return {
-    ...record,
-    stats: applyFounderPrivileges(record.stats),
-  };
+
+  if (record) {
+    return {
+      ...record,
+      stats: applyFounderPrivileges(record.stats),
+    };
+  }
+
+  // Pre-seed founder account if loading for the first time on a fresh device
+  if (isFounderAccount(key)) {
+    const nowIso = new Date().toISOString();
+    const founderStats = applyFounderPrivileges({
+      uniqueTag: '#KURUCU',
+      lastActiveDate: nowIso.split('T')[0],
+      completedLessons: [],
+      openedChests: [],
+      totalQuestionsAnswered: 500,
+      totalStudyMinutes: 300,
+      errorList: [],
+      inventory: {
+        streakFreeze: 99,
+        heartRefillCount: 99,
+        doubleXpMinutes: 999,
+      },
+      dailyQuestProgress: {
+        completedLessonsToday: 5,
+        xpGainedToday: 500,
+        perfectLessonsToday: 5,
+      },
+      currentLevel: 50,
+      levelProgress: 100,
+      streakBonusMultiplier: 3,
+      achievementBadges: ['founder_crown', 'super_streak', 'duel_master'],
+      xp: 10000,
+      streak: 30,
+      hearts: 999999,
+      maxHearts: 999999,
+      gems: 99999,
+      email: key,
+      username: key.split('@')[0],
+      isLoggedIn: true,
+      authProvider: 'google',
+      hasCompletedOnboarding: true,
+      targetGoal: 'yks',
+      selectedCourseId: 'yks',
+      dailyGoalQuestions: 30,
+      preferredQuickTools: ['tests', 'duel', 'exams', 'aicoach'],
+      theme: 'gold',
+      bannerColor: 'from-amber-500 to-yellow-600',
+      avatar: 'haribo',
+      title: '👑 Kurucu Mimar & VIP',
+      eloRating: 2500,
+      duelWins: 100,
+      duelLosses: 0,
+      duelHistory: [],
+      unlockedAvatarFrames: [
+        'none', 'gold_flame', 'lightning_bolt', 'cyber_neon', 'nature_leaf',
+        'cherry_blossom', 'royal_crown', 'blood_web', 'cosmic_stars', 'dark_wings',
+        'dragon_fire', 'moon_reverie', 'deadpool_hearts', 'eous_astronaut'
+      ],
+      equippedAvatarFrame: 'royal_crown',
+      unlockedCostumes: ['classic', 'king', 'cyber', 'party', 'graduate', 'astronaut'],
+      selectedCostume: 'king',
+      customBear: {
+        furColor: 'kraliyet_altini',
+        headwear: 'royal_crown',
+        eyewear: 'sunshades',
+        outfit: 'royal_cape',
+        heldItem: 'trophy',
+      },
+      lastSavedAt: nowIso,
+    });
+
+    const founderRecord: StoredAccountRecord = {
+      stats: founderStats,
+      notes: [],
+      updatedAt: nowIso,
+    };
+    vault[key] = founderRecord;
+    writeVault(vault);
+    return founderRecord;
+  }
+
+  return null;
 };
 
 /** List all real saved accounts on this device, most recently updated first */

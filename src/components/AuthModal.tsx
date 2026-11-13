@@ -2,7 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { useGame } from '../context/GameContext';
 import { sound } from '../utils/audio';
 import {
+  isFounderAccount,
   listSavedAccounts,
+  loadAccountRecord,
   removeSavedAccount,
   SavedAccountSummary,
 } from '../utils/accountStorage';
@@ -80,7 +82,11 @@ export const AuthModal: React.FC<AuthModalProps> = ({
 
   const isUnauthorizedDomain =
     feedbackCode === 'auth/unauthorized-domain' ||
-    (Boolean(feedback) && feedback!.includes('Authorized domains'));
+    (Boolean(feedback) && (
+      feedback!.includes('Authorized domains') ||
+      feedback!.includes('alan adı') ||
+      feedback!.includes('unauthorized-domain')
+    ));
   const currentHostname =
     typeof window !== 'undefined' ? window.location.hostname : 'akademigo-platform.onrender.com';
   const firebaseSettingsUrl = getFirebaseAuthorizedDomainsSettingsUrl();
@@ -102,14 +108,37 @@ export const AuthModal: React.FC<AuthModalProps> = ({
       return;
     }
 
-    loginUser(provider, res.email, {
+    const cleanEmail = res.email.toLowerCase().trim();
+    const isFounder = isFounderAccount(cleanEmail);
+    const localRec = loadAccountRecord(cleanEmail);
+    const isExisting = !res.isNewAccount || Boolean(res.stats) || Boolean(localRec) || isFounder;
+
+    loginUser(provider, cleanEmail, {
       username: res.googleName || '',
       firebaseUid: res.firebaseUid,
       googleSub: res.googleSub,
       avatarUrl: res.avatarUrl,
-      existingStats: res.stats ?? null,
-      existingNotes: res.notes ?? [],
-      isNewAccount: res.isNewAccount,
+      existingStats: res.stats ?? localRec?.stats ?? null,
+      existingNotes: res.notes ?? localRec?.notes ?? [],
+      isNewAccount: !isExisting,
+    });
+    if (onClose) onClose();
+  };
+
+  // Instant 1-click resume for saved accounts (zero lag, offline-ready)
+  const handleSelectSavedAccount = (acc: SavedAccountSummary) => {
+    sound.playClick();
+    const cleanEmail = acc.email.toLowerCase().trim();
+    const localRec = loadAccountRecord(cleanEmail);
+    const isFounder = isFounderAccount(cleanEmail);
+    const existingStats = localRec?.stats || null;
+
+    loginUser(acc.authProvider || 'google', cleanEmail, {
+      username: acc.username || cleanEmail.split('@')[0],
+      avatarUrl: acc.avatarUrl,
+      existingStats: existingStats ? { ...existingStats, hasCompletedOnboarding: true } : null,
+      existingNotes: localRec?.notes || [],
+      isNewAccount: false,
     });
     if (onClose) onClose();
   };
@@ -194,9 +223,25 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   // Connect or resume real Google Email account (zero fake defaults!)
   const handleGoogleEmailLogin = async (targetEmail: string) => {
     setFeedback(null);
-    const trimmed = targetEmail.trim();
+    const trimmed = targetEmail.trim().toLowerCase();
     if (!trimmed) {
       setFeedback('Lütfen kendi Google e-posta adresini yaz (örn: adin@gmail.com).');
+      return;
+    }
+
+    const localRec = loadAccountRecord(trimmed);
+    const isFounder = isFounderAccount(trimmed);
+
+    // If already known on this device or is founder, instant resume
+    if (localRec || isFounder) {
+      sound.playClick();
+      loginUser('google', trimmed, {
+        username: localRec?.stats?.username || trimmed.split('@')[0],
+        existingStats: localRec?.stats ? { ...localRec.stats, hasCompletedOnboarding: true } : null,
+        existingNotes: localRec?.notes || [],
+        isNewAccount: false,
+      });
+      if (onClose) onClose();
       return;
     }
 
@@ -359,7 +404,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                       {savedAccounts.map((acc) => (
                         <div
                           key={acc.email}
-                          onClick={() => handleGoogleEmailLogin(acc.email)}
+                          onClick={() => handleSelectSavedAccount(acc)}
                           className="p-2.5 rounded-2xl bg-amber-50/70 hover:bg-amber-100/70 border-2 border-amber-200/80 hover:border-[#FFB800] transition cursor-pointer flex items-center justify-between gap-2 group"
                         >
                           <div className="flex items-center gap-2.5 min-w-0">
@@ -620,6 +665,31 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                         </a>
                       </p>
                       <p>2. "Authorized domains" sekmesinde "Add domain" deyip yapıştır.</p>
+                    </div>
+
+                    <div className="pt-2 border-t border-rose-200/60 space-y-2">
+                      <span className="text-[10px] font-black text-rose-950 block">
+                        ⚡ Veya E-postanla Şifresiz Doğrudan Devam Et:
+                      </span>
+                      <div className="flex gap-1.5">
+                        <input
+                          type="email"
+                          value={googleEmail}
+                          onChange={(e) => setGoogleEmail(e.target.value)}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter') handleGoogleEmailLogin(googleEmail);
+                          }}
+                          placeholder="zypherstudio330@gmail.com"
+                          className="flex-1 min-w-0 px-2.5 py-2 bg-white border border-rose-300 rounded-xl text-xs font-bold text-slate-900 outline-none focus:border-amber-500"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => handleGoogleEmailLogin(googleEmail)}
+                          className="px-3 py-2 bg-amber-500 hover:bg-amber-600 text-amber-950 font-black text-xs rounded-xl transition active:scale-95 flex-shrink-0"
+                        >
+                          Giriş
+                        </button>
+                      </div>
                     </div>
 
                     <div className="pt-1 border-t border-rose-200/60">

@@ -34,7 +34,11 @@ import {
   setSessionToken,
   syncAccountToServer
 } from '../utils/apiClient';
-import { completeFirebaseRedirectSignIn, signOutFirebase } from '../utils/firebaseClient';
+import {
+  completeFirebaseRedirectSignIn,
+  signOutFirebase,
+  subscribeToFirebaseAuth,
+} from '../utils/firebaseClient';
 import { sound } from '../utils/audio';
 import confetti from 'canvas-confetti';
 
@@ -724,34 +728,49 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
       ? options.existingNotes
       : localRecord?.notes || [];
 
+    const isFounder = isFounderAccount(cleanEmail);
+    const isExistingAccount = Boolean(
+      !options?.isNewAccount &&
+      (savedStats || localRecord || isFounder)
+    );
+
     sound.playVictory();
     confetti({ particleCount: 50, spread: 70 });
 
-    if (savedStats && !options?.isNewAccount) {
+    if (isExistingAccount) {
       // Restore full existing account progress (XP, gems, streak, duel ELO, frames, preferences)
-      const cleanedSavedName = savedStats.username === 'Öğrenci' ? '' : (savedStats.username || '');
+      const baseSaved = savedStats || localRecord?.stats;
+      const cleanedSavedName = baseSaved?.username === 'Öğrenci' ? '' : (baseSaved?.username || '');
+
+      const hasFinishedOnboarding = Boolean(
+        isFounder ||
+        baseSaved?.hasCompletedOnboarding ||
+        (baseSaved && ((baseSaved.xp ?? 0) > 0 || (baseSaved.streak ?? 0) > 0)) ||
+        (localRecord?.stats && ((localRecord.stats.xp ?? 0) > 0 || localRecord.stats.hasCompletedOnboarding))
+      );
+
       const nextStats: UserStats = applyFounderPrivileges({
         ...DEFAULT_STATS,
-        ...savedStats,
+        ...(baseSaved || {}),
         email: cleanEmail,
         authProvider: provider,
         isLoggedIn: true,
-        firebaseUid: options?.firebaseUid || savedStats.firebaseUid,
-        googleSub: options?.googleSub || savedStats.googleSub,
-        avatarUrl: options?.avatarUrl || savedStats.avatarUrl,
-        username: cleanedSavedName || (options?.username?.trim() || ''),
+        firebaseUid: options?.firebaseUid || baseSaved?.firebaseUid,
+        googleSub: options?.googleSub || baseSaved?.googleSub,
+        avatarUrl: options?.avatarUrl || baseSaved?.avatarUrl,
+        username: cleanedSavedName || (options?.username?.trim() || cleanEmail.split('@')[0]),
         uniqueTag: '#DOĞRULANDI',
-        equippedAvatarFrame: savedStats.equippedAvatarFrame ?? 'none',
-        unlockedAvatarFrames: savedStats.unlockedAvatarFrames ?? ['none', 'gold_flame'],
-        preferredQuickTools: savedStats.preferredQuickTools ?? ['tests', 'duel', 'exams', 'aicoach'],
-        duelHistory: Array.isArray(savedStats.duelHistory) ? savedStats.duelHistory : [],
-        hasCompletedOnboarding: Boolean(savedStats.hasCompletedOnboarding),
+        equippedAvatarFrame: baseSaved?.equippedAvatarFrame ?? 'none',
+        unlockedAvatarFrames: baseSaved?.unlockedAvatarFrames ?? ['none', 'gold_flame'],
+        preferredQuickTools: baseSaved?.preferredQuickTools ?? ['tests', 'duel', 'exams', 'aicoach'],
+        duelHistory: Array.isArray(baseSaved?.duelHistory) ? baseSaved.duelHistory : [],
+        hasCompletedOnboarding: hasFinishedOnboarding,
       });
       setStats(nextStats);
       setNotes(savedNotes);
       saveAccountRecord(nextStats, savedNotes);
     } else {
-      // Brand new account: start fresh and ALWAYS go through Onboarding Questions
+      // Brand new account: start fresh and go through Onboarding Questions
       const initialStats: UserStats = applyFounderPrivileges({
         ...DEFAULT_STATS,
         isLoggedIn: true,
@@ -760,9 +779,9 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
         firebaseUid: options?.firebaseUid,
         googleSub: options?.googleSub,
         avatarUrl: options?.avatarUrl,
-        username: options?.username?.trim() || '',
+        username: options?.username?.trim() || cleanEmail.split('@')[0],
         uniqueTag: '#DOĞRULANDI',
-        hasCompletedOnboarding: false,
+        hasCompletedOnboarding: isFounder ? true : false,
       });
       setStats(initialStats);
       setNotes(DEFAULT_NOTES);
@@ -773,23 +792,70 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     refreshLeaderboard();
   };
 
-  // Complete mobile Google signInWithRedirect return flow automatically on startup
+  // 1. Complete mobile Google signInWithRedirect return flow automatically on startup
+  // 2. Subscribe to Firebase Auth state listener (auto-restore session across reloads)
   useEffect(() => {
     let active = true;
+
     completeFirebaseRedirectSignIn().then((res) => {
       if (!active || !res || !res.ok || !res.email) return;
-      loginUser('google', res.email, {
-        username: res.displayName || '',
+      const cleanEmail = normalizeEmail(res.email);
+      const localRec = loadAccountRecord(cleanEmail);
+      const isFounder = isFounderAccount(cleanEmail);
+      const isExisting = !res.isNewAccount || Boolean(localRec) || isFounder;
+
+      loginUser('google', cleanEmail, {
+        username: res.displayName || localRec?.stats?.username || '',
         firebaseUid: res.uid,
         googleSub: res.uid,
-        avatarUrl: res.photoURL,
-        existingStats: res.stats ?? null,
-        existingNotes: res.notes ?? [],
-        isNewAccount: res.isNewAccount,
+        avatarUrl: res.photoURL || localRec?.stats?.avatarUrl,
+        existingStats: res.stats || localRec?.stats || null,
+        existingNotes: res.notes?.length ? res.notes : localRec?.notes || [],
+        isNewAccount: !isExisting,
       });
     });
+
+    const unsubscribe = subscribeToFirebaseAuth((user) => {
+      if (!active || !user || !user.email) return;
+      const cleanEmail = normalizeEmail(user.email);
+      setStats((currentStats) => {
+        if (currentStats.isLoggedIn && normalizeEmail(currentStats.email || '') === cleanEmail) {
+          return currentStats;
+        }
+        const localRec = loadAccountRecord(cleanEmail);
+        const isFounder = isFounderAccount(cleanEmail);
+        const saved = localRec?.stats || null;
+        const savedNotes = localRec?.notes || [];
+
+        const hasFinishedOnboarding = Boolean(
+          isFounder ||
+          saved?.hasCompletedOnboarding ||
+          (saved && ((saved.xp ?? 0) > 0 || (saved.streak ?? 0) > 0))
+        );
+
+        const restored = applyFounderPrivileges({
+          ...DEFAULT_STATS,
+          ...(saved || {}),
+          email: cleanEmail,
+          authProvider: 'google',
+          isLoggedIn: true,
+          firebaseUid: user.uid,
+          googleSub: user.uid,
+          avatarUrl: user.photoURL || saved?.avatarUrl,
+          username: saved?.username || user.displayName || cleanEmail.split('@')[0],
+          uniqueTag: '#DOĞRULANDI',
+          hasCompletedOnboarding: hasFinishedOnboarding,
+        });
+
+        saveAccountRecord(restored, savedNotes);
+        localStorage.setItem('knowza_has_started', 'true');
+        return restored;
+      });
+    });
+
     return () => {
       active = false;
+      if (unsubscribe) unsubscribe();
     };
   }, []);
 

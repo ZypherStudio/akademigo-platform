@@ -948,8 +948,10 @@ export const KnowzaAvatar: React.FC<KnowzaAvatarProps> = ({
           className="w-full h-full object-cover rounded-full select-none pointer-events-none transition-all duration-300"
           style={{ filter: furFilter }}
         />
+      </div>
 
-        {/* 2. 3D Styled Modular Accessories (Hat, Glasses, Cape/Robe, Held Item) */}
+      {/* 2. 3D Styled Modular Accessories (Hat, Glasses, Cape/Robe, Held Item) */}
+      <div className="absolute inset-0 pointer-events-none z-10 overflow-visible">
         <BearAccessoriesLayer config={bearConfig} size={px} />
       </div>
 

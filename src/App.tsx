@@ -25,9 +25,10 @@ import { AchievementToast } from './components/AchievementToast';
 import { KnowzaWidgetHub } from './components/KnowzaWidgetHub';
 import { ArrowLeft, Smartphone, Monitor } from 'lucide-react';
 import { soundSystem } from './utils/audio';
+import { loadAccountRecord, SavedAccountSummary } from './utils/accountStorage';
 
 const KnowzaAppContent: React.FC = () => {
-  const { stats, activeLesson, closeLesson, activeAchievement, dismissAchievement } = useGame();
+  const { stats, loginUser, activeLesson, closeLesson, activeAchievement, dismissAchievement } = useGame();
   const [currentTab, setCurrentTab] = useState<KnowzaTab>('home');
   const [hasStarted, setHasStarted] = useState<boolean>(() => {
     return localStorage.getItem('knowza_has_started') === 'true';
@@ -38,6 +39,19 @@ const KnowzaAppContent: React.FC = () => {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [authInitialMode, setAuthInitialMode] = useState<'google' | 'email'>('google');
   const [showOnboarding, setShowOnboarding] = useState(false);
+
+  const handleSelectSavedAccount = (acc: SavedAccountSummary) => {
+    const cleanEmail = acc.email.toLowerCase().trim();
+    const localRec = loadAccountRecord(cleanEmail);
+    const existingStats = localRec?.stats || null;
+    loginUser(acc.authProvider || 'google', cleanEmail, {
+      username: acc.username || cleanEmail.split('@')[0],
+      avatarUrl: acc.avatarUrl,
+      existingStats: existingStats ? { ...existingStats, hasCompletedOnboarding: true } : null,
+      existingNotes: localRec?.notes || [],
+      isNewAccount: false,
+    });
+  };
 
   // User must authenticate / login first before entering main app
   const isUserAuthenticated = stats.isLoggedIn && !!stats.email;
@@ -59,6 +73,7 @@ const KnowzaAppContent: React.FC = () => {
               setAuthInitialMode('google');
               setShowAuthModal(true);
             }}
+            onSelectSavedAccount={handleSelectSavedAccount}
           />
           {showAuthModal && (
             <AuthModal

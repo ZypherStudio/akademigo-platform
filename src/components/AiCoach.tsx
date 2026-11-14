@@ -75,15 +75,20 @@ export const AiCoach: React.FC = () => {
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [isListening, setIsListening] = useState(false);
   const [voiceEnabled, setVoiceEnabled] = useState(true);
-  const [voicePack, setVoicePack] = useState<'energetic' | 'calm' | 'fast'>(() => {
-    const saved = localStorage.getItem('knowza_voice_pack');
-    return saved === 'calm' || saved === 'fast' ? saved : 'energetic';
+  const [voiceGender, setVoiceGender] = useState<'female' | 'male'>(() => {
+    const saved = localStorage.getItem('knowza_voice_gender');
+    return saved === 'male' ? 'male' : 'female';
   });
+  const [voiceStatusMsg, setVoiceStatusMsg] = useState<string | null>(null);
   const [mascotMood, setMascotMood] = useState<'idle' | 'thinking' | 'speaking' | 'excited'>('idle');
 
   const chatBottomRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const recognitionRef = useRef<any>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const audioUrlRef = useRef<string | null>(null);
+  const voiceTranscriptRef = useRef<string>('');
+  const voiceSentRef = useRef<boolean>(false);
 
   // ── 2. Note -> Flashcards & Mini Quiz State ──
   const [noteInput, setNoteInput] = useState('');
@@ -140,106 +145,190 @@ export const AiCoach: React.FC = () => {
   };
 
   const VOICE_PACKS = {
-    energetic: { label: 'Enerjik Ayıcık', pitch: 1.16, rate: 1.04 },
-    calm: { label: 'Sakin Öğretmen', pitch: 0.96, rate: 0.94 },
-    fast: { label: 'Hızlı Özet', pitch: 1.04, rate: 1.24 },
+    female: { label: '👩 Kadın Sesi', name: 'Sarah' },
+    male: { label: '👨 Erkek Sesi', name: 'Liam' },
   } as const;
 
-  const cycleVoicePack = () => {
+  const toggleVoiceGender = () => {
     sound.playClick();
-    const order: Array<'energetic' | 'calm' | 'fast'> = ['energetic', 'calm', 'fast'];
-    const next = order[(order.indexOf(voicePack) + 1) % order.length];
-    setVoicePack(next);
-    localStorage.setItem('knowza_voice_pack', next);
-  };
-
-  // Read message aloud using Web Speech Synthesis API with Voice Package
-  const speakText = (text: string) => {
-    if ('speechSynthesis' in window && voiceEnabled) {
-      window.speechSynthesis.cancel();
-      const cleanText = text.replace(/[*_#`📸🎯📘🏛️🌍💻✨💡❓•]/g, '');
-      const utterance = new SpeechSynthesisUtterance(cleanText);
-      const targetLang = activeTrack === 'dil' ? 'en' : 'tr';
-      utterance.lang = targetLang === 'en' ? 'en-US' : 'tr-TR';
-
-      const voices = window.speechSynthesis.getVoices();
-      const matchedVoice =
-        voices.find((v) => v.lang.toLowerCase().startsWith(targetLang) && /natural|google|yelda|cem|samantha/i.test(v.name)) ||
-        voices.find((v) => v.lang.toLowerCase().startsWith(targetLang));
-      if (matchedVoice) utterance.voice = matchedVoice;
-
-      const pack = VOICE_PACKS[voicePack];
-      utterance.pitch = pack.pitch;
-      utterance.rate = pack.rate;
-
-      utterance.onstart = () => {
-        setIsSpeaking(true);
-        setMascotMood('speaking');
-      };
-      utterance.onend = () => {
-        setIsSpeaking(false);
-        setMascotMood('idle');
-      };
-      utterance.onerror = () => {
-        setIsSpeaking(false);
-        setMascotMood('idle');
-      };
-
-      window.speechSynthesis.speak(utterance);
-    }
+    const next: 'female' | 'male' = voiceGender === 'female' ? 'male' : 'female';
+    setVoiceGender(next);
+    localStorage.setItem('knowza_voice_gender', next);
   };
 
   const stopSpeaking = () => {
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+      audioRef.current = null;
+    }
+    if (audioUrlRef.current) {
+      URL.revokeObjectURL(audioUrlRef.current);
+      audioUrlRef.current = null;
+    }
     if ('speechSynthesis' in window) {
       window.speechSynthesis.cancel();
-      setIsSpeaking(false);
-      setMascotMood('idle');
     }
+    setIsSpeaking(false);
+    setMascotMood('idle');
   };
 
-  // Voice Input
+  const fallbackSpeechSynthesis = (cleanText: string) => {
+    if (!('speechSynthesis' in window)) {
+      setIsSpeaking(false);
+      setMascotMood('idle');
+      return;
+    }
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(cleanText);
+    const targetLang = activeTrack === 'dil' ? 'en' : 'tr';
+    utterance.lang = targetLang === 'en' ? 'en-US' : 'tr-TR';
+    utterance.pitch = voiceGender === 'female' ? 1.1 : 0.9;
+    utterance.rate = 1.0;
+    utterance.onstart = () => {
+      setIsSpeaking(true);
+      setMascotMood('speaking');
+    };
+    utterance.onend = () => {
+      setIsSpeaking(false);
+      setMascotMood('idle');
+    };
+    utterance.onerror = () => {
+      setIsSpeaking(false);
+      setMascotMood('idle');
+    };
+    window.speechSynthesis.speak(utterance);
+  };
+
+  // Read message aloud using ElevenLabs natural Female/Male voices via /api/tts
+  const speakText = async (text: string) => {
+    if (!voiceEnabled) return;
+    stopSpeaking();
+    const cleanText = text.replace(/[*_#`📸🎯📘🏛️🌍💻✨💡❓•👩👨🎙️🐻🎓]/g, '').trim();
+    if (!cleanText) return;
+
+    setIsSpeaking(true);
+    setMascotMood('speaking');
+
+    const ttsEndpoints = ['/api/tts', 'https://akademigo-platform.onrender.com/api/tts'];
+    for (const url of ttsEndpoints) {
+      try {
+        const res = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ text: cleanText, voiceGender }),
+        });
+        if (!res.ok) continue;
+
+        const blob = await res.blob();
+        if (!blob || blob.size < 100) continue;
+
+        const objUrl = URL.createObjectURL(blob);
+        audioUrlRef.current = objUrl;
+        const audio = new Audio(objUrl);
+        audioRef.current = audio;
+
+        audio.onended = () => stopSpeaking();
+        audio.onerror = () => stopSpeaking();
+        await audio.play();
+        return;
+      } catch {
+        // try next endpoint
+      }
+    }
+
+    fallbackSpeechSynthesis(cleanText);
+  };
+
+  const showVoiceHint = (msg: string) => {
+    setVoiceStatusMsg(msg);
+    setTimeout(() => {
+      setVoiceStatusMsg((curr) => (curr === msg ? null : curr));
+    }, 4000);
+  };
+
+  // Reliable Voice Input with live transcript & guaranteed auto-send
   const toggleSpeechRecognition = () => {
     const SpeechRecognition =
       (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
 
     if (!SpeechRecognition) {
-      alert('Tarayıcınız ses tanıma özelliğini desteklemiyor. Lütfen Chrome veya Safari kullanın.');
+      showVoiceHint('Bu tarayıcı sesli girişi desteklemiyor (Chrome/Safari kullan).');
       return;
     }
 
     if (isListening) {
       recognitionRef.current?.stop();
-      setIsListening(false);
-      setMascotMood('idle');
       return;
     }
 
     sound.playClick();
+    stopSpeaking();
+    voiceTranscriptRef.current = '';
+    voiceSentRef.current = false;
+    setVoiceStatusMsg(null);
+
     const recognition = new SpeechRecognition();
-    recognition.lang = 'tr-TR';
-    recognition.interimResults = false;
+    recognition.lang = activeTrack === 'dil' ? 'en-US' : 'tr-TR';
+    recognition.interimResults = true;
+    recognition.continuous = false;
     recognition.maxAlternatives = 1;
 
     recognition.onstart = () => {
       setIsListening(true);
       setMascotMood('thinking');
     };
+
     recognition.onresult = (event: any) => {
-      const transcript = event.results[0][0].transcript;
-      setInputText(transcript);
-      handleSendMessage(transcript);
+      let combined = '';
+      let hasFinal = false;
+      for (let i = 0; i < event.results.length; i++) {
+        combined += event.results[i][0].transcript;
+        if (event.results[i].isFinal) hasFinal = true;
+      }
+      const cleaned = combined.trim();
+      voiceTranscriptRef.current = cleaned;
+      setInputText(cleaned);
+
+      if (hasFinal && cleaned && !voiceSentRef.current) {
+        voiceSentRef.current = true;
+        setIsListening(false);
+        recognition.stop();
+        handleSendMessage(cleaned);
+      }
     };
-    recognition.onerror = () => {
+
+    recognition.onerror = (event: any) => {
       setIsListening(false);
       setMascotMood('idle');
+      const errCode = event?.error;
+      if (errCode === 'not-allowed' || errCode === 'service-not-allowed') {
+        showVoiceHint('Mikrofon izni kapalı — tarayıcı ayarlarından izin ver.');
+      } else if (errCode === 'no-speech') {
+        showVoiceHint('Ses algılanamadı, mikrofona yaklaşıp tekrar dene.');
+      } else if (errCode !== 'aborted') {
+        showVoiceHint('Sesli giriş başlatılamadı, tekrar dene.');
+      }
     };
+
     recognition.onend = () => {
       setIsListening(false);
-      setMascotMood('idle');
+      const pending = voiceTranscriptRef.current.trim();
+      if (pending && !voiceSentRef.current) {
+        voiceSentRef.current = true;
+        handleSendMessage(pending);
+      } else if (!voiceSentRef.current) {
+        setMascotMood('idle');
+      }
     };
 
     recognitionRef.current = recognition;
-    recognition.start();
+    try {
+      recognition.start();
+    } catch {
+      setIsListening(false);
+      showVoiceHint('Mikrofon açılamadı, lütfen tekrar dokun.');
+    }
   };
 
   // Homework Photo Upload Handler
@@ -282,7 +371,7 @@ export const AiCoach: React.FC = () => {
 
     const imageSnapshot = pendingImage;
     setMessages((prev) => [...prev, userMsg]);
-    if (!textToSend) setInputText('');
+    setInputText('');
     setPendingImage(null);
     setIsTyping(true);
     setMascotMood('thinking');
@@ -443,11 +532,11 @@ export const AiCoach: React.FC = () => {
 
           <div className="flex items-center gap-1.5 flex-shrink-0">
             <button
-              onClick={cycleVoicePack}
-              className="px-2 py-1.5 rounded-xl bg-black/20 hover:bg-black/30 border border-white/20 text-[9px] font-black whitespace-nowrap transition active:scale-95"
-              title="Ses Paketini Değiştir"
+              onClick={toggleVoiceGender}
+              className="px-2.5 py-1.5 rounded-xl bg-black/20 hover:bg-black/30 border border-white/20 text-[10px] font-black whitespace-nowrap transition active:scale-95"
+              title="Kadın / Erkek Sesi Değiştir"
             >
-              🎙️ {VOICE_PACKS[voicePack].label}
+              {VOICE_PACKS[voiceGender].label}
             </button>
             <button
               onClick={() => {
@@ -619,6 +708,31 @@ export const AiCoach: React.FC = () => {
                 >
                   <X className="w-3.5 h-3.5" />
                 </button>
+              </div>
+            )}
+
+            {/* Live Voice Listening / Status Banner */}
+            {(isListening || voiceStatusMsg) && (
+              <div
+                className={`px-3 py-1.5 border-t text-[11px] font-bold flex items-center justify-between gap-2 ${
+                  isListening
+                    ? 'bg-rose-50 border-rose-200 text-rose-700'
+                    : 'bg-amber-50 border-amber-200 text-amber-800'
+                }`}
+              >
+                <span>
+                  {isListening
+                    ? '🎙️ Dinleniyor... Konuş, bitince otomatik gönderilir!'
+                    : `⚠️ ${voiceStatusMsg}`}
+                </span>
+                {isListening && (
+                  <button
+                    onClick={() => recognitionRef.current?.stop()}
+                    className="px-2 py-0.5 rounded-lg bg-rose-600 text-white text-[10px] font-black"
+                  >
+                    Gönder
+                  </button>
+                )}
               </div>
             )}
 

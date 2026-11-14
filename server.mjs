@@ -615,6 +615,59 @@ async function handleApi(req, res, pathname, urlObj) {
     return sendJson(res, 200, { ok: true, room });
   }
 
+  if (req.method === 'POST' && pathname === '/api/tts') {
+    const body = await readBody(req);
+    const rawText = String(body.text || '').trim().slice(0, 1200);
+    if (!rawText) {
+      return sendJson(res, 400, { ok: false, error: 'Metin boş olamaz.' });
+    }
+    const voiceGender = body.voiceGender === 'male' ? 'male' : 'female';
+    const voiceId =
+      voiceGender === 'male'
+        ? 'TX3LPaxmHKxFdv7VOQHJ' // Liam (Doğal Erkek Sesi)
+        : 'EXAVITQu4vr4xnSDxMaL'; // Sarah (Doğal Kadın Sesi)
+    const apiKey =
+      process.env.ELEVENLABS_API_KEY || 'sk_bd77470feb0e4fd290d9f5b9cc60468a648c0793897f9a13';
+
+    try {
+      const ttsRes = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`, {
+        method: 'POST',
+        headers: {
+          'xi-api-key': apiKey,
+          'Content-Type': 'application/json',
+          Accept: 'audio/mpeg',
+        },
+        body: JSON.stringify({
+          text: rawText,
+          model_id: 'eleven_multilingual_v2',
+          voice_settings: {
+            stability: 0.45,
+            similarity_boost: 0.78,
+            style: 0.2,
+          },
+        }),
+      });
+
+      if (!ttsRes.ok) {
+        const errTxt = await ttsRes.text();
+        console.error('[ElevenLabs TTS Error]', ttsRes.status, errTxt);
+        return sendJson(res, 502, { ok: false, error: 'Ses üretimi başarısız oldu.' });
+      }
+
+      const audioBuf = Buffer.from(await ttsRes.arrayBuffer());
+      res.writeHead(200, {
+        'Content-Type': 'audio/mpeg',
+        'Content-Length': audioBuf.length,
+        'Cache-Control': 'no-store',
+        'Access-Control-Allow-Origin': '*',
+      });
+      return res.end(audioBuf);
+    } catch (err) {
+      console.error('[ElevenLabs TTS Exception]', err);
+      return sendJson(res, 502, { ok: false, error: 'Ses sunucusuna bağlanılamadı.' });
+    }
+  }
+
   return sendJson(res, 404, { ok: false, error: 'API endpoint bulunamadı.' });
 }
 

@@ -66,6 +66,50 @@ export const KNOWZA_COSTUMES: KnowzaCostumeInfo[] = [
     badge: 'EFSANEVİ 🚀',
     icon: '🛰️',
     bgGradient: 'from-indigo-600 to-violet-800'
+  },
+  {
+    id: 'shadow_raven',
+    name: 'Gölge Kuzgun Knowza',
+    title: 'Karanlık Kanatların Efendisi',
+    description: 'Obsidiyen kuzgun moru kürk, büyülü kraliyet pelerini ve parlayan mistik asa. Nadir koleksiyon!',
+    priceGems: 1450,
+    requiredXp: 6000,
+    badge: 'EFSANEVİ 🦅',
+    icon: '🦅',
+    bgGradient: 'from-violet-700 to-purple-950'
+  },
+  {
+    id: 'moon_wolf',
+    name: 'Ay Kurdu Knowza',
+    title: 'Hilal Rüyalarının Muhafızı',
+    description: 'Gümüş ay ışığı kürkü, yıldızlı büyücü şapkası ve gece yarısı peleriniyle parlayan efsane.',
+    priceGems: 1750,
+    requiredXp: 7500,
+    badge: 'MİTİK 🌙',
+    icon: '🌙',
+    bgGradient: 'from-indigo-700 to-slate-900'
+  },
+  {
+    id: 'crimson_samurai',
+    name: 'Kızıl Savaşçı Knowza',
+    title: 'Neon Arena Şampiyonu',
+    description: 'Kızıl kahraman kürkü, neon siber vizör ve alevli meşalesiyle rakiplerine göz açtırmaz!',
+    priceGems: 2100,
+    requiredXp: 9000,
+    badge: 'EFSANEVİ 🔥',
+    icon: '🔥',
+    bgGradient: 'from-rose-600 to-red-900'
+  },
+  {
+    id: 'dragon_emperor',
+    name: 'Ejderha İmparatoru Knowza',
+    title: 'Mutlak Zirve Hükümdarı',
+    description: 'Saf altın kürk, yakut işlemeli imparator tacı, profesör gözlüğü ve altın asasıyla en prestijli karakter.',
+    priceGems: 2500,
+    requiredXp: 12000,
+    badge: 'ULTİMATE 🐉',
+    icon: '🐉',
+    bgGradient: 'from-amber-500 via-orange-600 to-red-800'
   }
 ];
 

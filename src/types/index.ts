@@ -32,7 +32,7 @@ export type FrameRarity = 'common' | 'rare' | 'epic' | 'legendary';
 export type FrameAnimationType = 'static' | 'pulse' | 'spin' | 'sparkle' | 'shake' | 'float';
 
 export interface CustomBearConfig {
-  furColor: 'bal_sarisi' | 'kar_beyazi' | 'cikolata' | 'gece_siyahi' | 'pembe_seker' | 'siber_neon' | 'kraliyet_altini';
+  furColor: 'bal_sarisi' | 'kar_beyazi' | 'cikolata' | 'gece_siyahi' | 'pembe_seker' | 'siber_neon' | 'kraliyet_altini' | 'obsidian_raven' | 'moonlight_wolf' | 'crimson_hero';
   headwear: 'none' | 'graduate_cap' | 'royal_crown' | 'cyber_visor' | 'party_hat' | 'astronaut_helmet' | 'wizard_hat' | 'beanie';
   eyewear: 'none' | 'sunshades' | 'professor' | 'neon_visor' | 'star_glasses';
   outfit: 'hoodie' | 'royal_cape' | 'cyber_suit' | 'graduate_robe' | 'space_suit' | 'tuxedo';
@@ -60,7 +60,17 @@ export type AppTheme = 'duo' | 'dark' | 'cyber' | 'gold' | 'ocean';
 
 export type UserAvatar = 'haribo' | 'owl' | 'fox' | 'robot' | 'astronaut' | 'wizard' | 'coder_cat';
 
-export type HariboCostume = 'classic' | 'king' | 'cyber' | 'party' | 'graduate' | 'astronaut';
+export type HariboCostume =
+  | 'classic'
+  | 'king'
+  | 'cyber'
+  | 'party'
+  | 'graduate'
+  | 'astronaut'
+  | 'shadow_raven'
+  | 'moon_wolf'
+  | 'crimson_samurai'
+  | 'dragon_emperor';
 export type KnowzaCostume = HariboCostume;
 
 export interface HariboCostumeInfo {

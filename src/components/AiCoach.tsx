@@ -26,6 +26,7 @@ import {
 import { sound } from '../utils/audio';
 import confetti from 'canvas-confetti';
 import { AiChatMessage } from '../types';
+import { KnowzaAvatar } from './KnowzaAvatar';
 import {
   askGeminiCoach,
   generateFlashcardsAndQuizFromNotes,
@@ -47,7 +48,7 @@ type StudioSubTab = 'chat' | 'notes_quiz' | 'study_plan' | 'train_ai';
 const TRACK_ORDER: AiTrackId[] = ['yks', 'lgs', 'kpss', 'dil', 'kodlama'];
 
 export const AiCoach: React.FC = () => {
-  const { selectedCourseId, addXpAndGems } = useGame();
+  const { stats, selectedCourseId, addXpAndGems } = useGame();
   const initialTrack = normalizeAiTrack(selectedCourseId);
   const [activeTrack, setActiveTrack] = useState<AiTrackId>(initialTrack);
   const [studioTab, setStudioTab] = useState<StudioSubTab>('chat');
@@ -377,17 +378,19 @@ export const AiCoach: React.FC = () => {
 
         <div className="flex items-center justify-between gap-2.5 relative z-10">
           <div className="flex items-center gap-2.5 min-w-0">
-            <div className="w-14 h-14 rounded-2xl bg-white/20 backdrop-blur-md border border-white/30 p-1 flex-shrink-0 shadow-md">
-              <img
-                src={mascotImage}
-                alt="Knowza 3D AI Maskot"
-                className={`w-full h-full object-contain ${
-                  mascotMood === 'thinking'
-                    ? 'animate-pulse'
-                    : mascotMood === 'excited'
-                    ? 'animate-bounceSubtle'
-                    : ''
-                }`}
+            <div className="flex-shrink-0">
+              <KnowzaAvatar
+                size="lg"
+                animate={
+                  mascotMood === 'excited'
+                    ? 'dance'
+                    : mascotMood === 'thinking'
+                    ? 'wiggle'
+                    : 'bounce'
+                }
+                costume={stats.selectedCostume}
+                frameId={stats.equippedAvatarFrame ?? 'none'}
+                customBear={stats.customBear}
               />
             </div>
 

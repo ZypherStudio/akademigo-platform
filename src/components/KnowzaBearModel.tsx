@@ -401,6 +401,16 @@ export const KnowzaBearModel: React.FC<KnowzaBearModelProps> = ({
           </g>
         )}
 
+        {config.headwear === 'wizard_hat' && (
+          <g transform="translate(0, -3) rotate(-6 60 26)" filter={`url(#${uid}-softShadow)`}>
+            <ellipse cx="60" cy="30" rx="26" ry="5.5" fill="#312e81" stroke="#818cf8" strokeWidth="1.2" />
+            <path d="M43 29 L58 6 L77 29 Z" fill="#4338ca" stroke="#a5b4fc" strokeWidth="1" />
+            <path d="M45 26 Q60 29 75 26" fill="none" stroke="#fde047" strokeWidth="2.4" />
+            <circle cx="58" cy="16" r="2" fill="#fef08a" />
+            <circle cx="65" cy="21" r="1.4" fill="#e0e7ff" />
+          </g>
+        )}
+
         {config.headwear === 'cyber_visor' && (
           <g filter={`url(#${uid}-softShadow)`}>
             <path d="M27 46 C27 19, 93 19, 93 46" fill="none" stroke="#1e293b" strokeWidth="6" strokeLinecap="round" />

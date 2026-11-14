@@ -59,6 +59,38 @@ export function getBearConfigFromCostume(costume: KnowzaCostume = 'classic', cus
         outfit: 'space_suit',
         heldItem: 'torch',
       };
+    case 'shadow_raven':
+      return {
+        furColor: 'obsidian_raven',
+        headwear: 'royal_crown',
+        eyewear: 'none',
+        outfit: 'royal_cape',
+        heldItem: 'wand',
+      };
+    case 'moon_wolf':
+      return {
+        furColor: 'moonlight_wolf',
+        headwear: 'wizard_hat',
+        eyewear: 'none',
+        outfit: 'royal_cape',
+        heldItem: 'wand',
+      };
+    case 'crimson_samurai':
+      return {
+        furColor: 'crimson_hero',
+        headwear: 'cyber_visor',
+        eyewear: 'neon_visor',
+        outfit: 'cyber_suit',
+        heldItem: 'torch',
+      };
+    case 'dragon_emperor':
+      return {
+        furColor: 'kraliyet_altini',
+        headwear: 'royal_crown',
+        eyewear: 'professor',
+        outfit: 'royal_cape',
+        heldItem: 'trophy',
+      };
     case 'classic':
     default:
       return {
@@ -1056,9 +1088,9 @@ export const KnowzaAvatar: React.FC<KnowzaAvatarProps> = ({
   const bearConfig = getBearConfigFromCostume(costume, customBear);
   const showAmbientFx = px >= 44;
   const isCyber = bearConfig.eyewear === 'neon_visor' || bearConfig.outfit === 'cyber_suit' || frameId === 'eous_astronaut';
-  const isKing = bearConfig.headwear === 'royal_crown' || bearConfig.outfit === 'royal_cape' || frameId === 'royal_crown' || frameId === 'wolverine_claws';
-  const isDarkMoon = frameId === 'dark_moon_crows' || frameId === 'moon_reverie';
-  const isCrimson = frameId === 'deadpool_hearts' || frameId === 'blood_web';
+  const isKing = bearConfig.headwear === 'royal_crown' || bearConfig.outfit === 'royal_cape' || frameId === 'royal_crown' || frameId === 'wolverine_claws' || costume === 'dragon_emperor';
+  const isDarkMoon = frameId === 'dark_moon_crows' || frameId === 'moon_reverie' || costume === 'shadow_raven' || costume === 'moon_wolf';
+  const isCrimson = frameId === 'deadpool_hearts' || frameId === 'blood_web' || costume === 'crimson_samurai';
 
   const stageBgClass = isDarkMoon
     ? 'bg-gradient-to-br from-indigo-950 via-purple-900/90 to-slate-950'

@@ -215,14 +215,12 @@ export const KnowzaOnboarding: React.FC<KnowzaOnboardingProps> = ({ onComplete, 
         {/* ================= STEP 1: HEDEF SINAV / ALAN ================= */}
         {step === 1 && (
           <div className="w-full flex flex-col items-center text-center animate-fade space-y-2.5">
-            <div className="relative w-36 sm:w-44 flex items-center justify-center animate-bounceSubtle">
-              <div className="absolute inset-4 rounded-full bg-amber-400/25 blur-2xl pointer-events-none" />
+            <div className="relative w-28 sm:w-32 flex items-center justify-center animate-bounceSubtle">
+              <div className="absolute inset-3 rounded-full bg-amber-400/20 blur-xl pointer-events-none" />
               <img
                 src={
                   targetGoal === 'yks'
                     ? '/assets/knowza_reading.png'
-                    : targetGoal === 'lgs'
-                    ? '/assets/knowza_avatar_3d.png'
                     : targetGoal === 'kpss'
                     ? '/assets/knowza_thinking.png'
                     : targetGoal === 'kodlama'
@@ -246,7 +244,7 @@ export const KnowzaOnboarding: React.FC<KnowzaOnboardingProps> = ({ onComplete, 
               </span>
             </div>
 
-            <div className="w-full max-w-sm space-y-2 max-h-64 overflow-y-auto scrollbar-none px-1">
+            <div className="w-full max-w-sm space-y-2 max-h-56 overflow-y-auto scrollbar-none px-1">
               {GOAL_OPTIONS.map((goal) => {
                 const isSelected = targetGoal === goal.id;
                 return (

@@ -16,8 +16,6 @@ import {
 } from 'lucide-react';
 import { sound } from '../utils/audio';
 import { listSavedAccounts, SavedAccountSummary } from '../utils/accountStorage';
-import { KnowzaAvatar } from './KnowzaAvatar';
-import { AvatarFrameId, KnowzaCostume } from '../types';
 
 interface KnowzaSplashProps {
   onStartGoogle: () => void;
@@ -79,13 +77,6 @@ function GraduationCapIcon(props: any) {
   return <BookOpen {...props} />;
 }
 
-const HERO_SHOWCASE: { costume: KnowzaCostume; frame: AvatarFrameId; quote: string }[] = [
-  { costume: 'king', frame: 'royal_crown', quote: 'Hedefin zirve! 👑' },
-  { costume: 'cyber', frame: 'cyber_neon', quote: 'AI Koçun hazır ⚡' },
-  { costume: 'astronaut', frame: 'eous_astronaut', quote: 'Sınırları aş! 🚀' },
-  { costume: 'classic', frame: 'wolverine_claws', quote: 'Rakiplerini geç! 🔥' },
-];
-
 export const KnowzaSplash: React.FC<KnowzaSplashProps> = ({ 
   onStartGoogle, 
   onOpenEmailAuth,
@@ -93,7 +84,6 @@ export const KnowzaSplash: React.FC<KnowzaSplashProps> = ({
   onSelectSavedAccount,
 }) => {
   const [activeFeature, setActiveFeature] = useState(0);
-  const [heroIdx, setHeroIdx] = useState(0);
   const [savedAccounts] = useState<SavedAccountSummary[]>(() => listSavedAccounts());
   const primaryAccount = savedAccounts[0] || null;
 
@@ -107,7 +97,6 @@ export const KnowzaSplash: React.FC<KnowzaSplashProps> = ({
 
   const feat = FEATURES[activeFeature];
   const IconComp = feat.icon;
-  const heroPreset = HERO_SHOWCASE[heroIdx];
 
   return (
     <div className="min-h-[100dvh] max-h-[100dvh] w-full box-border bg-gradient-to-b from-[#FFFDF5] via-[#FFF9ED] to-[#FFF3DC] flex flex-col justify-between items-center px-3.5 py-3.5 select-none overflow-y-auto overflow-x-hidden relative">
@@ -146,39 +135,23 @@ export const KnowzaSplash: React.FC<KnowzaSplashProps> = ({
         </p>
       </div>
 
-      {/* ================= 2. INTERACTIVE 3D MASCOT MEDALLION STAGE ================= */}
-      <div className="w-full max-w-[350px] mx-auto flex flex-col items-center justify-center relative z-10 my-auto py-2">
-        
-        {/* Interactive Custom Avatar Portal (Zero flat PNG box!) */}
-        <button
-          type="button"
-          onClick={() => {
-            sound.playClick();
-            setHeroIdx((prev) => (prev + 1) % HERO_SHOWCASE.length);
-          }}
-          className="relative flex flex-col items-center justify-center group cursor-pointer active:scale-95 transition-transform"
-          title="Dokun ve Maskot Kostümünü Değiştir!"
-        >
-          {/* Floating Interactive Speech Bubble */}
-          <div className="mb-2 px-3 py-1 rounded-full bg-white/95 border border-amber-300 shadow-sm text-[11px] font-black text-amber-950 animate-bounceSubtle flex items-center gap-1">
-            <span>{heroPreset.quote}</span>
-            <span className="text-[9px] text-amber-600 font-bold">(Dokun & Değiştir)</span>
-          </div>
+      {/* ================= 2. 3D FULL-BODY MASCOT STAGE ================= */}
+      <div className="w-full max-w-[350px] mx-auto flex flex-col items-center justify-center relative z-10 my-auto py-1">
+        <div className="relative w-full flex flex-col items-center justify-center">
+          {/* Soft Ambient Floor Glow (No harsh box or cheap oval border) */}
+          <div className="absolute bottom-3 w-44 h-7 bg-amber-500/20 rounded-full blur-md pointer-events-none" />
 
-          {/* Orbital Glow Rings */}
-          <div className="relative w-36 h-36 rounded-full flex items-center justify-center bg-gradient-to-br from-amber-200/40 via-yellow-100/60 to-amber-300/30 p-3 shadow-[0_14px_36px_rgba(245,158,11,0.28)] border border-amber-300/60">
-            <div className="absolute inset-1 rounded-full border-2 border-dashed border-amber-400/50 animate-spin-slow pointer-events-none" />
-            <KnowzaAvatar
-              size="2xl"
-              animate="bounce"
-              costume={heroPreset.costume}
-              frameId={heroPreset.frame}
-              showFrameGlow={true}
+          {/* Full-Body 3D Mascot - Seamlessly Blended */}
+          <div className="relative z-10 w-48 sm:w-52 max-h-[28vh] flex items-center justify-center animate-float">
+            <img
+              src="/assets/knowza_main.png"
+              alt="Knowza 3D Ayıcık Maskotu"
+              className="w-full h-auto max-h-[27vh] object-contain mx-auto mix-blend-multiply drop-shadow-[0_14px_24px_rgba(180,83,9,0.18)]"
             />
           </div>
 
           {/* Balanced Symmetrical Pills Directly Below */}
-          <div className="flex flex-wrap items-center justify-center gap-1.5 mt-3 z-20">
+          <div className="flex flex-wrap items-center justify-center gap-1.5 mt-2.5 z-20">
             <div className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-white/95 backdrop-blur-md border border-amber-200/80 shadow-xs text-[10px] font-black text-slate-800">
               <span className="w-3.5 h-3.5 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-[9px] font-black">✓</span>
               <span>2026 Maarif Müfredatı</span>
@@ -186,10 +159,10 @@ export const KnowzaSplash: React.FC<KnowzaSplashProps> = ({
 
             <div className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-white/95 backdrop-blur-md border border-indigo-200/80 shadow-xs text-[10px] font-black text-slate-800">
               <Sparkles className="w-3 h-3 text-indigo-500 fill-indigo-400" />
-              <span>Kişisel Ayıcık & AI Koç</span>
+              <span>Gemini AI Koç</span>
             </div>
           </div>
-        </button>
+        </div>
 
         {/* ================= 3. INTERACTIVE FEATURE CARD CAROUSEL ================= */}
         <div className="w-full mt-4 bg-white/95 backdrop-blur-md rounded-2xl border border-amber-200/80 p-3 shadow-md">

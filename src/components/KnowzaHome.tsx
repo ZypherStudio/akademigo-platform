@@ -283,16 +283,13 @@ export const KnowzaHome: React.FC<KnowzaHomeProps> = ({
             {/* Mascot Character with Clean Float & Shadow */}
             <div 
               onClick={() => onNavigateTab('aicoach')}
-              className="relative z-10 w-24 h-24 sm:w-28 sm:h-28 flex items-center justify-center rounded-full bg-white/80 backdrop-blur-md border-2 border-amber-200/80 shadow-[0_10px_24px_rgba(245,158,11,0.22)] hover:scale-105 active:scale-95 transition-transform duration-200 cursor-pointer flex-shrink-0"
-              title="Kişisel 3D Knowza Ayıcığın - Tıkla ve Koçuna Soru Sor!"
+              className="relative z-10 w-24 sm:w-28 filter drop-shadow-[0_8px_16px_rgba(245,158,11,0.25)] hover:scale-105 active:scale-95 transition-transform duration-200 cursor-pointer"
+              title="3D Knowza Ayıcığı - Tıkla ve Koçuna Soru Sor!"
             >
-              <KnowzaAvatar
-                size="xl"
-                animate="bounce"
-                costume={stats.selectedCostume}
-                customBear={stats.customBear}
-                frameId={stats.equippedAvatarFrame ?? 'none'}
-                showFrameGlow={true}
+              <img
+                src="/assets/knowza_reading.png"
+                alt="Knowza 3D Maskot"
+                className="w-full h-auto object-contain animate-float mix-blend-multiply"
               />
             </div>
 

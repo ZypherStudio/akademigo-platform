@@ -328,3 +328,69 @@
 .animate-knowza-talk {
   animation: knowzaTalkMouth 0.34s ease-in-out infinite;
 }
+
+/* =========================================================
+   KNOWZA GLOBAL DARK MODE (html.dark)
+   ========================================================= */
+html.dark body {
+  background-color: #0b0e17;
+  color: #f1f5f9;
+}
+
+html.dark .bg-\[\#FFFDF9\],
+html.dark .bg-\[\#FFFDF7\],
+html.dark .bg-\[\#FFFDF5\],
+html.dark .bg-\[\#FFFBF0\],
+html.dark .bg-\[\#FFF9E8\] {
+  background-color: #0d111c !important;
+  background-image: none !important;
+}
+
+html.dark .bg-white,
+html.dark .bg-white\/95,
+html.dark .bg-\[\#FFF9EB\] {
+  background-color: #151a28 !important;
+}
+
+html.dark .bg-slate-50,
+html.dark .bg-amber-50,
+html.dark .bg-amber-50\/60 {
+  background-color: #1b2234 !important;
+}
+
+html.dark .border-\[\#F2E8D5\],
+html.dark .border-\[\#FFE2A3\],
+html.dark .border-slate-100,
+html.dark .border-slate-200,
+html.dark .border-amber-200,
+html.dark .border-amber-200\/80 {
+  border-color: #27314a !important;
+}
+
+html.dark .text-\[\#2A1E00\],
+html.dark .text-slate-900,
+html.dark .text-slate-800,
+html.dark .text-slate-700 {
+  color: #f1f5f9 !important;
+}
+
+html.dark .text-slate-600,
+html.dark .text-slate-500,
+html.dark .text-\[\#8C7A5E\],
+html.dark .text-amber-900,
+html.dark .text-amber-800 {
+  color: #cbd5e1 !important;
+}
+
+html.dark input,
+html.dark textarea,
+html.dark select {
+  background-color: #1b2234 !important;
+  color: #f8fafc !important;
+  border-color: #2d3854 !important;
+}
+
+html.dark .knowza-mascot-blend {
+  mix-blend-mode: normal !important;
+  filter: drop-shadow(0 12px 28px rgba(251, 191, 36, 0.25));
+}

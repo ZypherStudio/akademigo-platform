@@ -11,6 +11,8 @@ import {
   Flame,
   CheckCircle2,
   Zap,
+  Sun,
+  Moon,
 } from 'lucide-react';
 
 interface KnowzaOnboardingProps {
@@ -180,16 +182,31 @@ export const KnowzaOnboarding: React.FC<KnowzaOnboardingProps> = ({ onComplete, 
             ))}
           </div>
 
-          {onSkip ? (
+          <div className="flex items-center gap-1.5">
             <button
-              onClick={onSkip}
-              className="text-xs font-bold text-slate-400 hover:text-slate-600 px-2 py-1"
+              type="button"
+              onClick={() => {
+                sound.playClick();
+                const isDark = document.documentElement.classList.contains('dark');
+                document.documentElement.classList.toggle('dark', !isDark);
+                try { localStorage.setItem('knowza_dark_mode', String(!isDark)); } catch {}
+                window.dispatchEvent(new CustomEvent('knowza-theme-change', { detail: { isDark: !isDark } }));
+              }}
+              className="w-8 h-8 rounded-full bg-amber-50 border border-amber-200 flex items-center justify-center text-slate-700 hover:scale-105 active:scale-95 transition"
+              title="Açık / Koyu Mod"
             >
-              Kapat
+              <Moon className="w-4 h-4 dark:hidden" />
+              <Sun className="w-4 h-4 hidden dark:block text-amber-400" />
             </button>
-          ) : (
-            <div className="w-8 h-8" />
-          )}
+            {onSkip && (
+              <button
+                onClick={onSkip}
+                className="text-xs font-bold text-slate-400 hover:text-slate-600 px-2 py-1"
+              >
+                Kapat
+              </button>
+            )}
+          </div>
         </div>
       </div>
 
@@ -197,12 +214,25 @@ export const KnowzaOnboarding: React.FC<KnowzaOnboardingProps> = ({ onComplete, 
       <div className="flex-1 w-full max-w-md flex flex-col justify-center items-center py-2 relative z-10 overflow-y-auto scrollbar-none">
         {/* ================= STEP 1: HEDEF SINAV / ALAN ================= */}
         {step === 1 && (
-          <div className="w-full flex flex-col items-center text-center animate-fade space-y-3">
-            <div className="w-24 sm:w-28 filter drop-shadow-lg animate-bounceSubtle">
+          <div className="w-full flex flex-col items-center text-center animate-fade space-y-2.5">
+            <div className="relative w-36 sm:w-44 flex items-center justify-center animate-bounceSubtle">
+              <div className="absolute inset-4 rounded-full bg-amber-400/25 blur-2xl pointer-events-none" />
               <img
-                src="/assets/knowza_main.png"
+                src={
+                  targetGoal === 'yks'
+                    ? '/assets/knowza_reading.png'
+                    : targetGoal === 'lgs'
+                    ? '/assets/knowza_avatar_3d.png'
+                    : targetGoal === 'kpss'
+                    ? '/assets/knowza_thinking.png'
+                    : targetGoal === 'kodlama'
+                    ? '/assets/knowza_cheering.png'
+                    : targetGoal.startsWith('dil')
+                    ? '/assets/knowza_dogru.png'
+                    : '/assets/knowza_main.png'
+                }
                 alt="Knowza Ayıcık"
-                className="w-full h-auto object-contain"
+                className="w-full h-auto object-contain relative z-10 knowza-mascot-blend mix-blend-multiply drop-shadow-xl transition-all duration-300"
               />
             </div>
 

@@ -26,9 +26,12 @@ import {
   VolumeX,
   ShoppingBag,
   Compass,
-  ArrowRight
+  ArrowRight,
+  Sun,
+  Moon
 } from 'lucide-react';
 import { sound } from '../utils/audio';
+import { useDarkMode } from '../utils/theme';
 import { KnowzaTab } from './KnowzaBottomNav';
 import { KnowzaAvatar } from './KnowzaAvatar';
 
@@ -50,6 +53,7 @@ export const KnowzaHome: React.FC<KnowzaHomeProps> = ({
   const { stats, selectedCourseId, setSelectedCourseId, startLesson } = useGame();
   const [showAllCategoriesModal, setShowAllCategoriesModal] = useState(false);
   const [isMusicPlaying, setIsMusicPlaying] = useState(() => sound.getBgmEnabled());
+  const [isDark, toggleDarkMode] = useDarkMode();
 
   // Dynamic user level calculation (Starts at Level 1 with 0 XP)
   const userLevel = Math.max(1, Math.floor((stats.xp || 0) / 100) + 1);
@@ -172,8 +176,18 @@ export const KnowzaHome: React.FC<KnowzaHomeProps> = ({
           </div>
         </div>
 
-        {/* Right Action Icons: Gems, Streak, Music & Settings */}
+        {/* Right Action Icons: Gems, Streak, Dark Mode, Music & Settings */}
         <div className="flex items-center gap-1.5 sm:gap-2">
+          <button
+            onClick={() => {
+              sound.playClick();
+              toggleDarkMode();
+            }}
+            className="w-8 h-8 rounded-2xl bg-amber-50 border border-amber-200 flex items-center justify-center text-amber-700 hover:scale-105 active:scale-95 transition"
+            title={isDark ? 'Açık Moda Geç' : 'Koyu Moda Geç'}
+          >
+            {isDark ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-slate-700" />}
+          </button>
           {/* Gems & Direct Shop Pill */}
           <button
             onClick={() => {

@@ -15,11 +15,14 @@ import {
   Edit3,
   Download,
   Compass,
-  GraduationCap
+  GraduationCap,
+  Sun,
+  Moon
 } from 'lucide-react';
 import { soundSystem } from '../utils/audio';
 import { KnowzaAvatar } from './KnowzaAvatar';
 import { getDisplayIdentity } from '../utils/accountStorage';
+import { useDarkMode } from '../utils/theme';
 
 interface KnowzaProfileProps {
   onBack?: () => void;
@@ -33,6 +36,7 @@ export const KnowzaProfile: React.FC<KnowzaProfileProps> = ({
   onOpenOnboarding
 }) => {
   const { stats, updateUsername, logoutUser } = useGame();
+  const [isDark, toggleDarkMode] = useDarkMode();
   const displayIdentity = getDisplayIdentity(stats);
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
   const [bgmOn, setBgmOn] = useState(() => soundSystem.getBgmEnabled());
@@ -64,12 +68,24 @@ export const KnowzaProfile: React.FC<KnowzaProfileProps> = ({
           <ArrowLeft className="w-5 h-5" />
         </button>
         <span className="text-base font-bold text-slate-900">Profil</span>
-        <button
-          onClick={() => setActiveModal('settings')}
-          className="w-10 h-10 rounded-full flex items-center justify-center text-slate-700 hover:bg-amber-100/60 active:scale-95 transition"
-        >
-          <Settings className="w-5 h-5" />
-        </button>
+        <div className="flex items-center gap-1">
+          <button
+            onClick={() => {
+              soundSystem.playClick();
+              toggleDarkMode();
+            }}
+            className="w-10 h-10 rounded-full flex items-center justify-center text-slate-700 hover:bg-amber-100/60 active:scale-95 transition"
+            title={isDark ? 'Açık Mod' : 'Koyu Mod'}
+          >
+            {isDark ? <Sun className="w-5 h-5 text-amber-400" /> : <Moon className="w-5 h-5" />}
+          </button>
+          <button
+            onClick={() => setActiveModal('settings')}
+            className="w-10 h-10 rounded-full flex items-center justify-center text-slate-700 hover:bg-amber-100/60 active:scale-95 transition"
+          >
+            <Settings className="w-5 h-5" />
+          </button>
+        </div>
       </div>
 
       <div className="max-w-md mx-auto px-5 pt-4 space-y-6">

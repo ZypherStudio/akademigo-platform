@@ -1,6 +1,7 @@
 import React from 'react';
 import { KnowzaCostume, AvatarFrameId, CustomBearConfig } from '../types';
 import { getFrame } from '../data/framesData';
+import { KnowzaBearModel } from './KnowzaBearModel';
 
 export interface KnowzaAvatarProps {
   size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
@@ -1052,19 +1053,10 @@ export const KnowzaAvatar: React.FC<KnowzaAvatarProps> = ({
       ? { filter: `drop-shadow(0 0 6px ${frame.glowColor})` }
       : undefined;
 
-  const COSTUME_AVATAR_IMAGES: Record<string, string> = {
-    king: '/assets/avatars/bear_king.jpg',
-    cyber: '/assets/avatars/bear_cyber.jpg',
-  };
-
   const bearConfig = getBearConfigFromCostume(costume, customBear);
-  const dedicatedCostumeSrc = !customBear ? COSTUME_AVATAR_IMAGES[costume] : undefined;
-  const avatarSrc = dedicatedCostumeSrc || '/assets/knowza_avatar_circle.png';
-  const furFilter = dedicatedCostumeSrc ? 'none' : getFurFilter(bearConfig.furColor);
-
   const showAmbientFx = px >= 44;
-  const isCyber = costume === 'cyber' && !customBear;
-  const isKing = costume === 'king' && !customBear;
+  const isCyber = bearConfig.eyewear === 'neon_visor' || bearConfig.outfit === 'cyber_suit';
+  const isKing = bearConfig.headwear === 'royal_crown' || bearConfig.outfit === 'royal_cape';
 
   return (
     <div
@@ -1072,42 +1064,26 @@ export const KnowzaAvatar: React.FC<KnowzaAvatarProps> = ({
       title={hasFrame ? `${frame.badge} ${frame.name}` : `Knowza Maskot`}
       style={glowStyle}
     >
-      {/* 1. Living 3D Knowza Mascot Core (breathing + spherical depth + specular sweep) */}
+      {/* 1. Living 3D-Shaded Interactive Knowza Bear Model (No Flat Pasted Photo!) */}
       <div
         className={`w-full h-full rounded-full overflow-hidden flex items-center justify-center relative ${
           isCyber
-            ? 'bg-gradient-to-br from-slate-900 via-cyan-950 to-slate-900'
+            ? 'bg-gradient-to-br from-slate-900 via-cyan-950/90 to-slate-950'
             : isKing
-            ? 'bg-gradient-to-br from-amber-300 via-yellow-500 to-amber-700'
-            : 'bg-gradient-to-br from-amber-100 to-amber-300'
+            ? 'bg-gradient-to-br from-amber-900/80 via-amber-700/60 to-slate-900/90'
+            : 'bg-gradient-to-br from-amber-500/20 via-amber-200/25 to-slate-900/40'
         }`}
         style={{
           boxShadow:
-            'inset 0 2px 6px rgba(255,255,255,0.42), inset 0 -4px 10px rgba(0,0,0,0.28)',
+            'inset 0 2px 6px rgba(255,255,255,0.28), inset 0 -4px 10px rgba(0,0,0,0.3)',
         }}
       >
-        <img
-          src={avatarSrc}
-          alt="Knowza 3D Maskot"
-          className="w-full h-full object-cover rounded-full select-none pointer-events-none animate-knowza-breathe will-change-transform"
-          style={{ filter: furFilter }}
-        />
-
-        {/* 3D Specular Glass Sweep */}
-        {showAmbientFx && (
-          <div
-            className="absolute inset-0 pointer-events-none animate-knowza-sweep"
-            style={{
-              background:
-                'linear-gradient(105deg, transparent 35%, rgba(255,255,255,0.34) 50%, transparent 65%)',
-            }}
-          />
-        )}
+        <KnowzaBearModel config={bearConfig} size={px} className="relative z-[2]" />
 
         {/* Costume-specific live atmospheric FX */}
         {showAmbientFx && isCyber && (
           <div
-            className="absolute inset-x-0 h-[2px] pointer-events-none animate-knowza-hud-scan"
+            className="absolute inset-x-0 h-[2px] pointer-events-none z-[4] animate-knowza-hud-scan"
             style={{
               background:
                 'linear-gradient(90deg, transparent, rgba(34,211,238,0.85), transparent)',
@@ -1119,38 +1095,22 @@ export const KnowzaAvatar: React.FC<KnowzaAvatarProps> = ({
         {showAmbientFx && (isKing || !isCyber) && (
           <>
             <span
-              className={`absolute bottom-2 left-2.5 w-1.5 h-1.5 rounded-full pointer-events-none animate-knowza-particle ${
+              className={`absolute bottom-2 left-2.5 w-1.5 h-1.5 rounded-full pointer-events-none z-[4] animate-knowza-particle ${
                 isKing ? 'bg-yellow-200' : 'bg-amber-100'
               }`}
               style={{ boxShadow: '0 0 6px rgba(253,224,71,0.95)' }}
             />
             <span
-              className={`absolute bottom-3 right-2.5 w-1 h-1 rounded-full pointer-events-none animate-knowza-particle-delayed ${
+              className={`absolute bottom-3 right-2.5 w-1 h-1 rounded-full pointer-events-none z-[4] animate-knowza-particle-delayed ${
                 isKing ? 'bg-amber-300' : 'bg-white'
               }`}
               style={{ boxShadow: '0 0 5px rgba(255,255,255,0.9)' }}
             />
           </>
         )}
-
-        {/* Spherical 3D rim vignette */}
-        <div
-          className="absolute inset-0 rounded-full pointer-events-none"
-          style={{
-            boxShadow:
-              'inset 0 1px 3px rgba(255,255,255,0.45), inset 0 -3px 8px rgba(15,23,42,0.32)',
-          }}
-        />
       </div>
 
-      {/* 2. 3D Styled Modular Accessories (only for custom Bear Studio configurations) */}
-      {!dedicatedCostumeSrc && (
-        <div className="absolute inset-0 pointer-events-none z-10 overflow-visible">
-          <BearAccessoriesLayer config={bearConfig} size={px} />
-        </div>
-      )}
-
-      {/* 3. Discord Nitro-Style Animated Avatar Decoration Overlay (Zero Emojis!) */}
+      {/* 2. Discord Nitro-Style Animated Avatar Decoration Overlay (Zero Emojis!) */}
       {hasFrame && <AvatarFrameOverlay frameId={frameId} size={px} />}
     </div>
   );

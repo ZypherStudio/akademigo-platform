@@ -60,7 +60,7 @@ export const AiCoach: React.FC = () => {
     {
       id: 'msg-init',
       sender: 'knowza',
-      text: `Merhaba! Ben **${TRACK_AI_PROFILES[initialTrack].expertTitle}** modundaki 3D Knowza Maskot AI koçun 🐻🎓\n\nTakıldığın ödev sorusunun fotoğrafını 📷 yükleyebilir, sesli sorabilir veya konu hakkında yazabilirsin!`,
+      text: `Merhaba! Ben ${TRACK_AI_PROFILES[initialTrack].expertTitle} modundaki Knowza Ayıcık Koçun 🐻🎓\n\nTakıldığın ödev sorusunun fotoğrafını 📷 yükleyebilir, sesli sorabilir veya konu hakkında yazabilirsin!`,
       timestamp: 'Şimdi',
       cardTip: `💡 Aktif Mod: ${TRACK_AI_PROFILES[initialTrack].badge}`,
     },
@@ -943,7 +943,7 @@ export const AiCoach: React.FC = () => {
             <div className="flex items-center gap-2">
               <Brain className="w-4 h-4 text-amber-600" />
               <h3 className="text-xs font-black text-slate-900">
-                Maskot AI Koçunu Kendi Tarzına Göre Eğit
+                Knowza Koçunu Kendi Tarzına Göre Ayarla
               </h3>
             </div>
 

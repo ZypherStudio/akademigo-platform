@@ -28,7 +28,7 @@ export const KnowzaBottomNav: React.FC<KnowzaBottomNavProps> = ({ currentTab, on
   const tabs = [
     { id: 'home' as const, label: 'Ana Sayfa', icon: Home },
     { id: 'stats' as const, label: 'İstatistik', icon: BarChart2 },
-    { id: 'aicoach' as const, label: 'Maskot AI', icon: Sparkles, isCenterAi: true },
+    { id: 'aicoach' as const, label: 'Knowza Koç', icon: Sparkles, isCenterAi: true },
     { id: 'shop' as const, label: 'Mağaza', icon: ShoppingBag, hasBadge: true },
     { id: 'profile' as const, label: 'Profil', icon: User },
   ];
@@ -59,7 +59,7 @@ export const KnowzaBottomNav: React.FC<KnowzaBottomNavProps> = ({ currentTab, on
                 >
                   <img
                     src="/assets/knowza_avatar_3d.png"
-                    alt="Maskot AI"
+                    alt="Knowza Koç"
                     className="w-9 h-9 object-contain drop-shadow-sm"
                   />
                 </div>

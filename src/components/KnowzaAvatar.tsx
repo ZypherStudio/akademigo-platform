@@ -1062,19 +1062,84 @@ export const KnowzaAvatar: React.FC<KnowzaAvatarProps> = ({
   const avatarSrc = dedicatedCostumeSrc || '/assets/knowza_avatar_circle.png';
   const furFilter = dedicatedCostumeSrc ? 'none' : getFurFilter(bearConfig.furColor);
 
+  const showAmbientFx = px >= 44;
+  const isCyber = costume === 'cyber' && !customBear;
+  const isKing = costume === 'king' && !customBear;
+
   return (
     <div
-      className={`relative inline-flex items-center justify-center flex-shrink-0 select-none rounded-full ${cls} ${animationClass} ${className}`}
+      className={`group relative inline-flex items-center justify-center flex-shrink-0 select-none rounded-full transition-transform duration-300 hover:scale-105 active:scale-95 ${cls} ${animationClass} ${className}`}
       title={hasFrame ? `${frame.badge} ${frame.name}` : `Knowza Maskot`}
       style={glowStyle}
     >
-      {/* 1. Authentic High-Resolution 3D Knowza Mascot Core */}
-      <div className="w-full h-full rounded-full overflow-hidden flex items-center justify-center bg-gradient-to-br from-amber-100 to-amber-200 relative shadow-inner">
+      {/* 1. Living 3D Knowza Mascot Core (breathing + spherical depth + specular sweep) */}
+      <div
+        className={`w-full h-full rounded-full overflow-hidden flex items-center justify-center relative ${
+          isCyber
+            ? 'bg-gradient-to-br from-slate-900 via-cyan-950 to-slate-900'
+            : isKing
+            ? 'bg-gradient-to-br from-amber-300 via-yellow-500 to-amber-700'
+            : 'bg-gradient-to-br from-amber-100 to-amber-300'
+        }`}
+        style={{
+          boxShadow:
+            'inset 0 2px 6px rgba(255,255,255,0.42), inset 0 -4px 10px rgba(0,0,0,0.28)',
+        }}
+      >
         <img
           src={avatarSrc}
           alt="Knowza 3D Maskot"
-          className="w-full h-full object-cover rounded-full select-none pointer-events-none transition-all duration-300"
+          className="w-full h-full object-cover rounded-full select-none pointer-events-none animate-knowza-breathe will-change-transform"
           style={{ filter: furFilter }}
+        />
+
+        {/* 3D Specular Glass Sweep */}
+        {showAmbientFx && (
+          <div
+            className="absolute inset-0 pointer-events-none animate-knowza-sweep"
+            style={{
+              background:
+                'linear-gradient(105deg, transparent 35%, rgba(255,255,255,0.34) 50%, transparent 65%)',
+            }}
+          />
+        )}
+
+        {/* Costume-specific live atmospheric FX */}
+        {showAmbientFx && isCyber && (
+          <div
+            className="absolute inset-x-0 h-[2px] pointer-events-none animate-knowza-hud-scan"
+            style={{
+              background:
+                'linear-gradient(90deg, transparent, rgba(34,211,238,0.85), transparent)',
+              boxShadow: '0 0 8px rgba(34,211,238,0.9)',
+            }}
+          />
+        )}
+
+        {showAmbientFx && (isKing || !isCyber) && (
+          <>
+            <span
+              className={`absolute bottom-2 left-2.5 w-1.5 h-1.5 rounded-full pointer-events-none animate-knowza-particle ${
+                isKing ? 'bg-yellow-200' : 'bg-amber-100'
+              }`}
+              style={{ boxShadow: '0 0 6px rgba(253,224,71,0.95)' }}
+            />
+            <span
+              className={`absolute bottom-3 right-2.5 w-1 h-1 rounded-full pointer-events-none animate-knowza-particle-delayed ${
+                isKing ? 'bg-amber-300' : 'bg-white'
+              }`}
+              style={{ boxShadow: '0 0 5px rgba(255,255,255,0.9)' }}
+            />
+          </>
+        )}
+
+        {/* Spherical 3D rim vignette */}
+        <div
+          className="absolute inset-0 rounded-full pointer-events-none"
+          style={{
+            boxShadow:
+              'inset 0 1px 3px rgba(255,255,255,0.45), inset 0 -3px 8px rgba(15,23,42,0.32)',
+          }}
         />
       </div>
 

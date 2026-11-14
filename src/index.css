@@ -202,6 +202,57 @@
   }
 }
 
+@keyframes knowzaBreathe3d {
+  0%, 100% {
+    transform: translateY(0px) scale(1.03) rotate(-0.8deg);
+  }
+  50% {
+    transform: translateY(-2.5px) scale(1.07) rotate(0.9deg);
+  }
+}
+
+@keyframes knowzaHoloSweep {
+  0%, 72% {
+    transform: translateX(-140%) rotate(25deg);
+    opacity: 0;
+  }
+  82% {
+    opacity: 0.45;
+  }
+  100% {
+    transform: translateX(160%) rotate(25deg);
+    opacity: 0;
+  }
+}
+
+@keyframes knowzaHudScan {
+  0% {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  20%, 80% {
+    opacity: 0.65;
+  }
+  100% {
+    transform: translateY(220%);
+    opacity: 0;
+  }
+}
+
+@keyframes knowzaParticleRise {
+  0% {
+    transform: translateY(8px) scale(0.6);
+    opacity: 0;
+  }
+  35% {
+    opacity: 0.95;
+  }
+  100% {
+    transform: translateY(-14px) scale(1.1);
+    opacity: 0;
+  }
+}
+
 .animate-float-hearts {
   animation: floatHearts 2.2s infinite ease-out;
 }
@@ -243,4 +294,19 @@
 }
 .animate-orbit-satellite {
   animation: orbitSatellite 6s infinite linear;
+}
+.animate-knowza-breathe {
+  animation: knowzaBreathe3d 3.4s ease-in-out infinite;
+}
+.animate-knowza-sweep {
+  animation: knowzaHoloSweep 5.5s ease-in-out infinite;
+}
+.animate-knowza-hud-scan {
+  animation: knowzaHudScan 2.8s linear infinite;
+}
+.animate-knowza-particle {
+  animation: knowzaParticleRise 2.4s ease-out infinite;
+}
+.animate-knowza-particle-delayed {
+  animation: knowzaParticleRise 2.9s ease-out infinite 1.2s;
 }

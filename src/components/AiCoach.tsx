@@ -75,6 +75,10 @@ export const AiCoach: React.FC = () => {
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [isListening, setIsListening] = useState(false);
   const [voiceEnabled, setVoiceEnabled] = useState(true);
+  const [voicePack, setVoicePack] = useState<'energetic' | 'calm' | 'fast'>(() => {
+    const saved = localStorage.getItem('knowza_voice_pack');
+    return saved === 'calm' || saved === 'fast' ? saved : 'energetic';
+  });
   const [mascotMood, setMascotMood] = useState<'idle' | 'thinking' | 'speaking' | 'excited'>('idle');
 
   const chatBottomRef = useRef<HTMLDivElement>(null);
@@ -135,14 +139,38 @@ export const AiCoach: React.FC = () => {
     ]);
   };
 
-  // Read message aloud using Web Speech Synthesis API
+  const VOICE_PACKS = {
+    energetic: { label: 'Enerjik Ayıcık', pitch: 1.16, rate: 1.04 },
+    calm: { label: 'Sakin Öğretmen', pitch: 0.96, rate: 0.94 },
+    fast: { label: 'Hızlı Özet', pitch: 1.04, rate: 1.24 },
+  } as const;
+
+  const cycleVoicePack = () => {
+    sound.playClick();
+    const order: Array<'energetic' | 'calm' | 'fast'> = ['energetic', 'calm', 'fast'];
+    const next = order[(order.indexOf(voicePack) + 1) % order.length];
+    setVoicePack(next);
+    localStorage.setItem('knowza_voice_pack', next);
+  };
+
+  // Read message aloud using Web Speech Synthesis API with Voice Package
   const speakText = (text: string) => {
     if ('speechSynthesis' in window && voiceEnabled) {
       window.speechSynthesis.cancel();
       const cleanText = text.replace(/[*_#`📸🎯📘🏛️🌍💻✨💡❓•]/g, '');
       const utterance = new SpeechSynthesisUtterance(cleanText);
-      utterance.lang = activeTrack === 'dil' ? 'en-US' : 'tr-TR';
-      utterance.rate = 1.04;
+      const targetLang = activeTrack === 'dil' ? 'en' : 'tr';
+      utterance.lang = targetLang === 'en' ? 'en-US' : 'tr-TR';
+
+      const voices = window.speechSynthesis.getVoices();
+      const matchedVoice =
+        voices.find((v) => v.lang.toLowerCase().startsWith(targetLang) && /natural|google|yelda|cem|samantha/i.test(v.name)) ||
+        voices.find((v) => v.lang.toLowerCase().startsWith(targetLang));
+      if (matchedVoice) utterance.voice = matchedVoice;
+
+      const pack = VOICE_PACKS[voicePack];
+      utterance.pitch = pack.pitch;
+      utterance.rate = pack.rate;
 
       utterance.onstart = () => {
         setIsSpeaking(true);
@@ -388,6 +416,7 @@ export const AiCoach: React.FC = () => {
                     ? 'wiggle'
                     : 'bounce'
                 }
+                speaking={isSpeaking || mascotMood === 'speaking'}
                 costume={stats.selectedCostume}
                 frameId={stats.equippedAvatarFrame ?? 'none'}
                 customBear={stats.customBear}
@@ -400,11 +429,11 @@ export const AiCoach: React.FC = () => {
                 <span>{profile.badge}</span>
               </div>
               <h2 className="text-sm font-black leading-tight truncate">
-                Knowza Maskot AI Stüdyo
+                Knowza Ayıcık Koçun
               </h2>
               <p className="text-[10px] font-bold text-white/90 truncate">
                 {mascotMood === 'thinking'
-                  ? '🤔 Düşünüyor & analiz ediyor...'
+                  ? '🤔 Sorunu inceliyor...'
                   : mascotMood === 'speaking'
                   ? '🔊 Sesli anlatıyor...'
                   : profile.expertTitle}
@@ -412,17 +441,26 @@ export const AiCoach: React.FC = () => {
             </div>
           </div>
 
-          <button
-            onClick={() => {
-              sound.playClick();
-              if (isSpeaking) stopSpeaking();
-              setVoiceEnabled((v) => !v);
-            }}
-            className="w-9 h-9 rounded-xl bg-white/20 hover:bg-white/30 border border-white/25 flex items-center justify-center flex-shrink-0 transition active:scale-95"
-            title={voiceEnabled ? 'Sesi Kapat' : 'Sesi Aç'}
-          >
-            {voiceEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4 opacity-70" />}
-          </button>
+          <div className="flex items-center gap-1.5 flex-shrink-0">
+            <button
+              onClick={cycleVoicePack}
+              className="px-2 py-1.5 rounded-xl bg-black/20 hover:bg-black/30 border border-white/20 text-[9px] font-black whitespace-nowrap transition active:scale-95"
+              title="Ses Paketini Değiştir"
+            >
+              🎙️ {VOICE_PACKS[voicePack].label}
+            </button>
+            <button
+              onClick={() => {
+                sound.playClick();
+                if (isSpeaking) stopSpeaking();
+                setVoiceEnabled((v) => !v);
+              }}
+              className="w-9 h-9 rounded-xl bg-white/20 hover:bg-white/30 border border-white/25 flex items-center justify-center flex-shrink-0 transition active:scale-95"
+              title={voiceEnabled ? 'Sesi Kapat' : 'Sesi Aç'}
+            >
+              {voiceEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4 opacity-70" />}
+            </button>
+          </div>
         </div>
 
         {/* Exam Track Specialization Switcher (TYT, LGS, KPSS, EN, KOD) */}
@@ -451,10 +489,10 @@ export const AiCoach: React.FC = () => {
       <div className="grid grid-cols-4 gap-1 bg-white p-1 rounded-2xl border border-[#F2E8D5] shadow-xs">
         {(
           [
-            { id: 'chat', label: 'Ödev & AI', icon: Camera },
+            { id: 'chat', label: 'Soru & Foto', icon: Camera },
             { id: 'notes_quiz', label: 'Not → Quiz', icon: Layers },
             { id: 'study_plan', label: 'Planım', icon: CalendarCheck },
-            { id: 'train_ai', label: 'AI Eğit', icon: Sliders },
+            { id: 'train_ai', label: 'Koç Ayarı', icon: Sliders },
           ] as const
         ).map((tab) => {
           const Icon = tab.icon;
@@ -535,15 +573,16 @@ export const AiCoach: React.FC = () => {
                       }`}
                     >
                       {msg.text}
-                      {isAi && msg.cardTip && (
+                      {isAi && (
                         <div className="mt-2 pt-1.5 border-t border-amber-200/60 flex items-center justify-between gap-2 text-[10px] font-black text-amber-800">
-                          <span>{msg.cardTip}</span>
+                          <span>{msg.cardTip || '🐻 Knowza Koç'}</span>
                           <button
-                            onClick={() => speakText(msg.text)}
-                            className="p-1 rounded-lg bg-amber-100 hover:bg-amber-200 text-amber-900"
-                            title="Sesli Dinle"
+                            onClick={() => (isSpeaking ? stopSpeaking() : speakText(msg.text))}
+                            className="px-2 py-0.5 rounded-lg bg-amber-100 hover:bg-amber-200 text-amber-900 inline-flex items-center gap-1"
+                            title={isSpeaking ? 'Durdur' : 'Sesli Dinle'}
                           >
                             <Volume2 className="w-3 h-3" />
+                            <span>{isSpeaking ? 'Durdur' : 'Dinle'}</span>
                           </button>
                         </div>
                       )}

@@ -12,6 +12,7 @@ export interface KnowzaAvatarProps {
   showFrameGlow?: boolean;
   customBear?: CustomBearConfig;
   fallbackImage?: boolean;
+  speaking?: boolean;
 }
 
 /** Helper to derive default modular bear configuration from a costume */
@@ -1056,6 +1057,7 @@ export const KnowzaAvatar: React.FC<KnowzaAvatarProps> = ({
   frameId = 'none',
   showFrameGlow = true,
   customBear,
+  speaking = false,
 }) => {
   const sizeMap: Record<string, { cls: string; px: number }> = {
     xs:    { cls: 'w-7 h-7',    px: 28  },
@@ -1116,7 +1118,15 @@ export const KnowzaAvatar: React.FC<KnowzaAvatarProps> = ({
             'inset 0 2px 8px rgba(255,255,255,0.28), inset 0 -5px 12px rgba(0,0,0,0.42)',
         }}
       >
-        <KnowzaBearModel config={bearConfig} size={px} className="relative z-[2] scale-[1.06] translate-y-[2%]" />
+        <KnowzaBearModel
+          config={bearConfig}
+          size={px}
+          speaking={speaking}
+          className="relative z-[2] scale-[1.06] translate-y-[2%]"
+        />
+        {speaking && (
+          <div className="absolute inset-0 rounded-full border-2 border-amber-300/75 animate-ping pointer-events-none z-[5]" />
+        )}
 
         {/* Costume-specific live atmospheric FX */}
         {showAmbientFx && isCyber && (

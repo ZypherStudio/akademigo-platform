@@ -253,6 +253,21 @@
   }
 }
 
+@keyframes knowzaTalkMouth {
+  0%, 100% {
+    transform: scaleY(0.35) scaleX(0.92);
+  }
+  25% {
+    transform: scaleY(1.25) scaleX(1.06);
+  }
+  50% {
+    transform: scaleY(0.55) scaleX(0.96);
+  }
+  75% {
+    transform: scaleY(1.35) scaleX(1.08);
+  }
+}
+
 .animate-float-hearts {
   animation: floatHearts 2.2s infinite ease-out;
 }
@@ -309,4 +324,7 @@
 }
 .animate-knowza-particle-delayed {
   animation: knowzaParticleRise 2.9s ease-out infinite 1.2s;
+}
+.animate-knowza-talk {
+  animation: knowzaTalkMouth 0.34s ease-in-out infinite;
 }

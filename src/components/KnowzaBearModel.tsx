@@ -5,6 +5,7 @@ interface KnowzaBearModelProps {
   config: CustomBearConfig;
   size?: number;
   className?: string;
+  speaking?: boolean;
 }
 
 interface FurPalette {
@@ -103,6 +104,7 @@ export const KnowzaBearModel: React.FC<KnowzaBearModelProps> = ({
   config,
   size = 64,
   className = '',
+  speaking = false,
 }) => {
   const uid = useId().replace(/:/g, '');
   const pal = FUR_PALETTES[config.furColor] || FUR_PALETTES.bal_sarisi;
@@ -320,9 +322,18 @@ export const KnowzaBearModel: React.FC<KnowzaBearModelProps> = ({
         <ellipse cx="60" cy="56.8" rx="4.4" ry="3.1" fill="#1c1917" />
         <ellipse cx="58.7" cy="55.7" rx="1.4" ry="0.8" fill="#ffffff" opacity="0.65" />
 
-        {/* Happy Smile + Cute Tongue */}
-        <path d="M54 62 Q57 65.5 60 62.5 Q63 65.5 66 62" fill="none" stroke="#292524" strokeWidth="1.9" strokeLinecap="round" />
-        <path d="M57.5 64.5 Q60 69 62.5 64.5 Z" fill="#fb7185" />
+        {/* Happy Smile / Animated Speaking Mouth */}
+        {speaking ? (
+          <g className="animate-knowza-talk" style={{ transformOrigin: '60px 64px' }}>
+            <ellipse cx="60" cy="64.5" rx="4.6" ry="3.8" fill="#450a0a" stroke="#292524" strokeWidth="1.4" />
+            <ellipse cx="60" cy="66" rx="2.8" ry="1.8" fill="#fb7185" />
+          </g>
+        ) : (
+          <>
+            <path d="M54 62 Q57 65.5 60 62.5 Q63 65.5 66 62" fill="none" stroke="#292524" strokeWidth="1.9" strokeLinecap="round" />
+            <path d="M57.5 64.5 Q60 69 62.5 64.5 Z" fill="#fb7185" />
+          </>
+        )}
 
         {/* === 3. EYEWEAR LAYER === */}
         {config.eyewear === 'neon_visor' && (

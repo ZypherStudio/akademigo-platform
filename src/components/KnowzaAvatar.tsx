@@ -1052,8 +1052,15 @@ export const KnowzaAvatar: React.FC<KnowzaAvatarProps> = ({
       ? { filter: `drop-shadow(0 0 6px ${frame.glowColor})` }
       : undefined;
 
+  const COSTUME_AVATAR_IMAGES: Record<string, string> = {
+    king: '/assets/avatars/bear_king.jpg',
+    cyber: '/assets/avatars/bear_cyber.jpg',
+  };
+
   const bearConfig = getBearConfigFromCostume(costume, customBear);
-  const furFilter = getFurFilter(bearConfig.furColor);
+  const dedicatedCostumeSrc = !customBear ? COSTUME_AVATAR_IMAGES[costume] : undefined;
+  const avatarSrc = dedicatedCostumeSrc || '/assets/knowza_avatar_circle.png';
+  const furFilter = dedicatedCostumeSrc ? 'none' : getFurFilter(bearConfig.furColor);
 
   return (
     <div
@@ -1064,17 +1071,19 @@ export const KnowzaAvatar: React.FC<KnowzaAvatarProps> = ({
       {/* 1. Authentic High-Resolution 3D Knowza Mascot Core */}
       <div className="w-full h-full rounded-full overflow-hidden flex items-center justify-center bg-gradient-to-br from-amber-100 to-amber-200 relative shadow-inner">
         <img
-          src="/assets/knowza_avatar_circle.png"
+          src={avatarSrc}
           alt="Knowza 3D Maskot"
           className="w-full h-full object-cover rounded-full select-none pointer-events-none transition-all duration-300"
           style={{ filter: furFilter }}
         />
       </div>
 
-      {/* 2. 3D Styled Modular Accessories (Hat, Glasses, Cape/Robe, Held Item) */}
-      <div className="absolute inset-0 pointer-events-none z-10 overflow-visible">
-        <BearAccessoriesLayer config={bearConfig} size={px} />
-      </div>
+      {/* 2. 3D Styled Modular Accessories (only for custom Bear Studio configurations) */}
+      {!dedicatedCostumeSrc && (
+        <div className="absolute inset-0 pointer-events-none z-10 overflow-visible">
+          <BearAccessoriesLayer config={bearConfig} size={px} />
+        </div>
+      )}
 
       {/* 3. Discord Nitro-Style Animated Avatar Decoration Overlay (Zero Emojis!) */}
       {hasFrame && <AvatarFrameOverlay frameId={frameId} size={px} />}

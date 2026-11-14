@@ -73,6 +73,30 @@ const FUR_PALETTES: Record<string, FurPalette> = {
     muzzleDark: '#cffafe',
     earInner: '#22d3ee',
   },
+  obsidian_raven: {
+    light: '#a78bfa',
+    mid: '#5b21b6',
+    dark: '#1e1b4b',
+    muzzleLight: '#ddd6fe',
+    muzzleDark: '#c4b5fd',
+    earInner: '#7c3aed',
+  },
+  moonlight_wolf: {
+    light: '#f8fafc',
+    mid: '#cbd5e1',
+    dark: '#64748b',
+    muzzleLight: '#ffffff',
+    muzzleDark: '#e2e8f0',
+    earInner: '#c4b5fd',
+  },
+  crimson_hero: {
+    light: '#fb7185',
+    mid: '#e11d48',
+    dark: '#881337',
+    muzzleLight: '#ffe4e6',
+    muzzleDark: '#fecdd3',
+    earInner: '#f43f5e',
+  },
 };
 
 export const KnowzaBearModel: React.FC<KnowzaBearModelProps> = ({
@@ -90,7 +114,7 @@ export const KnowzaBearModel: React.FC<KnowzaBearModelProps> = ({
 
   return (
     <svg
-      viewBox="0 0 120 120"
+      viewBox="14 10 92 94"
       width={size}
       height={size}
       className={`overflow-visible select-none pointer-events-none ${className}`}

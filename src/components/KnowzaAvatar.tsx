@@ -1055,8 +1055,20 @@ export const KnowzaAvatar: React.FC<KnowzaAvatarProps> = ({
 
   const bearConfig = getBearConfigFromCostume(costume, customBear);
   const showAmbientFx = px >= 44;
-  const isCyber = bearConfig.eyewear === 'neon_visor' || bearConfig.outfit === 'cyber_suit';
-  const isKing = bearConfig.headwear === 'royal_crown' || bearConfig.outfit === 'royal_cape';
+  const isCyber = bearConfig.eyewear === 'neon_visor' || bearConfig.outfit === 'cyber_suit' || frameId === 'eous_astronaut';
+  const isKing = bearConfig.headwear === 'royal_crown' || bearConfig.outfit === 'royal_cape' || frameId === 'royal_crown' || frameId === 'wolverine_claws';
+  const isDarkMoon = frameId === 'dark_moon_crows' || frameId === 'moon_reverie';
+  const isCrimson = frameId === 'deadpool_hearts' || frameId === 'blood_web';
+
+  const stageBgClass = isDarkMoon
+    ? 'bg-gradient-to-br from-indigo-950 via-purple-900/90 to-slate-950'
+    : isCrimson
+    ? 'bg-gradient-to-br from-rose-950 via-red-900/80 to-slate-950'
+    : isCyber
+    ? 'bg-gradient-to-br from-slate-900 via-cyan-950/90 to-slate-950'
+    : isKing
+    ? 'bg-gradient-to-br from-amber-900/85 via-amber-700/65 to-slate-950/95'
+    : 'bg-gradient-to-br from-amber-500/25 via-amber-200/20 to-slate-900/50';
 
   return (
     <div
@@ -1066,19 +1078,13 @@ export const KnowzaAvatar: React.FC<KnowzaAvatarProps> = ({
     >
       {/* 1. Living 3D-Shaded Interactive Knowza Bear Model (No Flat Pasted Photo!) */}
       <div
-        className={`w-full h-full rounded-full overflow-hidden flex items-center justify-center relative ${
-          isCyber
-            ? 'bg-gradient-to-br from-slate-900 via-cyan-950/90 to-slate-950'
-            : isKing
-            ? 'bg-gradient-to-br from-amber-900/80 via-amber-700/60 to-slate-900/90'
-            : 'bg-gradient-to-br from-amber-500/20 via-amber-200/25 to-slate-900/40'
-        }`}
+        className={`w-full h-full rounded-full overflow-hidden flex items-center justify-center relative ${stageBgClass}`}
         style={{
           boxShadow:
-            'inset 0 2px 6px rgba(255,255,255,0.28), inset 0 -4px 10px rgba(0,0,0,0.3)',
+            'inset 0 2px 8px rgba(255,255,255,0.28), inset 0 -5px 12px rgba(0,0,0,0.42)',
         }}
       >
-        <KnowzaBearModel config={bearConfig} size={px} className="relative z-[2]" />
+        <KnowzaBearModel config={bearConfig} size={px} className="relative z-[2] scale-[1.06] translate-y-[2%]" />
 
         {/* Costume-specific live atmospheric FX */}
         {showAmbientFx && isCyber && (

@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Crown, Heart, Sparkles, Volume2, X } from 'lucide-react';
+import { Capacitor } from '@capacitor/core';
 import { useGame } from '../context/GameContext';
 import { getGeoPricing, t } from '../i18n/locale';
+import { showNativeInterstitialAd, showNativeRewardedAd } from '../utils/admob';
 
 interface AdInterstitialModalProps {
   open: boolean;
@@ -24,12 +26,40 @@ export const AdInterstitialModal: React.FC<AdInterstitialModalProps> = ({
 
   useEffect(() => {
     if (!open) return;
+    if (mode === 'interstitial' && (stats.isPro || stats.isFounder || stats.hasAdFree)) {
+      onClose();
+      return;
+    }
+
+    let cancelled = false;
     setSecondsLeft(5);
+
+    if (Capacitor.isNativePlatform()) {
+      const runNative = async () => {
+        const shown =
+          mode === 'rewarded_heart'
+            ? await showNativeRewardedAd()
+            : await showNativeInterstitialAd();
+        if (cancelled) return;
+        if (shown) {
+          if (mode === 'rewarded_heart') {
+            grantRewardedHeart();
+            onRewardClaimed?.();
+          }
+          onClose();
+        }
+      };
+      runNative();
+    }
+
     const timer = window.setInterval(() => {
       setSecondsLeft((prev) => (prev > 0 ? prev - 1 : 0));
     }, 1000);
-    return () => window.clearInterval(timer);
-  }, [open]);
+    return () => {
+      cancelled = true;
+      window.clearInterval(timer);
+    };
+  }, [open, mode]);
 
   if (!open) return null;
 

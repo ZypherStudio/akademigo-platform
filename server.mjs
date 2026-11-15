@@ -344,8 +344,8 @@ async function handleApi(req, res, pathname, urlObj) {
         email,
         authProvider: 'google',
         stats: isFounder ? {
-          xp: 10000,
-          streak: 30,
+          xp: 0,
+          streak: 0,
           hearts: 999999,
           maxHearts: 999999,
           gems: 99999,
@@ -357,7 +357,7 @@ async function handleApi(req, res, pathname, urlObj) {
           theme: 'gold',
           avatar: 'haribo',
           title: '👑 Kurucu Mimar & VIP',
-          eloRating: 2500,
+          eloRating: 1000,
           equippedAvatarFrame: 'royal_crown',
           unlockedAvatarFrames: [
             'none', 'gold_flame', 'lightning_bolt', 'cyber_neon', 'nature_leaf',

@@ -38,38 +38,70 @@ export const KnowzaWidgetHub: React.FC<KnowzaWidgetHubProps> = ({
   onNavigateTab,
   onStartLesson,
 }) => {
-  const { stats, selectedCourseId, setSelectedCourseId, startLesson } = useGame();
+  const { stats, selectedCourseId, setSelectedCourseId, startLesson, leaderboard } = useGame();
   const [activeTab, setActiveTab] = useState<HubView>('gallery');
   const [sizeFilter, setSizeFilter] = useState<WidgetSize>('all');
   const [copiedId, setCopiedId] = useState<string | null>(null);
-  const [activeDayIndex, setActiveDayIndex] = useState<number>(3); // Default middle of the week
+  const jsDay = new Date().getDay(); // 0=Paz, 1=Pzt, ..., 6=Cmt
+  const todayIdx = (jsDay + 6) % 7; // 0=Pzt, ..., 6=Paz
+  const [activeDayIndex, setActiveDayIndex] = useState<number>(todayIdx);
   const [savedToast, setSavedToast] = useState<boolean>(false);
 
   const currentCourse = COURSES.find((c) => c.id === selectedCourseId) || COURSES[0];
 
-  // Dynamic user level calculation
+  // Dynamic real user metrics (zero dummy fallbacks)
   const userLevel = Math.max(1, Math.floor((stats.xp || 0) / 100) + 1);
-  const userStreak = Math.max(1, stats.streak || 1);
-  const userXp = stats.xp || 2450;
-  const courseTitle = currentCourse?.name || 'İngilizce';
-  const courseIcon = currentCourse?.icon || '🇬🇧';
+  const userStreak = stats.streak ?? 0;
+  const userXp = stats.xp ?? 0;
+  const courseTitle = currentCourse?.name || 'Knowza';
+  const courseIcon = currentCourse?.icon || '🎓';
 
-  const weekdays = [
-    { label: 'Pzt', active: true },
-    { label: 'Sal', active: true },
-    { label: 'Çar', active: true },
-    { label: 'Per', active: true },
-    { label: 'Cum', active: userStreak >= 5 },
-    { label: 'Cmt', active: userStreak >= 6 },
-    { label: 'Paz', active: userStreak >= 7 },
-  ];
+  const completedSet = new Set(stats.completedLessons || []);
+  const courseLessons = currentCourse?.units?.flatMap((u) => u.lessons) || [];
+  const totalInCourse = courseLessons.length;
+  const completedInCourse = courseLessons.filter((l) => completedSet.has(l.id)).length;
+  const nextLessonNumber = totalInCourse > 0 ? Math.min(totalInCourse, completedInCourse + 1) : 1;
+  const courseProgressPct = totalInCourse > 0 ? Math.round((completedInCourse / totalInCourse) * 100) : 0;
+
+  const todayStr = new Date().toISOString().split('T')[0];
+  const isTodayRecorded = stats.lastActiveDate === todayStr;
+  const dailyTarget = 3;
+  const completedToday = isTodayRecorded ? (stats.dailyQuestProgress?.completedLessonsToday ?? 0) : 0;
+  const dailyPct = Math.min(100, Math.round((completedToday / dailyTarget) * 100));
+
+  const foundRankIdx = leaderboard.findIndex((p) => p.isCurrentUser);
+  const userRank = foundRankIdx >= 0 ? foundRankIdx + 1 : 1;
+
+  const activeDayIndices = new Set<number>();
+  const streakDaysToShow = Math.min(7, Math.max(0, userStreak));
+  for (let offset = 0; offset < streakDaysToShow; offset++) {
+    activeDayIndices.add((todayIdx - offset + 7) % 7);
+  }
+  const dayLabels = ['Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt', 'Paz'];
+  const weekdays = dayLabels.map((label, idx) => ({
+    label,
+    active: activeDayIndices.has(idx),
+  }));
+
+  const trackedCourses = [
+    currentCourse,
+    ...COURSES.filter((c) => c.id !== currentCourse.id),
+  ]
+    .slice(0, 3)
+    .map((course, idx) => {
+      const lessons = course.units.flatMap((u) => u.lessons);
+      const total = lessons.length;
+      const done = lessons.filter((l) => completedSet.has(l.id)).length;
+      const pct = total > 0 ? Math.min(100, Math.round((done / total) * 100)) : 0;
+      return { id: course.id, icon: course.icon, name: course.name, total, done, pct, colorIdx: idx };
+    });
 
   const handleCopyWidget = (widgetId: string, widgetName: string) => {
     sound.playCorrect();
     setCopiedId(widgetId);
     if (navigator.clipboard) {
       navigator.clipboard.writeText(
-        `Knowza Widget: ${widgetName} | Seviye: ${userLevel} | Seri: ${userStreak} gün | XP: ${userXp}`
+        `Knowza Widget: ${widgetName} | Seviye: ${userLevel} | Seri: ${userStreak} gün | XP: ${userXp} | İlerleme: %${courseProgressPct}`
       );
     }
     setTimeout(() => {
@@ -357,7 +389,11 @@ export const KnowzaWidgetHub: React.FC<KnowzaWidgetHubProps> = ({
                             <span className="w-1.5 h-1.5 rounded-full bg-slate-300" />
                           )}
                         </div>
-                        <span className="text-[10px] font-black text-[#8C7A5E]">
+                        <span
+                          className={`text-[10px] font-black ${
+                            activeDayIndex === idx ? 'text-[#2A1E00] underline' : 'text-[#8C7A5E]'
+                          }`}
+                        >
                           {day.label}
                         </span>
                       </div>
@@ -398,7 +434,7 @@ export const KnowzaWidgetHub: React.FC<KnowzaWidgetHubProps> = ({
                             {courseTitle}
                           </h4>
                           <span className="text-[11px] font-bold text-amber-700">
-                            Seviye 1 • Ders 3
+                            Seviye {userLevel} • Ders {nextLessonNumber} ({completedInCourse}/{totalInCourse})
                           </span>
                         </div>
                       </div>
@@ -470,16 +506,17 @@ export const KnowzaWidgetHub: React.FC<KnowzaWidgetHubProps> = ({
                           cx="18"
                           cy="18"
                           r="15"
-                          className="text-[#FFB800] stroke-current"
+                          pathLength={100}
+                          className="text-[#FFB800] stroke-current transition-all duration-500"
                           strokeWidth="3.5"
                           strokeDasharray="100"
-                          strokeDashoffset="32"
+                          strokeDashoffset={100 - courseProgressPct}
                           strokeLinecap="round"
                           fill="none"
                         />
                       </svg>
                       <div className="absolute text-center">
-                        <span className="text-xs font-black text-[#2A1E00]">%68</span>
+                        <span className="text-xs font-black text-[#2A1E00]">%{courseProgressPct}</span>
                       </div>
                     </div>
 
@@ -492,13 +529,13 @@ export const KnowzaWidgetHub: React.FC<KnowzaWidgetHubProps> = ({
                       </div>
                       <div>
                         <span className="text-[9px] font-bold text-slate-400 block">Sıra</span>
-                        <span className="text-[10px] font-black text-[#8C7A5E]">#1247</span>
+                        <span className="text-[10px] font-black text-[#8C7A5E]">#{userRank}</span>
                       </div>
                     </div>
                   </div>
 
                   <div className="text-[10px] font-bold text-amber-800 bg-amber-100/70 rounded-xl px-2 py-1 text-center">
-                    Günün hedefine %68 ulaştın
+                    Kurs ilerlemesi: %{courseProgressPct} ({completedInCourse}/{totalInCourse})
                   </div>
                 </div>
 
@@ -580,47 +617,40 @@ export const KnowzaWidgetHub: React.FC<KnowzaWidgetHubProps> = ({
                       </span>
                     </div>
 
-                    {/* Subject 1 */}
-                    <div className="space-y-0.5">
-                      <div className="flex items-center justify-between text-[11px] font-bold">
-                        <span className="flex items-center gap-1 text-[#2A1E00]">
-                          <span>🇬🇧</span>
-                          <span>İngilizce</span>
-                        </span>
-                        <span className="text-slate-500">3 / 5</span>
-                      </div>
-                      <div className="w-full h-2 bg-amber-100 rounded-full overflow-hidden">
-                        <div className="h-full bg-[#FFB800] rounded-full w-[60%]" />
-                      </div>
-                    </div>
-
-                    {/* Subject 2 */}
-                    <div className="space-y-0.5">
-                      <div className="flex items-center justify-between text-[11px] font-bold">
-                        <span className="flex items-center gap-1 text-[#2A1E00]">
-                          <span>🔢</span>
-                          <span>Matematik</span>
-                        </span>
-                        <span className="text-slate-500">2 / 5</span>
-                      </div>
-                      <div className="w-full h-2 bg-sky-100 rounded-full overflow-hidden">
-                        <div className="h-full bg-sky-500 rounded-full w-[40%]" />
-                      </div>
-                    </div>
-
-                    {/* Subject 3 */}
-                    <div className="space-y-0.5">
-                      <div className="flex items-center justify-between text-[11px] font-bold">
-                        <span className="flex items-center gap-1 text-[#2A1E00]">
-                          <span>🧠</span>
-                          <span>Mantık</span>
-                        </span>
-                        <span className="text-slate-500">1 / 5</span>
-                      </div>
-                      <div className="w-full h-2 bg-purple-100 rounded-full overflow-hidden">
-                        <div className="h-full bg-purple-500 rounded-full w-[20%]" />
-                      </div>
-                    </div>
+                    {/* Tracked Courses (Real User Progress) */}
+                    {trackedCourses.map((tc) => {
+                      const trackBg =
+                        tc.colorIdx === 0
+                          ? 'bg-amber-100'
+                          : tc.colorIdx === 1
+                          ? 'bg-sky-100'
+                          : 'bg-purple-100';
+                      const fillBg =
+                        tc.colorIdx === 0
+                          ? 'bg-[#FFB800]'
+                          : tc.colorIdx === 1
+                          ? 'bg-sky-500'
+                          : 'bg-purple-500';
+                      return (
+                        <div key={tc.id} className="space-y-0.5">
+                          <div className="flex items-center justify-between text-[11px] font-bold">
+                            <span className="flex items-center gap-1 text-[#2A1E00] truncate">
+                              <span>{tc.icon}</span>
+                              <span className="truncate">{tc.name}</span>
+                            </span>
+                            <span className="text-slate-500 flex-shrink-0 ml-1">
+                              {tc.done} / {tc.total}
+                            </span>
+                          </div>
+                          <div className={`w-full h-2 ${trackBg} rounded-full overflow-hidden`}>
+                            <div
+                              className={`h-full ${fillBg} rounded-full transition-all duration-500`}
+                              style={{ width: `${tc.pct}%` }}
+                            />
+                          </div>
+                        </div>
+                      );
+                    })}
                   </div>
 
                   <div className="w-20 h-20 relative flex-shrink-0">
@@ -660,10 +690,15 @@ export const KnowzaWidgetHub: React.FC<KnowzaWidgetHubProps> = ({
                     <div className="bg-white/10 backdrop-blur-md rounded-2xl p-2.5 border border-white/15 space-y-1.5">
                       <div className="flex items-center gap-2">
                         <span className="text-base">🎯</span>
-                        <span className="text-xs font-black text-white">3 ders bitir</span>
+                        <span className="text-xs font-black text-white">
+                          {completedToday} / {dailyTarget} ders tamamlandı
+                        </span>
                       </div>
                       <div className="w-full h-2 bg-white/20 rounded-full overflow-hidden">
-                        <div className="h-full bg-gradient-to-r from-amber-400 to-yellow-300 rounded-full w-[66%]" />
+                        <div
+                          className="h-full bg-gradient-to-r from-amber-400 to-yellow-300 rounded-full transition-all duration-500"
+                          style={{ width: `${dailyPct}%` }}
+                        />
                       </div>
                     </div>
 

@@ -332,7 +332,7 @@ function mapFirebaseError(err: unknown): string {
     case 'auth/popup-blocked':
       return 'Tarayıcı açılır pencereyi (pop-up) engelledi. Lütfen izin verip tekrar dene.';
     case 'auth/unauthorized-domain':
-      return 'Bu alan adı Firebase Authentication → Authorized domains listesinde ekli değil.';
+      return 'E-posta adresinizi yazarak şifresiz hızlı giriş yapabilirsiniz.';
     case 'auth/email-already-in-use':
       return 'Bu e-posta adresiyle kayıtlı bir hesap zaten var.';
     case 'auth/invalid-credential':

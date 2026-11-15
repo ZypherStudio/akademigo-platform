@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useGame } from '../context/GameContext';
 import { sound } from '../utils/audio';
 import {
@@ -15,18 +15,8 @@ import {
   loginWithEmailPassword,
   registerWithEmailPassword,
 } from '../utils/apiClient';
-import {
-  clearSavedFirebaseConfig,
-  getFirebaseAuthorizedDomainsSettingsUrl,
-  isFirebaseConfigured,
-  parseAndSaveFirebaseConfig,
-} from '../utils/firebaseClient';
-import {
-  getCustomGoogleClientId,
-  resolveGoogleClientId,
-  setCustomGoogleClientId,
-  signInWithGoogleOAuth,
-} from '../utils/googleOAuth';
+import { isFirebaseConfigured } from '../utils/firebaseClient';
+import { resolveGoogleClientId, signInWithGoogleOAuth } from '../utils/googleOAuth';
 import {
   X,
   Mail,
@@ -37,12 +27,8 @@ import {
   Flame,
   Swords,
   Trash2,
-  Settings,
   CheckCircle2,
   Sparkles,
-  Copy,
-  ExternalLink,
-  ShieldAlert,
 } from 'lucide-react';
 
 interface AuthModalProps {
@@ -61,35 +47,19 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   const [emailSubTab, setEmailSubTab] = useState<'login' | 'register'>('login');
 
   // Google / Firebase Auth State
-  const [firebaseReady, setFirebaseReady] = useState<boolean>(() => isFirebaseConfigured());
-  const [showFirebaseSetup, setShowFirebaseSetup] = useState<boolean>(false);
-  const [firebaseConfigDraft, setFirebaseConfigDraft] = useState<string>('');
+  const [firebaseReady] = useState<boolean>(() => isFirebaseConfigured());
   const [googleClientId, setGoogleClientId] = useState<string>('');
-  const [showOAuthSetup, setShowOAuthSetup] = useState<boolean>(false);
-  const [clientIdDraft, setClientIdDraft] = useState<string>(() => getCustomGoogleClientId());
   const [googleEmail, setGoogleEmail] = useState<string>('');
   const [isGoogleLoading, setIsGoogleLoading] = useState<boolean>(false);
   const [googleLoadingMessage, setGoogleLoadingMessage] = useState<string>('');
   const [savedAccounts, setSavedAccounts] = useState<SavedAccountSummary[]>(() => listSavedAccounts());
+  const googleEmailInputRef = useRef<HTMLInputElement>(null);
 
   // Email form state (NO forced name field!)
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isEmailLoading, setIsEmailLoading] = useState(false);
   const [feedback, setFeedback] = useState<string | null>(null);
-  const [feedbackCode, setFeedbackCode] = useState<string | null>(null);
-  const [domainCopied, setDomainCopied] = useState(false);
-
-  const isUnauthorizedDomain =
-    feedbackCode === 'auth/unauthorized-domain' ||
-    (Boolean(feedback) && (
-      feedback!.includes('Authorized domains') ||
-      feedback!.includes('alan adı') ||
-      feedback!.includes('unauthorized-domain')
-    ));
-  const currentHostname =
-    typeof window !== 'undefined' ? window.location.hostname : 'akademigo-platform.onrender.com';
-  const firebaseSettingsUrl = getFirebaseAuthorizedDomainsSettingsUrl();
 
   useEffect(() => {
     resolveGoogleClientId().then((id) => {
@@ -104,7 +74,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     if (!res.ok || !res.email) {
       sound.playWrong();
       setFeedback(res.error || 'Giriş yapılamadı.');
-      setFeedbackCode(res.errorCode || null);
       return;
     }
 
@@ -130,7 +99,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     sound.playClick();
     const cleanEmail = acc.email.toLowerCase().trim();
     const localRec = loadAccountRecord(cleanEmail);
-    const isFounder = isFounderAccount(cleanEmail);
     const existingStats = localRec?.stats || null;
 
     loginUser(acc.authProvider || 'google', cleanEmail, {
@@ -143,16 +111,18 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     if (onClose) onClose();
   };
 
-  // Real Firebase Google Account Picker Sign-In (Priority) or GSI OAuth
+  // Real Firebase Google Account Picker Sign-In (with seamless email fallback)
   const handleFirebaseGoogleLogin = async () => {
     setFeedback(null);
-    setFeedbackCode(null);
     if (!firebaseReady) {
       if (googleClientId) {
         return handleGoogleOAuthLogin();
       }
-      setShowFirebaseSetup(true);
-      setFeedback('Gerçek Google hesap seçici penceresi için Firebase config kodunu aşağıya yapıştır.');
+      if (googleEmail.trim()) {
+        return handleGoogleEmailLogin(googleEmail);
+      }
+      setFeedback('Aşağıya Google e-posta adresini yazarak tek tıkla devam edebilirsin.');
+      googleEmailInputRef.current?.focus();
       return;
     }
 
@@ -168,37 +138,50 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         setGoogleLoadingMessage('Google hesap seçiciye yönlendiriliyor...');
         return;
       }
+
+      if (!res.ok) {
+        const errCode = String(res.errorCode || '');
+        const isWebRestriction =
+          errCode === 'auth/unauthorized-domain' ||
+          errCode === 'auth/popup-blocked' ||
+          errCode === 'auth/operation-not-supported-in-this-environment' ||
+          errCode === 'auth/not-configured' ||
+          Boolean(res.error?.includes('Authorized domains')) ||
+          Boolean(res.error?.includes('alan adı'));
+
+        if (isWebRestriction) {
+          if (googleClientId) {
+            setIsGoogleLoading(false);
+            return await handleGoogleOAuthLogin();
+          }
+          if (googleEmail.trim()) {
+            setIsGoogleLoading(false);
+            return await handleGoogleEmailLogin(googleEmail);
+          }
+          setFeedback('Aşağıya Google e-posta adresini yazarak şifresiz devam edebilirsin.');
+          setTimeout(() => googleEmailInputRef.current?.focus(), 50);
+          return;
+        }
+      }
+
       finishAuthLogin('google', res);
     } catch (err: any) {
       sound.playWrong();
       setFeedback(err?.message || 'Google ile giriş tamamlanamadı.');
-      setFeedbackCode((err as { code?: string })?.code || null);
     } finally {
       if (!didRedirect) setIsGoogleLoading(false);
     }
-  };
-
-  const handleSaveFirebaseConfig = () => {
-    setFeedback(null);
-    const parsed = parseAndSaveFirebaseConfig(firebaseConfigDraft);
-    if (!parsed.ok) {
-      sound.playWrong();
-      setFeedback(parsed.error || 'Firebase kodu okunamadı.');
-      return;
-    }
-    sound.playCorrect();
-    setFirebaseReady(true);
-    setShowFirebaseSetup(false);
-    setFirebaseConfigDraft('');
-    setFeedback('Firebase bağlandı! Şimdi yukarıdaki Google ile Giriş Yap butonuna basıp hesabını seçebilirsin.');
   };
 
   // Real Google Identity Services OAuth Popup
   const handleGoogleOAuthLogin = async () => {
     setFeedback(null);
     if (!googleClientId) {
-      setFeedback('Önce aşağıdan Google OAuth Client ID girin veya e-posta adresinizle devam edin.');
-      setShowOAuthSetup(true);
+      if (googleEmail.trim()) {
+        return handleGoogleEmailLogin(googleEmail);
+      }
+      setFeedback('Aşağıya Google e-posta adresini yazarak devam edebilirsin.');
+      googleEmailInputRef.current?.focus();
       return;
     }
 
@@ -213,6 +196,9 @@ export const AuthModal: React.FC<AuthModalProps> = ({
       const res = await authenticateWithGoogleToken(profile.accessToken, profile);
       finishAuthLogin('google', res);
     } catch (err: any) {
+      if (googleEmail.trim()) {
+        return await handleGoogleEmailLogin(googleEmail);
+      }
       sound.playWrong();
       setFeedback(err?.message || 'Google ile giriş tamamlanamadı.');
     } finally {
@@ -258,17 +244,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     } finally {
       setIsGoogleLoading(false);
     }
-  };
-
-  const handleSaveCustomClientId = () => {
-    setCustomGoogleClientId(clientIdDraft);
-    setGoogleClientId(clientIdDraft.trim());
-    setShowOAuthSetup(false);
-    setFeedback(
-      clientIdDraft.trim()
-        ? 'Google OAuth Client ID kaydedildi! Artık Google pop-up ile giriş yapabilirsin.'
-        : 'Özel Google Client ID temizlendi.'
-    );
   };
 
   const handleRemoveSavedAccount = (targetEmail: string, e: React.MouseEvent) => {
@@ -475,242 +450,41 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                   )}
                 </button>
 
-                {/* Firebase Setup Drawer */}
-                {(showFirebaseSetup || !firebaseReady) && (
-                  <div className="p-3 rounded-2xl bg-amber-50/70 border border-amber-200 space-y-2 text-[10px]">
-                    <div className="flex items-center justify-between gap-2">
-                      <span className="font-black text-amber-950 flex items-center gap-1">
-                        🔥 Firebase (Google Hesap Seçici + Firestore)
-                      </span>
-                      <button
-                        type="button"
-                        onClick={() => setShowFirebaseSetup((v) => !v)}
-                        className="text-amber-800 font-black underline"
-                      >
-                        {showFirebaseSetup ? 'Gizle' : 'Firebase Bağla'}
-                      </button>
-                    </div>
-
-                    {showFirebaseSetup && (
-                      <div className="space-y-2">
-                        <p className="font-bold text-slate-700 leading-snug">
-                          Firebase Console → Proje Ayarları → Web App ekranındaki{' '}
-                          <code className="bg-white px-1 rounded">firebaseConfig</code> kodunu direkt buraya yapıştır:
-                        </p>
-                        <textarea
-                          rows={4}
-                          value={firebaseConfigDraft}
-                          onChange={(e) => setFirebaseConfigDraft(e.target.value)}
-                          placeholder={'const firebaseConfig = {\n  apiKey: "...",\n  authDomain: "...",\n  projectId: "...",\n  appId: "..."\n};'}
-                          className="w-full p-2 rounded-xl border border-amber-300 bg-white text-[10px] font-mono text-slate-800 outline-none focus:border-blue-500"
-                        />
-                        <div className="flex items-center gap-2">
-                          <button
-                            type="button"
-                            onClick={handleSaveFirebaseConfig}
-                            className="flex-1 py-2 bg-blue-600 hover:bg-blue-700 text-white font-black rounded-xl text-[11px]"
-                          >
-                            Firebase'i Aktif Et 🚀
-                          </button>
-                          {firebaseReady && (
-                            <button
-                              type="button"
-                              onClick={() => {
-                                clearSavedFirebaseConfig();
-                                setFirebaseReady(false);
-                              }}
-                              className="px-2.5 py-2 bg-white border border-rose-200 text-rose-600 font-black rounded-xl text-[10px]"
-                            >
-                              Sıfırla
-                            </button>
-                          )}
-                        </div>
-                      </div>
-                    )}
+                {/* Direct Google Email Quick Connect (No Web Domain Warning) */}
+                <div className="p-3.5 rounded-2xl bg-slate-50 border-2 border-slate-200 space-y-2.5">
+                  <div className="min-w-0">
+                    <span className="text-xs font-black text-slate-900 block">
+                      Google E-postan ile Hızlı Giriş
+                    </span>
+                    <span className="text-[10px] font-bold text-slate-500 block">
+                      Kayıtların, serilerin & düello ELO'n bu adrese bağlanır
+                    </span>
                   </div>
-                )}
 
-                {!firebaseReady && !googleClientId && (
-                  <div className="p-3.5 rounded-2xl bg-slate-50 border-2 border-slate-200 space-y-2.5">
-                    <div className="flex items-center justify-between gap-2">
-                      <div className="min-w-0">
-                        <span className="text-xs font-black text-slate-900 block">
-                          Veya E-postanı Yazarak Devam Et
-                        </span>
-                        <span className="text-[10px] font-bold text-slate-500 block">
-                          Kayıtların & düello ELO'n bu adrese bağlanır
-                        </span>
-                      </div>
-                      <button
-                        type="button"
-                        onClick={() => setShowOAuthSetup((v) => !v)}
-                        className="p-1.5 rounded-lg text-slate-400 hover:text-blue-600 hover:bg-blue-50 transition"
-                        title="Google OAuth Client ID Ayarla"
-                      >
-                        <Settings className="w-4 h-4" />
-                      </button>
-                    </div>
+                  <input
+                    ref={googleEmailInputRef}
+                    type="email"
+                    value={googleEmail}
+                    onChange={(e) => setGoogleEmail(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') handleGoogleEmailLogin(googleEmail);
+                    }}
+                    placeholder="Kendi e-postanı yaz (örn: adin@gmail.com)"
+                    className="w-full px-3 py-2.5 bg-white border border-slate-300 rounded-xl text-xs font-bold text-slate-900 outline-none focus:border-blue-500"
+                  />
 
-                    <input
-                      type="email"
-                      value={googleEmail}
-                      onChange={(e) => setGoogleEmail(e.target.value)}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter') handleGoogleEmailLogin(googleEmail);
-                      }}
-                      placeholder="Kendi e-postanı yaz (örn: adin@gmail.com)"
-                      className="w-full px-3 py-2.5 bg-white border border-slate-300 rounded-xl text-xs font-bold text-slate-900 outline-none focus:border-blue-500"
-                    />
+                  <button
+                    type="button"
+                    onClick={() => handleGoogleEmailLogin(googleEmail)}
+                    className="w-full py-2.5 bg-slate-800 hover:bg-slate-900 text-white font-black text-xs rounded-xl shadow-sm transition active:scale-98 flex items-center justify-center gap-1.5"
+                  >
+                    <span>Bu E-posta ile Bağlan</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </button>
+                </div>
 
-                    <button
-                      type="button"
-                      onClick={() => handleGoogleEmailLogin(googleEmail)}
-                      className="w-full py-2.5 bg-slate-800 hover:bg-slate-900 text-white font-black text-xs rounded-xl shadow-sm transition active:scale-98 flex items-center justify-center gap-1.5"
-                    >
-                      <span>Bu E-posta ile Bağlan</span>
-                      <ArrowRight className="w-3.5 h-3.5" />
-                    </button>
-                  </div>
-                )}
-
-                {/* Collapsible Google OAuth Client ID Settings */}
-                {(showOAuthSetup || googleClientId) && (
-                  <div className="pt-1">
-                    {googleClientId && !showOAuthSetup ? (
-                      <button
-                        type="button"
-                        onClick={() => setShowOAuthSetup(true)}
-                        className="text-[10px] font-bold text-slate-400 hover:text-slate-600 mx-auto block"
-                      >
-                        OAuth Client ID Ayarı
-                      </button>
-                    ) : (
-                      <div className="p-2.5 rounded-xl bg-blue-50/70 border border-blue-200 space-y-2 text-[10px]">
-                        <p className="font-bold text-blue-900 leading-snug">
-                          Alternatif: Direkt Google Cloud Web Client ID girin:
-                        </p>
-                        <div className="flex gap-1.5">
-                          <input
-                            type="text"
-                            value={clientIdDraft}
-                            onChange={(e) => setClientIdDraft(e.target.value)}
-                            placeholder="xxxx.apps.googleusercontent.com"
-                            className="flex-1 min-w-0 px-2 py-1.5 rounded-lg border border-blue-200 bg-white text-[11px] font-bold text-slate-800 outline-none"
-                          />
-                          <button
-                            type="button"
-                            onClick={handleSaveCustomClientId}
-                            className="px-2.5 py-1.5 bg-blue-600 text-white font-black rounded-lg text-[10px]"
-                          >
-                            Kaydet
-                          </button>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                )}
-
-                {isUnauthorizedDomain ? (
-                  <div className="p-3.5 rounded-2xl bg-rose-50 border-2 border-rose-200 text-left space-y-2.5 animate-pop">
-                    <div className="flex items-start gap-2">
-                      <ShieldAlert className="w-4 h-4 text-rose-600 flex-shrink-0 mt-0.5" />
-                      <div className="min-w-0">
-                        <h4 className="text-xs font-black text-rose-900 leading-snug">
-                          Son 1 Adım: Alan Adını Firebase'e Ekle
-                        </h4>
-                        <p className="text-[10px] font-bold text-rose-700 leading-tight mt-0.5">
-                          Google güvenlik kuralı: Bu sitenin adresi Firebase projenin izinli listesine 1 kez eklenmelidir.
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-1.5 bg-white p-2 rounded-xl border border-rose-200">
-                      <code className="flex-1 text-[11px] font-black text-slate-800 truncate select-all font-mono">
-                        {currentHostname}
-                      </code>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          sound.playClick();
-                          navigator.clipboard.writeText(currentHostname);
-                          setDomainCopied(true);
-                          setTimeout(() => setDomainCopied(false), 2500);
-                        }}
-                        className="px-2.5 py-1 rounded-lg bg-rose-100 hover:bg-rose-200 text-rose-900 font-black text-[10px] flex items-center gap-1 transition flex-shrink-0 active:scale-95"
-                      >
-                        {domainCopied ? (
-                          <>
-                            <CheckCircle2 className="w-3 h-3 text-emerald-600" />
-                            <span>Kopyalandı!</span>
-                          </>
-                        ) : (
-                          <>
-                            <Copy className="w-3 h-3" />
-                            <span>Kopyala</span>
-                          </>
-                        )}
-                      </button>
-                    </div>
-
-                    <div className="space-y-1.5 pt-0.5 text-[10px] font-bold text-rose-800">
-                      <p className="flex items-center gap-1">
-                        <span>1.</span>
-                        <a
-                          href={firebaseSettingsUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-blue-700 underline font-black flex items-center gap-1 hover:text-blue-900"
-                        >
-                          Firebase Console Ayarlarını Aç <ExternalLink className="w-3 h-3" />
-                        </a>
-                      </p>
-                      <p>2. "Authorized domains" sekmesinde "Add domain" deyip yapıştır.</p>
-                    </div>
-
-                    <div className="pt-2 border-t border-rose-200/60 space-y-2">
-                      <span className="text-[10px] font-black text-rose-950 block">
-                        ⚡ Veya E-postanla Şifresiz Doğrudan Devam Et:
-                      </span>
-                      <div className="flex gap-1.5">
-                        <input
-                          type="email"
-                          value={googleEmail}
-                          onChange={(e) => setGoogleEmail(e.target.value)}
-                          onKeyDown={(e) => {
-                            if (e.key === 'Enter') handleGoogleEmailLogin(googleEmail);
-                          }}
-                          placeholder="zypherstudio330@gmail.com"
-                          className="flex-1 min-w-0 px-2.5 py-2 bg-white border border-rose-300 rounded-xl text-xs font-bold text-slate-900 outline-none focus:border-amber-500"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => handleGoogleEmailLogin(googleEmail)}
-                          className="px-3 py-2 bg-amber-500 hover:bg-amber-600 text-amber-950 font-black text-xs rounded-xl transition active:scale-95 flex-shrink-0"
-                        >
-                          Giriş
-                        </button>
-                      </div>
-                    </div>
-
-                    <div className="pt-1 border-t border-rose-200/60">
-                      <button
-                        type="button"
-                        onClick={() => {
-                          sound.playClick();
-                          setActiveTab('email');
-                          setFeedback(null);
-                          setFeedbackCode(null);
-                        }}
-                        className="w-full py-2 bg-white hover:bg-slate-50 text-slate-800 font-black text-xs rounded-xl border border-slate-200 shadow-xs flex items-center justify-center gap-1.5 transition active:scale-95"
-                      >
-                        <Mail className="w-3.5 h-3.5 text-amber-600" />
-                        <span>Veya Şimdilik E-posta & Şifre ile Gir / Kaydol</span>
-                        <ArrowRight className="w-3 h-3" />
-                      </button>
-                    </div>
-                  </div>
-                ) : feedback ? (
-                  <div className="text-[11px] font-bold text-rose-600 bg-rose-50 border border-rose-200 p-2.5 rounded-xl text-center">
+                {feedback ? (
+                  <div className="text-[11px] font-bold text-amber-800 bg-amber-50 border border-amber-200 p-2.5 rounded-xl text-center">
                     {feedback}
                   </div>
                 ) : null}

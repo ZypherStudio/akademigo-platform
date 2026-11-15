@@ -1,0 +1,8 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Knowza</string>
+    <string name="knowza_widget_description">Knowza canlı seri, seviye, XP ve ders ilerleme widget\u0027ı</string>
+    <string name="title_activity_main">Knowza</string>
+    <string name="package_name">com.knowza.app</string>
+    <string name="custom_url_scheme">com.knowza.app</string>
+</resources>

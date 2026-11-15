@@ -25,3 +25,5 @@ dist-ssr
 /data/
 .env
 .env.*
+playstore-assets/*.aab
+playstore-assets/*.apk

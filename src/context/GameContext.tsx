@@ -16,6 +16,7 @@ import {
   CustomBearConfig
 } from '../types';
 import { KNOWZA_COSTUMES } from '../data/costumesData';
+import { COURSES } from '../data/coursesData';
 import { getFrame } from '../data/framesData';
 import {
   getDisplayIdentity,
@@ -196,6 +197,27 @@ export const AVATAR_MAP: Record<UserAvatar, { emoji: string; name: string }> = {
 
 const KNOWZA_STORAGE_VERSION = 'knowza_v2026_real_v5';
 
+const getTodayIsoDate = (): string => new Date().toISOString().split('T')[0];
+
+const computeNextStreakState = (prev: UserStats) => {
+  const todayStr = getTodayIsoDate();
+  const isNewDay = prev.lastActiveDate !== todayStr;
+  const nextStreak =
+    (prev.streak || 0) === 0
+      ? 1
+      : isNewDay
+      ? (prev.streak || 0) + 1
+      : (prev.streak || 0);
+  const dailyQuest = isNewDay
+    ? { completedLessonsToday: 0, xpGainedToday: 0, perfectLessonsToday: 0 }
+    : (prev.dailyQuestProgress || {
+        completedLessonsToday: 0,
+        xpGainedToday: 0,
+        perfectLessonsToday: 0,
+      });
+  return { nextStreak, todayStr, dailyQuest };
+};
+
 const GameContext = createContext<GameContextType | undefined>(undefined);
 
 export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -297,6 +319,44 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
       document.documentElement.classList.remove('dark');
     }
     document.documentElement.setAttribute('data-theme', stats.theme);
+
+    // Real-time sync to native Android home screen widget (if running inside Capacitor Android WebView)
+    const activeCourse = COURSES.find((c) => c.id === stats.selectedCourseId) || COURSES[0];
+    const activeLessons = activeCourse ? activeCourse.units.flatMap((u) => u.lessons) : [];
+    const completedSet = new Set(stats.completedLessons || []);
+    const completedInActive = activeLessons.filter((l) => completedSet.has(l.id)).length;
+    const progressPct = activeLessons.length > 0
+      ? Math.round((completedInActive / activeLessons.length) * 100)
+      : 0;
+    const currentLvl = Math.max(1, Math.floor((stats.xp || 0) / 100) + 1);
+    const nativeBridge = (window as unknown as {
+      KnowzaNativeWidget?: {
+        updateWidget?: (
+          streak: number,
+          xp: number,
+          level: number,
+          courseTitle: string,
+          progressPct: number,
+          completedCount: number,
+          totalCount: number
+        ) => void;
+      };
+    }).KnowzaNativeWidget;
+    if (nativeBridge && typeof nativeBridge.updateWidget === 'function') {
+      try {
+        nativeBridge.updateWidget(
+          stats.streak || 0,
+          stats.xp || 0,
+          currentLvl,
+          activeCourse?.name || 'Knowza',
+          progressPct,
+          completedInActive,
+          activeLessons.length
+        );
+      } catch {
+        // Safe fallback on non-Android targets
+      }
+    }
   }, [stats]);
 
   useEffect(() => {
@@ -424,7 +484,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const newCompleted = isAlreadyCompleted ? prev.completedLessons : [...prev.completedLessons, lessonId];
       const newXp = prev.xp + earnedXp;
       const newGems = prev.gems + earnedGems;
-      const newStreak = prev.streak + (isAlreadyCompleted ? 0 : 1);
+      const { nextStreak: newStreak, todayStr, dailyQuest } = computeNextStreakState(prev);
       const newTotalQuestions = prev.totalQuestionsAnswered + 4;
       const prevLevel = Math.max(1, Math.floor((prev.xp || 0) / 100) + 1);
       const newLevel = Math.max(1, Math.floor(newXp / 100) + 1);
@@ -519,19 +579,23 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }, 300);
       }
 
+      const finalXp = newXp + (pendingAchievement?.xpReward || 0);
       return {
         ...prev,
-        xp: newXp + (pendingAchievement?.xpReward || 0),
+        xp: finalXp,
         gems: newGems + (pendingAchievement?.gemReward || 0),
         streak: newStreak,
+        lastActiveDate: todayStr,
+        currentLevel: Math.floor(finalXp / 100) + 1,
+        levelProgress: finalXp % 100,
         completedLessons: newCompleted,
         achievementBadges: badges,
         totalQuestionsAnswered: newTotalQuestions,
         totalStudyMinutes: prev.totalStudyMinutes + 10,
         dailyQuestProgress: {
-          completedLessonsToday: prev.dailyQuestProgress.completedLessonsToday + 1,
-          xpGainedToday: prev.dailyQuestProgress.xpGainedToday + earnedXp,
-          perfectLessonsToday: prev.dailyQuestProgress.perfectLessonsToday + (accuracy === 100 ? 1 : 0)
+          completedLessonsToday: dailyQuest.completedLessonsToday + 1,
+          xpGainedToday: dailyQuest.xpGainedToday + earnedXp,
+          perfectLessonsToday: dailyQuest.perfectLessonsToday + (accuracy === 100 ? 1 : 0)
         }
       };
     });
@@ -652,16 +716,24 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
         : prev.duelHistory || [];
 
       const newXp = prev.xp + (won ? 25 : 10);
+      const { nextStreak, todayStr, dailyQuest } = computeNextStreakState(prev);
       return {
         ...prev,
         eloRating: Math.max(800, prev.eloRating + delta),
         duelWins: prev.duelWins + (won ? 1 : 0),
         duelLosses: prev.duelLosses + (won ? 0 : 1),
         xp: newXp,
+        streak: nextStreak,
+        lastActiveDate: todayStr,
         currentLevel: Math.floor(newXp / 100) + 1,
         levelProgress: newXp % 100,
         gems: prev.gems + (won ? 15 : 3),
         duelHistory: nextHistory,
+        dailyQuestProgress: {
+          ...dailyQuest,
+          completedLessonsToday: dailyQuest.completedLessonsToday + 1,
+          xpGainedToday: dailyQuest.xpGainedToday + (won ? 25 : 10),
+        },
       };
     });
   };
@@ -940,11 +1012,32 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const addXpAndGems = (xp: number, gems: number) => {
-    setStats(prev => ({
-      ...prev,
-      xp: prev.xp + xp,
-      gems: prev.gems + gems
-    }));
+    setStats(prev => {
+      const newXp = prev.xp + xp;
+      const newGems = prev.gems + gems;
+      if (xp <= 0) {
+        return {
+          ...prev,
+          xp: newXp,
+          gems: newGems,
+        };
+      }
+      const { nextStreak, todayStr, dailyQuest } = computeNextStreakState(prev);
+      return {
+        ...prev,
+        xp: newXp,
+        gems: newGems,
+        streak: nextStreak,
+        lastActiveDate: todayStr,
+        currentLevel: Math.floor(newXp / 100) + 1,
+        levelProgress: newXp % 100,
+        dailyQuestProgress: {
+          ...dailyQuest,
+          completedLessonsToday: dailyQuest.completedLessonsToday + 1,
+          xpGainedToday: dailyQuest.xpGainedToday + xp,
+        },
+      };
+    });
   };
 
   const upgradeToPro = () => {

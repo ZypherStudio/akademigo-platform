@@ -1,9 +1,13 @@
-import React, { useEffect, useState } from 'react';
-import { Crown, Heart, Sparkles, Volume2, X } from 'lucide-react';
-import { Capacitor } from '@capacitor/core';
+import React, { useEffect, useRef, useState } from 'react';
+import { Crown, ExternalLink, Heart, Sparkles, Volume2, X } from 'lucide-react';
 import { useGame } from '../context/GameContext';
 import { getGeoPricing, t } from '../i18n/locale';
-import { showNativeInterstitialAd, showNativeRewardedAd } from '../utils/admob';
+import {
+  ADSTERRA_DIRECT_URL,
+  ADSTERRA_SCRIPT_URL,
+  hasAdsterraConfigured,
+  injectAdsterraScript,
+} from '../utils/adsterra';
 
 interface AdInterstitialModalProps {
   open: boolean;
@@ -22,6 +26,7 @@ export const AdInterstitialModal: React.FC<AdInterstitialModalProps> = ({
 }) => {
   const { stats, appLang, regionCode, grantRewardedHeart, upgradeToPro } = useGame();
   const [secondsLeft, setSecondsLeft] = useState(5);
+  const adSlotRef = useRef<HTMLDivElement | null>(null);
   const pricing = getGeoPricing(regionCode, appLang);
 
   useEffect(() => {
@@ -31,39 +36,23 @@ export const AdInterstitialModal: React.FC<AdInterstitialModalProps> = ({
       return;
     }
 
-    let cancelled = false;
     setSecondsLeft(5);
-
-    if (Capacitor.isNativePlatform()) {
-      const runNative = async () => {
-        const shown =
-          mode === 'rewarded_heart'
-            ? await showNativeRewardedAd()
-            : await showNativeInterstitialAd();
-        if (cancelled) return;
-        if (shown) {
-          if (mode === 'rewarded_heart') {
-            grantRewardedHeart();
-            onRewardClaimed?.();
-          }
-          onClose();
-        }
-      };
-      runNative();
+    let cleanupScript: (() => void) | undefined;
+    if (ADSTERRA_SCRIPT_URL && adSlotRef.current) {
+      cleanupScript = injectAdsterraScript(adSlotRef.current);
     }
 
     const timer = window.setInterval(() => {
       setSecondsLeft((prev) => (prev > 0 ? prev - 1 : 0));
     }, 1000);
     return () => {
-      cancelled = true;
       window.clearInterval(timer);
+      cleanupScript?.();
     };
   }, [open, mode]);
 
   if (!open) return null;
 
-  // Never show interstitial ads to PRO / Ad-Free / Founder accounts
   if (mode === 'interstitial' && (stats.isPro || stats.isFounder || stats.hasAdFree)) {
     return null;
   }
@@ -84,6 +73,11 @@ export const AdInterstitialModal: React.FC<AdInterstitialModalProps> = ({
       upgradeToPro();
     }
     onClose();
+  };
+
+  const handleOpenAdsterraDirect = () => {
+    if (!ADSTERRA_DIRECT_URL) return;
+    window.open(ADSTERRA_DIRECT_URL, '_blank', 'noopener,noreferrer');
   };
 
   return (
@@ -118,36 +112,56 @@ export const AdInterstitialModal: React.FC<AdInterstitialModalProps> = ({
           </button>
         </div>
 
-        {/* Sponsor Creative Body (AdMob/AdSense Hook Ready) */}
-        <div className="p-6 space-y-5 text-center">
-          <div className="w-20 h-20 mx-auto rounded-3xl bg-gradient-to-br from-indigo-500 via-purple-600 to-amber-500 flex items-center justify-center shadow-lg shadow-purple-500/30">
-            {mode === 'rewarded_heart' ? (
-              <Heart className="w-10 h-10 text-white fill-white animate-pulse" />
-            ) : (
-              <Sparkles className="w-10 h-10 text-white" />
-            )}
-          </div>
+        {/* Adsterra Native/Script Slot + Sponsor Body */}
+        <div className="p-6 space-y-4 text-center">
+          {ADSTERRA_SCRIPT_URL ? (
+            <div
+              ref={adSlotRef}
+              className="w-full min-h-[140px] rounded-2xl bg-[#0e171b] border border-white/10 flex items-center justify-center overflow-hidden p-2"
+            />
+          ) : (
+            <div
+              onClick={handleOpenAdsterraDirect}
+              className={`p-5 rounded-2xl bg-gradient-to-br from-indigo-950/90 via-slate-900 to-purple-950/90 border border-white/15 space-y-3 ${
+                ADSTERRA_DIRECT_URL ? 'cursor-pointer hover:border-amber-400/60 transition' : ''
+              }`}
+            >
+              <div className="w-16 h-16 mx-auto rounded-2xl bg-gradient-to-br from-indigo-500 via-purple-600 to-amber-500 flex items-center justify-center shadow-lg shadow-purple-500/30">
+                {mode === 'rewarded_heart' ? (
+                  <Heart className="w-8 h-8 text-white fill-white animate-pulse" />
+                ) : (
+                  <Sparkles className="w-8 h-8 text-white" />
+                )}
+              </div>
 
-          <div className="space-y-2">
-            <h3 className="text-xl font-black tracking-tight">
-              {mode === 'rewarded_heart'
-                ? appLang === 'tr'
-                  ? 'Ücretsiz +1 Can Kazanılıyor...'
-                  : 'Earning +1 Free Heart...'
-                : appLang === 'tr'
-                ? 'Knowza ile Sınavlara 10x Hızlı Hazırlan!'
-                : 'Master Your Exams 10x Faster with Knowza!'}
-            </h3>
-            <p className="text-sm text-gray-300 leading-relaxed">
-              {mode === 'rewarded_heart'
-                ? appLang === 'tr'
-                  ? 'Sayaç bittiğinde hesabına anında +1 ❤️ can eklenecek.'
-                  : 'Once the timer finishes, +1 ❤️ heart will be added to your account.'
-                : appLang === 'tr'
-                ? 'Reklamsız deneyim, sınırsız can (bekleme yok) ve sınırsız Gemini AI Koç için PRO üyeliğe geç.'
-                : 'Upgrade to Knowza PRO for zero post-test ads, unlimited hearts with no wait, and unlimited Gemini AI Coach.'}
-            </p>
-          </div>
+              <h3 className="text-lg font-black tracking-tight">
+                {mode === 'rewarded_heart'
+                  ? appLang === 'tr'
+                    ? 'Ücretsiz +1 Can Kazanılıyor...'
+                    : 'Earning +1 Free Heart...'
+                  : appLang === 'tr'
+                  ? 'Knowza ile Sınavlara 10x Hızlı Hazırlan!'
+                  : 'Master Your Exams 10x Faster with Knowza!'}
+              </h3>
+
+              <p className="text-xs text-gray-300 leading-relaxed">
+                {mode === 'rewarded_heart'
+                  ? appLang === 'tr'
+                    ? 'Sayaç bittiğinde hesabına anında +1 ❤️ can eklenecek.'
+                    : 'Once the timer finishes, +1 ❤️ heart will be added to your account.'
+                  : appLang === 'tr'
+                  ? 'Reklamsız deneyim, sınırsız can (bekleme yok) ve sınırsız Gemini AI Koç için PRO üyeliğe geç.'
+                  : 'Upgrade to Knowza PRO for zero post-test ads, unlimited hearts with no wait, and unlimited Gemini AI Coach.'}
+              </p>
+
+              {hasAdsterraConfigured() && ADSTERRA_DIRECT_URL && (
+                <div className="inline-flex items-center gap-1.5 text-xs font-black text-amber-300">
+                  <ExternalLink className="w-3.5 h-3.5" />
+                  <span>{appLang === 'tr' ? 'Sponsor Bağlantısını Aç' : 'Open Sponsor Offer'}</span>
+                </div>
+              )}
+            </div>
+          )}
 
           {/* PRO Upsell CTA inside Ad */}
           <button

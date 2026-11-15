@@ -16,10 +16,10 @@
 
         <ImageView
             android:id="@+id/widget_logo"
-            android:layout_width="28dp"
-            android:layout_height="28dp"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
             android:contentDescription="@string/app_name"
-            android:src="@mipmap/ic_launcher_round" />
+            android:src="@drawable/knowza_mascot_3d" />
 
         <TextView
             android:id="@+id/widget_brand"

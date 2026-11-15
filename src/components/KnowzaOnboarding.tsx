@@ -226,11 +226,11 @@ export const KnowzaOnboarding: React.FC<KnowzaOnboardingProps> = ({ onComplete, 
                     : targetGoal === 'kodlama'
                     ? '/assets/knowza_cheering.png'
                     : targetGoal.startsWith('dil')
-                    ? '/assets/knowza_dogru.png'
+                    ? '/assets/knowza_cheering.png'
                     : '/assets/knowza_main.png'
                 }
                 alt="Knowza Ayıcık"
-                className="w-full h-auto object-contain relative z-10 knowza-mascot-blend mix-blend-multiply drop-shadow-xl transition-all duration-300"
+                className="w-full h-auto object-contain relative z-10 drop-shadow-[0_14px_24px_rgba(245,158,11,0.22)] transition-all duration-300"
               />
             </div>
 
@@ -301,11 +301,12 @@ export const KnowzaOnboarding: React.FC<KnowzaOnboardingProps> = ({ onComplete, 
         {/* ================= STEP 2: EN ÇOK NE KULLANACAKSIN (HIZLI GİRİŞ) ================= */}
         {step === 2 && (
           <div className="w-full flex flex-col items-center text-center animate-fade space-y-3">
-            <div className="w-20 sm:w-24 filter drop-shadow-lg">
+            <div className="relative w-24 sm:w-28 flex items-center justify-center">
+              <div className="absolute inset-2 rounded-full bg-amber-400/20 blur-xl pointer-events-none" />
               <img
                 src="/assets/knowza_reading.png"
                 alt="Knowza Ayıcık"
-                className="w-full h-auto object-contain animate-float"
+                className="w-full h-auto object-contain relative z-10 drop-shadow-[0_14px_24px_rgba(245,158,11,0.22)] animate-float"
               />
             </div>
 
@@ -361,11 +362,12 @@ export const KnowzaOnboarding: React.FC<KnowzaOnboardingProps> = ({ onComplete, 
         {/* ================= STEP 3: GÜNLÜK HEDEF ================= */}
         {step === 3 && (
           <div className="w-full flex flex-col items-center text-center animate-fade space-y-4">
-            <div className="w-28 sm:w-32 filter drop-shadow-lg animate-bounceSubtle">
+            <div className="relative w-28 sm:w-32 flex items-center justify-center animate-bounceSubtle">
+              <div className="absolute inset-2 rounded-full bg-amber-400/20 blur-xl pointer-events-none" />
               <img
-                src="/assets/knowza_dogru.png"
+                src="/assets/knowza_main.png"
                 alt="Knowza Ayıcık Başparmak"
-                className="w-full h-auto object-contain"
+                className="w-full h-auto object-contain relative z-10 drop-shadow-[0_14px_24px_rgba(245,158,11,0.22)]"
               />
             </div>
 
@@ -437,11 +439,12 @@ export const KnowzaOnboarding: React.FC<KnowzaOnboardingProps> = ({ onComplete, 
         {/* ================= STEP 4: ÖZET & HIZLI GİRİŞ ÖNİZLEME ================= */}
         {step === 4 && (
           <div className="w-full flex flex-col items-center text-center animate-fade space-y-4">
-            <div className="w-28 sm:w-32 filter drop-shadow-xl animate-bounceSubtle">
+            <div className="relative w-28 sm:w-32 flex items-center justify-center animate-bounceSubtle">
+              <div className="absolute inset-2 rounded-full bg-amber-400/20 blur-xl pointer-events-none" />
               <img
                 src="/assets/knowza_cheering.png"
                 alt="Knowza Ayıcık Kutluyor"
-                className="w-full h-auto object-contain"
+                className="w-full h-auto object-contain relative z-10 drop-shadow-[0_14px_24px_rgba(245,158,11,0.22)]"
               />
             </div>
 

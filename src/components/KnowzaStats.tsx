@@ -69,7 +69,7 @@ export const KnowzaStats: React.FC<KnowzaStatsProps> = ({ onBack }) => {
 
       {/* User Progress Header Card */}
       <div className="bg-white rounded-3xl p-4 sm:p-5 border-2 border-[#FFE2A3] shadow-[0_8px_24px_rgba(255,184,0,0.1)] flex items-center gap-4">
-        <div className="w-14 h-14 rounded-full border-2 border-[#FFB800] p-1 bg-[#FFF8E7] overflow-hidden flex-shrink-0 flex items-center justify-center">
+        <div className="w-14 h-14 rounded-full border-2 border-[#FFB800] p-1.5 bg-[#FFF8E7] flex-shrink-0 flex items-center justify-center">
           <img 
             src="/assets/knowza_avatar_3d.png" 
             alt="Knowza Profil" 

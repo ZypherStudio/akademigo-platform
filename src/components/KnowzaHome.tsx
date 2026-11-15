@@ -303,7 +303,7 @@ export const KnowzaHome: React.FC<KnowzaHomeProps> = ({
               <img
                 src="/assets/knowza_reading.png"
                 alt="Knowza 3D Maskot"
-                className="w-full h-auto object-contain animate-float mix-blend-multiply"
+                className="w-full h-auto object-contain animate-float"
               />
             </div>
 
@@ -639,11 +639,11 @@ export const KnowzaHome: React.FC<KnowzaHomeProps> = ({
             Canlı serini, derslerini ve seviyeni telefonunun ana ekranına ekle!
           </p>
         </div>
-        <div className="relative w-16 h-16 flex-shrink-0 group-hover:scale-110 transition-transform">
+        <div className="relative w-14 h-14 p-1 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
           <img
-            src="/assets/knowza_avatar_3d.png"
+            src="/assets/knowza_main.png"
             alt="Knowza Widget"
-            className="w-full h-full object-contain filter drop-shadow-md animate-bounceSubtle"
+            className="w-12 h-12 object-contain filter drop-shadow-md animate-bounceSubtle"
           />
         </div>
       </div>

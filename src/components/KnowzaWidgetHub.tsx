@@ -549,7 +549,7 @@ export const KnowzaWidgetHub: React.FC<KnowzaWidgetHubProps> = ({
                     </div>
                   </div>
 
-                  <div className="w-16 h-16 self-end -mb-1">
+                  <div className="w-16 h-16 p-0.5 self-end flex items-center justify-center">
                     <img
                       src="/assets/knowza_avatar_3d.png"
                       alt="Ayıcık"

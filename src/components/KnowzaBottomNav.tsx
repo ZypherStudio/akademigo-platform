@@ -51,16 +51,16 @@ export const KnowzaBottomNav: React.FC<KnowzaBottomNavProps> = ({ currentTab, on
                 className="flex-1 flex flex-col items-center -mt-4 transition-all active:scale-90 group"
               >
                 <div
-                  className={`w-12 h-12 rounded-2xl flex items-center justify-center shadow-lg border-2 transition-all ${
+                  className={`w-12 h-12 rounded-2xl p-1 flex items-center justify-center shadow-lg border-2 transition-all ${
                     isActive
                       ? 'bg-gradient-to-br from-[#FFC700] via-[#FFB800] to-[#F59E0B] border-amber-700 scale-105 ring-4 ring-amber-300/40'
                       : 'bg-gradient-to-br from-[#2A1E00] to-[#4A3500] border-amber-400/60 group-hover:scale-105'
                   }`}
                 >
                   <img
-                    src="/assets/knowza_avatar_3d.png"
+                    src="/assets/knowza_main.png"
                     alt="Knowza Koç"
-                    className="w-9 h-9 object-contain drop-shadow-sm"
+                    className="w-full h-full object-contain drop-shadow-sm"
                   />
                 </div>
                 <span

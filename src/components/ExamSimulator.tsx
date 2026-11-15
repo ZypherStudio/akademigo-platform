@@ -4,6 +4,7 @@ import { Clock, CheckCircle2, XCircle, FileText, Award, AlertCircle, ChevronLeft
 import { sound } from '../utils/audio';
 import confetti from 'canvas-confetti';
 import { Mascot } from './Mascot';
+import { AdInterstitialModal } from './AdInterstitialModal';
 
 interface ExamQuestion {
   id: number;
@@ -371,6 +372,7 @@ export const ExamSimulator: React.FC = () => {
   const [examActive, setExamActive] = useState(false);
   const [timeLeft, setTimeLeft] = useState(18 * 60);
   const [isFinished, setIsFinished] = useState(false);
+  const [showPostTestAd, setShowPostTestAd] = useState(false);
 
   // Timer Countdown
   useEffect(() => {
@@ -429,6 +431,9 @@ export const ExamSimulator: React.FC = () => {
 
     completeLesson(selectedExam.id, Math.round(net * 20), Math.round(correct * 4), accuracy);
     confetti({ particleCount: 90, spread: 75 });
+    if (!stats.isPro && !stats.isFounder && !stats.hasAdFree) {
+      setShowPostTestAd(true);
+    }
   };
 
   const formatTimer = (secs: number) => {
@@ -767,6 +772,11 @@ export const ExamSimulator: React.FC = () => {
         </div>
       )}
 
+      <AdInterstitialModal
+        open={showPostTestAd}
+        mode="interstitial"
+        onClose={() => setShowPostTestAd(false)}
+      />
     </div>
   );
 };

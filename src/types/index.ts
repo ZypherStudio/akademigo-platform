@@ -288,6 +288,11 @@ export interface UserStats {
   founderBadge?: string;
   hasAdFree?: boolean;
   hasAiPackage?: boolean;
+  hasMoonBundle?: boolean;
+  hasCyberBundle?: boolean;
+  lastHeartRegenAt?: number;
+  regionCode?: 'TR' | 'US' | 'GB' | 'DE' | 'FR' | 'ES' | 'GLOBAL';
+  appLang?: 'tr' | 'en' | 'de' | 'fr' | 'es';
   customBear?: CustomBearConfig;
 }
 

@@ -25,6 +25,7 @@ import {
 } from 'lucide-react';
 import { sound } from '../utils/audio';
 import confetti from 'canvas-confetti';
+import { getGeoPricing, t } from '../i18n/locale';
 
 type ShopTab = 'pro' | 'bear_studio' | 'frames' | 'costumes' | 'boosters' | 'ads';
 
@@ -38,8 +39,14 @@ export const Shop: React.FC = () => {
     upgradeToPro,
     equipFrame,
     buyFrameWithGems,
-    updateCustomBear
+    updateCustomBear,
+    regionCode,
+    appLang,
+    purchasePackage,
+    buyCostumeDirect,
+    buyFrameDirect,
   } = useGame();
+  const pricing = getGeoPricing(regionCode, appLang);
 
   const [activeTab, setActiveTab] = useState<ShopTab>('pro');
   const [feedback, setFeedback] = useState<string | null>(null);
@@ -296,12 +303,12 @@ export const Shop: React.FC = () => {
 
             <div className="space-y-2 mb-5">
               {[
-                '❤️ Sınırsız Can (Hiçbir zaman bekleme yapma)',
-                '🚫 %100 Reklamsız Kesintisiz Deneyim',
-                '⚡ 2 Kat Sabit XP & Liderlik Çarpanı',
-                '👑 Özel 3D Altın Taçlı Kral Maskot Kostümü',
-                '🤖 Sesli AI Koç ile Sınırsız Soru-Cevap',
-                '📊 C1/C2 Uzmanlık & ÖSYM Net Analiz Raporları'
+                `❤️ ${t(appLang, 'shop_unlimited_hearts_feature')}`,
+                `🚫 ${t(appLang, 'shop_no_ads_feature')}`,
+                `🤖 ${t(appLang, 'shop_ai_feature')}`,
+                `💎 ${t(appLang, 'shop_gems_bonus_feature')}`,
+                '⚡ 2x XP & Leaderboard Multiplier',
+                '👑 VIP Profile Badge (Knowza PRO)'
               ].map((feat, i) => (
                 <div key={i} className="flex items-center gap-2 text-xs font-bold text-amber-100">
                   <Check className="w-4 h-4 text-emerald-400 flex-shrink-0" />
@@ -314,16 +321,16 @@ export const Shop: React.FC = () => {
               <button
                 onClick={() => {
                   upgradeToPro();
-                  showToast('👑 Tebrikler! Knowza PRO başarıyla aktif edildi!');
+                  showToast('👑 Knowza PRO aktif edildi! Tüm özellikler & +1000 💎 açıldı!');
                 }}
                 className="w-full py-4 rounded-2xl bg-gradient-to-r from-[#FFC700] via-[#FFB800] to-[#FFA000] text-slate-950 font-black text-sm shadow-lg shadow-amber-500/30 active:scale-95 transition flex items-center justify-center gap-2 hover:scale-102"
               >
-                <span>Knowza PRO'ya Yükselt (₺79.99 / Ay)</span>
+                <span>{t(appLang, 'shop_pro_cta')} ({pricing.proMonthlyLabel} {pricing.proPeriodLabel})</span>
                 <ArrowRight className="w-4 h-4 stroke-[3]" />
               </button>
             ) : (
               <div className="w-full py-3 rounded-2xl bg-emerald-500/20 border border-emerald-400/40 text-emerald-300 font-extrabold text-xs text-center">
-                ✨ Tüm PRO ayrıcalıklarından sınırsız faydalanıyorsunuz!
+                ✨ {t(appLang, 'shop_pro_active')}
               </div>
             )}
           </div>
@@ -331,7 +338,7 @@ export const Shop: React.FC = () => {
           {/* Sub Packages List (Ad-Free Lite, AI Koç, Discord Bundles) */}
           <div className="space-y-3 pt-1">
             <h4 className="text-xs font-black uppercase text-slate-500 tracking-wider px-1">
-              Diğer Özel Paketler
+              {t(appLang, 'shop_packages_title')}
             </h4>
 
             {/* Package 1: Ad-Free Lite */}
@@ -341,20 +348,28 @@ export const Shop: React.FC = () => {
                   🚫
                 </div>
                 <div>
-                  <h4 className="font-black text-sm text-slate-900">Sadece Reklam Kaldır</h4>
-                  <p className="text-[11px] text-slate-500 font-bold">Tek seferlik ömür boyu reklamsız</p>
-                  <span className="text-xs font-black text-amber-600">₺29.99 (Tek Seferlik)</span>
+                  <h4 className="font-black text-sm text-slate-900">
+                    {appLang === 'tr' ? 'Sadece Reklam Kaldır' : 'Ad-Free Forever Pack'}
+                  </h4>
+                  <p className="text-[11px] text-slate-500 font-bold">
+                    {appLang === 'tr' ? 'Test sonrası reklamları kalıcı kaldırır' : 'Removes all post-test ads permanently'}
+                  </p>
+                  <span className="text-xs font-black text-amber-600">{pricing.packageLabel}</span>
                 </div>
               </div>
               <button
+                disabled={Boolean(stats.isFounder || stats.isPro || stats.hasAdFree)}
                 onClick={() => {
-                  sound.playVictory();
-                  confetti({ particleCount: 50, spread: 60 });
+                  purchasePackage('ad_free');
                   showToast('🎉 Reklamlar kalıcı olarak kaldırıldı!');
                 }}
-                className="px-4 py-2 bg-slate-900 hover:bg-black text-amber-300 font-black text-xs rounded-xl shadow-xs active:scale-95 transition whitespace-nowrap"
+                className={`px-4 py-2 font-black text-xs rounded-xl shadow-xs transition whitespace-nowrap ${
+                  stats.isFounder || stats.isPro || stats.hasAdFree
+                    ? 'bg-emerald-100 text-emerald-800 cursor-default'
+                    : 'bg-slate-900 hover:bg-black text-amber-300 active:scale-95'
+                }`}
               >
-                {stats.isFounder ? 'Sahipsin' : 'Satın Al'}
+                {stats.isFounder || stats.isPro || stats.hasAdFree ? t(appLang, 'shop_owned') : t(appLang, 'shop_buy_direct')}
               </button>
             </div>
 
@@ -365,19 +380,28 @@ export const Shop: React.FC = () => {
                   🤖
                 </div>
                 <div>
-                  <h4 className="font-black text-sm text-slate-900">Gemini AI Koç Paketi</h4>
-                  <p className="text-[11px] text-slate-500 font-bold">7/24 Sesli & Yazılı Soru Çözücü</p>
-                  <span className="text-xs font-black text-indigo-600">₺49.99 / Ay</span>
+                  <h4 className="font-black text-sm text-slate-900">
+                    {appLang === 'tr' ? 'Gemini AI Koç Paketi' : 'Gemini AI Coach Pack'}
+                  </h4>
+                  <p className="text-[11px] text-slate-500 font-bold">
+                    {appLang === 'tr' ? '7/24 Sesli & Yazılı Soru Çözücü + 250 💎' : '24/7 AI Tutor & Solver + 250 💎'}
+                  </p>
+                  <span className="text-xs font-black text-indigo-600">{pricing.packageLabel}</span>
                 </div>
               </div>
               <button
+                disabled={Boolean(stats.isFounder || stats.isPro || stats.hasAiPackage)}
                 onClick={() => {
-                  sound.playVictory();
-                  showToast('🤖 AI Koç paketi hesabınıza bağlandı!');
+                  purchasePackage('ai_coach');
+                  showToast('🤖 AI Koç paketi & +250 💎 hesabınıza tanımlandı!');
                 }}
-                className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-black text-xs rounded-xl shadow-xs active:scale-95 transition whitespace-nowrap"
+                className={`px-4 py-2 font-black text-xs rounded-xl shadow-xs transition whitespace-nowrap ${
+                  stats.isFounder || stats.isPro || stats.hasAiPackage
+                    ? 'bg-emerald-100 text-emerald-800 cursor-default'
+                    : 'bg-indigo-600 hover:bg-indigo-700 text-white active:scale-95'
+                }`}
               >
-                {stats.isFounder ? 'Sahipsin' : 'Satın Al'}
+                {stats.isFounder || stats.isPro || stats.hasAiPackage ? t(appLang, 'shop_owned') : t(appLang, 'shop_buy_direct')}
               </button>
             </div>
 
@@ -389,25 +413,30 @@ export const Shop: React.FC = () => {
                 </div>
                 <div>
                   <div className="flex items-center gap-1.5">
-                    <h4 className="font-black text-sm text-white">Ay Kurdu Paketi</h4>
-                    <span className="text-[9px] font-black bg-purple-400/20 text-purple-300 px-1.5 rounded">Discord</span>
+                    <h4 className="font-black text-sm text-white">
+                      {appLang === 'tr' ? 'Ay Kurdu Paketi' : 'Moon Wolf Bundle'}
+                    </h4>
+                    <span className="text-[9px] font-black bg-purple-400/20 text-purple-300 px-1.5 rounded">VIP</span>
                   </div>
                   <p className="text-[10px] text-purple-200/80 font-medium">
-                    Hilal Rüyaları animasyonlu çerçeve + Gece kürkü + 1000 💎
+                    Hilal Rüyaları çerçeve + Ay Kurdu kostümü
                   </p>
-                  <span className="text-xs font-black text-amber-300">₺59.99</span>
+                  <span className="text-xs font-black text-amber-300">{pricing.packageLabel}</span>
                 </div>
               </div>
               <button
+                disabled={Boolean(stats.hasMoonBundle)}
                 onClick={() => {
-                  equipFrame('moon_reverie');
-                  sound.playVictory();
-                  confetti({ particleCount: 70, spread: 70 });
-                  showToast('🌙 Ay Kurdu Paketi açıldı ve Hilal Rüyaları kuşandı!');
+                  purchasePackage('moon_wolf');
+                  showToast('🌙 Ay Kurdu Paketi açıldı ve kuşandı!');
                 }}
-                className="px-3.5 py-2 bg-gradient-to-r from-purple-500 to-indigo-600 text-white font-black text-xs rounded-xl shadow-xs active:scale-95 transition whitespace-nowrap"
+                className={`px-3.5 py-2 font-black text-xs rounded-xl shadow-xs transition whitespace-nowrap ${
+                  stats.hasMoonBundle
+                    ? 'bg-emerald-500/30 text-emerald-200 cursor-default'
+                    : 'bg-gradient-to-r from-purple-500 to-indigo-600 text-white active:scale-95'
+                }`}
               >
-                {stats.isFounder ? 'Kuşan' : 'Paketi Al'}
+                {stats.hasMoonBundle ? t(appLang, 'shop_owned') : t(appLang, 'shop_buy_direct')}
               </button>
             </div>
 
@@ -419,25 +448,30 @@ export const Shop: React.FC = () => {
                 </div>
                 <div>
                   <div className="flex items-center gap-1.5">
-                    <h4 className="font-black text-sm text-white">Siber Savaşçı & Kalpler</h4>
-                    <span className="text-[9px] font-black bg-red-400/20 text-red-300 px-1.5 rounded">Discord</span>
+                    <h4 className="font-black text-sm text-white">
+                      {appLang === 'tr' ? 'Siber Savaşçı Paketi' : 'Cyber Warrior Bundle'}
+                    </h4>
+                    <span className="text-[9px] font-black bg-red-400/20 text-red-300 px-1.5 rounded">VIP</span>
                   </div>
                   <p className="text-[10px] text-rose-200/80 font-medium">
-                    Uçuşan Kalpler animasyonlu çerçeve + Siber kürk + 1000 💎
+                    Siber Neon çerçeve + Siber kostüm + 300 💎 + Full ❤️
                   </p>
-                  <span className="text-xs font-black text-amber-300">₺59.99</span>
+                  <span className="text-xs font-black text-amber-300">{pricing.packageLabel}</span>
                 </div>
               </div>
               <button
+                disabled={Boolean(stats.hasCyberBundle)}
                 onClick={() => {
-                  equipFrame('deadpool_hearts');
-                  sound.playVictory();
-                  confetti({ particleCount: 70, spread: 70 });
-                  showToast('❤️‍🔥 Siber Savaşçı ve Uçuşan Kalpler kuşandı!');
+                  purchasePackage('cyber_warrior');
+                  showToast('❤️‍🔥 Siber Savaşçı Paketi açıldı ve +300 💎 eklendi!');
                 }}
-                className="px-3.5 py-2 bg-gradient-to-r from-red-600 to-rose-600 text-white font-black text-xs rounded-xl shadow-xs active:scale-95 transition whitespace-nowrap"
+                className={`px-3.5 py-2 font-black text-xs rounded-xl shadow-xs transition whitespace-nowrap ${
+                  stats.hasCyberBundle
+                    ? 'bg-emerald-500/30 text-emerald-200 cursor-default'
+                    : 'bg-gradient-to-r from-red-600 to-rose-600 text-white active:scale-95'
+                }`}
               >
-                {stats.isFounder ? 'Kuşan' : 'Paketi Al'}
+                {stats.hasCyberBundle ? t(appLang, 'shop_owned') : t(appLang, 'shop_buy_direct')}
               </button>
             </div>
           </div>
@@ -771,6 +805,18 @@ export const Shop: React.FC = () => {
                   >
                     {isEquipped ? 'Kuşanıldı' : isOwned ? 'Kuşan' : `${frame.priceGems} 💎`}
                   </button>
+                  {!isOwned && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        buyFrameDirect(frame.id as AvatarFrameId);
+                        showToast(`✨ "${frame.name}" açıldı ve kuşandı!`);
+                      }}
+                      className="w-full py-1.5 rounded-xl bg-amber-100 hover:bg-amber-200 text-amber-900 font-black text-[11px] transition"
+                    >
+                      {t(appLang, 'shop_buy_direct')} ({pricing.avatarLabel})
+                    </button>
+                  )}
                 </div>
               );
             })}
@@ -815,6 +861,17 @@ export const Shop: React.FC = () => {
                 >
                   {isSelected ? 'Kuşanıldı ✨' : isUnlocked ? 'Kuşan' : `${costume.priceGems} 💎`}
                 </button>
+                {!isUnlocked && (
+                  <button
+                    onClick={() => {
+                      buyCostumeDirect(costume.id);
+                      showToast(`🐻 "${costume.name}" açıldı ve kuşandı!`);
+                    }}
+                    className="w-full py-1.5 rounded-xl bg-amber-100 hover:bg-amber-200 text-amber-900 font-black text-[11px] transition"
+                  >
+                    {t(appLang, 'shop_buy_direct')} ({pricing.avatarLabel})
+                  </button>
+                )}
               </div>
             );
           })}

@@ -34,6 +34,7 @@ import { sound } from '../utils/audio';
 import { useDarkMode } from '../utils/theme';
 import { KnowzaTab } from './KnowzaBottomNav';
 import { KnowzaAvatar } from './KnowzaAvatar';
+import { getLocalizedTrack } from '../i18n/locale';
 
 interface KnowzaHomeProps {
   onStartQuiz: (subject: string) => void;
@@ -50,7 +51,7 @@ export const KnowzaHome: React.FC<KnowzaHomeProps> = ({
   onNavigateTab,
   onOpenOnboarding
 }) => {
-  const { stats, selectedCourseId, setSelectedCourseId, startLesson } = useGame();
+  const { stats, selectedCourseId, setSelectedCourseId, startLesson, regionCode } = useGame();
   const [showAllCategoriesModal, setShowAllCategoriesModal] = useState(false);
   const [isMusicPlaying, setIsMusicPlaying] = useState(() => sound.getBgmEnabled());
   const [isDark, toggleDarkMode] = useDarkMode();
@@ -58,18 +59,22 @@ export const KnowzaHome: React.FC<KnowzaHomeProps> = ({
   // Dynamic user level calculation (Starts at Level 1 with 0 XP)
   const userLevel = Math.max(1, Math.floor((stats.xp || 0) / 100) + 1);
 
-  // Available categories with metadata
-  const categories: { id: CourseCategory; name: string; icon: string; badge: string; color: string }[] = [
-    { id: 'yks', name: 'YKS (TYT - AYT)', icon: '🎓', badge: 'ÖSYM', color: 'from-amber-500 to-orange-500' },
-    { id: 'dil', name: 'İngilizce (A1-C2)', icon: '🇬🇧', badge: 'Küresel Dil', color: 'from-cyan-500 to-blue-600' },
-    { id: 'dil_alm', name: 'Almanca (A1-C2)', icon: '🇩🇪', badge: 'Avrupa', color: 'from-yellow-500 to-amber-600' },
-    { id: 'dil_fra', name: 'Fransızca (A1-C2)', icon: '🇫🇷', badge: 'Diplomasi', color: 'from-indigo-500 to-blue-600' },
-    { id: 'dil_isp', name: 'İspanyolca (A1-C2)', icon: '🇪🇸', badge: 'Popüler', color: 'from-orange-500 to-red-600' },
-    { id: 'dil_bos', name: 'Boşnakça (A1-C2)', icon: '🇧🇦', badge: 'Balkanlar', color: 'from-blue-600 to-indigo-700' },
-    { id: 'lgs', name: '8. Sınıf LGS', icon: '📚', badge: 'MEB', color: 'from-blue-500 to-indigo-500' },
-    { id: 'kpss', name: 'KPSS 2026', icon: '🏛️', badge: 'Memurluk', color: 'from-emerald-500 to-teal-600' },
-    { id: 'kodlama', name: 'Kodlama / Python', icon: '💻', badge: 'Yazılım', color: 'from-purple-500 to-pink-500' }
+  // Available categories with country-localized metadata
+  const rawCategories: { id: CourseCategory; icon: string; color: string }[] = [
+    { id: 'yks', icon: '🎓', color: 'from-amber-500 to-orange-500' },
+    { id: 'dil', icon: '🇬🇧', color: 'from-cyan-500 to-blue-600' },
+    { id: 'dil_alm', icon: '🇩🇪', color: 'from-yellow-500 to-amber-600' },
+    { id: 'dil_fra', icon: '🇫🇷', color: 'from-indigo-500 to-blue-600' },
+    { id: 'dil_isp', icon: '🇪🇸', color: 'from-orange-500 to-red-600' },
+    { id: 'dil_bos', icon: '🇧🇦', color: 'from-blue-600 to-indigo-700' },
+    { id: 'lgs', icon: '📚', color: 'from-blue-500 to-indigo-500' },
+    { id: 'kpss', icon: '🏛️', color: 'from-emerald-500 to-teal-600' },
+    { id: 'kodlama', icon: '💻', color: 'from-purple-500 to-pink-500' }
   ];
+  const categories = rawCategories.map((c) => {
+    const loc = getLocalizedTrack(c.id, regionCode);
+    return { ...c, name: loc.title, badge: loc.badge };
+  });
 
   // User's target category takes priority in ordering
   const userTargetGoal = stats.targetGoal || 'yks';

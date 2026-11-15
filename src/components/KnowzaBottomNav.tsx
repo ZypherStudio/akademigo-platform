@@ -1,6 +1,8 @@
 import React from 'react';
 import { Home, BarChart2, ShoppingBag, User, Sparkles } from 'lucide-react';
 import { sound } from '../utils/audio';
+import { useGame } from '../context/GameContext';
+import { t } from '../i18n/locale';
 
 export type KnowzaTab =
   | 'home'
@@ -25,12 +27,13 @@ interface KnowzaBottomNavProps {
 }
 
 export const KnowzaBottomNav: React.FC<KnowzaBottomNavProps> = ({ currentTab, onSelectTab }) => {
+  const { appLang } = useGame();
   const tabs = [
-    { id: 'home' as const, label: 'Ana Sayfa', icon: Home },
-    { id: 'stats' as const, label: 'İstatistik', icon: BarChart2 },
-    { id: 'aicoach' as const, label: 'Knowza Koç', icon: Sparkles, isCenterAi: true },
-    { id: 'shop' as const, label: 'Mağaza', icon: ShoppingBag, hasBadge: true },
-    { id: 'profile' as const, label: 'Profil', icon: User },
+    { id: 'home' as const, label: t(appLang, 'nav_home'), icon: Home },
+    { id: 'stats' as const, label: appLang === 'tr' ? 'İstatistik' : 'Stats', icon: BarChart2 },
+    { id: 'aicoach' as const, label: t(appLang, 'nav_coach'), icon: Sparkles, isCenterAi: true },
+    { id: 'shop' as const, label: t(appLang, 'nav_shop'), icon: ShoppingBag, hasBadge: true },
+    { id: 'profile' as const, label: t(appLang, 'nav_profile'), icon: User },
   ];
 
   return (

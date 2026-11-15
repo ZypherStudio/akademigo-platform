@@ -42,6 +42,14 @@ import {
 } from '../utils/firebaseClient';
 import { sound } from '../utils/audio';
 import confetti from 'canvas-confetti';
+import {
+  RegionCode,
+  AppLang,
+  detectInitialRegionAndLang,
+  saveRegionAndLangStorage,
+} from '../i18n/locale';
+
+export const HEART_REGEN_MS = 15 * 60 * 1000; // 15 minutes per heart
 
 export interface LoginUserOptions {
   username?: string;
@@ -108,6 +116,14 @@ interface GameContextType {
   activeAchievement: AchievementToastData | null;
   dismissAchievement: () => void;
   triggerAchievement: (achievement: AchievementToastData) => void;
+  regionCode: RegionCode;
+  appLang: AppLang;
+  setRegionAndLang: (region: RegionCode, lang: AppLang) => void;
+  grantRewardedHeart: () => void;
+  nextHeartInSec: number;
+  purchasePackage: (pkg: 'ad_free' | 'ai_coach' | 'moon_wolf' | 'cyber_warrior') => void;
+  buyCostumeDirect: (costumeId: KnowzaCostume) => void;
+  buyFrameDirect: (frameId: AvatarFrameId) => void;
 }
 
 const DEFAULT_MISTAKES: MistakeItem[] = [
@@ -223,6 +239,10 @@ const GameContext = createContext<GameContextType | undefined>(undefined);
 export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [activeAchievement, setActiveAchievement] = useState<AchievementToastData | null>(null);
   const [serverPlayers, setServerPlayers] = useState<ServerLeaderboardPlayer[]>([]);
+  const initialLocale = detectInitialRegionAndLang();
+  const [regionCode, setRegionCode] = useState<RegionCode>(initialLocale.region);
+  const [appLang, setAppLang] = useState<AppLang>(initialLocale.lang);
+  const [nextHeartInSec, setNextHeartInSec] = useState<number>(0);
 
   const [stats, setStats] = useState<UserStats>(() => {
     try {
@@ -426,9 +446,19 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
       }
 
+      if (prev.isPro || prev.isFounder) {
+        return {
+          ...prev,
+          totalQuestionsAnswered: prev.totalQuestionsAnswered + 1,
+          errorList: updatedErrors
+        };
+      }
+
+      const nextHearts = Math.max(0, prev.hearts - 1);
       return {
         ...prev,
-        hearts: Math.max(0, prev.hearts - 1),
+        hearts: nextHearts,
+        lastHeartRegenAt: prev.lastHeartRegenAt || Date.now(),
         totalQuestionsAnswered: prev.totalQuestionsAnswered + 1,
         errorList: updatedErrors
       };
@@ -442,12 +472,56 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setStats(prev => ({
         ...prev,
         gems: prev.gems - 50,
-        hearts: prev.maxHearts
+        hearts: prev.maxHearts,
+        lastHeartRegenAt: undefined,
       }));
       return true;
     }
     return false;
   };
+
+  const grantRewardedHeart = () => {
+    sound.playVictory();
+    setStats(prev => {
+      if (prev.isPro || prev.isFounder) return prev;
+      const nextHearts = Math.min(prev.maxHearts, prev.hearts + 1);
+      return {
+        ...prev,
+        hearts: nextHearts,
+        lastHeartRegenAt: nextHearts >= prev.maxHearts ? undefined : Date.now(),
+      };
+    });
+  };
+
+  useEffect(() => {
+    if (stats.isPro || stats.isFounder || stats.hearts >= stats.maxHearts) {
+      setNextHeartInSec(0);
+      return;
+    }
+
+    const tick = () => {
+      const anchor = stats.lastHeartRegenAt || Date.now();
+      const elapsed = Date.now() - anchor;
+      if (elapsed >= HEART_REGEN_MS) {
+        const gained = Math.floor(elapsed / HEART_REGEN_MS);
+        setStats(prev => {
+          if (prev.isPro || prev.isFounder || prev.hearts >= prev.maxHearts) return prev;
+          const nextHearts = Math.min(prev.maxHearts, prev.hearts + gained);
+          return {
+            ...prev,
+            hearts: nextHearts,
+            lastHeartRegenAt: nextHearts >= prev.maxHearts ? undefined : anchor + gained * HEART_REGEN_MS,
+          };
+        });
+      } else {
+        setNextHeartInSec(Math.ceil((HEART_REGEN_MS - elapsed) / 1000));
+      }
+    };
+
+    tick();
+    const timer = window.setInterval(tick, 1000);
+    return () => window.clearInterval(timer);
+  }, [stats.isPro, stats.isFounder, stats.hearts, stats.maxHearts, stats.lastHeartRegenAt]);
 
   const dismissAchievement = () => {
     setActiveAchievement(null);
@@ -1043,14 +1117,106 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const upgradeToPro = () => {
     sound.playVictory();
     confetti({ particleCount: 120, spread: 80 });
+    setStats(prev => {
+      const nextFrames = prev.unlockedAvatarFrames.includes('royal_crown')
+        ? prev.unlockedAvatarFrames
+        : [...prev.unlockedAvatarFrames, 'royal_crown' as AvatarFrameId];
+      const nextCostumes = prev.unlockedCostumes.includes('king')
+        ? prev.unlockedCostumes
+        : [...prev.unlockedCostumes, 'king' as KnowzaCostume];
+      return {
+        ...prev,
+        isPro: true,
+        hearts: 9999,
+        maxHearts: 9999,
+        lastHeartRegenAt: undefined,
+        hasAdFree: true,
+        hasAiPackage: true,
+        gems: prev.gems + 1000,
+        unlockedAvatarFrames: nextFrames,
+        unlockedCostumes: nextCostumes,
+      };
+    });
+  };
+
+  const purchasePackage = (pkg: 'ad_free' | 'ai_coach' | 'moon_wolf' | 'cyber_warrior') => {
+    sound.playVictory();
+    confetti({ particleCount: 90, spread: 70 });
+    setStats(prev => {
+      if (pkg === 'ad_free') {
+        return { ...prev, hasAdFree: true };
+      }
+      if (pkg === 'ai_coach') {
+        return { ...prev, hasAiPackage: true, gems: prev.gems + 250 };
+      }
+      if (pkg === 'moon_wolf') {
+        const nextFrames = prev.unlockedAvatarFrames.includes('moon_reverie')
+          ? prev.unlockedAvatarFrames
+          : [...prev.unlockedAvatarFrames, 'moon_reverie' as AvatarFrameId];
+        const nextCostumes = prev.unlockedCostumes.includes('moon_wolf')
+          ? prev.unlockedCostumes
+          : [...prev.unlockedCostumes, 'moon_wolf' as KnowzaCostume];
+        return {
+          ...prev,
+          hasMoonBundle: true,
+          unlockedAvatarFrames: nextFrames,
+          unlockedCostumes: nextCostumes,
+          equippedAvatarFrame: 'moon_reverie',
+          equippedCostume: 'moon_wolf',
+        };
+      }
+      const nextFrames = prev.unlockedAvatarFrames.includes('cyber_neon')
+        ? prev.unlockedAvatarFrames
+        : [...prev.unlockedAvatarFrames, 'cyber_neon' as AvatarFrameId];
+      const nextCostumes = prev.unlockedCostumes.includes('cyber')
+        ? prev.unlockedCostumes
+        : [...prev.unlockedCostumes, 'cyber' as KnowzaCostume];
+      return {
+        ...prev,
+        hasCyberBundle: true,
+        hearts: prev.maxHearts,
+        lastHeartRegenAt: undefined,
+        gems: prev.gems + 300,
+        unlockedAvatarFrames: nextFrames,
+        unlockedCostumes: nextCostumes,
+        equippedAvatarFrame: 'cyber_neon',
+        equippedCostume: 'cyber',
+      };
+    });
+  };
+
+  const buyCostumeDirect = (costumeId: KnowzaCostume) => {
+    sound.playVictory();
+    confetti({ particleCount: 60, spread: 60 });
     setStats(prev => ({
       ...prev,
-      isPro: true,
-      hearts: 9999,
-      maxHearts: 9999,
-      hasAdFree: true,
-      hasAiPackage: true,
-      gems: prev.gems + 1000
+      unlockedCostumes: prev.unlockedCostumes.includes(costumeId)
+        ? prev.unlockedCostumes
+        : [...prev.unlockedCostumes, costumeId],
+      equippedCostume: costumeId,
+    }));
+  };
+
+  const buyFrameDirect = (frameId: AvatarFrameId) => {
+    sound.playVictory();
+    confetti({ particleCount: 60, spread: 60 });
+    setStats(prev => ({
+      ...prev,
+      unlockedAvatarFrames: prev.unlockedAvatarFrames.includes(frameId)
+        ? prev.unlockedAvatarFrames
+        : [...prev.unlockedAvatarFrames, frameId],
+      equippedAvatarFrame: frameId,
+    }));
+  };
+
+  const setRegionAndLang = (region: RegionCode, lang: AppLang) => {
+    saveRegionAndLangStorage(region, lang);
+    setRegionCode(region);
+    setAppLang(lang);
+    setStats(prev => ({
+      ...prev,
+      regionCode: region,
+      appLang: lang,
     }));
   };
 
@@ -1245,7 +1411,15 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
         updateUserPreferences,
         activeAchievement,
         dismissAchievement,
-        triggerAchievement
+        triggerAchievement,
+        regionCode,
+        appLang,
+        setRegionAndLang,
+        grantRewardedHeart,
+        nextHeartInSec,
+        purchasePackage,
+        buyCostumeDirect,
+        buyFrameDirect,
       }}
     >
       {children}

@@ -4,6 +4,7 @@ import { useGame } from '../context/GameContext';
 import { QUICK_TOOLS, QUICK_TOOL_MAP } from '../data/quickToolsData';
 import { getDisplayIdentity } from '../utils/accountStorage';
 import { sound } from '../utils/audio';
+import { getLocalizedTrack, REGIONS, RegionCode, AppLang } from '../i18n/locale';
 import {
   ChevronRight,
   ChevronLeft,
@@ -85,7 +86,7 @@ const GOAL_OPTIONS: GoalOption[] = [
 ];
 
 export const KnowzaOnboarding: React.FC<KnowzaOnboardingProps> = ({ onComplete, onSkip }) => {
-  const { stats, completeOnboarding } = useGame();
+  const { stats, completeOnboarding, regionCode, setRegionAndLang } = useGame();
   const [step, setStep] = useState<number>(1);
 
   const initialGoal: CourseCategory = stats.targetGoal || 'yks';
@@ -244,9 +245,30 @@ export const KnowzaOnboarding: React.FC<KnowzaOnboardingProps> = ({ onComplete, 
               </span>
             </div>
 
+            {/* Country / Exam System Selector */}
+            <div className="w-full max-w-sm flex items-center gap-1.5 overflow-x-auto scrollbar-none px-1 py-0.5">
+              {REGIONS.map((r) => (
+                <button
+                  key={r.code}
+                  onClick={() => {
+                    sound.playClick();
+                    setRegionAndLang(r.code as RegionCode, r.defaultLang as AppLang);
+                  }}
+                  className={`px-2.5 py-1 rounded-full text-[11px] font-black border flex-shrink-0 transition ${
+                    regionCode === r.code
+                      ? 'bg-slate-900 text-amber-300 border-slate-900 shadow-xs'
+                      : 'bg-white text-slate-700 border-amber-200 hover:bg-amber-50'
+                  }`}
+                >
+                  {r.flag} {r.code}
+                </button>
+              ))}
+            </div>
+
             <div className="w-full max-w-sm space-y-2 max-h-56 overflow-y-auto scrollbar-none px-1">
               {GOAL_OPTIONS.map((goal) => {
                 const isSelected = targetGoal === goal.id;
+                const loc = getLocalizedTrack(goal.id, regionCode);
                 return (
                   <button
                     key={goal.id}
@@ -264,14 +286,14 @@ export const KnowzaOnboarding: React.FC<KnowzaOnboardingProps> = ({ onComplete, 
                       <div className="min-w-0 flex-1 pr-2">
                         <div className="flex items-center gap-1.5">
                           <h4 className="text-xs sm:text-sm font-black text-slate-900 truncate">
-                            {goal.title}
+                            {loc.title}
                           </h4>
                           <span className={`text-[9px] font-black px-1.5 py-0.5 rounded-full border ${goal.tagColor}`}>
-                            {goal.badge}
+                            {loc.badge}
                           </span>
                         </div>
                         <p className="text-[10px] font-bold text-slate-500 truncate mt-0.5">
-                          {goal.details}
+                          {loc.subtitle}
                         </p>
                       </div>
                     </div>

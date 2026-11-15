@@ -3,6 +3,7 @@ import { X, Check, ChevronRight } from 'lucide-react';
 import { sound } from '../utils/audio';
 import { useGame } from '../context/GameContext';
 import { KnowzaSuccessScreen } from './KnowzaSuccessScreen';
+import { AdInterstitialModal } from './AdInterstitialModal';
 
 interface KnowzaQuizModalProps {
   subject: string;
@@ -10,13 +11,14 @@ interface KnowzaQuizModalProps {
 }
 
 export const KnowzaQuizModal: React.FC<KnowzaQuizModalProps> = ({ subject, onClose }) => {
-  const { addXpAndGems } = useGame();
+  const { addXpAndGems, stats } = useGame();
   
   const [currentStep, setCurrentStep] = useState(3);
   const totalSteps = 10;
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
   const [isAnswered, setIsAnswered] = useState(false);
   const [showSuccessScreen, setShowSuccessScreen] = useState(false);
+  const [showPostTestAd, setShowPostTestAd] = useState(false);
 
   const sampleQuestion = {
     prompt: 'Bu kelimenin Türkçe karşılığı nedir?',
@@ -49,6 +51,19 @@ export const KnowzaQuizModal: React.FC<KnowzaQuizModalProps> = ({ subject, onClo
     }
   };
 
+  if (showPostTestAd) {
+    return (
+      <AdInterstitialModal
+        open={true}
+        mode="interstitial"
+        onClose={() => {
+          setShowPostTestAd(false);
+          onClose();
+        }}
+      />
+    );
+  }
+
   if (showSuccessScreen) {
     return (
       <KnowzaSuccessScreen
@@ -59,6 +74,8 @@ export const KnowzaQuizModal: React.FC<KnowzaQuizModalProps> = ({ subject, onClo
             setCurrentStep(s => s + 1);
             setSelectedOption(null);
             setIsAnswered(false);
+          } else if (!stats.isPro && !stats.isFounder && !stats.hasAdFree) {
+            setShowPostTestAd(true);
           } else {
             onClose();
           }

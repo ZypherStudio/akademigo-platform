@@ -5,6 +5,14 @@ import { X, Heart, CheckCircle2, XCircle, Lightbulb, Sparkles, Award, Volume2 } 
 import { sound } from '../utils/audio';
 import { speakText, stopSpeech } from '../utils/speech';
 import { Mascot } from './Mascot';
+import { AdInterstitialModal } from './AdInterstitialModal';
+import { t, getGeoPricing } from '../i18n/locale';
+
+function formatCountdown(secs: number): string {
+  const m = Math.floor(secs / 60);
+  const s = secs % 60;
+  return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+}
 
 interface LessonModalProps {
   lesson: Lesson;
@@ -12,7 +20,9 @@ interface LessonModalProps {
 }
 
 export const LessonModal: React.FC<LessonModalProps> = ({ lesson, onClose }) => {
-  const { stats, loseHeart, completeLesson, refillHearts } = useGame();
+  const { stats, loseHeart, completeLesson, refillHearts, nextHeartInSec, appLang, regionCode, upgradeToPro } = useGame();
+  const [adMode, setAdMode] = useState<'interstitial' | 'rewarded_heart' | null>(null);
+  const pricing = getGeoPricing(regionCode, appLang);
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
@@ -128,6 +138,9 @@ export const LessonModal: React.FC<LessonModalProps> = ({ lesson, onClose }) => 
       completeLesson(lesson.id, lesson.xpReward, lesson.gemReward, accuracy);
       sound.playTestComplete();
       setIsCompleted(true);
+      if (!stats.isPro && !stats.isFounder && !stats.hasAdFree) {
+        setAdMode('interstitial');
+      }
     }
   };
 
@@ -135,29 +148,56 @@ export const LessonModal: React.FC<LessonModalProps> = ({ lesson, onClose }) => 
   if (stats.hearts <= 0) {
     return (
       <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
-        <div className="bg-white rounded-3xl max-w-md w-full p-6 text-center shadow-2xl animate-pop border-2 border-red-200">
+        <div className="bg-white dark:bg-[#1a2c35] rounded-3xl max-w-md w-full p-6 text-center shadow-2xl animate-pop border-2 border-red-200 dark:border-red-900/60">
           <div className="text-6xl mb-3">💔</div>
-          <h2 className="text-2xl font-black text-gray-800">Canların Tükendi!</h2>
-          <p className="text-sm text-gray-600 font-semibold mt-2 mb-6">
-            Derslere devam etmek için canlarını elmas ile doldurabilir veya çalışma odasında pratik yapabilirsin.
+          <h2 className="text-2xl font-black text-gray-800 dark:text-white">{t(appLang, 'hearts_out_title')}</h2>
+          <p className="text-sm text-gray-600 dark:text-gray-300 font-semibold mt-2 mb-4">
+            {appLang === 'tr'
+              ? 'Canın bitti! Yeni can için bekleme süresi dolana kadar bekleyebilir, reklam izleyebilir veya PRO’ya geçebilirsin.'
+              : 'You ran out of hearts! Wait for the timer, watch a short ad, refill with gems, or go PRO.'}
           </p>
 
-          <div className="space-y-3">
+          <div className="mb-5 p-3.5 rounded-2xl bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800/60 flex items-center justify-between">
+            <span className="text-xs font-black text-red-700 dark:text-red-300 uppercase tracking-wide">
+              ⏳ {t(appLang, 'hearts_wait_label')}
+            </span>
+            <span className="text-lg font-black font-mono text-red-600 dark:text-red-400">
+              {nextHeartInSec > 0 ? formatCountdown(nextHeartInSec) : '15:00'}
+            </span>
+          </div>
+
+          <div className="space-y-2.5">
+            <button
+              onClick={() => setAdMode('rewarded_heart')}
+              className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-black py-3 rounded-2xl border-b-4 border-indigo-800 active:border-b-0 active:translate-y-1 transition-all flex items-center justify-center gap-2 text-sm"
+            >
+              <span>🎬 {t(appLang, 'hearts_watch_ad')}</span>
+            </button>
             <button
               onClick={() => refillHearts()}
-              className="w-full bg-[#58cc02] hover:bg-[#46a302] text-white font-black py-3.5 rounded-2xl border-b-4 border-[#46a302] active:border-b-0 active:translate-y-1 transition-all flex items-center justify-center gap-2"
+              className="w-full bg-[#58cc02] hover:bg-[#46a302] text-white font-black py-3 rounded-2xl border-b-4 border-[#46a302] active:border-b-0 active:translate-y-1 transition-all flex items-center justify-center gap-2 text-sm"
             >
-              <span>Canları Doldur</span>
-              <span className="bg-white/20 px-2 py-0.5 rounded-lg text-sm">💎 50</span>
+              <span>{t(appLang, 'hearts_refill_gems')}</span>
+            </button>
+            <button
+              onClick={() => upgradeToPro()}
+              className="w-full bg-gradient-to-r from-[#FFC700] to-[#FF9500] text-[#2A1E00] font-black py-3 rounded-2xl border-b-4 border-[#CC7700] active:border-b-0 active:translate-y-1 transition-all flex items-center justify-center gap-2 text-xs"
+            >
+              <span>👑 {t(appLang, 'hearts_go_pro')} ({pricing.proMonthlyLabel}{pricing.proPeriodLabel})</span>
             </button>
             <button
               onClick={onClose}
-              className="w-full bg-gray-100 hover:bg-gray-200 text-gray-600 font-black py-3 rounded-2xl transition-all"
+              className="w-full bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-300 font-black py-2.5 rounded-2xl transition-all text-xs"
             >
-              ŞİMDİLİK ÇIK
+              {appLang === 'tr' ? 'ŞİMDİLİK ÇIK' : 'EXIT FOR NOW'}
             </button>
           </div>
         </div>
+        <AdInterstitialModal
+          open={adMode !== null}
+          mode={adMode || 'rewarded_heart'}
+          onClose={() => setAdMode(null)}
+        />
       </div>
     );
   }
@@ -199,6 +239,11 @@ export const LessonModal: React.FC<LessonModalProps> = ({ lesson, onClose }) => 
             DEVAM ET
           </button>
         </div>
+        <AdInterstitialModal
+          open={adMode !== null}
+          mode={adMode || 'interstitial'}
+          onClose={() => setAdMode(null)}
+        />
       </div>
     );
   }

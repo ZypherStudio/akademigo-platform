@@ -48,7 +48,7 @@ type StudioSubTab = 'chat' | 'notes_quiz' | 'study_plan' | 'train_ai';
 const TRACK_ORDER: AiTrackId[] = ['yks', 'lgs', 'kpss', 'dil', 'kodlama'];
 
 export const AiCoach: React.FC = () => {
-  const { stats, selectedCourseId, addXpAndGems } = useGame();
+  const { stats, selectedCourseId, addXpAndGems, regionCode, appLang } = useGame();
   const initialTrack = normalizeAiTrack(selectedCourseId);
   const [activeTrack, setActiveTrack] = useState<AiTrackId>(initialTrack);
   const [studioTab, setStudioTab] = useState<StudioSubTab>('chat');
@@ -60,9 +60,11 @@ export const AiCoach: React.FC = () => {
     {
       id: 'msg-init',
       sender: 'knowza',
-      text: `Merhaba! Ben ${TRACK_AI_PROFILES[initialTrack].expertTitle} modundaki Knowza Ayıcık Koçun 🐻🎓\n\nTakıldığın ödev sorusunun fotoğrafını 📷 yükleyebilir, sesli sorabilir veya konu hakkında yazabilirsin!`,
-      timestamp: 'Şimdi',
-      cardTip: `💡 Aktif Mod: ${TRACK_AI_PROFILES[initialTrack].badge}`,
+      text: appLang === 'tr'
+        ? `Merhaba! Ben ${TRACK_AI_PROFILES[initialTrack].expertTitle} modundaki Knowza Ayıcık Koçun 🐻🎓\n\nTakıldığın ödev sorusunun fotoğrafını 📷 yükleyebilir, sesli sorabilir veya konu hakkında yazabilirsin!`
+        : `Hi! I'm your Knowza AI Bear Coach (${regionCode} • ${TRACK_AI_PROFILES[initialTrack].badge}) 🐻🎓\n\nUpload a photo 📷 of any homework/exam question, ask by voice, or type your topic below!`,
+      timestamp: appLang === 'tr' ? 'Şimdi' : 'Now',
+      cardTip: `💡 ${regionCode} • ${TRACK_AI_PROFILES[initialTrack].badge}`,
     },
   ]);
   const [inputText, setInputText] = useState('');

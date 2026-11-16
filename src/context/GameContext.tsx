@@ -124,6 +124,9 @@ interface GameContextType {
   purchasePackage: (pkg: 'ad_free' | 'ai_coach' | 'moon_wolf' | 'cyber_warrior') => void;
   buyCostumeDirect: (costumeId: KnowzaCostume) => void;
   buyFrameDirect: (frameId: AvatarFrameId) => void;
+  remainingStreakRestores: number;
+  restoreBrokenStreak: () => { success: boolean; remaining: number };
+  dismissBrokenStreak: () => void;
 }
 
 const DEFAULT_MISTAKES: MistakeItem[] = [
@@ -214,12 +217,23 @@ export const AVATAR_MAP: Record<UserAvatar, { emoji: string; name: string }> = {
 const KNOWZA_STORAGE_VERSION = 'knowza_v2026_real_v5';
 
 const getTodayIsoDate = (): string => new Date().toISOString().split('T')[0];
+const getCurrentYear = (): number => new Date().getFullYear();
+export const MAX_ANNUAL_STREAK_RESTORES = 3;
+
+const getDayDiff = (fromIso: string, toIso: string): number => {
+  const a = new Date(fromIso + 'T00:00:00Z').getTime();
+  const b = new Date(toIso + 'T00:00:00Z').getTime();
+  if (Number.isNaN(a) || Number.isNaN(b)) return 0;
+  return Math.round((b - a) / (24 * 60 * 60 * 1000));
+};
 
 const computeNextStreakState = (prev: UserStats) => {
   const todayStr = getTodayIsoDate();
   const isNewDay = prev.lastActiveDate !== todayStr;
+  const diffDays = prev.lastActiveDate ? getDayDiff(prev.lastActiveDate, todayStr) : 0;
+  const missedMultipleDays = diffDays >= 2;
   const nextStreak =
-    (prev.streak || 0) === 0
+    (prev.streak || 0) === 0 || missedMultipleDays
       ? 1
       : isNewDay
       ? (prev.streak || 0) + 1
@@ -1220,6 +1234,57 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }));
   };
 
+  const currentYear = getCurrentYear();
+  const usedThisYear =
+    stats.streakRestoresYear === currentYear ? stats.streakRestoresUsed || 0 : 0;
+  const remainingStreakRestores = Math.max(0, MAX_ANNUAL_STREAK_RESTORES - usedThisYear);
+
+  // Detect if user missed 2+ days and trigger streak break / 3x-per-year recovery modal
+  useEffect(() => {
+    if (!stats.lastActiveDate || (stats.streak || 0) <= 0 || stats.brokenStreakValue) return;
+    const todayStr = getTodayIsoDate();
+    const diffDays = getDayDiff(stats.lastActiveDate, todayStr);
+    if (diffDays >= 2) {
+      setStats(prev => {
+        if ((prev.streak || 0) <= 0) return prev;
+        return {
+          ...prev,
+          brokenStreakValue: prev.streak,
+          streak: 0,
+        };
+      });
+    }
+  }, [stats.lastActiveDate, stats.streak, stats.brokenStreakValue]);
+
+  const restoreBrokenStreak = (): { success: boolean; remaining: number } => {
+    const yr = getCurrentYear();
+    const used = stats.streakRestoresYear === yr ? stats.streakRestoresUsed || 0 : 0;
+    if (used >= MAX_ANNUAL_STREAK_RESTORES || !stats.brokenStreakValue) {
+      return { success: false, remaining: Math.max(0, MAX_ANNUAL_STREAK_RESTORES - used) };
+    }
+    const nextUsed = used + 1;
+    const remaining = Math.max(0, MAX_ANNUAL_STREAK_RESTORES - nextUsed);
+    sound.playVictory();
+    confetti({ particleCount: 90, spread: 75 });
+    setStats(prev => ({
+      ...prev,
+      streak: Math.max(1, prev.brokenStreakValue || 1),
+      lastActiveDate: getTodayIsoDate(),
+      streakRestoresYear: yr,
+      streakRestoresUsed: nextUsed,
+      brokenStreakValue: undefined,
+    }));
+    return { success: true, remaining };
+  };
+
+  const dismissBrokenStreak = () => {
+    setStats(prev => ({
+      ...prev,
+      brokenStreakValue: undefined,
+      streak: 0,
+    }));
+  };
+
   const updateCustomBear = (config: CustomBearConfig) => {
     sound.playClick();
     setStats(prev => {
@@ -1422,6 +1487,9 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
         purchasePackage,
         buyCostumeDirect,
         buyFrameDirect,
+        remainingStreakRestores,
+        restoreBrokenStreak,
+        dismissBrokenStreak,
       }}
     >
       {children}

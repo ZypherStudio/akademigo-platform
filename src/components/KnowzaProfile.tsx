@@ -37,7 +37,7 @@ export const KnowzaProfile: React.FC<KnowzaProfileProps> = ({
   onOpenAuth,
   onOpenOnboarding
 }) => {
-  const { stats, updateUsername, logoutUser, regionCode, appLang, setRegionAndLang } = useGame();
+  const { stats, updateUsername, logoutUser, regionCode, appLang, setRegionAndLang, remainingStreakRestores } = useGame();
   const currentRegionInfo = getRegionInfo(regionCode);
   const streakTier = getStreakTier(stats.streak || 0);
   const [isDark, toggleDarkMode] = useDarkMode();
@@ -156,13 +156,16 @@ export const KnowzaProfile: React.FC<KnowzaProfileProps> = ({
           )}
 
           {/* Evolving Streak Flame Tier Badge */}
-          <div className={`inline-flex items-center gap-1.5 bg-gradient-to-r ${streakTier.badgeGradient} text-white text-xs font-black px-3.5 py-1 rounded-full shadow-md mb-2`}>
+          <div className={`inline-flex items-center gap-1.5 bg-gradient-to-r ${streakTier.badgeGradient} text-white text-xs font-black px-3.5 py-1 rounded-full shadow-md mb-1`}>
             <span>{streakTier.emoji}</span>
             <span>{appLang === 'tr' ? streakTier.titleTr : streakTier.titleEn}</span>
             <span className="bg-black/20 px-1.5 py-0.5 rounded-full text-[10px]">
               {stats.streak || 0} Gün
               {streakTier.nextMilestone ? ` / 🎯 ${streakTier.nextMilestone}` : ' MAX'}
             </span>
+          </div>
+          <div className="text-[11px] font-bold text-amber-700 mb-2">
+            🛡️ {appLang === 'tr' ? `Yıllık Seri Kurtarma Hakkı: ${remainingStreakRestores}/3` : `Annual Streak Restores: ${remainingStreakRestores}/3`}
           </div>
 
           <div className="flex items-center gap-1.5 text-xs font-bold text-slate-500 mb-2">

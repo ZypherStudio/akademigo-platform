@@ -294,6 +294,9 @@ export interface UserStats {
   lastHeartRegenAt?: number;
   regionCode?: 'TR' | 'US' | 'GB' | 'DE' | 'FR' | 'ES' | 'GLOBAL';
   appLang?: 'tr' | 'en' | 'de' | 'fr' | 'es';
+  streakRestoresYear?: number;
+  streakRestoresUsed?: number;
+  brokenStreakValue?: number;
   customBear?: CustomBearConfig;
 }
 

@@ -26,6 +26,7 @@ import {
 import { sound } from '../utils/audio';
 import confetti from 'canvas-confetti';
 import { getGeoPricing, t } from '../i18n/locale';
+import { BearNoticeData, KnowzaBearNotice } from './KnowzaBearNotice';
 
 type ShopTab = 'pro' | 'bear_studio' | 'frames' | 'costumes' | 'boosters' | 'ads';
 
@@ -50,6 +51,7 @@ export const Shop: React.FC = () => {
 
   const [activeTab, setActiveTab] = useState<ShopTab>('pro');
   const [feedback, setFeedback] = useState<string | null>(null);
+  const [bearNotice, setBearNotice] = useState<BearNoticeData | null>(null);
   const [watchingAd, setWatchingAd] = useState<{ active: boolean; secondsLeft: number; rewardType: 'gems' | 'heart' } | null>(null);
 
   // Discord-style frame preview modal state
@@ -93,12 +95,20 @@ export const Shop: React.FC = () => {
 
   const handleBuyBooster = (item: 'refill' | 'freeze' | 'double', cost: number) => {
     if (stats.gems < cost) {
-      showToast('❌ Yeterli elmasın yok! Reklam izleyerek veya test çözerek elmas kazanabilirsin.');
+      setBearNotice({
+        kind: 'no_gems',
+        title: 'Elmasın Yetersiz! 💎',
+        message: 'Bu güçlendirici için yeterli elmasın yok. Ders çözerek veya ödüllü reklam izleyerek hemen elmas kazanabilirsin!',
+      });
       return;
     }
     const success = buyShopItem(item);
     if (success) {
-      showToast('🎉 Güçlendirici başarıyla satın alındı!');
+      setBearNotice({
+        kind: 'purchased',
+        title: 'Güçlendirici Alındı! ⚡',
+        message: 'Seçtiğin güçlendirici hesabına tanımlandı, başarılar şampiyon!',
+      });
     } else {
       showToast('⚠️ Canların zaten dolu veya işlem gerçekleştirilemedi.');
     }
@@ -119,13 +129,21 @@ export const Shop: React.FC = () => {
     }
 
     if (stats.gems < costume.priceGems) {
-      showToast(`❌ Yetersiz elmas! Bu kostüm için ${costume.priceGems} Elmas gerekli.`);
+      setBearNotice({
+        kind: 'no_gems',
+        title: `${costume.priceGems} Elmas Gerekli 💎`,
+        message: `Elmasın eksik ama istersen hemen altındaki "${pricing.avatarLabel}" seçeneğiyle doğrudan açabilir veya test çözüp elmas biriktirebilirsin!`,
+      });
       return;
     }
 
     const success = buyCostume(costume.id);
     if (success) {
-      showToast(`👑 Tebrikler! "${costume.name}" başarıyla açıldı ve kuşandı!`);
+      setBearNotice({
+        kind: 'purchased',
+        title: `${costume.name} Alındı! 🐻`,
+        message: 'Yeni kostümün kalıcı olarak açıldı ve ayıcığına giydirildi!',
+      });
     }
   };
 
@@ -138,6 +156,7 @@ export const Shop: React.FC = () => {
 
   return (
     <div className="flex-1 w-full max-w-md mx-auto px-4 py-4 space-y-4 pb-36 select-none animate-fade">
+      <KnowzaBearNotice notice={bearNotice} onClose={() => setBearNotice(null)} />
       {/* Toast Notification */}
       {feedback && (
         <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 bg-[#2A1E00] text-amber-300 font-black text-xs px-4 py-2.5 rounded-full shadow-2xl border border-amber-400/50 animate-bounceSubtle flex items-center gap-2">

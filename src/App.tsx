@@ -24,6 +24,7 @@ import { KnowzaOnboarding } from './components/KnowzaOnboarding';
 import { AchievementToast } from './components/AchievementToast';
 import { KnowzaWidgetHub } from './components/KnowzaWidgetHub';
 import { StreakRecoveryModal } from './components/StreakRecoveryModal';
+import { DailyCoachReminderHost } from './components/KnowzaBearNotice';
 import { ArrowLeft, Smartphone, Monitor } from 'lucide-react';
 import { soundSystem } from './utils/audio';
 import { loadAccountRecord, SavedAccountSummary } from './utils/accountStorage';
@@ -108,6 +109,7 @@ const KnowzaAppContent: React.FC = () => {
       <div className="w-full max-w-md min-h-[100dvh] relative bg-[#FFFDF7] md:my-3 md:rounded-[40px] md:shadow-2xl md:border md:border-amber-200/50 flex flex-col overflow-hidden">
         {/* Main Tab Views */}
         <StreakRecoveryModal />
+        <DailyCoachReminderHost onOpenCoach={() => setCurrentTab('aicoach')} />
         <main className="flex-1 w-full flex flex-col">
           {currentTab === 'home' && (
             <KnowzaHome

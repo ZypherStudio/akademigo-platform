@@ -6,6 +6,16 @@ import { speakText, stopSpeech } from '../utils/speech';
 import confetti from 'canvas-confetti';
 import { Mascot } from './Mascot';
 import { KnowzaAvatar } from './KnowzaAvatar';
+import { getCourseForRegion } from '../data/regionalCoursesData';
+
+function shuffleArray<T>(items: T[]): T[] {
+  const arr = [...items];
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
 
 interface ReelQuestion {
   id: string;
@@ -135,7 +145,38 @@ const REEL_QUESTIONS: ReelQuestion[] = [
 ];
 
 export const ReelsQuestions: React.FC = () => {
-  const { completeLesson, loseHeart } = useGame();
+  const { completeLesson, loseHeart, regionCode, selectedCourseId } = useGame();
+  const [feedQuestions, setFeedQuestions] = useState<ReelQuestion[]>(() => {
+    const extraCourses = [
+      getCourseForRegion('ehliyet', regionCode),
+      getCourseForRegion(selectedCourseId, regionCode),
+    ];
+    const dynamicItems: ReelQuestion[] = [];
+    extraCourses.forEach((course) => {
+      course.units.forEach((unit) => {
+        unit.lessons.forEach((lesson) => {
+          lesson.questions.forEach((q) => {
+            if (q.type === 'multiple_choice' && q.options.length >= 2) {
+              const correctIdx = Math.max(0, q.options.findIndex((o) => o.isCorrect));
+              dynamicItems.push({
+                id: `dyn-${course.id}-${q.id}`,
+                category: course.name,
+                categoryColor: course.id === 'ehliyet' ? 'bg-rose-500' : 'bg-indigo-500',
+                badge: course.badge || 'Güncel 2026',
+                prompt: q.prompt,
+                options: q.options.map((o) => o.text),
+                correctIndex: correctIdx,
+                explanation: q.explanation,
+                knowzaTip: q.explanation,
+              });
+            }
+          });
+        });
+      });
+    });
+    const combined = [...REEL_QUESTIONS, ...dynamicItems];
+    return shuffleArray(combined);
+  });
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
   const [isAnswered, setIsAnswered] = useState(false);
@@ -145,7 +186,7 @@ export const ReelsQuestions: React.FC = () => {
   const [timeLeft, setTimeLeft] = useState(15);
   const [copiedShare, setCopiedShare] = useState(false);
 
-  const currentQ = REEL_QUESTIONS[currentIndex % REEL_QUESTIONS.length];
+  const currentQ = feedQuestions[currentIndex % feedQuestions.length];
 
   // 15-second countdown timer for Reels adrenaline
   useEffect(() => {
@@ -244,6 +285,20 @@ export const ReelsQuestions: React.FC = () => {
             <Timer className="w-4 h-4" />
             <span>{timeLeft}s</span>
           </div>
+          <button
+            onClick={() => {
+              sound.playClick();
+              setFeedQuestions((prev) => shuffleArray(prev));
+              setCurrentIndex(0);
+              setSelectedOption(null);
+              setIsAnswered(false);
+              setTimeLeft(15);
+            }}
+            className="p-1.5 rounded-xl bg-amber-100 hover:bg-amber-200 text-amber-800 transition"
+            title="Soruları Karıştır"
+          >
+            <RotateCcw className="w-4 h-4" />
+          </button>
         </div>
 
         {/* Total Earned XP */}

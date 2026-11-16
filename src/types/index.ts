@@ -2,6 +2,7 @@ export type CourseCategory =
   | 'yks'
   | 'lgs'
   | 'kpss'
+  | 'ehliyet'
   | 'kodlama'
   | 'dil'
   | 'dil_alm'

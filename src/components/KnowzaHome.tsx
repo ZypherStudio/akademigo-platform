@@ -35,6 +35,8 @@ import { useDarkMode } from '../utils/theme';
 import { KnowzaTab } from './KnowzaBottomNav';
 import { KnowzaAvatar } from './KnowzaAvatar';
 import { getLocalizedTrack } from '../i18n/locale';
+import { getCourseForRegion } from '../data/regionalCoursesData';
+import { loadCachedOfficialManifest, OfficialSyncManifest, syncOfficialTests } from '../utils/officialSync';
 
 interface KnowzaHomeProps {
   onStartQuiz: (subject: string) => void;
@@ -55,6 +57,19 @@ export const KnowzaHome: React.FC<KnowzaHomeProps> = ({
   const [showAllCategoriesModal, setShowAllCategoriesModal] = useState(false);
   const [isMusicPlaying, setIsMusicPlaying] = useState(() => sound.getBgmEnabled());
   const [isDark, toggleDarkMode] = useDarkMode();
+  const [officialManifest, setOfficialManifest] = useState<OfficialSyncManifest | null>(() =>
+    loadCachedOfficialManifest()
+  );
+
+  React.useEffect(() => {
+    let active = true;
+    syncOfficialTests().then((manifest) => {
+      if (active && manifest) setOfficialManifest(manifest);
+    });
+    return () => {
+      active = false;
+    };
+  }, [regionCode]);
 
   // Dynamic user level calculation (Starts at Level 1 with 0 XP)
   const userLevel = Math.max(1, Math.floor((stats.xp || 0) / 100) + 1);
@@ -62,6 +77,7 @@ export const KnowzaHome: React.FC<KnowzaHomeProps> = ({
   // Available categories with country-localized metadata
   const rawCategories: { id: CourseCategory; icon: string; color: string }[] = [
     { id: 'yks', icon: '🎓', color: 'from-amber-500 to-orange-500' },
+    { id: 'ehliyet', icon: '🚗', color: 'from-rose-500 to-red-600' },
     { id: 'dil', icon: '🇬🇧', color: 'from-cyan-500 to-blue-600' },
     { id: 'dil_alm', icon: '🇩🇪', color: 'from-yellow-500 to-amber-600' },
     { id: 'dil_fra', icon: '🇫🇷', color: 'from-indigo-500 to-blue-600' },
@@ -84,8 +100,8 @@ export const KnowzaHome: React.FC<KnowzaHomeProps> = ({
     return 0;
   });
 
-  // Active course data from coursesData
-  const currentCourse = COURSES.find((c) => c.id === selectedCourseId) || COURSES[0];
+  // Active course data localized by country + auto-synced official updates
+  const currentCourse = getCourseForRegion(selectedCourseId, regionCode, officialManifest);
   const allUnits = currentCourse?.units || [];
   
   // Real playable lessons with actual questions (Zero 0-question lessons!)

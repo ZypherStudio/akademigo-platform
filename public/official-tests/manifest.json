@@ -1,0 +1,14 @@
+{
+  "version": "2026.11",
+  "updatedAt": "2026-11-16T22:30:00Z",
+  "sources": {
+    "TR": "MEB e-Sınav & ÖSYM 2026 Resmi Müfredat",
+    "US": "DMV Official Handbook & College Board SAT 2026",
+    "GB": "DVSA Highway Code & AQA/Edexcel 2026",
+    "DE": "StVO TÜV/DEKRA & Kultusministerkonferenz Abitur 2026",
+    "FR": "Sécurité Routière ETG/ETM & Éducation Nationale BAC 2026",
+    "ES": "DGT Oficial & Ministerio EvAU 2026",
+    "GLOBAL": "International Road Rules & IB/SAT 2026"
+  },
+  "updates": {}
+}

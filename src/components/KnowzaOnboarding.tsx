@@ -64,6 +64,16 @@ const GOAL_OPTIONS: GoalOption[] = [
     recommendedTools: ['tests', 'exams', 'countdown', 'errors'],
   },
   {
+    id: 'ehliyet',
+    title: 'Ehliyet (Araba & Motor)',
+    subtitle: 'Resmi Sınav Hazırlık',
+    details: 'Trafik, Motor, İlk Yardım & Ülkeye Özel Sürüş Kuralları',
+    icon: '🚗',
+    badge: 'B & A',
+    tagColor: 'bg-rose-100 text-rose-900 border-rose-300',
+    recommendedTools: ['tests', 'exams', 'aicoach', 'errors'],
+  },
+  {
     id: 'kodlama',
     title: 'Kodlama & Yazılım',
     subtitle: 'Python & Algoritma',

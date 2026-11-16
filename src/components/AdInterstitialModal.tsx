@@ -8,6 +8,11 @@ import {
   hasAdsterraConfigured,
   injectAdsterraScript,
 } from '../utils/adsterra';
+import {
+  isNativeUnityAdsAvailable,
+  showUnityInterstitial,
+  showUnityRewarded,
+} from '../utils/unityAds';
 
 interface AdInterstitialModalProps {
   open: boolean;
@@ -36,7 +41,27 @@ export const AdInterstitialModal: React.FC<AdInterstitialModalProps> = ({
       return;
     }
 
+    let cancelled = false;
     setSecondsLeft(5);
+
+    if (isNativeUnityAdsAvailable()) {
+      const runUnity = async () => {
+        const shown =
+          mode === 'rewarded_heart'
+            ? await showUnityRewarded()
+            : await showUnityInterstitial();
+        if (cancelled) return;
+        if (shown) {
+          if (mode === 'rewarded_heart') {
+            grantRewardedHeart();
+            onRewardClaimed?.();
+          }
+          onClose();
+        }
+      };
+      runUnity();
+    }
+
     let cleanupScript: (() => void) | undefined;
     if (ADSTERRA_SCRIPT_URL && adSlotRef.current) {
       cleanupScript = injectAdsterraScript(adSlotRef.current);
@@ -46,6 +71,7 @@ export const AdInterstitialModal: React.FC<AdInterstitialModalProps> = ({
       setSecondsLeft((prev) => (prev > 0 ? prev - 1 : 0));
     }, 1000);
     return () => {
+      cancelled = true;
       window.clearInterval(timer);
       cleanupScript?.();
     };

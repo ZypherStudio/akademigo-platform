@@ -5,4 +5,6 @@
     <string name="title_activity_main">Knowza</string>
     <string name="package_name">com.knowza.app</string>
     <string name="custom_url_scheme">com.knowza.app</string>
+    <string name="unity_game_id">800440695</string>
+    <bool name="unity_test_mode">false</bool>
 </resources>

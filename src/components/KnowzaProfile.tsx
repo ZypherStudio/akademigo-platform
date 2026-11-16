@@ -24,6 +24,7 @@ import { KnowzaAvatar } from './KnowzaAvatar';
 import { getDisplayIdentity } from '../utils/accountStorage';
 import { useDarkMode } from '../utils/theme';
 import { REGIONS, LANGUAGES, RegionCode, AppLang, getRegionInfo, t } from '../i18n/locale';
+import { getStreakTier } from '../utils/streakTiers';
 
 interface KnowzaProfileProps {
   onBack?: () => void;
@@ -38,6 +39,7 @@ export const KnowzaProfile: React.FC<KnowzaProfileProps> = ({
 }) => {
   const { stats, updateUsername, logoutUser, regionCode, appLang, setRegionAndLang } = useGame();
   const currentRegionInfo = getRegionInfo(regionCode);
+  const streakTier = getStreakTier(stats.streak || 0);
   const [isDark, toggleDarkMode] = useDarkMode();
   const displayIdentity = getDisplayIdentity(stats);
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
@@ -152,6 +154,16 @@ export const KnowzaProfile: React.FC<KnowzaProfileProps> = ({
               <span>⚡</span>
             </div>
           )}
+
+          {/* Evolving Streak Flame Tier Badge */}
+          <div className={`inline-flex items-center gap-1.5 bg-gradient-to-r ${streakTier.badgeGradient} text-white text-xs font-black px-3.5 py-1 rounded-full shadow-md mb-2`}>
+            <span>{streakTier.emoji}</span>
+            <span>{appLang === 'tr' ? streakTier.titleTr : streakTier.titleEn}</span>
+            <span className="bg-black/20 px-1.5 py-0.5 rounded-full text-[10px]">
+              {stats.streak || 0} Gün
+              {streakTier.nextMilestone ? ` / 🎯 ${streakTier.nextMilestone}` : ' MAX'}
+            </span>
+          </div>
 
           <div className="flex items-center gap-1.5 text-xs font-bold text-slate-500 mb-2">
             <span>Seviye {currentLevel}</span>

@@ -1,7 +1,10 @@
 import { initializeApp, getApps, FirebaseApp } from 'firebase/app';
+import { Capacitor } from '@capacitor/core';
+import { FirebaseAuthentication } from '@capacitor-firebase/authentication';
 import {
   getAuth,
   GoogleAuthProvider,
+  signInWithCredential,
   signInWithPopup,
   signInWithRedirect,
   getRedirectResult,
@@ -401,6 +404,31 @@ export async function signInWithFirebaseGoogle(): Promise<FirebaseAuthResult> {
 
   try {
     await setPersistence(instances.auth, browserLocalPersistence).catch(() => {});
+
+    // Native Android / iOS Google Account Picker via @capacitor-firebase/authentication
+    if (Capacitor.isNativePlatform()) {
+      const nativeResult = await FirebaseAuthentication.signInWithGoogle();
+      const idToken = nativeResult.credential?.idToken;
+      if (!idToken) {
+        return { ok: false, error: 'Google kimlik doğrulama jetonu alınamadı.', errorCode: 'auth/no-id-token' };
+      }
+      const credential = GoogleAuthProvider.credential(idToken);
+      const cred = await signInWithCredential(instances.auth, credential);
+      const user = cred.user;
+      const email = user.email || nativeResult.user?.email;
+      if (!email) {
+        return { ok: false, error: 'Google hesabından e-posta bilgisi alınamadı.', errorCode: 'auth/no-email' };
+      }
+      return await loadOrInitializeFirestoreProfile({
+        db: instances.db,
+        uid: user.uid,
+        email,
+        displayName: user.displayName || nativeResult.user?.displayName || '',
+        photoURL: user.photoURL || nativeResult.user?.photoUrl || undefined,
+        authProvider: 'google',
+      });
+    }
+
     const provider = new GoogleAuthProvider();
     provider.addScope('email');
     provider.addScope('profile');

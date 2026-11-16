@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "323680176995",
+    "project_id": "knowza-d6f66",
+    "storage_bucket": "knowza-d6f66.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:323680176995:android:0f3a6552d4f279bc60a156",
+        "android_client_info": {
+          "package_name": "com.knowza.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "323680176995-mafa9rqr2abtt2qlkjdss94pjuctv5qd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC4B5faG_EsjfDdT2cch1altTyNTXEUh6s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "323680176995-mafa9rqr2abtt2qlkjdss94pjuctv5qd.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

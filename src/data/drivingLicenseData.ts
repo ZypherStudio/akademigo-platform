@@ -79,6 +79,25 @@ function getRawDrivingCourse(region: RegionCode): RawCourseInput {
                     1,
                     'B sınıfı hususi otomobiller ilk 3 yaş sonunda ve devamında her 2 yılda bir TÜVTÜRK periyodik muayenesine girer.'
                   ),
+                  mc(
+                    'tr-car-5',
+                    'Trafik kazalarında araçta yaralı varsa ve yangın/patlama tehlikesi yoksa yaralıya ilk olarak ne yapılmalıdır?',
+                    [
+                      'Hemen araçtan çekilip çıkarılmalıdır',
+                      'Baş-boyun-gövde ekseni bozulmadan bilinci ve solunumu kontrol edilmelidir',
+                      'Su içirilmelidir',
+                      'Oturtulmalıdır',
+                    ],
+                    1,
+                    'Omurilik zedelenmesi riskine karşı tehlike yoksa yaralı hareket ettirilmez; ABC (Hava yolu, Solunum, Dolaşım) kontrol edilir.'
+                  ),
+                  mc(
+                    'tr-car-6',
+                    'Araçta takip mesafesi en az kaç metre olmalıdır (örneğin 90 km/sa hızla giderken)?',
+                    ['25 metre', '45 metre (hızın yarısı)', '60 metre', '90 metre'],
+                    1,
+                    'Güvenli takip mesafesi, km/saat cinsinden hızın en az yarısı kadardır (90 / 2 = 45 metre veya 2 saniye kuralı).'
+                  ),
                 ],
               },
             ],
@@ -172,6 +191,20 @@ function getRawDrivingCourse(region: RegionCode): RawCourseInput {
                     ['Priorité à gauche', 'Priorité à droite', 'Le véhicule le plus rapide passe', 'Stop obligatoire'],
                     1,
                     'En l’absence de signalisation, la règle générale en France est la priorité à droite.'
+                  ),
+                  mc(
+                    'fr-car-4',
+                    'En France, quelle est la vitesse maximale autorisée sur route bidirectionnelle sans séparateur central ?',
+                    ['80 km/h', '90 km/h', '110 km/h', '70 km/h'],
+                    0,
+                    'Sur les routes bidirectionnelles sans séparateur central en France, la limitation générale est de 80 km/h.'
+                  ),
+                  mc(
+                    'fr-car-5',
+                    'Que signifie un panneau rond à fond bleu avec une flèche blanche pointant vers la droite ?',
+                    ['Interdiction de tourner à droite', 'Obligation de tourner à droite', 'Direction conseillée', 'Sens interdit'],
+                    1,
+                    'Les panneaux ronds à fond bleu indiquent une obligation (ici obligation de tourner à droite).'
                   ),
                 ],
               },
@@ -500,6 +533,13 @@ function getRawDrivingCourse(region: RegionCode): RawCourseInput {
                     ['0.05%', '0.08%', '0.10%', '0.12%'],
                     1,
                     'In nearly all US states (0.05% in Utah), 0.08% BAC is the legal threshold for DUI/DWI for drivers 21+.'
+                  ),
+                  mc(
+                    'us-car-4',
+                    'What does a flashing yellow traffic light mean?',
+                    ['Come to a full stop', 'Proceed with caution', 'Speed up before red', 'Pedestrians only'],
+                    1,
+                    'A flashing yellow light warns drivers to slow down and proceed with caution.'
                   ),
                 ],
               },

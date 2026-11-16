@@ -16,6 +16,9 @@
 }
 -keep class com.unity3d.ads.** { *; }
 -dontwarn com.unity3d.ads.**
+-dontwarn com.facebook.**
+-dontwarn com.apple.**
+-keep class io.capawesome.capacitorjs.plugins.firebase.authentication.** { *; }
 
 # Uncomment this to preserve the line number information for
 # debugging stack traces.

@@ -37,6 +37,7 @@ import { KnowzaAvatar } from './KnowzaAvatar';
 import { getLocalizedTrack } from '../i18n/locale';
 import { getCourseForRegion } from '../data/regionalCoursesData';
 import { loadCachedOfficialManifest, OfficialSyncManifest, syncOfficialTests } from '../utils/officialSync';
+import { getStreakTier } from '../utils/streakTiers';
 
 interface KnowzaHomeProps {
   onStartQuiz: (subject: string) => void;
@@ -119,6 +120,7 @@ export const KnowzaHome: React.FC<KnowzaHomeProps> = ({
   };
 
   const currentStreak = stats.streak ?? 0;
+  const streakTier = getStreakTier(currentStreak);
   const currentGems = stats.gems ?? 0;
   const displayIdentity = getDisplayIdentity(stats);
 
@@ -222,10 +224,13 @@ export const KnowzaHome: React.FC<KnowzaHomeProps> = ({
             <span>{currentGems}</span>
           </button>
 
-          {/* Daily Streak Pill */}
-          <div className="flex items-center gap-1 bg-[#FFF2D6] border border-[#FFE2A3] px-2.5 py-1.5 rounded-2xl text-[#D96B00] font-black text-xs shadow-xs">
-            <Flame className="w-3.5 h-3.5 fill-[#FF8A00] text-[#FF8A00] animate-bounceSubtle" />
-            <span>{currentStreak}g</span>
+          {/* Dynamic Evolving Streak Pill */}
+          <div
+            className={`flex items-center gap-1 ${streakTier.pillBg} border ${streakTier.pillBorder} px-2.5 py-1.5 rounded-2xl ${streakTier.pillText} font-black text-xs shadow-xs`}
+            title={streakTier.titleTr}
+          >
+            <Flame className={`w-3.5 h-3.5 ${streakTier.flameFill} animate-bounceSubtle`} />
+            <span>{currentStreak}g {streakTier.emoji}</span>
           </div>
 
           {/* Music Toggle */}

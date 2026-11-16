@@ -122,6 +122,10 @@ export const KnowzaHome: React.FC<KnowzaHomeProps> = ({
   const currentStreak = stats.streak ?? 0;
   const streakTier = getStreakTier(currentStreak);
   const currentGems = stats.gems ?? 0;
+  const formattedGems =
+    currentGems >= 10000
+      ? `${(currentGems / 1000).toFixed(currentGems >= 99000 ? 0 : 1)}k`
+      : String(currentGems);
   const displayIdentity = getDisplayIdentity(stats);
 
   const preferredToolIds: QuickToolId[] =
@@ -167,13 +171,13 @@ export const KnowzaHome: React.FC<KnowzaHomeProps> = ({
     <div className="flex-1 w-full px-4 py-4 space-y-4 pb-36 select-none animate-fade overflow-x-hidden">
       
       {/* ================= TOP HEADER BAR ================= */}
-      <div className="flex items-center justify-between pt-1">
+      <div className="flex items-center justify-between gap-2 pt-[max(0.25rem,env(safe-area-inset-top))]">
         {/* User Profile Pill */}
         <div
           onClick={() => onNavigateTab('profile')}
-          className="flex items-center gap-2.5 cursor-pointer group active:scale-95 transition-all"
+          className="flex items-center gap-2.5 min-w-0 flex-1 cursor-pointer group active:scale-95 transition-all"
         >
-          <div className="flex-shrink-0">
+          <div className="flex-shrink-0 p-0.5">
             <KnowzaAvatar
               size="md"
               costume={stats.selectedCostume}
@@ -181,81 +185,76 @@ export const KnowzaHome: React.FC<KnowzaHomeProps> = ({
               frameId={stats.equippedAvatarFrame ?? 'none'}
             />
           </div>
-          <div className="min-w-0 max-w-[130px] sm:max-w-[180px]">
-            <div className="flex items-center gap-1">
+          <div className="min-w-0 flex-1">
+            <div className="flex items-center gap-1 min-w-0">
               <span className="text-[10px] font-bold text-[#8C7A5E] block leading-none truncate">
                 {displayIdentity.secondary || (stats.authProvider === 'google' ? 'Google Hesabı' : 'Kayıtlı Hesap')}
               </span>
               {stats.isFounder && (
-                <span className="bg-gradient-to-r from-amber-400 to-yellow-300 text-slate-950 text-[8px] font-black px-1.5 py-0.2 rounded-full uppercase tracking-wider shadow-xs animate-pulse">
+                <span className="bg-gradient-to-r from-amber-400 to-yellow-300 text-slate-950 text-[8px] font-black px-1.5 py-0.5 rounded-full uppercase tracking-wider shadow-xs flex-shrink-0">
                   KURUCU
                 </span>
               )}
+              {stats.isPro && !stats.isFounder && (
+                <span className="bg-amber-300 text-slate-950 text-[8px] font-black px-1.5 py-0.5 rounded-full uppercase tracking-wider flex-shrink-0">
+                  PRO
+                </span>
+              )}
             </div>
-            <h2 className="text-base sm:text-lg font-black text-[#2A1E00] flex items-center gap-1 leading-snug truncate mt-0.5">
+            <h2 className="text-sm sm:text-base font-black text-[#2A1E00] flex items-center gap-1 leading-snug truncate mt-0.5">
               <span className="truncate">{displayIdentity.primary}</span>
-              <span className="text-xs">👑</span>
+              <span className="text-xs flex-shrink-0">👑</span>
             </h2>
           </div>
         </div>
 
-        {/* Right Action Icons: Gems, Streak, Dark Mode, Music & Settings */}
-        <div className="flex items-center gap-1.5 sm:gap-2">
-          <button
-            onClick={() => {
-              sound.playClick();
-              toggleDarkMode();
-            }}
-            className="w-8 h-8 rounded-2xl bg-amber-50 border border-amber-200 flex items-center justify-center text-amber-700 hover:scale-105 active:scale-95 transition"
-            title={isDark ? 'Açık Moda Geç' : 'Koyu Moda Geç'}
-          >
-            {isDark ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-slate-700" />}
-          </button>
+        {/* Right Compact Action Pills: Gems, Streak & Settings */}
+        <div className="flex items-center gap-1.5 flex-shrink-0">
           {/* Gems & Direct Shop Pill */}
           <button
             onClick={() => {
               sound.playClick();
               onNavigateTab('shop');
             }}
-            className="flex items-center gap-1 bg-[#EBF5FF] border border-[#BCE1FE] px-2.5 py-1.5 rounded-2xl text-[#1C8BD6] font-black text-xs shadow-xs hover:scale-105 active:scale-95 transition"
+            className="flex items-center gap-1 bg-[#EBF5FF] border border-[#BCE1FE] px-2 py-1.5 rounded-2xl text-[#1C8BD6] font-black text-xs shadow-xs hover:scale-105 active:scale-95 transition"
             title="Knowza Mağaza & Elmaslar"
           >
-            <Gem className="w-3.5 h-3.5 fill-[#1CB0F6] text-[#1CB0F6]" />
-            <span>{currentGems}</span>
+            <Gem className="w-3.5 h-3.5 fill-[#1CB0F6] text-[#1CB0F6] flex-shrink-0" />
+            <span>{formattedGems}</span>
           </button>
 
           {/* Dynamic Evolving Streak Pill */}
           <div
-            className={`flex items-center gap-1 ${streakTier.pillBg} border ${streakTier.pillBorder} px-2.5 py-1.5 rounded-2xl ${streakTier.pillText} font-black text-xs shadow-xs`}
+            className={`flex items-center gap-1 ${streakTier.pillBg} border ${streakTier.pillBorder} px-2 py-1.5 rounded-2xl ${streakTier.pillText} font-black text-xs shadow-xs`}
             title={streakTier.titleTr}
           >
-            <Flame className={`w-3.5 h-3.5 ${streakTier.flameFill} animate-bounceSubtle`} />
-            <span>{currentStreak}g {streakTier.emoji}</span>
+            <Flame className={`w-3.5 h-3.5 ${streakTier.flameFill} flex-shrink-0`} />
+            <span>{currentStreak}g</span>
           </div>
 
-          {/* Music Toggle */}
+          {/* Music Toggle (hidden on ultra-narrow screens, available in Settings) */}
           <button
             onClick={() => {
               const bgmOn = sound.toggleBgm();
               setIsMusicPlaying(bgmOn);
             }}
-            className={`w-9 h-9 rounded-2xl border flex items-center justify-center transition-all active:scale-90 shadow-xs ${
+            className={`hidden sm:flex w-8 h-8 rounded-2xl border items-center justify-center transition-all active:scale-90 shadow-xs ${
               isMusicPlaying
-                ? 'bg-amber-100 border-amber-300 text-amber-900 shadow-sm animate-pulse'
+                ? 'bg-amber-100 border-amber-300 text-amber-900 shadow-sm'
                 : 'bg-white border-[#F2E8D5] text-[#A0988A] hover:text-[#70685A]'
             }`}
             title={isMusicPlaying ? 'Müziği Duraklat' : 'Çalışma Müziğini Başlat 🎵'}
           >
-            {isMusicPlaying ? <Music className="w-4 h-4 text-amber-600" /> : <VolumeX className="w-4 h-4" />}
+            {isMusicPlaying ? <Music className="w-3.5 h-3.5 text-amber-600" /> : <VolumeX className="w-3.5 h-3.5" />}
           </button>
 
-          {/* Settings Button */}
+          {/* Settings / Theme Button */}
           <button
             onClick={() => {
               sound.playClick();
               onOpenSettings();
             }}
-            className="w-9 h-9 rounded-2xl bg-white border border-[#F2E8D5] flex items-center justify-center text-[#70685A] hover:text-[#2A1E00] hover:bg-[#FFF9EC] shadow-xs active:scale-90 transition-all"
+            className="w-8 h-8 rounded-2xl bg-white border border-[#F2E8D5] flex items-center justify-center text-[#70685A] hover:text-[#2A1E00] hover:bg-[#FFF9EC] shadow-xs active:scale-90 transition-all"
             title="Ayarlar & Profil"
           >
             <Settings className="w-4 h-4" />

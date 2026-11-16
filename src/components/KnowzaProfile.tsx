@@ -24,7 +24,8 @@ import { KnowzaAvatar } from './KnowzaAvatar';
 import { getDisplayIdentity } from '../utils/accountStorage';
 import { useDarkMode } from '../utils/theme';
 import { REGIONS, LANGUAGES, RegionCode, AppLang, getRegionInfo, t } from '../i18n/locale';
-import { getStreakTier } from '../utils/streakTiers';
+import { getStreakTier, getEloLeague } from '../utils/streakTiers';
+import { FriendsAndChatModal } from './FriendsAndChatModal';
 
 interface KnowzaProfileProps {
   onBack?: () => void;
@@ -37,9 +38,12 @@ export const KnowzaProfile: React.FC<KnowzaProfileProps> = ({
   onOpenAuth,
   onOpenOnboarding
 }) => {
-  const { stats, updateUsername, logoutUser, regionCode, appLang, setRegionAndLang, remainingStreakRestores } = useGame();
+  const { stats, updateUsername, logoutUser, regionCode, appLang, setRegionAndLang, remainingStreakRestores, leaderboard } = useGame();
   const currentRegionInfo = getRegionInfo(regionCode);
   const streakTier = getStreakTier(stats.streak || 0);
+  const eloLeague = getEloLeague(stats.eloRating || 1000);
+  const userRank = Math.max(1, leaderboard.findIndex((u) => u.isCurrentUser) + 1);
+  const [showFriendsModal, setShowFriendsModal] = useState(false);
   const [isDark, toggleDarkMode] = useDarkMode();
   const displayIdentity = getDisplayIdentity(stats);
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
@@ -164,8 +168,18 @@ export const KnowzaProfile: React.FC<KnowzaProfileProps> = ({
               {streakTier.nextMilestone ? ` / 🎯 ${streakTier.nextMilestone}` : ' MAX'}
             </span>
           </div>
-          <div className="text-[11px] font-bold text-amber-700 mb-2">
+          <div className="text-[11px] font-bold text-amber-700 mb-1.5">
             🛡️ {appLang === 'tr' ? `Yıllık Seri Kurtarma Hakkı: ${remainingStreakRestores}/3` : `Annual Streak Restores: ${remainingStreakRestores}/3`}
+          </div>
+
+          {/* League & Global Leaderboard Rank Pill */}
+          <div className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full border text-xs font-black mb-2 ${eloLeague.badgeClass}`}>
+            <span>{eloLeague.emoji}</span>
+            <span>{appLang === 'tr' ? eloLeague.titleTr : eloLeague.titleEn}</span>
+            <span>•</span>
+            <span>{stats.eloRating || 1000} ELO</span>
+            <span>•</span>
+            <span>🏆 #{userRank}</span>
           </div>
 
           <div className="flex items-center gap-1.5 text-xs font-bold text-slate-500 mb-2">
@@ -221,6 +235,25 @@ export const KnowzaProfile: React.FC<KnowzaProfileProps> = ({
               </div>
             </button>
           )}
+
+          {/* Arkadaşlar & Kurallı Sohbet */}
+          <button
+            onClick={() => setShowFriendsModal(true)}
+            className="w-full flex items-center justify-between p-3.5 hover:bg-amber-50/60 rounded-2xl transition text-left"
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center">
+                <User className="w-5 h-5" />
+              </div>
+              <div>
+                <span className="text-sm font-black text-slate-900 block">Arkadaşlar & Kurallı Sohbet</span>
+                <span className="text-[11px] font-bold text-slate-500">
+                  Arkadaş ekle, lig/seri gör & güvenli sohbet (Otomatik ban korumalı)
+                </span>
+              </div>
+            </div>
+            <ChevronRight className="w-5 h-5 text-slate-400" />
+          </button>
 
           {/* Ülke & Dil / Sınav Sistemi */}
           <button
@@ -607,6 +640,7 @@ export const KnowzaProfile: React.FC<KnowzaProfileProps> = ({
           </div>
         </div>
       )}
+      <FriendsAndChatModal open={showFriendsModal} onClose={() => setShowFriendsModal(false)} />
     </div>
   );
 };

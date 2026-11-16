@@ -200,8 +200,52 @@ const DUEL_QUESTIONS: DuelQuestion[] = [
     options: ['Execute / Perform', 'Cancel', 'Delay', 'Forget'],
     correctAnswer: 'Execute / Perform',
     category: 'İngilizce'
+  },
+  {
+    id: 26,
+    prompt: 'Dünyanın yüzölçümü bakımından en büyük okyanusu hangisidir?',
+    options: ['Büyük Okyanus (Pasifik)', 'Atlas Okyanusu', 'Hint Okyanusu', 'Arktik Okyanusu'],
+    correctAnswer: 'Büyük Okyanus (Pasifik)',
+    category: 'Genel Kültür'
+  },
+  {
+    id: 27,
+    prompt: 'Mona Lisa tablosu hangi ünlü müzede sergilenmektedir?',
+    options: ['Louvre Müzesi (Paris)', 'British Museum', 'Prado Müzesi', 'Uffizi Galerisi'],
+    correctAnswer: 'Louvre Müzesi (Paris)',
+    category: 'Genel Kültür'
+  },
+  {
+    id: 28,
+    prompt: 'Güneş sisteminde halkalarıyla en belirgin gezegen hangisidir?',
+    options: ['Satürn', 'Mars', 'Venüs', 'Merkür'],
+    correctAnswer: 'Satürn',
+    category: 'Genel Kültür'
+  },
+  {
+    id: 29,
+    prompt: 'Bir satranç tahtasında toplam kaç kare vardır?',
+    options: ['64', '48', '81', '100'],
+    correctAnswer: '64',
+    category: 'Genel Kültür'
+  },
+  {
+    id: 30,
+    prompt: 'Işık yılı neyi ölçmek için kullanılan bir birimdir?',
+    options: ['Mesafe (Uzunluk)', 'Zaman', 'Hız', 'Parlaklık'],
+    correctAnswer: 'Mesafe (Uzunluk)',
+    category: 'Genel Kültür'
   }
 ];
+
+function pickRandomDuelQuestions(count = 5): DuelQuestion[] {
+  const copy = [...DUEL_QUESTIONS];
+  for (let i = copy.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [copy[i], copy[j]] = [copy[j], copy[i]];
+  }
+  return copy.slice(0, count);
+}
 
 interface DuelOpponent {
   name: string;
@@ -218,14 +262,14 @@ const getTrainingOpponents = (userElo: number): DuelOpponent[] => [
 ];
 
 export const QuizDuel: React.FC = () => {
-  const { stats, updateElo } = useGame();
+  const { stats, updateElo, addXpAndGems } = useGame();
   const displayIdentity = getDisplayIdentity(stats);
   const trainingPool = getTrainingOpponents(stats.eloRating);
 
   const [phase, setPhase] = useState<'lobby' | 'matchmaking' | 'room_lobby' | 'battle' | 'result'>('lobby');
   const [opponent, setOpponent] = useState<DuelOpponent>(trainingPool[0]);
   const [duelMode, setDuelMode] = useState<'bot' | 'live_room'>('bot');
-  const [activeQuestions, setActiveQuestions] = useState<DuelQuestion[]>(() => DUEL_QUESTIONS.slice(0, 5));
+  const [activeQuestions, setActiveQuestions] = useState<DuelQuestion[]>(() => pickRandomDuelQuestions(5));
   const [currentRound, setCurrentRound] = useState(0);
   const [userScore, setUserScore] = useState(0);
   const [opponentScore, setOpponentScore] = useState(0);
@@ -525,23 +569,35 @@ export const QuizDuel: React.FC = () => {
 
   const finishDuel = (finalUser: number, finalOpponent: number) => {
     setPhase('result');
-    const won = finalUser >= finalOpponent;
-    const delta = won ? 32 : -18;
+    const isTie = finalUser === finalOpponent;
+    const won = finalUser > finalOpponent;
+    const delta = won
+      ? opponent.elo > stats.eloRating
+        ? 40
+        : 32
+      : isTie
+      ? 10
+      : -18;
     setEloDelta(delta);
-    updateElo(delta, won, {
+    updateElo(delta, won || isTie, {
       opponentName: opponent.name,
       opponentElo: opponent.elo,
       userScore: finalUser,
       opponentScore: finalOpponent,
       eloDelta: delta,
-      won,
+      won: won || isTie,
       mode: duelMode === 'live_room' ? 'room' : 'solo',
     });
 
     if (won) {
+      addXpAndGems(30, 10);
       sound.playTestComplete();
       confetti({ particleCount: 120, spread: 80 });
+    } else if (isTie) {
+      addXpAndGems(15, 3);
+      sound.playTestComplete();
     } else {
+      addXpAndGems(5, 0);
       sound.playWrong();
     }
   };

@@ -113,3 +113,69 @@ export function getStreakTier(streak: number): StreakTier {
   }
   return matched;
 }
+
+export interface EloLeagueTier {
+  id: string;
+  minElo: number;
+  nextElo: number | null;
+  titleTr: string;
+  titleEn: string;
+  emoji: string;
+  badgeClass: string;
+}
+
+export const ELO_LEAGUES: EloLeagueTier[] = [
+  {
+    id: 'bronze',
+    minElo: 0,
+    nextElo: 1000,
+    titleTr: 'Bronz Arena',
+    titleEn: 'Bronze Arena',
+    emoji: '🥉',
+    badgeClass: 'bg-orange-100 text-orange-900 border-orange-300',
+  },
+  {
+    id: 'silver',
+    minElo: 1000,
+    nextElo: 1200,
+    titleTr: 'Gümüş Arena',
+    titleEn: 'Silver Arena',
+    emoji: '🥈',
+    badgeClass: 'bg-slate-200 text-slate-900 border-slate-400',
+  },
+  {
+    id: 'gold',
+    minElo: 1200,
+    nextElo: 1400,
+    titleTr: 'Altın Arena',
+    titleEn: 'Gold Arena',
+    emoji: '🥇',
+    badgeClass: 'bg-amber-100 text-amber-900 border-amber-400',
+  },
+  {
+    id: 'platinum',
+    minElo: 1400,
+    nextElo: 1600,
+    titleTr: 'Platin Arena',
+    titleEn: 'Platinum Arena',
+    emoji: '💠',
+    badgeClass: 'bg-cyan-100 text-cyan-900 border-cyan-400',
+  },
+  {
+    id: 'diamond',
+    minElo: 1600,
+    nextElo: null,
+    titleTr: 'Elmas Şampiyon Ligi',
+    titleEn: 'Diamond Champion League',
+    emoji: '👑',
+    badgeClass: 'bg-purple-100 text-purple-900 border-purple-400',
+  },
+];
+
+export function getEloLeague(elo: number): EloLeagueTier {
+  let matched = ELO_LEAGUES[0];
+  for (const tier of ELO_LEAGUES) {
+    if (elo >= tier.minElo) matched = tier;
+  }
+  return matched;
+}

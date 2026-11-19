@@ -12,6 +12,7 @@ const __dirname = path.dirname(__filename);
 
 const PORT = Number(process.env.PORT || 3000);
 const DIST_DIR = path.join(__dirname, 'dist');
+const BLAST_DIST_DIR = path.join(__dirname, 'knowza-blast', 'dist');
 const DATA_DIR = path.join(__dirname, 'data');
 const DB_FILE = path.join(DATA_DIR, 'knowza_db.json');
 const DATABASE_URL = (process.env.DATABASE_URL || '').trim();
@@ -671,19 +672,19 @@ async function handleApi(req, res, pathname, urlObj) {
   return sendJson(res, 404, { ok: false, error: 'API endpoint bulunamadı.' });
 }
 
-function serveStatic(req, res, pathname) {
+function serveStatic(req, res, pathname, baseDir = DIST_DIR) {
   let reqPath = pathname === '/' ? '/index.html' : decodeURIComponent(pathname);
-  const safePath = path.normalize(reqPath).replace(/^(\.\.(\/|\\|$))+/, '');
-  let fullPath = path.join(DIST_DIR, safePath);
+  const safePath = path.normalize(reqPath).replace(/^(\.\.(\/|\\|$))+/, '').replace(/^[/\\]+/, '');
+  let fullPath = path.join(baseDir, safePath);
 
-  if (!fullPath.startsWith(DIST_DIR)) {
+  if (fullPath !== baseDir && !fullPath.startsWith(baseDir + path.sep)) {
     res.writeHead(403);
     res.end('Forbidden');
     return;
   }
 
   if (!fs.existsSync(fullPath) || fs.statSync(fullPath).isDirectory()) {
-    fullPath = path.join(DIST_DIR, 'index.html');
+    fullPath = path.join(baseDir, 'index.html');
   }
 
   const ext = path.extname(fullPath).toLowerCase();
@@ -719,7 +720,19 @@ const server = http.createServer(async (req, res) => {
       return;
     }
 
-    serveStatic(req, res, pathname);
+    if (pathname === '/blast') {
+      res.writeHead(301, { Location: '/blast/' });
+      res.end();
+      return;
+    }
+
+    if (pathname.startsWith('/blast/')) {
+      const blastPath = pathname.slice('/blast'.length) || '/';
+      serveStatic(req, res, blastPath, BLAST_DIST_DIR);
+      return;
+    }
+
+    serveStatic(req, res, pathname, DIST_DIR);
   } catch (err) {
     console.error('[Server Error]', err);
     sendJson(res, 500, { ok: false, error: 'Sunucu hatası.' });

@@ -12,7 +12,7 @@ const __dirname = path.dirname(__filename);
 
 const PORT = Number(process.env.PORT || 3000);
 const DIST_DIR = path.join(__dirname, 'dist');
-const BLAST_DIST_DIR = path.join(__dirname, 'knowza-blast', 'dist');
+const BLAST_DIST_DIR = path.join(DIST_DIR, 'blast');
 const DATA_DIR = path.join(__dirname, 'data');
 const DB_FILE = path.join(DATA_DIR, 'knowza_db.json');
 const DATABASE_URL = (process.env.DATABASE_URL || '').trim();

@@ -13,6 +13,7 @@ const __dirname = path.dirname(__filename);
 const PORT = Number(process.env.PORT || 3000);
 const DIST_DIR = path.join(__dirname, 'dist');
 const BLAST_DIST_DIR = path.join(DIST_DIR, 'blast');
+const AKADEMI_DIST_DIR = path.join(DIST_DIR, 'akademi');
 const DATA_DIR = path.join(__dirname, 'data');
 const DB_FILE = path.join(DATA_DIR, 'knowza_db.json');
 const DATABASE_URL = (process.env.DATABASE_URL || '').trim();
@@ -729,6 +730,18 @@ const server = http.createServer(async (req, res) => {
     if (pathname.startsWith('/blast/')) {
       const blastPath = pathname.slice('/blast'.length) || '/';
       serveStatic(req, res, blastPath, BLAST_DIST_DIR);
+      return;
+    }
+
+    if (pathname === '/akademi') {
+      res.writeHead(301, { Location: '/akademi/' });
+      res.end();
+      return;
+    }
+
+    if (pathname.startsWith('/akademi/')) {
+      const akademiPath = pathname.slice('/akademi'.length) || '/';
+      serveStatic(req, res, akademiPath, AKADEMI_DIST_DIR);
       return;
     }
 

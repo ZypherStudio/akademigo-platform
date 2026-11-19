@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build && npm --prefix knowza-blast install --include=dev --no-audit --no-fund && VITE_BASE_PATH=/blast/ npm --prefix knowza-blast run build && node -e \"const fs=require('fs');fs.rmSync('dist/blast',{recursive:true,force:true});fs.cpSync('knowza-blast/dist','dist/blast',{recursive:true});\"",
+    "build": "node knowza-blast/assemble-dist.mjs",
     "preview": "vite preview",
     "start": "node server.mjs",
     "start:static": "serve -s dist -l $PORT",

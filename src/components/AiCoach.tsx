@@ -1152,21 +1152,6 @@ export const AiCoach: React.FC = () => {
               />
             </div>
 
-            {/* Optional Gemini API Key */}
-            <div className="space-y-1 pt-1 border-t border-slate-100">
-              <span className="text-[10px] font-black uppercase text-slate-500 flex items-center gap-1">
-                <KeyRound className="w-3 h-3 text-amber-600" />
-                Google Gemini API Anahtarı (Fotoğraflı OCR Çözüm İçin)
-              </span>
-              <input
-                type="password"
-                value={geminiApiKeyDraft}
-                onChange={(e) => setGeminiApiKeyDraft(e.target.value)}
-                placeholder="AIzaSy... (İsteğe bağlı, cihazında saklanır)"
-                className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs font-mono text-slate-800 outline-none focus:border-[#FFB800]"
-              />
-            </div>
-
             <button
               onClick={handleSaveTraining}
               className="w-full py-3 rounded-2xl bg-[#2A1E00] hover:bg-slate-900 text-amber-300 font-black text-xs transition flex items-center justify-center gap-2"

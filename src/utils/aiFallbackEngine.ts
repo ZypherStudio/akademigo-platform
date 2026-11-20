@@ -257,7 +257,7 @@ export async function generateSmartCoachReply(
   };
 
   if (options?.hasImage) {
-    return `📸 **${options.trackTitle || track.toUpperCase()} Görseli Alındı!**\n\n1️⃣ **Soru Kökü & Verilenler:** Fotoğraftaki soru cümlesini veya sayısal değerleri buraya metin olarak da yazarsan (ör. \`3x + 5 = 20\`) **anında hesaplayıp adım adım çözebilirim**.\n2️⃣ **Canlı Gemini Görsel OCR:** Gerçek fotoğraf okuma için ayarlardan ücretsiz Gemini API anahtarı veya sunucu \`GEMINI_API_KEY\` bağlantısı aktif edilirse fotoğrafı tek tıkla okurum.`;
+    return `📸 **${options.trackTitle || track.toUpperCase()} Görseli Alındı!**\n\n1️⃣ **Soru Kökü & Verilenler:** Görseldeki sorunun metnini veya sayısal ifadeyi (ör. \`3x + 5 = 20\`, \`%20 kar\`, \`kavşak sorusu\`) aşağıya kısaca yazarsan **anında adım adım çözebilirim**.\n2️⃣ **Konu İpucu:** ${options.expertTitle || 'Knowza Koçu'} modunda takıldığın kavramın adını yazman da yeterli — hemen özetleyip örnek soruyla pekiştirelim!`;
   }
 
   const lower = userText.toLowerCase().trim();

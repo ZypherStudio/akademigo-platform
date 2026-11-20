@@ -617,6 +617,49 @@ async function handleApi(req, res, pathname, urlObj) {
     return sendJson(res, 200, { ok: true, room });
   }
 
+  if (req.method === 'POST' && pathname === '/api/ai/chat') {
+    const body = await readJsonBody(req);
+    const userText = String(body.userText || '').trim();
+    const systemInstruction = String(body.systemInstruction || '').trim();
+    const history = Array.isArray(body.history) ? body.history.slice(-6) : [];
+    const imageBase64 = typeof body.imageBase64 === 'string' ? body.imageBase64 : '';
+    const imageMimeType = typeof body.imageMimeType === 'string' ? body.imageMimeType : '';
+    const serverGeminiKey = (process.env.GEMINI_API_KEY || '').trim();
+
+    if (serverGeminiKey) {
+      try {
+        const userParts = [];
+        if (imageBase64 && imageMimeType) {
+          userParts.push({ inlineData: { mimeType: imageMimeType, data: imageBase64 } });
+        }
+        userParts.push({ text: userText || 'Bu soruyu adım adım açıkla.' });
+
+        const gRes = await fetch(
+          `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${serverGeminiKey}`,
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              systemInstruction: systemInstruction ? { parts: [{ text: systemInstruction }] } : undefined,
+              contents: [...history, { role: 'user', parts: userParts }],
+            }),
+          }
+        );
+        if (gRes.ok) {
+          const gData = await gRes.json();
+          const reply = gData?.candidates?.[0]?.content?.parts?.[0]?.text;
+          if (reply) {
+            return sendJson(res, 200, { ok: true, text: reply, provider: 'gemini' });
+          }
+        }
+      } catch (err) {
+        console.warn('[AI Chat Gemini Warning]', err.message);
+      }
+    }
+
+    return sendJson(res, 200, { ok: false, fallbackRequired: true });
+  }
+
   if (req.method === 'POST' && pathname === '/api/tts') {
     const body = await readBody(req);
     const rawText = String(body.text || '').trim().slice(0, 1200);

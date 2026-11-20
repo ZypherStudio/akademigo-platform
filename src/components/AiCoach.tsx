@@ -45,7 +45,7 @@ import {
 
 type StudioSubTab = 'chat' | 'notes_quiz' | 'study_plan' | 'train_ai';
 
-const TRACK_ORDER: AiTrackId[] = ['yks', 'lgs', 'kpss', 'dil', 'kodlama'];
+const TRACK_ORDER: AiTrackId[] = ['yks', 'lgs', 'kpss', 'ehliyet', 'dil', 'kodlama'];
 
 export const AiCoach: React.FC = () => {
   const { stats, selectedCourseId, addXpAndGems, regionCode, appLang } = useGame();

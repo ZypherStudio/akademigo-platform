@@ -1,12 +1,13 @@
 // Knowza Google Gemini AI Assistant & Specialized Exam Tutor Service
 import { CourseCategory } from '../types';
+import { generateSmartCoachReply } from './aiFallbackEngine';
 
 export type AiTeachingStyle = 'step_by_step' | 'fast_tactic' | 'strict_coach';
-export type AiTrackId = 'yks' | 'lgs' | 'kpss' | 'dil' | 'kodlama';
+export type AiTrackId = 'yks' | 'lgs' | 'kpss' | 'ehliyet' | 'dil' | 'kodlama';
 
 export function normalizeAiTrack(courseId?: CourseCategory): AiTrackId {
   if (!courseId) return 'yks';
-  if (courseId === 'lgs' || courseId === 'kpss' || courseId === 'kodlama') return courseId;
+  if (courseId === 'lgs' || courseId === 'kpss' || courseId === 'kodlama' || courseId === 'ehliyet') return courseId;
   if (courseId.startsWith('dil')) return 'dil';
   return 'yks';
 }
@@ -153,6 +154,27 @@ export const TRACK_AI_PROFILES: Record<AiTrackId, TrackAiProfile> = {
       '1839 Tanzimat Fermanı ile ilk kez padişah kendi gücünün üstünde kanun gücünü kabul etmiştir. 1856 Islahat Fermanı ise azınlıklara geniş haklar tanımıştır. 1876 Kanun-i Esasi Türk tarihinin ilk anayasasıdır ve I. Meşrutiyeti başlatmıştır. Türkiye\'de yasama yetkisi TBMM\'ye aittir ve devredilemez. Milletvekili seçilme yaşı 18\'dir; genel seçimler 5 yılda bir yapılır.',
     subjects: ['KPSS Tarih', 'KPSS Coğrafya', 'Vatandaşlık & Güncel', 'Sözel / Sayısal Mantık'],
   },
+  ehliyet: {
+    id: 'ehliyet',
+    name: 'Ehliyet (Araba & Motor)',
+    shortName: 'Ehliyet',
+    badge: '2026 e-Sınav & Trafik 🚗',
+    expertTitle: 'Otomobil (B) & Motosiklet (A) Sürücü Koçu',
+    accentGradient: 'from-rose-500 to-red-600',
+    systemPrompt: `Sen Knowza'nın 2026 Ehliyet (B Otomobil & A Motosiklet) e-Sınav uzmanı AI Koçusun.
+- Trafik & Çevre, İlk Yardım, Motor ve Araç Tekniği ile Trafik Adabı konularında net ve güncel kurallar ver.
+- Türkiye MEB e-Sınav (50 soru, 70 geçme puanı) ve kullanıcının ülkesine göre hız limitleri, geçiş üstünlüğü ve motosiklet güvenliğini öğret.`,
+    quickPrompts: [
+      'Otomobil ve motosiklet için otoyol hız limitleri nelerdir?',
+      'Kavşaklarda geçiş üstünlüğü sıralaması nasıldır?',
+      'Yetişkinlerde kalp masajı (temel yaşam desteği) kaç bası ve kaç cm?',
+      'Motosiklet kullanırken ön ve arka fren nasıl uygulanır?',
+    ],
+    sampleNoteTitle: '2026 Ehliyet Trafik, Motor & İlk Yardım',
+    sampleNoteText:
+      'Geçiş üstünlüğü sıralaması: Can kurtaran (Ambulans) -> İtfaiye -> Polis -> Sivil Savunma. Kalp masajı 30 bası / 2 suni solunum ve 5 cm derinlik ile uygulanır. Benzinli motorlarda yakıt-hava karışımını buji ateşler. Motosiklette durma gücünün %70’i ön frenden sağlanır.',
+    subjects: ['Trafik & İşaretler', 'İlk Yardım', 'Motor & Araç Tekniği', 'Motosiklet (A/A2)'],
+  },
   dil: {
     id: 'dil',
     name: 'Yabancı Dil (A1 - C2)',
@@ -229,7 +251,9 @@ export async function askGeminiCoach(
 ): Promise<{ text: string; success: boolean }> {
   const track: AiTrackId = options?.track || 'yks';
   const settings = loadAiTrainingSettings();
-  const customKey = localStorage.getItem('knowza_gemini_api_key')?.trim();
+  const envKey = (((import.meta as any).env || {}) as Record<string, string | undefined>).VITE_GEMINI_API_KEY?.trim();
+  const customKey = localStorage.getItem('knowza_gemini_api_key')?.trim() || envKey;
+  const sysPrompt = buildSystemInstruction(track, settings);
 
   if (customKey) {
     try {
@@ -252,7 +276,7 @@ export async function askGeminiCoach(
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            systemInstruction: { parts: [{ text: buildSystemInstruction(track, settings) }] },
+            systemInstruction: { parts: [{ text: sysPrompt }] },
             contents: [...history, { role: 'user', parts: userParts }],
           }),
         }
@@ -266,108 +290,53 @@ export async function askGeminiCoach(
         }
       }
     } catch {
-      // Fallback to track-specific intelligent tutor
+      // Fall through to backend / smart coach
     }
   }
 
-  // Track-specific intelligent built-in response engine
-  const lower = userText.toLowerCase();
-  const hasImage = Boolean(options?.imageBase64);
+  // Try Knowza backend AI endpoint (/api/ai/chat) in case server has GEMINI_API_KEY configured
+  try {
+    const isNativeOrFile =
+      typeof window !== 'undefined' &&
+      (window.location.protocol === 'capacitor:' || window.location.protocol === 'file:');
+    const endpoint = isNativeOrFile
+      ? 'https://akademigo-platform.onrender.com/api/ai/chat'
+      : '/api/ai/chat';
+    const controller = new AbortController();
+    const timer = window.setTimeout(() => controller.abort(), 4500);
+    const apiRes = await fetch(endpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      signal: controller.signal,
+      body: JSON.stringify({
+        userText,
+        history: history.slice(-6),
+        systemInstruction: sysPrompt,
+        imageBase64: options?.imageBase64,
+        imageMimeType: options?.imageMimeType,
+      }),
+    });
+    window.clearTimeout(timer);
+    if (apiRes.ok) {
+      const apiData = await apiRes.json();
+      if (apiData?.ok && apiData?.text) {
+        return { text: apiData.text, success: true };
+      }
+    }
+  } catch {
+    // Fall through cleanly to local smart tutor + Wikipedia engine
+  }
+
   const profile = TRACK_AI_PROFILES[track] || TRACK_AI_PROFILES.yks;
-
-  if (hasImage) {
-    if (track === 'lgs') {
-      return {
-        text: `📸 **LGS Ödev Görseli İncelendi!**\n\n1️⃣ **Soru Kökünü Yakala:** MEB yeni nesil sorularında üstteki hikaye kısmını değil, en alttaki koyu yazılı soru cümlesini önce oku.\n2️⃣ **Verilenleri Listele:** Şeklin veya tablonun üzerindeki sayısal verileri kenara yaz.\n3️⃣ **İşlem Adımı:** Sorudaki anahtar kelimeye ("en az", "eşit parça", "kaç farklı") göre EBOB/EKOK veya üslü ifade kuralını uygula.\n\n💡 *Tam otomatik görsel OCR okuma için "AI Eğit & Ayar" sekmesinden kendi ücretsiz Gemini API anahtarını ekleyebilirsin; böylece fotoğraftaki yazıyı birebir çözerim!*`,
-        success: true,
-      };
-    }
-    if (track === 'kpss') {
-      return {
-        text: `📸 **KPSS Soru Görseli Analizi!**\n\n1️⃣ **Kavram / Dönem Tespiti:** Soruda geçen anahtar tarih, antlaşma veya anayasa maddesini işaretle.\n2️⃣ **Çeldirici Eleme:** ÖSYM KPSS'de genellikle "yalnızca", "tamamı", "kesinlikle" gibi keskin ifadeleri tuzak olarak kullanır.\n\n💡 *Fotoğraftaki metni birebir okuyup şıkları tek tek elemem için "AI Eğit & Ayar" sekmesinden Gemini API anahtarı tanımlayabilirsin.*`,
-        success: true,
-      };
-    }
-    return {
-      text: `📸 **${profile.name} Ödev Görseli Alındı!**\n\n1️⃣ **Adım 1 (Verilenler):** Görseldeki sorunun bilinenlerini ve senden isteneni netleştir.\n2️⃣ **Adım 2 (Strateji):** ${profile.expertTitle} modunda olduğumuz için soruyu doğrudan ${profile.shortName} müfredatı ve soru kalıplarına göre çözmelisin.\n\n💡 *Fotoğraftaki yazıyı ve şekilleri birebir okuyup adım adım çözmem için "AI Eğit & Ayar" sekmesinden Gemini API anahtarı ekleyebilirsin veya sorunun metnini buraya yazabilirsin!*`,
-      success: true,
-    };
-  }
-
-  // Track-specific text responses
-  if (track === 'yks') {
-    if (lower.includes('paragraf') || lower.includes('türkçe')) {
-      return {
-        text: `🎯 **YKS / TYT Paragraf Hız & Net Taktiği:**\n\n1. **Soru Kökü Önce:** Metne dalmadan önce "Bu parçada asıl anlatılmak istenen..." veya "Değinilmemiştir" kökünü oku.\n2. **Olumsuz Kök Stratejisi:** "Ulaşılamaz / Çıkarılamaz" sorularında şıklardan kısa anahtar kelimeler seçip metinde tara.\n3. **İlk & Son 2 Cümle:** Ana fikir sorularında yazarın tezi %80 ilk iki ve son iki cümlede gizlidir.\n\n❓ *Kontrol Sorusu:* Günde şu an kaç paragraf sorusu çözüyorsun ve ortalama kaç dakika sürüyor?`,
-        success: true,
-      };
-    }
-    if (lower.includes('problem') || lower.includes('matematik') || lower.includes('fonksiyon')) {
-      return {
-        text: `📐 **TYT-AYT Matematik Stratejisi:**\n\n1. **Bilinmeyen Tasarrufu:** Problemlerde her şeye 'x, y, z' deme! Kesir veya oran varsa bütüne '100x' ya da '12k' diyerek rasyonel sayılardan kaç.\n2. **AYT Derinliği:** Fonksiyon grafikleri ve Polinomlarda 'P(x)' derecesi ile kökler toplamını her zaman kenara not et.\n3. **ÖSYM Örneği:** Bir sınıftaki öğrencilerin %40'ı erkektir. Sınıfa 6 kız daha gelince erkek oranı %30 oluyor. Başlangıçta kaç öğrenci vardır? (İpucu: Başlangıca '100k' veya '10x' ver!)`,
-        success: true,
-      };
-    }
-    if (lower.includes('soru sor') || lower.includes('test')) {
-      return {
-        text: `🔥 **ÖSYM Tarzı TYT Sorusu:**\n\n"Bir kırtasiyede etiket fiyatı üzerinden %20 indirimle satılan bir test kitabı, indirimli fiyatı üzerinden %25 zam yapıldığında başlangıç fiyatından **3 TL daha ucuz** oluyor. Bu kitabın ilk etiket fiyatı kaç TL'dir?"\n\n💡 *İpucu:* İlk fiyata '100x' de. %20 indirim -> '80x'. Sonra '80x'in %25'i (dörtte biri) kadar zam ekle! Cevabını yaz, kontrol edeyim!`,
-        success: true,
-      };
-    }
-  }
-
-  if (track === 'lgs') {
-    if (lower.includes('ebob') || lower.includes('ekok') || lower.includes('çarpan')) {
-      return {
-        text: `📘 **LGS EBOB - EKOK Ayırt Etme Rehberi:**\n\n• **Büyükten Küçüğe (Bölme / Parçalama) = EBOB:** Tarlanın etrafına ağaç dikme, büyük bidonları küçük şişelere doldurma, sınıf mevcudunu eşit gruplara ayırma.\n• **Küçükten Büyüğe (Birleştirme / Buluşma) = EKOK:** Küçük dikdörtgenlerden kare yapma, farklı sürelerde çalan zillerin tekrar buluşması, cevizleri 3'erli 5'erli sayma.\n\n❓ *Mini Test:* 12 dakika ve 18 dakikada bir kalkan iki otobüs ilk kez saat 08:00'de birlikte kalkarsa tekrar ne zaman birlikte kalkarlar?`,
-        success: true,
-      };
-    }
-    if (lower.includes('üslü') || lower.includes('köklü') || lower.includes('tuzak')) {
-      return {
-        text: `⚡ **LGS Üslü & Köklü İfade Tuzakları:**\n\n1. **Parantez Tuzağı:** (-3)² = +9 iken -3² = -9 olur! Çift kuvvet sadece parantez dışındaysa eksiyi artı yapar.\n2. **Negatif Üs Tuzağı:** 2⁻³ sayısı negatif değildir! Sadece ters döner: 1/8.\n3. **Kök Dışına Çıkarma:** √72 gördüğünde hemen 36 × 2 = 6√2 olarak parçala.\n\nHarikasın, 8. sınıf hızıyla devam! 🚀`,
-        success: true,
-      };
-    }
-    if (lower.includes('inkılap') || lower.includes('kronoloji')) {
-      return {
-        text: `🇹🇷 **LGS İnkılap Tarihi Altın Kronoloji:**\n\n1. **19 Mayıs 1919:** Samsun'a Çıkış (Milli Mücadele başlangıcı)\n2. **Havza & Amasya Genelgesi:** Amaç, Gerekçe ve Yöntem belirlendi!\n3. **Erzurum & Sivas Kongreleri:** "Manda ve himaye kabul edilemez" + Cemiyetler birleştirildi.\n4. **23 Nisan 1920:** TBMM'nin açılışı.\n\n💡 *İpucu:* LGS'de tarih ezberi değil, olayların **neden-sonuç** ilişkisi sorulur!`,
-        success: true,
-      };
-    }
-  }
-
-  if (track === 'kpss') {
-    if (lower.includes('ıslahat') || lower.includes('tanzimat') || lower.includes('tarih')) {
-      return {
-        text: `🏛️ **KPSS Tarih Kodlaması (Tanzimat vs Islahat):**\n\n• **1839 Tanzimat Fermanı:** Herkesi kapsar (Müslüman + Gayrimüslim eşit). Padişah ilk kez kanun üstünlüğünü kabul etti.\n• **1856 Islahat Fermanı:** Sadece **Azınlıklara** (Gayrimüslimlere) yeni ayrıcalıklar verdi. Paris Antlaşması öncesi Avrupalıların baskısını önlemek için ilan edildi.\n• **Kodlama:** **T**anzimat = **T**üm Halk | **I**slahat = **I**şıl ışıl sadece Azınlıklar!`,
-        success: true,
-      };
-    }
-    if (lower.includes('sözel') || lower.includes('mantık') || lower.includes('tablo')) {
-      return {
-        text: `🧩 **KPSS Sözel Mantık Tablo Tekniği:**\n\n1. Önce **en az değişkene** (günler, sıralar, şehirler) göre ana sütunları çiz.\n2. Kesin bilgileri doğrudan tabloya yerleştir.\n3. "A, B'den hemen önce" gibi blok bilgileri yan tarafa kutu içinde bağla.\n4. İhtimalleri (1. İhtimal / 2. İhtimal) alt alta iki satır halinde yürüt; tek tabloda karalama yapma!`,
-        success: true,
-      };
-    }
-  }
-
-  if (track === 'dil') {
-    return {
-      text: `🌍 **Knowza English Coach (${profile.badge}):**\n\n• **Simple Past vs Present Perfect:**\n  - *I visited London in 2023.* (Zaman belli → Simple Past)\n  - *I have visited London twice.* (Deneyim, zaman belirsiz → Present Perfect)\n\n• **Hızlı Kalıp:** *"I am looking forward to hearing from you."* (Senden haber almayı dört gözle bekliyorum — "to" sonrası fiil **-ing** alır!)\n\n✍️ Şimdi sen "give up" ile İngilizce kısa bir cümle kur, kontrol edeyim!`,
-      success: true,
-    };
-  }
-
-  if (track === 'kodlama') {
-    return {
-      text: `💻 **Knowza Kodlama Mentorü:**\n\nPython Döngü & Fonksiyon Örneği:\ndef cift_sayilari_bul(liste):\n    return [x for x in liste if x % 2 == 0]\n\nprint(cift_sayilari_bul([1, 2, 3, 4, 6])) # [2, 4, 6]\n\n🔍 **Neden List Comprehension?** Hem kodu 4 satırdan 1 satıra düşürür hem de Python'da normal 'for' döngüsünden daha hızlı çalışır. Takıldığın bir kod bloğu varsa buraya yapıştır, satır satır debug edelim!`,
-      success: true,
-    };
-  }
+  const smartText = await generateSmartCoachReply(userText, track, history, {
+    hasImage: Boolean(options?.imageBase64),
+    trackTitle: profile.name,
+    expertTitle: profile.expertTitle,
+    trackBadge: profile.badge,
+  });
 
   return {
-    text: `✨ **${profile.name} Uzman Koçun Hazır!**\n\nŞu an **${profile.expertTitle}** modunda eğitilmiş durumdayım.\n• Sorunun fotoğrafını sol alttaki **📷 Kamera/Görsel** butonundan yükleyebilirsin.\n• Ders notlarını **"Not → Quiz & Kart"** sekmesine yapıştırarak saniyede bilgi kartları ve mini test üretebilirsin.\n• **"Ödev Planı"** sekmesinde ise bugüne özel çalışma listeni çıkarabilirsin!`,
+    text: smartText,
     success: true,
   };
 }
@@ -497,6 +466,22 @@ ${noteText.slice(0, 3500)}`;
         options: ['-8', '-6', '1/8', '1/6'],
         correctIndex: 2,
         explanation: 'Negatif üs sayıyı eksi yapmaz, tabanı çarpmaya göre ters çevirir: 1 / 2³ = 1/8.',
+      },
+    ],
+    ehliyet: [
+      {
+        id: 'ehliyet-q1',
+        question: 'Kavşakta karşılaşan ambulans ve itfaiye aracından hangisi ilk geçiş hakkına sahiptir?',
+        options: ['İtfaiye', 'Ambulans (Can kurtaran)', 'Sağdaki araç', 'Hızlı olan'],
+        correctIndex: 1,
+        explanation: 'Geçiş üstünlüğü sıralamasında ilk hak daima can kurtaran (ambulans) aracınındır.',
+      },
+      {
+        id: 'ehliyet-q2',
+        question: 'Yetişkinlerde temel yaşam desteğinde kalp masajı / suni solunum oranı nedir?',
+        options: ['15 / 1', '30 / 2', '10 / 2', '20 / 5'],
+        correctIndex: 1,
+        explanation: 'Yetişkinlerde 30 kalp basısı ve 2 suni solunum uygulanır (5 cm bası derinliği).',
       },
     ],
     kpss: [

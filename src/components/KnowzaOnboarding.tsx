@@ -165,7 +165,7 @@ export const KnowzaOnboarding: React.FC<KnowzaOnboardingProps> = ({ onComplete, 
       <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-full max-w-[420px] h-[220px] bg-gradient-to-b from-[#FFE8B3] via-[#FFF3D6] to-transparent rounded-full opacity-60 pointer-events-none" />
 
       {/* Top Header & Progress (4 Steps) */}
-      <div className="w-full max-w-md pt-1 relative z-10">
+      <div className="w-full max-w-md md:max-w-2xl pt-1 relative z-10">
         <div className="flex items-center justify-between mb-2">
           {step > 1 ? (
             <button
@@ -222,7 +222,7 @@ export const KnowzaOnboarding: React.FC<KnowzaOnboardingProps> = ({ onComplete, 
       </div>
 
       {/* Dynamic Content Container */}
-      <div className="flex-1 w-full max-w-md flex flex-col justify-center items-center py-2 relative z-10 overflow-y-auto scrollbar-none">
+      <div className="flex-1 w-full max-w-md md:max-w-2xl flex flex-col justify-center items-center py-2 relative z-10 overflow-y-auto scrollbar-none">
         {/* ================= STEP 1: HEDEF SINAV / ALAN ================= */}
         {step === 1 && (
           <div className="w-full flex flex-col items-center text-center animate-fade space-y-2.5">

@@ -56,6 +56,7 @@ export const KnowzaHome: React.FC<KnowzaHomeProps> = ({
 }) => {
   const { stats, selectedCourseId, setSelectedCourseId, startLesson, regionCode } = useGame();
   const [showAllCategoriesModal, setShowAllCategoriesModal] = useState(false);
+  const [showStreakSheet, setShowStreakSheet] = useState(false);
   const [isMusicPlaying, setIsMusicPlaying] = useState(() => sound.getBgmEnabled());
   const [isDark, toggleDarkMode] = useDarkMode();
   const [officialManifest, setOfficialManifest] = useState<OfficialSyncManifest | null>(() =>
@@ -224,13 +225,17 @@ export const KnowzaHome: React.FC<KnowzaHomeProps> = ({
           </button>
 
           {/* Dynamic Evolving Streak Pill */}
-          <div
-            className={`flex items-center gap-1 ${streakTier.pillBg} border ${streakTier.pillBorder} px-2 py-1.5 rounded-2xl ${streakTier.pillText} font-black text-xs shadow-xs`}
+          <button
+            onClick={() => {
+              sound.playClick();
+              setShowStreakSheet((v) => !v);
+            }}
+            className={`flex items-center gap-1 ${streakTier.pillBg} border ${streakTier.pillBorder} px-2.5 py-1.5 rounded-2xl ${streakTier.pillText} font-black text-xs shadow-xs hover:scale-105 active:scale-95 transition`}
             title={streakTier.titleTr}
           >
             <Flame className={`w-3.5 h-3.5 ${streakTier.flameFill} flex-shrink-0`} />
             <span>{currentStreak}g</span>
-          </div>
+          </button>
 
           {/* Music Toggle (hidden on ultra-narrow screens, available in Settings) */}
           <button
@@ -261,6 +266,31 @@ export const KnowzaHome: React.FC<KnowzaHomeProps> = ({
           </button>
         </div>
       </div>
+
+      {/* ================= STREAK INFO BANNER (ON TAP) ================= */}
+      {showStreakSheet && (
+        <div className="bg-gradient-to-r from-orange-50 to-amber-50 border-2 border-amber-300 rounded-2xl p-3.5 shadow-sm flex items-center justify-between gap-3 animate-fade">
+          <div className="space-y-0.5 text-left">
+            <div className="text-xs font-black text-amber-950 flex items-center gap-1.5">
+              <span>{streakTier.emoji} {streakTier.titleTr}</span>
+              <span className="px-1.5 py-0.5 rounded-full bg-amber-200/80 text-[10px]">
+                {currentStreak} Gün
+              </span>
+            </div>
+            <p className="text-[11px] font-bold text-amber-900/80 leading-snug">
+              {currentStreak === 0
+                ? 'Bugün ilk dersini veya testini bitirdiğinde serin anında 1 güne çıkar! 🔥'
+                : `Harika gidiyorsun! Elinde ${stats.inventory?.streakFreeze || 0} Seri Dondurma ve yılda ${Math.max(0, 3 - (stats.streakRestoresUsed || 0))} Kurtarma hakkı var.`}
+            </p>
+          </div>
+          <button
+            onClick={() => setShowStreakSheet(false)}
+            className="text-xs font-black text-amber-800 bg-white/80 px-2.5 py-1.5 rounded-xl border border-amber-200"
+          >
+            Tamam
+          </button>
+        </div>
+      )}
 
       {/* ================= BESPOKE 3D MASCOT HERO CARD ================= */}
       <div className="bg-gradient-to-br from-[#FFFDF6] via-[#FFF5DE] to-[#FFEAB6] rounded-[28px] p-4 sm:p-5 border-2 border-[#FFDA85] shadow-[0_10px_26px_rgba(255,184,0,0.18)] relative overflow-hidden">
@@ -709,7 +739,7 @@ export const KnowzaHome: React.FC<KnowzaHomeProps> = ({
           onClick={() => setShowAllCategoriesModal(false)}
         >
           <div
-            className="w-full max-w-md bg-white rounded-t-[36px] sm:rounded-3xl p-5 max-h-[90vh] overflow-y-auto space-y-4 shadow-2xl border border-amber-100"
+            className="w-full max-w-md md:max-w-2xl bg-white rounded-t-[36px] sm:rounded-3xl p-5 max-h-[90vh] overflow-y-auto space-y-4 shadow-2xl border border-amber-100"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Modal Header */}

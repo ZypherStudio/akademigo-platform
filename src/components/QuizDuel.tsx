@@ -603,7 +603,7 @@ export const QuizDuel: React.FC = () => {
   };
 
   return (
-    <div className="flex-1 max-w-md mx-auto py-4 px-3 space-y-4 pb-24 select-none">
+    <div className="flex-1 w-full max-w-md md:max-w-3xl lg:max-w-4xl mx-auto py-4 px-3 space-y-4 pb-24 select-none">
       
       {/* 1. Lobby Phase: Quick Play or Friend Room */}
       {phase === 'lobby' && (

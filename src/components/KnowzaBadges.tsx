@@ -326,7 +326,7 @@ export const KnowzaBadges: React.FC<KnowzaBadgesProps> = ({ onBack, onNavigateTo
         <div className="w-10" />
       </div>
 
-      <div className="max-w-md mx-auto px-4 pt-3 space-y-4">
+      <div className="max-w-md md:max-w-3xl lg:max-w-5xl mx-auto px-4 pt-3 space-y-4">
         {/* Category Pills */}
         <div className="flex gap-1.5 overflow-x-auto pb-1 scrollbar-none">
           {categories.map((cat) => (

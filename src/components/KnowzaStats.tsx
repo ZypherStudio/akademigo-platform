@@ -41,7 +41,7 @@ export const KnowzaStats: React.FC<KnowzaStatsProps> = ({ onBack }) => {
   const activeGoal = goalSubjectMap[stats.targetGoal || 'yks'] || goalSubjectMap.yks;
 
   return (
-    <div className="flex-1 max-w-md mx-auto px-4 py-4 space-y-4 pb-28 select-none animate-fade">
+    <div className="flex-1 w-full max-w-md md:max-w-3xl lg:max-w-5xl mx-auto px-4 py-4 space-y-4 pb-28 select-none animate-fade">
       
       {/* Top Header */}
       <div className="flex items-center justify-between pt-1">

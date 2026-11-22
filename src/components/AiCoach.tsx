@@ -43,6 +43,26 @@ import {
   StudyPlanTask,
 } from '../utils/geminiService';
 
+function renderRichCoachText(text: string): React.ReactNode {
+  const parts = text.split(/(\*\*[^*]+\*\*|`[^`]+`|\*[^*\n]+\*)/g);
+  return parts.map((part, i) => {
+    if (part.startsWith('**') && part.endsWith('**') && part.length > 4) {
+      return <strong key={i} className="font-black text-slate-950">{part.slice(2, -2)}</strong>;
+    }
+    if (part.startsWith('`') && part.endsWith('`') && part.length > 2) {
+      return (
+        <code key={i} className="px-1.5 py-0.5 mx-0.5 rounded-md bg-amber-100/90 text-amber-950 font-mono text-[11px] font-bold">
+          {part.slice(1, -1)}
+        </code>
+      );
+    }
+    if (part.startsWith('*') && part.endsWith('*') && part.length > 2) {
+      return <em key={i} className="italic text-slate-700">{part.slice(1, -1)}</em>;
+    }
+    return <React.Fragment key={i}>{part}</React.Fragment>;
+  });
+}
+
 type StudioSubTab = 'chat' | 'notes_quiz' | 'study_plan' | 'train_ai';
 
 const TRACK_ORDER: AiTrackId[] = ['yks', 'lgs', 'kpss', 'ehliyet', 'dil', 'kodlama'];
@@ -490,10 +510,10 @@ export const AiCoach: React.FC = () => {
       : '/assets/knowza_avatar_3d.png';
 
   return (
-    <div className="w-full max-w-md mx-auto flex flex-col gap-3 px-3 pt-2 pb-6 select-none animate-fade">
+    <div className="w-full max-w-md md:max-w-3xl lg:max-w-5xl mx-auto flex flex-col gap-3 px-3 md:px-6 pt-2 pb-6 select-none">
       {/* ================= 1. MOBILE HERO MASCOT AI CARD ================= */}
       <div className={`bg-gradient-to-br ${profile.accentGradient} rounded-[28px] p-3.5 text-white shadow-lg relative overflow-hidden`}>
-        <div className="absolute -right-6 -top-6 w-28 h-28 bg-white/10 rounded-full blur-xl pointer-events-none" />
+        <div className="absolute -right-6 -top-6 w-28 h-28 bg-white/10 rounded-full pointer-events-none" />
 
         <div className="flex items-center justify-between gap-2.5 relative z-10">
           <div className="flex items-center gap-2.5 min-w-0">
@@ -663,7 +683,7 @@ export const AiCoach: React.FC = () => {
                           : 'bg-gradient-to-r from-[#FFB800] to-[#FFA000] text-[#2A1E00] font-bold rounded-tr-sm shadow-xs'
                       }`}
                     >
-                      {msg.text}
+                      {isAi ? renderRichCoachText(msg.text) : msg.text}
                       {isAi && (
                         <div className="mt-2 pt-1.5 border-t border-amber-200/60 flex items-center justify-between gap-2 text-[10px] font-black text-amber-800">
                           <span>{msg.cardTip || '🐻 Knowza Koç'}</span>

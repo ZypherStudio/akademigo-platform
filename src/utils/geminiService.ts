@@ -296,14 +296,18 @@ export async function askGeminiCoach(
 
   // Try Knowza backend AI endpoint (/api/ai/chat) in case server has GEMINI_API_KEY configured
   try {
+    const cap = (typeof window !== 'undefined' ? (window as unknown as { Capacitor?: { isNativePlatform?: () => boolean } }).Capacitor : undefined);
     const isNativeOrFile =
       typeof window !== 'undefined' &&
-      (window.location.protocol === 'capacitor:' || window.location.protocol === 'file:');
+      (Boolean(cap?.isNativePlatform?.()) ||
+        window.location.protocol === 'capacitor:' ||
+        window.location.protocol === 'file:' ||
+        (window.location.hostname === 'localhost' && window.location.port === ''));
     const endpoint = isNativeOrFile
       ? 'https://akademigo-platform.onrender.com/api/ai/chat'
       : '/api/ai/chat';
     const controller = new AbortController();
-    const timer = window.setTimeout(() => controller.abort(), 4500);
+    const timer = window.setTimeout(() => controller.abort(), 2500);
     const apiRes = await fetch(endpoint, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },

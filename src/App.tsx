@@ -42,6 +42,10 @@ const KnowzaAppContent: React.FC = () => {
   const [authInitialMode, setAuthInitialMode] = useState<'google' | 'email'>('google');
   const [showOnboarding, setShowOnboarding] = useState(false);
 
+  React.useEffect(() => {
+    window.scrollTo({ top: 0, left: 0 });
+  }, [currentTab]);
+
   const handleSelectSavedAccount = (acc: SavedAccountSummary) => {
     const cleanEmail = acc.email.toLowerCase().trim();
     const localRec = loadAccountRecord(cleanEmail);
@@ -60,8 +64,8 @@ const KnowzaAppContent: React.FC = () => {
 
   if (!isUserAuthenticated) {
     return (
-      <div className="h-[100dvh] w-full bg-[#FFFDF7] flex justify-center items-center overflow-hidden">
-        <div className="w-full max-w-md h-full md:h-auto md:max-h-[860px] md:my-6 md:rounded-[40px] md:shadow-2xl md:border md:border-amber-200/50 bg-[#FFFDF7] overflow-hidden flex flex-col justify-between relative">
+      <div className="min-h-[100dvh] w-full bg-[#FFFDF7] flex flex-col overflow-x-hidden">
+        <div className="w-full min-h-[100dvh] bg-[#FFFDF7] flex flex-col justify-between relative">
           <KnowzaSplash
             onStartGoogle={() => {
               setAuthInitialMode('google');
@@ -91,8 +95,8 @@ const KnowzaAppContent: React.FC = () => {
   // If user is authenticated but has not set up target goal & pace:
   if (!stats.hasCompletedOnboarding) {
     return (
-      <div className="h-[100dvh] w-full bg-[#FFFDF7] flex justify-center items-center overflow-hidden">
-        <div className="w-full max-w-md h-full md:h-auto md:max-h-[860px] md:my-6 md:rounded-[40px] md:shadow-2xl md:border md:border-amber-200/50 bg-[#FFFDF7] overflow-hidden flex flex-col justify-between relative">
+      <div className="min-h-[100dvh] w-full bg-[#FFFDF7] flex justify-center items-center overflow-y-auto md:p-6">
+        <div className="w-full max-w-md md:max-w-2xl min-h-[100dvh] md:min-h-0 md:rounded-[36px] md:shadow-xl md:border md:border-amber-200/60 bg-[#FFFDF7] overflow-hidden flex flex-col justify-between relative">
           <KnowzaOnboarding
             onComplete={() => {
               setShowOnboarding(false);
@@ -105,8 +109,8 @@ const KnowzaAppContent: React.FC = () => {
 
   return (
     <div className="min-h-[100dvh] w-full bg-[#FFFDF7] flex justify-center items-start text-slate-900 select-none antialiased relative">
-      {/* Play Store Mobile App Container */}
-      <div className="w-full max-w-md min-h-[100dvh] relative bg-[#FFFDF7] md:my-3 md:rounded-[40px] md:shadow-2xl md:border md:border-amber-200/50 flex flex-col overflow-hidden">
+      {/* Responsive Mobile & Tablet App Container */}
+      <div className="w-full max-w-md md:max-w-3xl lg:max-w-5xl min-h-[100dvh] relative bg-[#FFFDF7] flex flex-col overflow-x-clip">
         {/* Main Tab Views */}
         <StreakRecoveryModal />
         <DailyCoachReminderHost onOpenCoach={() => setCurrentTab('aicoach')} />
@@ -127,7 +131,7 @@ const KnowzaAppContent: React.FC = () => {
 
           {currentTab === 'shop' && (
             <div className="flex-1 flex flex-col">
-              <div className="sticky top-0 z-30 bg-[#FFFDF7]/95 backdrop-blur-md px-4 py-3 flex items-center justify-between border-b border-amber-100/50">
+              <div className="sticky top-0 z-30 bg-[#FFFDF7] px-4 py-3 flex items-center justify-between border-b border-amber-100/50">
                 <button
                   onClick={() => setCurrentTab('home')}
                   className="flex items-center gap-1.5 text-xs font-bold bg-amber-100/60 hover:bg-amber-200/60 text-slate-800 px-3 py-1.5 rounded-full transition"
@@ -162,7 +166,7 @@ const KnowzaAppContent: React.FC = () => {
           {/* Sub-Views with Top Navigation Bar */}
           {currentTab === 'kahoot' && (
             <div className="flex-1 flex flex-col">
-              <div className="sticky top-0 z-30 bg-purple-900/90 backdrop-blur-md px-4 py-3 flex items-center justify-between text-white border-b border-purple-800">
+              <div className="sticky top-0 z-30 bg-purple-900 px-4 py-3 flex items-center justify-between text-white border-b border-purple-800">
                 <button
                   onClick={() => setCurrentTab('home')}
                   className="flex items-center gap-1.5 text-xs font-bold bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded-full transition"
@@ -181,7 +185,7 @@ const KnowzaAppContent: React.FC = () => {
 
           {currentTab === 'duel' && (
             <div className="flex-1 flex flex-col">
-              <div className="sticky top-0 z-30 bg-rose-900/90 backdrop-blur-md px-4 py-3 flex items-center justify-between text-white border-b border-rose-800">
+              <div className="sticky top-0 z-30 bg-rose-900 px-4 py-3 flex items-center justify-between text-white border-b border-rose-800">
                 <button
                   onClick={() => setCurrentTab('home')}
                   className="flex items-center gap-1.5 text-xs font-bold bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded-full transition"
@@ -200,7 +204,7 @@ const KnowzaAppContent: React.FC = () => {
 
           {currentTab === 'reels' && (
             <div className="flex-1 flex flex-col">
-              <div className="sticky top-0 z-30 bg-orange-950/90 backdrop-blur-md px-4 py-3 flex items-center justify-between text-white border-b border-orange-900">
+              <div className="sticky top-0 z-30 bg-orange-950 px-4 py-3 flex items-center justify-between text-white border-b border-orange-900">
                 <button
                   onClick={() => setCurrentTab('home')}
                   className="flex items-center gap-1.5 text-xs font-bold bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded-full transition"
@@ -219,7 +223,7 @@ const KnowzaAppContent: React.FC = () => {
 
           {currentTab === 'aicoach' && (
             <div className="flex-1 flex flex-col">
-              <div className="sticky top-0 z-30 bg-amber-900/90 backdrop-blur-md px-4 py-3 flex items-center justify-between text-white border-b border-amber-800">
+              <div className="sticky top-0 z-30 bg-amber-900 px-4 py-3 flex items-center justify-between text-white border-b border-amber-800">
                 <button
                   onClick={() => setCurrentTab('home')}
                   className="flex items-center gap-1.5 text-xs font-bold bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded-full transition"
@@ -239,7 +243,7 @@ const KnowzaAppContent: React.FC = () => {
           {/* Deneme Sınavları Simülatörü */}
           {currentTab === 'exams' && (
             <div className="flex-1 flex flex-col">
-              <div className="sticky top-0 z-30 bg-emerald-900/90 backdrop-blur-md px-4 py-3 flex items-center justify-between text-white border-b border-emerald-800">
+              <div className="sticky top-0 z-30 bg-emerald-900 px-4 py-3 flex items-center justify-between text-white border-b border-emerald-800">
                 <button
                   onClick={() => setCurrentTab('home')}
                   className="flex items-center gap-1.5 text-xs font-bold bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded-full transition"
@@ -259,7 +263,7 @@ const KnowzaAppContent: React.FC = () => {
           {/* Sınav Sayacı */}
           {currentTab === 'countdown' && (
             <div className="flex-1 flex flex-col">
-              <div className="sticky top-0 z-30 bg-indigo-900/90 backdrop-blur-md px-4 py-3 flex items-center justify-between text-white border-b border-indigo-800">
+              <div className="sticky top-0 z-30 bg-indigo-900 px-4 py-3 flex items-center justify-between text-white border-b border-indigo-800">
                 <button
                   onClick={() => setCurrentTab('home')}
                   className="flex items-center gap-1.5 text-xs font-bold bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded-full transition"
@@ -279,7 +283,7 @@ const KnowzaAppContent: React.FC = () => {
           {/* Hata Defteri */}
           {currentTab === 'errors' && (
             <div className="flex-1 flex flex-col">
-              <div className="sticky top-0 z-30 bg-rose-950/90 backdrop-blur-md px-4 py-3 flex items-center justify-between text-white border-b border-rose-900">
+              <div className="sticky top-0 z-30 bg-rose-950 px-4 py-3 flex items-center justify-between text-white border-b border-rose-900">
                 <button
                   onClick={() => setCurrentTab('home')}
                   className="flex items-center gap-1.5 text-xs font-bold bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded-full transition"
@@ -299,7 +303,7 @@ const KnowzaAppContent: React.FC = () => {
           {/* Kod Lab */}
           {currentTab === 'codelab' && (
             <div className="flex-1 flex flex-col">
-              <div className="sticky top-0 z-30 bg-slate-900/90 backdrop-blur-md px-4 py-3 flex items-center justify-between text-white border-b border-slate-800">
+              <div className="sticky top-0 z-30 bg-slate-900 px-4 py-3 flex items-center justify-between text-white border-b border-slate-800">
                 <button
                   onClick={() => setCurrentTab('home')}
                   className="flex items-center gap-1.5 text-xs font-bold bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded-full transition"
@@ -319,7 +323,7 @@ const KnowzaAppContent: React.FC = () => {
           {/* Öğrenme Haritası (LearnPath) */}
           {currentTab === 'learn' && (
             <div className="flex-1 flex flex-col">
-              <div className="sticky top-0 z-30 bg-[#FFFDF7]/95 backdrop-blur-md px-4 py-3 flex items-center justify-between border-b border-amber-100">
+              <div className="sticky top-0 z-30 bg-[#FFFDF7] px-4 py-3 flex items-center justify-between border-b border-amber-100">
                 <button
                   onClick={() => setCurrentTab('home')}
                   className="flex items-center gap-1.5 text-xs font-bold bg-amber-100 hover:bg-amber-200 text-amber-900 px-3 py-1.5 rounded-full transition"
@@ -393,8 +397,8 @@ const KnowzaAppContent: React.FC = () => {
 
         {/* Change Goal & City Onboarding Modal */}
         {showOnboarding && (
-          <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-0 md:p-4 backdrop-blur-sm animate-fade">
-            <div className="w-full max-w-md h-full md:h-auto md:max-h-[860px] md:rounded-[40px] bg-[#FFFDF7] overflow-hidden shadow-2xl border-2 border-amber-200">
+          <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-0 md:p-4 animate-fade">
+            <div className="w-full max-w-md md:max-w-2xl h-full md:h-auto md:max-h-[90vh] md:rounded-[36px] bg-[#FFFDF7] overflow-y-auto shadow-2xl border-2 border-amber-200">
               <KnowzaOnboarding
                 onComplete={() => setShowOnboarding(false)}
                 onSkip={() => setShowOnboarding(false)}

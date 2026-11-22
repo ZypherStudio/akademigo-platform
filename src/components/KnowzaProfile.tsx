@@ -96,7 +96,7 @@ export const KnowzaProfile: React.FC<KnowzaProfileProps> = ({
         </div>
       </div>
 
-      <div className="max-w-md mx-auto px-5 pt-4 space-y-6">
+      <div className="max-w-md md:max-w-3xl lg:max-w-5xl mx-auto px-5 pt-4 space-y-6">
         {/* User Card matching Screen 8 */}
         <div className="flex flex-col items-center text-center pt-2">
           {/* Avatar with dynamic costume badge from Shop */}

@@ -155,7 +155,7 @@ export const Shop: React.FC = () => {
   };
 
   return (
-    <div className="flex-1 w-full max-w-md mx-auto px-4 py-4 space-y-4 pb-36 select-none animate-fade">
+    <div className="flex-1 w-full max-w-md md:max-w-3xl lg:max-w-5xl mx-auto px-4 py-4 space-y-4 pb-36 select-none animate-fade">
       <KnowzaBearNotice notice={bearNotice} onClose={() => setBearNotice(null)} />
       {/* Toast Notification */}
       {feedback && (

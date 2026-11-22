@@ -99,114 +99,111 @@ export const KnowzaSplash: React.FC<KnowzaSplashProps> = ({
   const IconComp = feat.icon;
 
   return (
-    <div className="min-h-[100dvh] max-h-[100dvh] w-full box-border bg-gradient-to-b from-[#FFFDF5] via-[#FFF9ED] to-[#FFF3DC] flex flex-col justify-between items-center px-3.5 py-3.5 select-none overflow-y-auto overflow-x-hidden relative">
+    <div className="min-h-[100dvh] w-full box-border bg-gradient-to-b from-[#FFFDF5] via-[#FFF9ED] to-[#FFF3DC] flex flex-col justify-center items-center px-4 py-4 md:px-10 md:py-8 select-none overflow-y-auto overflow-x-hidden relative">
       
-      {/* Background Ambient Glows */}
-      <div className="absolute -top-20 left-1/2 -translate-x-1/2 w-80 h-72 bg-gradient-to-b from-amber-300/40 via-yellow-200/20 to-transparent rounded-full blur-2xl pointer-events-none" />
-      <div className="absolute top-1/3 -right-20 w-60 h-60 bg-amber-400/15 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-10 -left-20 w-60 h-60 bg-yellow-400/15 rounded-full blur-3xl pointer-events-none" />
+      {/* Background Ambient Glows (gradient-only for crisp mobile/tablet GPU rendering) */}
+      <div className="absolute -top-20 left-1/2 -translate-x-1/2 w-80 h-72 bg-gradient-to-b from-amber-300/25 via-yellow-200/10 to-transparent rounded-full pointer-events-none" />
+      <div className="absolute top-1/3 -right-20 w-60 h-60 bg-amber-400/10 rounded-full pointer-events-none" />
+      <div className="absolute bottom-10 -left-20 w-60 h-60 bg-yellow-400/10 rounded-full pointer-events-none" />
 
-      {/* ================= 1. HEADER & BRAND ================= */}
-      <div className="w-full flex flex-col items-center text-center relative z-10 pt-1">
-        {/* Rating Pill */}
-        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/90 border border-amber-200 shadow-sm text-[11px] font-black text-amber-900 mb-2 animate-fade">
-          <div className="flex items-center text-amber-500">
-            <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-500" />
-            <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-500" />
-            <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-500" />
-            <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-500" />
-            <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-500" />
+      <div className="w-full max-w-md md:max-w-4xl lg:max-w-5xl mx-auto flex-1 flex flex-col justify-between md:grid md:grid-cols-2 md:gap-10 md:items-center relative z-10">
+
+        {/* LEFT COLUMN (Header + 3D Mascot on Tablet; Top stack on Phone) */}
+        <div className="w-full flex flex-col items-center text-center pt-1 md:pt-0">
+          {/* Rating Pill */}
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/90 border border-amber-200 shadow-sm text-[11px] font-black text-amber-900 mb-2 animate-fade">
+            <div className="flex items-center text-amber-500">
+              <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-500" />
+              <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-500" />
+              <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-500" />
+              <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-500" />
+              <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-500" />
+            </div>
+            <span className="font-extrabold">4.9 Puan</span>
+            <span className="text-amber-400">•</span>
+            <span className="text-slate-600 font-bold">100.000+ Öğrenci</span>
           </div>
-          <span className="font-extrabold">4.9 Puan</span>
-          <span className="text-amber-400">•</span>
-          <span className="text-slate-600 font-bold">100.000+ Öğrenci</span>
-        </div>
 
-        {/* 3D HD Logo */}
-        <div className="w-44 sm:w-52 filter drop-shadow-[0_4px_12px_rgba(255,184,0,0.3)]">
-          <img 
-            src="/assets/knowza_logo_hd.png" 
-            alt="Knowza 3D Logo" 
-            className="w-full h-auto object-contain"
-          />
-        </div>
-        <p className="text-[#8C7A5E] font-black text-xs mt-0.5 tracking-wide">
-          Sınavlara Hazırlığın Yeni Nesil Akıllı Yolu 🎓✨
-        </p>
-      </div>
-
-      {/* ================= 2. 3D FULL-BODY MASCOT STAGE ================= */}
-      <div className="w-full max-w-[350px] mx-auto flex flex-col items-center justify-center relative z-10 my-auto py-1">
-        <div className="relative w-full flex flex-col items-center justify-center">
-          {/* Soft Ambient Floor Glow (No harsh box or cheap oval border) */}
-          <div className="absolute bottom-3 w-44 h-7 bg-amber-500/20 rounded-full blur-md pointer-events-none" />
-
-          {/* Full-Body 3D Mascot - Seamlessly Blended */}
-          <div className="relative z-10 w-48 sm:w-52 max-h-[28vh] flex items-center justify-center animate-float">
-            <img
-              src="/assets/knowza_main.png"
-              alt="Knowza 3D Ayıcık Maskotu"
-              className="w-full h-auto max-h-[27vh] object-contain mx-auto mix-blend-multiply drop-shadow-[0_14px_24px_rgba(180,83,9,0.18)]"
+          {/* 3D HD Logo */}
+          <div className="w-44 sm:w-52 md:w-64 filter drop-shadow-[0_4px_12px_rgba(255,184,0,0.3)]">
+            <img 
+              src="/assets/knowza_logo_hd.png" 
+              alt="Knowza 3D Logo" 
+              className="w-full h-auto object-contain"
             />
           </div>
+          <p className="text-[#8C7A5E] font-black text-xs md:text-sm mt-0.5 tracking-wide">
+            Sınavlara Hazırlığın Yeni Nesil Akıllı Yolu 🎓✨
+          </p>
 
-          {/* Balanced Symmetrical Pills Directly Below */}
-          <div className="flex flex-wrap items-center justify-center gap-1.5 mt-2.5 z-20">
-            <div className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-white/95 backdrop-blur-md border border-amber-200/80 shadow-xs text-[10px] font-black text-slate-800">
-              <span className="w-3.5 h-3.5 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-[9px] font-black">✓</span>
-              <span>2026 Maarif Müfredatı</span>
-            </div>
-
-            <div className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-white/95 backdrop-blur-md border border-indigo-200/80 shadow-xs text-[10px] font-black text-slate-800">
-              <Sparkles className="w-3 h-3 text-indigo-500 fill-indigo-400" />
-              <span>Gemini AI Koç</span>
-            </div>
-          </div>
-        </div>
-
-        {/* ================= 3. INTERACTIVE FEATURE CARD CAROUSEL ================= */}
-        <div className="w-full mt-4 bg-white/95 backdrop-blur-md rounded-2xl border border-amber-200/80 p-3 shadow-md">
-          <div className="flex items-center gap-3">
-            <div className={`w-10 h-10 rounded-xl ${feat.iconBg} ${feat.iconColor} flex items-center justify-center flex-shrink-0 shadow-inner`}>
-              <IconComp className="w-5 h-5 stroke-[2.5]" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-1.5">
-                <h4 className="text-xs font-black text-slate-900 truncate">{feat.title}</h4>
-                <span className="text-[9px] font-black uppercase px-1.5 py-0.5 rounded-md bg-amber-100 text-amber-800">
-                  {feat.badge}
-                </span>
+          {/* 3D FULL-BODY MASCOT STAGE */}
+          <div className="w-full max-w-[350px] md:max-w-md mx-auto flex flex-col items-center justify-center my-2 md:mt-4">
+            <div className="relative w-full flex flex-col items-center justify-center">
+              <div className="absolute bottom-3 w-44 md:w-56 h-7 bg-amber-500/15 rounded-full pointer-events-none" />
+              <div className="relative z-10 w-44 sm:w-52 md:w-64 max-h-[26vh] md:max-h-[36vh] flex items-center justify-center animate-float">
+                <img
+                  src="/assets/knowza_main.png"
+                  alt="Knowza 3D Ayıcık Maskotu"
+                  className="w-full h-auto max-h-[25vh] md:max-h-[34vh] object-contain mx-auto mix-blend-multiply drop-shadow-[0_14px_24px_rgba(180,83,9,0.18)]"
+                />
               </div>
-              <p className="text-[11px] font-bold text-slate-500 leading-tight mt-0.5 line-clamp-2">
-                {feat.description}
-              </p>
+              <div className="flex flex-wrap items-center justify-center gap-1.5 mt-2.5 z-20">
+                <div className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-white/95 border border-amber-200/80 shadow-xs text-[10px] md:text-xs font-black text-slate-800">
+                  <span className="w-3.5 h-3.5 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-[9px] font-black">✓</span>
+                  <span>2026 Maarif Müfredatı</span>
+                </div>
+                <div className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-white/95 border border-indigo-200/80 shadow-xs text-[10px] md:text-xs font-black text-slate-800">
+                  <Sparkles className="w-3 h-3 text-indigo-500 fill-indigo-400" />
+                  <span>Gemini AI Koç</span>
+                </div>
+              </div>
             </div>
-          </div>
-
-          {/* Dot Indicators */}
-          <div className="flex items-center justify-center gap-1.5 pt-2.5 mt-2 border-t border-amber-100/80">
-            {FEATURES.map((f, idx) => (
-              <button
-                key={f.id}
-                onClick={() => {
-                  sound.playClick();
-                  setActiveFeature(idx);
-                }}
-                aria-label={f.title}
-                className={`h-1.5 rounded-full transition-all duration-300 ${
-                  activeFeature === idx 
-                    ? 'w-6 bg-[#FFB800]' 
-                    : 'w-1.5 bg-amber-200 hover:bg-amber-300'
-                }`}
-              />
-            ))}
           </div>
         </div>
 
-      </div>
+        {/* RIGHT COLUMN (Feature Showcase + Auth Buttons) */}
+        <div className="w-full max-w-[380px] md:max-w-md mx-auto flex flex-col gap-3 md:gap-5 pb-1">
+          {/* INTERACTIVE FEATURE CARD CAROUSEL */}
+          <div className="w-full bg-white/95 rounded-2xl md:rounded-3xl border border-amber-200/80 p-3.5 md:p-5 shadow-md">
+            <div className="flex items-start gap-3">
+              <div className={`w-10 h-10 md:w-12 md:h-12 rounded-xl ${feat.iconBg} ${feat.iconColor} flex items-center justify-center flex-shrink-0 shadow-inner`}>
+                <IconComp className="w-5 h-5 md:w-6 md:h-6 stroke-[2.5]" />
+              </div>
+              <div className="flex-1 min-w-0 text-left">
+                <div className="flex flex-wrap items-center gap-1.5">
+                  <h4 className="text-xs md:text-sm font-black text-slate-900 leading-tight">{feat.title}</h4>
+                  <span className="text-[9px] md:text-[10px] font-black uppercase px-1.5 py-0.5 rounded-md bg-amber-100 text-amber-800 whitespace-nowrap">
+                    {feat.badge}
+                  </span>
+                </div>
+                <p className="text-[11px] md:text-xs font-bold text-slate-500 leading-snug mt-1">
+                  {feat.description}
+                </p>
+              </div>
+            </div>
 
-      {/* ================= 4. AUTHENTIC ACTION BUTTONS ================= */}
-      <div className="w-full max-w-[350px] mx-auto space-y-2 pb-1 relative z-10">
+            {/* Dot Indicators */}
+            <div className="flex items-center justify-center gap-1.5 pt-2.5 mt-2.5 border-t border-amber-100/80">
+              {FEATURES.map((f, idx) => (
+                <button
+                  key={f.id}
+                  onClick={() => {
+                    sound.playClick();
+                    setActiveFeature(idx);
+                  }}
+                  aria-label={f.title}
+                  className={`h-1.5 rounded-full transition-all duration-300 ${
+                    activeFeature === idx 
+                      ? 'w-6 bg-[#FFB800]' 
+                      : 'w-1.5 bg-amber-200 hover:bg-amber-300'
+                  }`}
+                />
+              ))}
+            </div>
+          </div>
+
+          {/* AUTHENTIC ACTION BUTTONS */}
+          <div className="w-full space-y-2.5">
         
         {/* Instant 1-Click Continue for Saved Account */}
         {primaryAccount && (
@@ -295,6 +292,8 @@ export const KnowzaSplash: React.FC<KnowzaSplashProps> = ({
         <div className="flex items-center justify-center gap-1.5 pt-1 text-slate-500 text-[10px] font-bold">
           <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" />
           <span>Google Play & MEB 2026 Standartlarında Güvenli Giriş</span>
+        </div>
+        </div>
         </div>
       </div>
 

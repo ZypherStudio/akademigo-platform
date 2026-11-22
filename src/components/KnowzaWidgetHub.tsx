@@ -152,7 +152,7 @@ export const KnowzaWidgetHub: React.FC<KnowzaWidgetHubProps> = ({
         </button>
       </div>
 
-      <div className="px-4 py-3 space-y-4 max-w-md mx-auto w-full">
+      <div className="px-4 py-3 space-y-4 max-w-md md:max-w-3xl lg:max-w-4xl mx-auto w-full">
         {/* ================= HERO INTRO CARD ================= */}
         <div className="bg-gradient-to-br from-[#FFF8E7] via-[#FFEABF] to-[#FFD88A] rounded-3xl p-4 border-2 border-[#FFB800]/40 shadow-sm relative overflow-hidden">
           <div className="flex items-center justify-between gap-3 relative z-10">

@@ -154,7 +154,137 @@ const TOPIC_RULES: TopicRule[] = [
     keywords: ['python', 'javascript', 'react', 'html', 'css', 'sql', 'kod', 'döngü', 'for', 'while', 'bug', 'hata'],
     reply: `💻 **Yazılım & Debug Rehberi:**\n• **Python Döngü:** Liste elemanları için \`for item in items:\`, şart sağlanana kadar \`while kosul:\` kullan.\n• **JavaScript:** Sabitler için \`const\`, değişenler için \`let\` kullan; asenkron API çağrılarında \`async / await + try / catch\` yaz.\n🛠️ Hata aldığın kod parçasını buraya yapıştır, satır satır inceleyelim!`,
   },
+  {
+    keywords: ['tarih', 'inkılap', 'osmanlı', 'atatürk', 'tanzimat', 'cumhuriyet', 'lozan', 'kurtuluş'],
+    reply: `📜 **Tarih & İnkılap Altın Başlıklar:**\n• **1839 Tanzimat Fermanı:** İlk kez kanun üstünlüğü ilkesi benimsendi.\n• **1919 Amasya Genelgesi:** Kurtuluş Savaşı'nın amacı, gerekçesi ve yöntemi ("Milletin bağımsızlığını yine milletin azim ve kararı kurtaracaktır") ilan edildi.\n• **1923 Lozan Antlaşması:** Yeni Türk devletinin tam bağımsızlığı ve ekonomik kapitülasyonların kalkışı dünyaya kabul ettirildi!`,
+  },
+  {
+    keywords: ['coğrafya', 'iklim', 'harita', 'dağ', 'akarsu', 'nüfus', 'deprem', 'enlem'],
+    reply: `🗺️ **Coğrafya Kritik Kurallar:**\n• **Enlem Etkisi (Özel vs Mutlak Konum):** Türkiye \`36°-42° Kuzey\` paralelinde yer aldığı için güneyden kuzeye gidildikçe sıcaklık ve güneş ışınlarının geliş açısı düşer.\n• **Yağış Dağılışı:** En fazla yağışı **Doğu Karadeniz**, en az yağışı **Tuz Gölü çevresi ve Iğdır** alır.\n• Kırık dağlar Ege'de (Horst-Graben), kıvrım dağlar Karadeniz ve Akdeniz'dedir.`,
+  },
+  {
+    keywords: ['türkçe', 'paragraf', 'dil bilgisi', 'ek', 'noktalama', 'yazım', 'cümle', 'anlatım'],
+    reply: `✍️ **Türkçe & Paragraf Taktikleri:**\n• **Paragrafta Hız:** Önce soru kökünü ("ulaşılamaz", "değinilmemiştir" gibi) oku, sonra metni tara.\n• **Yazım Tuzakları:** *"Her şey, bir şey, pek çok, birçok, hiçbir, sağ ol, hoşça kal"* daima ÖSYM favorisidir!\n• *"De / Ki" Bağlacı:* Cümleden çıkarınca anlam bozulmuyorsa bağlaçtır ve **ayrı** yazılır.`,
+  },
+  {
+    keywords: ['fonksiyon', 'parabol', 'polinom', 'olasılık', 'çarpanlara', 'denklem', 'kök'],
+    reply: `📊 **Fonksiyon, Parabol & Olasılık İpuçları:**\n• **Parabol \`y = ax² + bx + c\`:** Tepe noktası \`T(r, k)\` için \`r = -b / (2a)\` ve \`k = f(r)\`dir. \`a > 0\` ise kollar yukarı (minimum), \`a < 0\` ise kollar aşağıdır.\n• **Olasılık:** \`P(A) = İstenen Durum Sayısı / Tüm Durumların Sayısı\` (daima \`0 ≤ P(A) ≤ 1\`).`,
+  },
 ];
+
+interface MiniChatQuestion {
+  tag: string;
+  question: string;
+  options: [string, string, string, string];
+  correctLetter: 'A' | 'B' | 'C' | 'D';
+  explanation: string;
+}
+
+const INTERACTIVE_QUESTION_BANK: Record<AiTrackId, MiniChatQuestion[]> = {
+  yks: [
+    {
+      tag: 'TYT Matematik',
+      question: 'Ardışık 3 çift tam sayının toplamı 48 olduğuna göre en büyük sayı kaçtır?',
+      options: ['14', '16', '18', '20'],
+      correctLetter: 'C',
+      explanation: 'Ortadaki sayı `48 / 3 = 16` olur; ardışık çift sayılar `14, 16, 18` olduğundan en büyüğü `18`dir (C).',
+    },
+    {
+      tag: 'TYT Türkçe',
+      question: 'Aşağıdaki sözcüklerden hangisinin yazımı DOĞRUDUR?',
+      options: ['Herkez', 'Yanlız', 'Her şey', 'Bir çok'],
+      correctLetter: 'C',
+      explanation: '"Her şey" ayrı yazılır (C). Doğruları: "Herkes", "Yalnız", "Birçok".',
+    },
+    {
+      tag: 'AYT Tarih',
+      question: 'Kurtuluş Savaşı’nda ilk kez "Milletin bağımsızlığını yine milletin azim ve kararı kurtaracaktır" maddesi nerede geçmiştir?',
+      options: ['Erzurum Kongresi', 'Amasya Genelgesi', 'Sivas Kongresi', 'Havza Bildirisi'],
+      correctLetter: 'B',
+      explanation: 'Bu madde Amasya Genelgesi’nde (22 Haziran 1919) yer alarak mücadelenin yöntemini belirlemiştir (B).',
+    },
+  ],
+  lgs: [
+    {
+      tag: 'LGS Matematik',
+      question: 'Aralarında asal iki sayının EKOK\'u 60 ve sayılardan biri 12 ise diğeri kaçtır?',
+      options: ['4', '5', '6', '10'],
+      correctLetter: 'B',
+      explanation: 'Aralarında asal sayıların EKOK\'u çarpımlarına eşittir: `60 / 12 = 5` (B).',
+    },
+    {
+      tag: 'LGS Fen',
+      question: '21 Haziran tarihinde Türkiye’de (Kuzey Yarım Küre) hangi olay yaşanır?',
+      options: ['En uzun gece', 'En uzun gündüz', 'Gece-gündüz eşitliği', 'Kış başlangıcı'],
+      correctLetter: 'B',
+      explanation: '21 Haziran yaz gündönümünde Kuzey Yarım Küre\'de en uzun gündüz yaşanır (B).',
+    },
+  ],
+  kpss: [
+    {
+      tag: 'KPSS Vatandaşlık',
+      question: '1982 Anayasası’na göre TBMM seçimleri kaç yılda bir yapılır?',
+      options: ['3', '4', '5', '6'],
+      correctLetter: 'C',
+      explanation: '2017 değişikliği ile TBMM ve Cumhurbaşkanlığı seçimleri 5 yılda bir birlikte yapılır (C).',
+    },
+    {
+      tag: 'KPSS Tarih',
+      question: 'Türk tarihinde kendi adına para bastıran ilk Osmanlı padişahı kimdir?',
+      options: ['Osman Bey', 'Orhan Bey', 'I. Murat', 'Fatih Sultan Mehmet'],
+      correctLetter: 'A',
+      explanation: 'İlk Osmanlı bakır akçesi Osman Bey döneminde bastırılmıştır; ilk gümüş akçe ise Orhan Bey dönemindedir (A).',
+    },
+  ],
+  ehliyet: [
+    {
+      tag: '2026 Ehliyet',
+      question: 'Yerleşim yeri dışındaki bölünmüş karayollarında otomobil (B) cinsi araçların azami hız sınırı kaç km/sa\'tir?',
+      options: ['90', '100', '110', '130'],
+      correctLetter: 'C',
+      explanation: 'Otomobiller şehir içi 50, çift yönlü yolda 90, bölünmüş yolda 110 km/sa hız limitine tabidir (C).',
+    },
+    {
+      tag: 'İlk Yardım',
+      question: 'Yetişkin bir kazazedeye uygulanan Temel Yaşam Desteği’nde kalp masajı / suni solunum oranı nedir?',
+      options: ['15 / 1', '30 / 2', '20 / 2', '10 / 1'],
+      correctLetter: 'B',
+      explanation: 'Yetişkinlerde 30 kalp basısı ve 2 suni solunum uygulanır (B).',
+    },
+  ],
+  dil: [
+    {
+      tag: 'İngilizce Grammar',
+      question: 'Cümleyi tamamla: "She has been living in Ankara ____ 2021."',
+      options: ['for', 'since', 'during', 'from'],
+      correctLetter: 'B',
+      explanation: 'Başlangıç yılı/noktası belli olduğunda ("2021\'den beri") **since** kullanılır (B).',
+    },
+    {
+      tag: 'Phrasal Verbs',
+      question: '"Postpone" fiilinin eş anlamlı phrasal verb karşılığı hangisidir?',
+      options: ['Put off', 'Look after', 'Give in', 'Turn up'],
+      correctLetter: 'A',
+      explanation: '"Put off" = ertelemek (= postpone) demektir (A).',
+    },
+  ],
+  kodlama: [
+    {
+      tag: 'Python',
+      question: 'Python’da `print(len("Knowza"))` komutunun ekran çıktısı nedir?',
+      options: ['5', '6', '7', 'Hata verir'],
+      correctLetter: 'B',
+      explanation: '"Knowza" kelimesi 6 karakterden oluştuğu için `len("Knowza") == 6` döner (B).',
+    },
+    {
+      tag: 'JavaScript',
+      question: 'JavaScript\'te `typeof []` ifadesinin döndürdüğü değer nedir?',
+      options: ['"array"', '"list"', '"object"', '"undefined"'],
+      correctLetter: 'C',
+      explanation: 'JavaScript\'te diziler (Array) aslında özel birer nesne olduğu için `typeof []` `"object"` döner (C).',
+    },
+  ],
+};
 
 const GREETINGS_TR = [
   'Selam! 🐻🎓 Bugün hangi konuya odaklanıyoruz? İstersen bir matematik sorusu yaz, istersen Ehliyet/YKS/LGS/KPSS sorusu sor!',
@@ -261,8 +391,53 @@ export async function generateSmartCoachReply(
   }
 
   const lower = userText.toLowerCase().trim();
+  const lastModelMsg = [...history].reverse().find((m) => m.role === 'model')?.parts?.[0]?.text || '';
+  const allBank = Object.values(INTERACTIVE_QUESTION_BANK).flat();
 
-  // 1. Check greetings first
+  // 0. Check if user answered an active A/B/C/D mini-question from last turn!
+  const answerMatch = lower.replace(/[şıkkı\s.!)]/g, '').match(/^([abcd])$/);
+  if (answerMatch && lastModelMsg.includes('Cevabını **A, B, C veya D**')) {
+    const picked = answerMatch[1].toUpperCase();
+    const matchedQ = allBank.find((q) => lastModelMsg.includes(q.question));
+    if (matchedQ) {
+      const isRight = picked === matchedQ.correctLetter;
+      return isRight
+        ? `🎉 **Harikasın, doğru cevap ${picked}!**\n\n✅ ${matchedQ.explanation}\n\n🔥 İstersen **"yeni soru sor"** yazarak bir sonrakine geçebilirsin!`
+        : `💡 **Yaklaştın ama ${picked} değil!**\n\n✅ Doğru cevap **${matchedQ.correctLetter}** olacaktı:\n${matchedQ.explanation}\n\n🐻 Hemen telafi için **"yeni soru sor"** yaz!`;
+    }
+  }
+
+  // 1. Interactive quiz request ("soru sor", "quiz", "yeni soru", "test")
+  const wantsQuiz = /\b(soru\s*sor|yeni\s*soru|örnek\s*soru|quiz|test\s*çöz|deneme\s*soru|sor bakalım)\b/i.test(lower);
+  if (wantsQuiz) {
+    const pool = INTERACTIVE_QUESTION_BANK[track] || INTERACTIVE_QUESTION_BANK.yks;
+    const candidates = pool.map(
+      (q) =>
+        `🎯 **${q.tag} İnteraktif Mini Soru:**\n\n**${q.question}**\n\n` +
+        `A) ${q.options[0]}\nB) ${q.options[1]}\nC) ${q.options[2]}\nD) ${q.options[3]}\n\n` +
+        `✍️ *Cevabını **A, B, C veya D** olarak yaz, anında kontrol edeyim!*`
+    );
+    return pickNonRepeating(candidates);
+  }
+
+  // 1b. Follow-up cues ("anlamadım", "örnek ver", "devam", "evet", "hayır", "tamam")
+  if (/\b(anlamadım|tekrar anlat|basitleştir|açıklar mısın|örnek ver)\b/i.test(lower)) {
+    return pickNonRepeating([
+      `🪜 **Daha Basit Anlatalım:**\nBir konuyu ezberlemek yerine **neden-sonuç** sırasıyla 3 adıma böl:\n1️⃣ Temel tanımı tek cümleye indir.\n2️⃣ Bir tane kolay sayısal/günlük örnek çöz.\n3️⃣ Hemen arkasından karma soru dene.\n\n📌 Hangi kavramı sadeleştirmemi istersin? Adını yaz, sıfırdan örnekleyeyim!`,
+      `🐻 **Somut Örnek Yöntemi:**\nTakıldığın başlığı ya da soruyu buraya kısa cümleyle yaz (örneğin \`%25 zam nedir\` veya \`if clause farkı\`), sana günlük hayattan 1 örnekle adım adım açayım!`,
+    ]);
+  }
+  if (/^(evet|tamam|olur|devam|devam et|peki|haydi|başla|hadi)[!.\s]*$/i.test(lower)) {
+    const pool = INTERACTIVE_QUESTION_BANK[track] || INTERACTIVE_QUESTION_BANK.yks;
+    const q = pool[Math.floor(Math.random() * pool.length)];
+    return (
+      `🚀 **Harika, o zaman hemen uygulayalım!** (${q.tag})\n\n**${q.question}**\n\n` +
+      `A) ${q.options[0]}\nB) ${q.options[1]}\nC) ${q.options[2]}\nD) ${q.options[3]}\n\n` +
+      `✍️ *Cevabını **A, B, C veya D** olarak yaz, anında kontrol edeyim!*`
+    );
+  }
+
+  // 2. Check greetings first
   const greetingWords = ['merhaba', 'selam', 'naber', 'nasılsın', 'sa', 'slm', 'hey', 'hi', 'hello', 'günaydın'];
   const tokens = lower.replace(/[!?.,]/g, ' ').split(/\s+/).filter(Boolean);
   if (tokens.some((t) => greetingWords.includes(t)) && tokens.length <= 5) {

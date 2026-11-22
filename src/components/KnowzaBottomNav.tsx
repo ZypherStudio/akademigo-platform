@@ -37,8 +37,8 @@ export const KnowzaBottomNav: React.FC<KnowzaBottomNavProps> = ({ currentTab, on
   ];
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-[#F2E8D5] px-2 sm:px-4 py-1.5 pb-[max(0.55rem,env(safe-area-inset-bottom))] shadow-[0_-4px_20px_rgba(0,0,0,0.05)] select-none">
-      <div className="max-w-md mx-auto flex items-end justify-around">
+    <nav className="fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-[#F2E8D5] px-2 sm:px-4 py-1.5 pb-[max(0.55rem,env(safe-area-inset-bottom))] shadow-[0_-4px_20px_rgba(0,0,0,0.05)] select-none">
+      <div className="max-w-md md:max-w-3xl lg:max-w-5xl mx-auto flex items-end justify-around">
         {tabs.map((tab) => {
           const Icon = tab.icon;
           const isActive = currentTab === tab.id;

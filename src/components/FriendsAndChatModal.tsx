@@ -229,7 +229,7 @@ export const FriendsAndChatModal: React.FC<{
 
   return (
     <div className="fixed inset-0 z-[125] bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 animate-fade select-none">
-      <div className="w-full max-w-md bg-[#FFFDF7] rounded-[32px] border-2 border-amber-200 shadow-2xl overflow-hidden flex flex-col max-h-[88dvh]">
+      <div className="w-full max-w-md md:max-w-xl bg-[#FFFDF7] rounded-[32px] border-2 border-amber-200 shadow-2xl overflow-hidden flex flex-col max-h-[88dvh]">
         {/* Header */}
         <div className="px-4 py-3.5 bg-gradient-to-r from-amber-400 via-[#FFB800] to-orange-400 text-slate-950 flex items-center justify-between">
           <div className="flex items-center gap-2">

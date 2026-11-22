@@ -216,7 +216,13 @@ export const AVATAR_MAP: Record<UserAvatar, { emoji: string; name: string }> = {
 
 const KNOWZA_STORAGE_VERSION = 'knowza_v2026_real_v5';
 
-const getTodayIsoDate = (): string => new Date().toISOString().split('T')[0];
+const getTodayIsoDate = (): string => {
+  const now = new Date();
+  const y = now.getFullYear();
+  const m = String(now.getMonth() + 1).padStart(2, '0');
+  const d = String(now.getDate()).padStart(2, '0');
+  return `${y}-${m}-${d}`;
+};
 const getCurrentYear = (): number => new Date().getFullYear();
 export const MAX_ANNUAL_STREAK_RESTORES = 3;
 
@@ -231,7 +237,13 @@ const computeNextStreakState = (prev: UserStats) => {
   const todayStr = getTodayIsoDate();
   const isNewDay = prev.lastActiveDate !== todayStr;
   const diffDays = prev.lastActiveDate ? getDayDiff(prev.lastActiveDate, todayStr) : 0;
-  const missedMultipleDays = diffDays >= 2;
+  let nextStreakFreezeCount = prev.inventory?.streakFreeze || 0;
+  let freezeProtected = false;
+  if (diffDays === 2 && (prev.streak || 0) > 0 && nextStreakFreezeCount > 0) {
+    nextStreakFreezeCount -= 1;
+    freezeProtected = true;
+  }
+  const missedMultipleDays = diffDays >= 2 && !freezeProtected;
   const nextStreak =
     (prev.streak || 0) === 0 || missedMultipleDays
       ? 1
@@ -245,7 +257,7 @@ const computeNextStreakState = (prev: UserStats) => {
         xpGainedToday: 0,
         perfectLessonsToday: 0,
       });
-  return { nextStreak, todayStr, dailyQuest };
+  return { nextStreak, todayStr, dailyQuest, nextStreakFreezeCount };
 };
 
 const GameContext = createContext<GameContextType | undefined>(undefined);
@@ -572,7 +584,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const newCompleted = isAlreadyCompleted ? prev.completedLessons : [...prev.completedLessons, lessonId];
       const newXp = prev.xp + earnedXp;
       const newGems = prev.gems + earnedGems;
-      const { nextStreak: newStreak, todayStr, dailyQuest } = computeNextStreakState(prev);
+      const { nextStreak: newStreak, todayStr, dailyQuest, nextStreakFreezeCount } = computeNextStreakState(prev);
       const newTotalQuestions = prev.totalQuestionsAnswered + 4;
       const prevLevel = Math.max(1, Math.floor((prev.xp || 0) / 100) + 1);
       const newLevel = Math.max(1, Math.floor(newXp / 100) + 1);
@@ -673,6 +685,10 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
         xp: finalXp,
         gems: newGems + (pendingAchievement?.gemReward || 0),
         streak: newStreak,
+        inventory: {
+          ...prev.inventory,
+          streakFreeze: nextStreakFreezeCount,
+        },
         lastActiveDate: todayStr,
         currentLevel: Math.floor(finalXp / 100) + 1,
         levelProgress: finalXp % 100,
@@ -804,7 +820,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
         : prev.duelHistory || [];
 
       const newXp = prev.xp + (won ? 25 : 10);
-      const { nextStreak, todayStr, dailyQuest } = computeNextStreakState(prev);
+      const { nextStreak, todayStr, dailyQuest, nextStreakFreezeCount } = computeNextStreakState(prev);
       return {
         ...prev,
         eloRating: Math.max(800, prev.eloRating + delta),
@@ -812,6 +828,10 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
         duelLosses: prev.duelLosses + (won ? 0 : 1),
         xp: newXp,
         streak: nextStreak,
+        inventory: {
+          ...prev.inventory,
+          streakFreeze: nextStreakFreezeCount,
+        },
         lastActiveDate: todayStr,
         currentLevel: Math.floor(newXp / 100) + 1,
         levelProgress: newXp % 100,
@@ -1110,12 +1130,16 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
           gems: newGems,
         };
       }
-      const { nextStreak, todayStr, dailyQuest } = computeNextStreakState(prev);
+      const { nextStreak, todayStr, dailyQuest, nextStreakFreezeCount } = computeNextStreakState(prev);
       return {
         ...prev,
         xp: newXp,
         gems: newGems,
         streak: nextStreak,
+        inventory: {
+          ...prev.inventory,
+          streakFreeze: nextStreakFreezeCount,
+        },
         lastActiveDate: todayStr,
         currentLevel: Math.floor(newXp / 100) + 1,
         levelProgress: newXp % 100,
@@ -1239,11 +1263,25 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     stats.streakRestoresYear === currentYear ? stats.streakRestoresUsed || 0 : 0;
   const remainingStreakRestores = Math.max(0, MAX_ANNUAL_STREAK_RESTORES - usedThisYear);
 
-  // Detect if user missed 2+ days and trigger streak break / 3x-per-year recovery modal
+  // Detect if user missed 2+ days; auto-consume Streak Freeze if diffDays === 2, else trigger recovery modal
   useEffect(() => {
     if (!stats.lastActiveDate || (stats.streak || 0) <= 0 || stats.brokenStreakValue) return;
     const todayStr = getTodayIsoDate();
     const diffDays = getDayDiff(stats.lastActiveDate, todayStr);
+    if (diffDays === 2 && (stats.inventory?.streakFreeze || 0) > 0) {
+      setStats(prev => {
+        if ((prev.inventory?.streakFreeze || 0) <= 0) return prev;
+        return {
+          ...prev,
+          inventory: {
+            ...prev.inventory,
+            streakFreeze: prev.inventory.streakFreeze - 1,
+          },
+          lastActiveDate: todayStr,
+        };
+      });
+      return;
+    }
     if (diffDays >= 2) {
       setStats(prev => {
         if ((prev.streak || 0) <= 0) return prev;
@@ -1254,7 +1292,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
         };
       });
     }
-  }, [stats.lastActiveDate, stats.streak, stats.brokenStreakValue]);
+  }, [stats.lastActiveDate, stats.streak, stats.brokenStreakValue, stats.inventory?.streakFreeze]);
 
   const restoreBrokenStreak = (): { success: boolean; remaining: number } => {
     const yr = getCurrentYear();

@@ -762,6 +762,81 @@ export interface TrayOptions {
   specialChance?: number;
   hardMode?: boolean;
   guaranteeFit?: boolean;
+  rng?: () => number;
+}
+
+export function hashSeedString(input: string): number {
+  let h = 2166136261;
+  for (let i = 0; i < input.length; i++) {
+    h ^= input.charCodeAt(i);
+    h = Math.imul(h, 16777619);
+  }
+  return h >>> 0;
+}
+
+export function createSeededRng(seed: number): () => number {
+  let a = seed >>> 0;
+  return () => {
+    a |= 0;
+    a = (a + 0x6d2b79f5) | 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+/** Generates the exact same 8x8 starter board worldwide for a given YYYY-MM-DD calendar date. */
+export function createDailyChallengeBoard(
+  dateStr: string,
+  colors: CubeColor[] = ['blue', 'yellow', 'red', 'green', 'purple']
+): Grid {
+  const rng = createSeededRng(hashSeedString(`daily_board_${dateStr}`));
+  const grid = createEmptyGrid(BLOCK_GRID_SIZE);
+
+  // Symmetric center + corner islands (~14 starter cubes) so lines are exciting from turn 1
+  const candidateCoords: [number, number][] = [
+    [2, 2],
+    [2, 5],
+    [5, 2],
+    [5, 5],
+    [3, 3],
+    [3, 4],
+    [4, 3],
+    [4, 4],
+    [1, 3],
+    [1, 4],
+    [6, 3],
+    [6, 4]
+  ];
+  for (const [r, c] of candidateCoords) {
+    if (rng() < 0.72) {
+      const col = colors[Math.floor(rng() * colors.length)];
+      grid[r][c] = {
+        uid: `d_${dateStr}_${r}_${c}`,
+        color: col,
+        special: null,
+        obstacle: rng() < 0.2 ? 'ice' : null,
+        obstacleHp: rng() < 0.2 ? 1 : 0,
+        isNew: true
+      };
+    }
+  }
+  return grid;
+}
+
+/** Deterministic 3-piece daily tray shared globally per date and turn index. */
+export function generateSeededBlockTray(
+  dateStr: string,
+  turnIdx: number,
+  colors: CubeColor[],
+  grid?: Grid,
+  options: Omit<TrayOptions, 'rng'> = {}
+): PolyominoShape[] {
+  const rng = createSeededRng(hashSeedString(`daily_tray_${dateStr}_t${turnIdx}`));
+  return generateBlockTray(colors, grid, { ...options, rng }).map((shape, idx) => ({
+    ...shape,
+    id: `daily_${dateStr}_t${turnIdx}_${idx}`
+  }));
 }
 
 export function generateBlockTray(
@@ -774,7 +849,8 @@ export function generateBlockTray(
     forceSpecial = false,
     specialChance = 0.28,
     hardMode = false,
-    guaranteeFit = true
+    guaranteeFit = true,
+    rng = Math.random
   } = options;
   const maxPool = allowAdvanced ? SHAPE_DEFS : SHAPE_DEFS.slice(0, 13);
   const hardPool = SHAPE_DEFS.slice(7); // Larger L, T, Z, 3x3, 2x3, 5-bar shapes for real challenge
@@ -789,24 +865,24 @@ export function generateBlockTray(
       : i === 0
       ? SHAPE_DEFS.slice(0, 8)
       : maxPool;
-    const def = pool[Math.floor(Math.random() * pool.length)];
+    const def = pool[Math.floor(rng() * pool.length)];
     result.push({
       id: `shape_${nextUid()}_${i}`,
       name: def.name,
       cells: def.cells,
-      color: randomColor(colors)
+      color: colors[Math.floor(rng() * colors.length)]
     });
   }
 
   // Embed special Rocket/Bomb/Disco power cell into one tray piece for chain-blast variety
-  const attachIdx = forceSpecial ? 1 : Math.random() < specialChance ? 1 : -1;
+  const attachIdx = forceSpecial ? 1 : rng() < specialChance ? 1 : -1;
   if (attachIdx >= 0 && result[attachIdx]) {
     const target = result[attachIdx];
-    const cellIndex = Math.floor(Math.random() * target.cells.length);
+    const cellIndex = Math.floor(rng() * target.cells.length);
     const chosenSpecial: SpecialType =
-      forceSpecial && Math.random() < 0.35
+      forceSpecial && rng() < 0.35
         ? 'disco'
-        : specialPool[Math.floor(Math.random() * specialPool.length)];
+        : specialPool[Math.floor(rng() * specialPool.length)];
     result[attachIdx] = {
       ...target,
       specialCell: { index: cellIndex, special: chosenSpecial },
@@ -820,7 +896,7 @@ export function generateBlockTray(
         id: `shape_safe_${nextUid()}_${idx}`,
         name: def.name,
         cells: def.cells,
-        color: randomColor(colors)
+        color: colors[Math.floor(rng() * colors.length)]
       }))
       .find((s) => canShapeFitAnywhere(grid, s));
     if (smallFits) {

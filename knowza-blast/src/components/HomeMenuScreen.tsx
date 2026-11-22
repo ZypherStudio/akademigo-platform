@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Calendar, Coins, Crown, Flame, Gift, Map, Play, Shirt, ShoppingBag, Sparkles, Star, Timer, Trophy, X } from 'lucide-react';
+import { Calendar, Check, Coins, Crown, Flame, Gift, Map, Play, Shirt, ShoppingBag, Smartphone, Sparkles, Star, Timer, Trophy, UserPlus, X } from 'lucide-react';
 import { TOTAL_LEVELS, getBiomeForLevel } from '../data/biomes';
 import { LEVELS } from '../data/levels';
 import { KnowzaMood, LevelConfig, PlayerProgress } from '../types/game';
@@ -8,13 +8,24 @@ import { WIN_STREAK_MAX_TIER, getWinStreakInfo, getWinStreakTier } from '../util
 import { BiomeWorldBackground } from './BiomeWorldArt';
 import { CubeTile } from './CubeTile';
 import { KnowzaSprite } from './KnowzaSprite';
+import { SocialTab } from './SocialHubModal';
+
+export const EVENT_MARATHON_TIERS = [
+  { tier: 1, lines: 5, label: '+120 Altın', rewardCoins: 120, rewardRocket: 0, rewardDisco: 0 },
+  { tier: 2, lines: 15, label: '+1 Roket', rewardCoins: 0, rewardRocket: 1, rewardDisco: 0 },
+  { tier: 3, lines: 30, label: '+300 Altın & Disko', rewardCoins: 300, rewardRocket: 0, rewardDisco: 1 }
+];
 
 interface HomeMenuScreenProps {
   progress: PlayerProgress;
+  pendingGiftBanner?: string | null;
   onPlayCurrent: (level: LevelConfig) => void;
   onOpenMap: () => void;
   onOpenEndless: () => void;
   onOpenSprint: () => void;
+  onOpenDailyChallenge: () => void;
+  onOpenSocial: (tab?: SocialTab) => void;
+  onClaimEventTier: (tier: number) => void;
   onOpenWardrobe: () => void;
   onOpenQuests: () => void;
   onOpenDaily: () => void;
@@ -25,10 +36,14 @@ interface HomeMenuScreenProps {
 
 export const HomeMenuScreen: React.FC<HomeMenuScreenProps> = ({
   progress,
+  pendingGiftBanner = null,
   onPlayCurrent,
   onOpenMap,
   onOpenEndless,
   onOpenSprint,
+  onOpenDailyChallenge,
+  onOpenSocial,
+  onClaimEventTier,
   onOpenWardrobe,
   onOpenQuests,
   onOpenDaily,
@@ -461,6 +476,128 @@ export const HomeMenuScreen: React.FC<HomeMenuScreenProps> = ({
               </div>
             </div>
           </button>
+        </div>
+
+        {/* Social, Daily Seeded Challenge & Growth Cards */}
+        {pendingGiftBanner && (
+          <div className="bg-emerald-600/95 border border-emerald-200 text-white rounded-2xl px-3 py-1.5 text-[11px] font-black flex items-center justify-between gap-2 shadow animate-pop-in">
+            <span>{pendingGiftBanner}</span>
+          </div>
+        )}
+
+        <div className="grid grid-cols-2 gap-2">
+          {/* Global Seeded Daily Challenge */}
+          <button
+            type="button"
+            onClick={() => {
+              sfx.click();
+              onOpenDailyChallenge();
+            }}
+            className="parchment-card rounded-2xl p-2.5 text-left flex items-center gap-2 active:scale-95 transition-transform ring-1 ring-indigo-400/70"
+          >
+            <div className="w-8 h-8 rounded-xl bg-gradient-to-b from-indigo-400 to-indigo-700 border border-indigo-900 flex items-center justify-center shrink-0 shadow">
+              <Calendar className="w-4 h-4 text-white" />
+            </div>
+            <div className="min-w-0 flex-1">
+              <div className="font-display text-xs font-black text-[#471f04] leading-tight truncate">
+                Günün Bulmacası
+              </div>
+              <div className="text-[9.5px] font-bold text-[#7c4819] leading-tight mt-0.5 truncate">
+                Ortak Tahta • Rekor: {progress.dailyChallengeBest || 0}
+              </div>
+            </div>
+          </button>
+
+          {/* Global Leaderboard + Referral + Hearts */}
+          <button
+            type="button"
+            onClick={() => {
+              sfx.click();
+              onOpenSocial('leaderboard');
+            }}
+            className="parchment-card rounded-2xl p-2.5 text-left flex items-center gap-2 active:scale-95 transition-transform ring-1 ring-emerald-400/70"
+          >
+            <div className="w-8 h-8 rounded-xl bg-gradient-to-b from-emerald-400 to-emerald-700 border border-emerald-900 flex items-center justify-center shrink-0 shadow">
+              <UserPlus className="w-4 h-4 text-white" />
+            </div>
+            <div className="min-w-0 flex-1">
+              <div className="font-display text-xs font-black text-[#471f04] leading-tight truncate">
+                Sıralama & Davet
+              </div>
+              <div className="text-[9.5px] font-bold text-[#7c4819] leading-tight mt-0.5 truncate">
+                Can & +300 Altın Kodu
+              </div>
+            </div>
+          </button>
+        </div>
+
+        {/* Limited-Time Daily Treasure Marathon Event + PWA Install Trigger */}
+        <div className="parchment-card rounded-2xl p-2.5 flex flex-col gap-1.5">
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-1.5">
+              <div className="w-5 h-5 rounded-md bg-gradient-to-b from-amber-300 to-orange-500 flex items-center justify-center shadow">
+                <Trophy className="w-3 h-3 text-[#471f04]" />
+              </div>
+              <span className="font-display text-xs font-black text-[#471f04]">
+                Hazine Maratonu
+              </span>
+              <span className="text-[9.5px] font-black text-amber-800 bg-amber-100 border border-amber-300 px-1.5 py-0.5 rounded-full tabular-nums">
+                {Math.min(30, progress.eventLinesProgress || 0)}/30 Satır
+              </span>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => {
+                sfx.click();
+                onOpenSocial('install');
+              }}
+              className="brown-btn px-2 py-1 rounded-xl text-[9.5px] font-black flex items-center gap-1 shrink-0"
+            >
+              <Smartphone className="w-3 h-3 text-[#7c3d12]" />
+              <span>Uygulamayı Kur</span>
+            </button>
+          </div>
+
+          <div className="w-full h-2.5 bg-[#e2c693] rounded-full overflow-hidden border border-[#a87035]">
+            <div
+              className="h-full bg-gradient-to-r from-amber-400 via-orange-500 to-rose-500 rounded-full transition-all duration-300"
+              style={{ width: `${Math.min(100, Math.round(((progress.eventLinesProgress || 0) / 30) * 100))}%` }}
+            />
+          </div>
+
+          <div className="grid grid-cols-3 gap-1.5">
+            {EVENT_MARATHON_TIERS.map((ev) => {
+              const linesDone = progress.eventLinesProgress || 0;
+              const claimed = (progress.eventClaimedTiers || []).includes(ev.tier);
+              const ready = !claimed && linesDone >= ev.lines;
+              return (
+                <button
+                  key={ev.tier}
+                  type="button"
+                  disabled={!ready}
+                  onClick={() => {
+                    if (!ready) return;
+                    sfx.reward();
+                    onClaimEventTier(ev.tier);
+                  }}
+                  className={`rounded-xl py-1 px-1.5 text-center border text-[9px] font-black transition ${
+                    claimed
+                      ? 'bg-emerald-100 border-emerald-400 text-emerald-800'
+                      : ready
+                      ? 'gold-btn border-amber-600 animate-pulse'
+                      : 'bg-white/70 border-[#d6b384] text-[#7c4819]'
+                  }`}
+                >
+                  <div className="flex items-center justify-center gap-0.5">
+                    {claimed && <Check className="w-2.5 h-2.5 stroke-[3]" />}
+                    <span>{ev.lines} Satır</span>
+                  </div>
+                  <div className="truncate">{ready ? 'Ödülü Al!' : ev.label}</div>
+                </button>
+              );
+            })}
+          </div>
         </div>
       </div>
 

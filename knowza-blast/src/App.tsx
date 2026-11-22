@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import confetti from 'canvas-confetti';
 import { LEVELS } from './data/levels';
 import {
   AccessoryId,
@@ -9,6 +10,12 @@ import {
   OutfitId,
   PlayerProgress
 } from './types/game';
+import {
+  PendingBlastGift,
+  claimPendingBlastGifts,
+  sendBlastGift,
+  syncBlastPlayer
+} from './utils/blastApi';
 import { sfx } from './utils/sound';
 import {
   addXpToProgress,
@@ -21,11 +28,12 @@ import {
   getWinStreakStartBoosters
 } from './utils/winStreak';
 import { TopHud } from './components/TopHud';
-import { HomeMenuScreen } from './components/HomeMenuScreen';
+import { EVENT_MARATHON_TIERS, HomeMenuScreen } from './components/HomeMenuScreen';
 import { WorldMapScreen } from './components/WorldMapScreen';
 import { HybridGameScreen } from './components/HybridGameScreen';
 import { EndlessBlockScreen } from './components/EndlessBlockScreen';
 import { WardrobeModal } from './components/WardrobeModal';
+import { BeforeInstallPromptEvent, SocialHubModal, SocialTab } from './components/SocialHubModal';
 import {
   BoosterDetailModal,
   CastleModal,
@@ -39,7 +47,7 @@ import {
   VictoryModal
 } from './components/GameModals';
 
-type Screen = 'home' | 'map' | 'game' | 'endless' | 'sprint';
+type Screen = 'home' | 'map' | 'game' | 'endless' | 'sprint' | 'daily';
 
 export const App: React.FC = () => {
   const [progress, setProgress] = useState<PlayerProgress>(() => loadProgress());
@@ -69,12 +77,70 @@ export const App: React.FC = () => {
   const [showSettingsModal, setShowSettingsModal] = useState(false);
   const [showCastleModal, setShowCastleModal] = useState(false);
   const [showWardrobeModal, setShowWardrobeModal] = useState(false);
+  const [socialModalTab, setSocialModalTab] = useState<SocialTab | null>(null);
+  const [incomingRefCode, setIncomingRefCode] = useState('');
+  const [pendingGiftBanner, setPendingGiftBanner] = useState<string | null>(null);
+  const [deferredInstallPrompt, setDeferredInstallPrompt] = useState<BeforeInstallPromptEvent | null>(null);
 
   useEffect(() => {
     sfx.enabled = progress.soundEnabled;
     sfx.hapticsEnabled = progress.hapticsEnabled;
     saveProgress(progress);
   }, [progress]);
+
+  useEffect(() => {
+    const onInstallPrompt = (e: Event) => {
+      e.preventDefault();
+      setDeferredInstallPrompt(e as BeforeInstallPromptEvent);
+    };
+    window.addEventListener('beforeinstallprompt', onInstallPrompt);
+    return () => window.removeEventListener('beforeinstallprompt', onInstallPrompt);
+  }, []);
+
+  useEffect(() => {
+    let active = true;
+    const bootSocial = async () => {
+      const synced = await syncBlastPlayer(progress);
+      if (active && synced?.inviteCode && synced.inviteCode !== progress.inviteCode) {
+        setProgress((prev) => ({ ...prev, inviteCode: synced.inviteCode }));
+      }
+      const gifts = await claimPendingBlastGifts(progress.playerId);
+      if (active && gifts.length > 0) {
+        const totalCoins = gifts.reduce((s, g) => s + (g.coins || 0), 0);
+        const totalHearts = gifts.reduce((s, g) => s + (g.hearts || 0), 0);
+        setProgress((prev) => ({
+          ...prev,
+          coins: prev.coins + totalCoins,
+          hearts: Math.min(prev.maxHearts, prev.hearts + totalHearts)
+        }));
+        setPendingGiftBanner(`Hediye Geldi: +${totalCoins} Altın${totalHearts > 0 ? `, +${totalHearts} Can` : ''}!`);
+        setTimeout(() => setPendingGiftBanner(null), 5000);
+      }
+
+      const params = new URLSearchParams(window.location.search);
+      const ref = (params.get('ref') || '').trim().toUpperCase();
+      const giftReq = (params.get('gift_req') || '').trim();
+      if (ref && !progress.claimedReferralCode && active) {
+        setIncomingRefCode(ref);
+        setSocialModalTab('invite');
+      }
+      if (giftReq && giftReq !== progress.playerId && active) {
+        const res = await sendBlastGift(progress, { targetPlayerId: giftReq });
+        if (res.ok && active) {
+          setProgress((prev) => ({ ...prev, coins: prev.coins + (res.helperCoins || 50) }));
+          setPendingGiftBanner(`${res.receiverName} için +1 Can gönderdin! (+${res.helperCoins || 50} Altın)`);
+          setTimeout(() => setPendingGiftBanner(null), 5000);
+        }
+      }
+      if ((ref || giftReq) && window.history?.replaceState) {
+        window.history.replaceState({}, '', window.location.pathname);
+      }
+    };
+    bootSocial();
+    return () => {
+      active = false;
+    };
+  }, []);
 
   useEffect(() => {
     const id = setInterval(() => {
@@ -157,6 +223,7 @@ export const App: React.FC = () => {
         ...p,
         totalCubesBlasted: p.totalCubesBlasted + (delta.cubesBlasted || 0),
         totalLinesCleared: p.totalLinesCleared + (delta.linesCleared || 0),
+        eventLinesProgress: (p.eventLinesProgress || 0) + (delta.linesCleared || 0),
         quests: nextQuests
       };
     });
@@ -184,7 +251,7 @@ export const App: React.FC = () => {
         if (q.type === 'win_streak') return { ...q, progress: Math.max(q.progress, updatedStreak) };
         return q;
       });
-      return {
+      const nextPlayerProgress: PlayerProgress = {
         ...withXp,
         stars: withXp.stars + activeLevel.rewards.stars,
         coins: withXp.coins + baseCoins + streakBonusCoins,
@@ -197,6 +264,8 @@ export const App: React.FC = () => {
         },
         quests: nextQuests
       };
+      syncBlastPlayer(nextPlayerProgress);
+      return nextPlayerProgress;
     });
   };
 
@@ -237,26 +306,69 @@ export const App: React.FC = () => {
     }));
   };
 
-  const handleEndlessGameOver = (score: number, linesCleared: number, mode: 'endless' | 'sprint' = 'endless') => {
+  const handleEventLineDelta = (lines: number) => {
+    if (lines <= 0) return;
+    updateProgress((p) => ({
+      ...p,
+      eventLinesProgress: (p.eventLinesProgress || 0) + lines
+    }));
+  };
+
+  const handleClaimEventTier = (tierNum: number) => {
+    const def = EVENT_MARATHON_TIERS.find((t) => t.tier === tierNum);
+    if (!def) return;
+    confetti({ particleCount: 45, spread: 60, origin: { y: 0.65 } });
+    updateProgress((p) => {
+      const claimed = p.eventClaimedTiers || [];
+      if (claimed.includes(tierNum) || (p.eventLinesProgress || 0) < def.lines) return p;
+      return {
+        ...p,
+        coins: p.coins + def.rewardCoins,
+        boosters: {
+          ...p.boosters,
+          rocket: (p.boosters.rocket || 0) + def.rewardRocket,
+          disco: (p.boosters.disco || 0) + def.rewardDisco
+        },
+        eventClaimedTiers: [...claimed, tierNum]
+      };
+    });
+  };
+
+  const handleEndlessGameOver = (score: number, linesCleared: number, mode: 'endless' | 'sprint' | 'daily' = 'endless') => {
     const coinsReward = Math.max(15, Math.floor(score / 25));
     const starsReward = Math.max(5, Math.floor(score / 80));
+    const today = new Date().toISOString().slice(0, 10);
     updateProgress((p) => {
       const withXp = addXpToProgress(p, Math.min(120, Math.max(20, Math.floor(score / 15))));
       const nextQuests = withXp.quests.map((q) =>
         q.type === 'clear_lines' ? { ...q, progress: q.progress + linesCleared } : q
       );
-      return {
+      const nextProgress: PlayerProgress = {
         ...withXp,
         highBlockScore: mode === 'endless' ? Math.max(withXp.highBlockScore, score) : withXp.highBlockScore,
         highSprintScore:
           mode === 'sprint'
             ? Math.max(withXp.highSprintScore || 0, score)
             : withXp.highSprintScore || 0,
+        dailyChallengeDate: today,
+        dailyChallengeBest:
+          mode === 'daily'
+            ? Math.max(withXp.dailyChallengeBest || 0, score)
+            : withXp.dailyChallengeBest || 0,
+        dailyChallengeLines:
+          mode === 'daily'
+            ? Math.max(withXp.dailyChallengeLines || 0, linesCleared)
+            : withXp.dailyChallengeLines || 0,
         totalLinesCleared: withXp.totalLinesCleared + linesCleared,
         coins: withXp.coins + coinsReward,
         stars: withXp.stars + starsReward,
         quests: nextQuests
       };
+      syncBlastPlayer(
+        nextProgress,
+        mode === 'daily' ? { date: today, score, lines: linesCleared } : undefined
+      );
+      return nextProgress;
     });
   };
 
@@ -311,7 +423,7 @@ export const App: React.FC = () => {
     <div className="w-full h-full bg-[#1e0e04] flex justify-center overflow-hidden">
       <div className="w-full max-w-[440px] h-full flex flex-col relative overflow-hidden bg-[#2b1405] shadow-[0_0_50px_rgba(0,0,0,0.75)] sm:border-x-2 sm:border-[#5a3010]">
         {/* Persistent Floating Top HUD */}
-        {screen !== 'endless' && screen !== 'sprint' && (
+        {screen !== 'endless' && screen !== 'sprint' && screen !== 'daily' && (
           <TopHud
             progress={progress}
             mood={screen === 'game' ? hudMood : 'idle'}
@@ -327,10 +439,14 @@ export const App: React.FC = () => {
         {screen === 'home' && (
           <HomeMenuScreen
             progress={progress}
+            pendingGiftBanner={pendingGiftBanner}
             onPlayCurrent={(lvl) => setIntroLevel(lvl)}
             onOpenMap={() => setScreen('map')}
             onOpenEndless={() => setScreen('endless')}
             onOpenSprint={() => setScreen('sprint')}
+            onOpenDailyChallenge={() => setScreen('daily')}
+            onOpenSocial={(tab = 'leaderboard') => setSocialModalTab(tab)}
+            onClaimEventTier={handleClaimEventTier}
             onOpenWardrobe={() => setShowWardrobeModal(true)}
             onOpenQuests={() => setShowQuestsModal(true)}
             onOpenDaily={() => setShowDailyModal(true)}
@@ -375,11 +491,13 @@ export const App: React.FC = () => {
           />
         )}
 
-        {(screen === 'endless' || screen === 'sprint') && (
+        {(screen === 'endless' || screen === 'sprint' || screen === 'daily') && (
           <EndlessBlockScreen
+            key={`eb_${screen}`}
             progress={progress}
-            mode={screen === 'sprint' ? 'sprint' : 'endless'}
+            mode={screen}
             onExit={() => setScreen('home')}
+            onLineClearedDelta={handleEventLineDelta}
             onGameOverScore={handleEndlessGameOver}
           />
         )}
@@ -595,6 +713,37 @@ export const App: React.FC = () => {
               }));
             }}
             onClose={() => setShowCastleModal(false)}
+          />
+        )}
+
+        {socialModalTab && (
+          <SocialHubModal
+            progress={progress}
+            initialTab={socialModalTab}
+            initialReferralCode={incomingRefCode}
+            deferredInstallPrompt={deferredInstallPrompt}
+            onConsumeInstallPrompt={() => setDeferredInstallPrompt(null)}
+            onClaimReferralReward={(code, coins, rockets) => {
+              updateProgress((p) => ({
+                ...p,
+                claimedReferralCode: code,
+                coins: p.coins + coins,
+                boosters: { ...p.boosters, rocket: (p.boosters.rocket || 0) + rockets }
+              }));
+            }}
+            onClaimPendingGifts={(gifts: PendingBlastGift[]) => {
+              const totalCoins = gifts.reduce((s, g) => s + (g.coins || 0), 0);
+              const totalHearts = gifts.reduce((s, g) => s + (g.hearts || 0), 0);
+              updateProgress((p) => ({
+                ...p,
+                coins: p.coins + totalCoins,
+                hearts: Math.min(p.maxHearts, p.hearts + totalHearts)
+              }));
+            }}
+            onHelperGiftCoinReward={(coins) => {
+              updateProgress((p) => ({ ...p, coins: p.coins + coins }));
+            }}
+            onClose={() => setSocialModalTab(null)}
           />
         )}
       </div>

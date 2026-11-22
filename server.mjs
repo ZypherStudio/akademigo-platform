@@ -30,6 +30,7 @@ const MIME_TYPES = {
   '.mjs': 'application/javascript; charset=utf-8',
   '.css': 'text/css; charset=utf-8',
   '.json': 'application/json; charset=utf-8',
+  '.webmanifest': 'application/manifest+json; charset=utf-8',
   '.png': 'image/png',
   '.jpg': 'image/jpeg',
   '.jpeg': 'image/jpeg',
@@ -46,6 +47,7 @@ function createEmptyDb() {
     accounts: {}, // key: normalized email
     sessions: {}, // key: token -> { email, createdAt }
     duelRooms: {}, // key: roomCode -> room object
+    blastPlayers: {}, // key: playerId -> Knowza Blast profile & daily scores
   };
 }
 
@@ -63,6 +65,7 @@ function loadDb() {
       accounts: parsed.accounts && typeof parsed.accounts === 'object' ? parsed.accounts : {},
       sessions: parsed.sessions && typeof parsed.sessions === 'object' ? parsed.sessions : {},
       duelRooms: parsed.duelRooms && typeof parsed.duelRooms === 'object' ? parsed.duelRooms : {},
+      blastPlayers: parsed.blastPlayers && typeof parsed.blastPlayers === 'object' ? parsed.blastPlayers : {},
     };
   } catch (err) {
     console.error('[DB Load Warning]', err.message);
@@ -102,6 +105,7 @@ async function initDatabase() {
         accounts: remote.accounts && typeof remote.accounts === 'object' ? remote.accounts : {},
         sessions: remote.sessions && typeof remote.sessions === 'object' ? remote.sessions : {},
         duelRooms: remote.duelRooms && typeof remote.duelRooms === 'object' ? remote.duelRooms : {},
+        blastPlayers: remote.blastPlayers && typeof remote.blastPlayers === 'object' ? remote.blastPlayers : {},
       };
       console.log(`[Knowza DB] PostgreSQL bağlandı (${Object.keys(db.accounts).length} hesap yüklendi).`);
     } else {
@@ -253,6 +257,57 @@ function cleanupExpiredDuelRooms() {
     }
   }
   if (removed) persistDb();
+}
+
+function computeBlastLeague(player) {
+  const best = Math.max(Number(player.highBlockScore || 0), Number(player.highSprintScore || 0));
+  const lvl = Number(player.unlockedLevel || 1);
+  if (best >= 3500 || lvl >= 250) return 'Efsane';
+  if (best >= 2000 || lvl >= 120) return 'Elmas';
+  if (best >= 1200 || lvl >= 45) return 'Altın';
+  if (best >= 600 || lvl >= 15) return 'Gümüş';
+  if (best >= 250 || lvl >= 4) return 'Bronz';
+  return 'Çırak';
+}
+
+function generateBlastInviteCode(playerId) {
+  const hash = crypto.createHash('sha256').update(String(playerId)).digest('hex').slice(0, 4).toUpperCase();
+  return `KB-${hash}`;
+}
+
+function ensureBlastPlayer(playerId, defaults = {}) {
+  if (!db.blastPlayers || typeof db.blastPlayers !== 'object') {
+    db.blastPlayers = {};
+  }
+  const cleanId = String(playerId || '').trim().slice(0, 64);
+  if (!cleanId) return null;
+  const existing = db.blastPlayers[cleanId];
+  if (existing) {
+    if (!existing.inviteCode) existing.inviteCode = generateBlastInviteCode(cleanId);
+    if (!Array.isArray(existing.pendingGifts)) existing.pendingGifts = [];
+    if (!existing.dailyScores || typeof existing.dailyScores !== 'object') existing.dailyScores = {};
+    if (!existing.lastGiftSent || typeof existing.lastGiftSent !== 'object') existing.lastGiftSent = {};
+    return existing;
+  }
+  const created = {
+    playerId: cleanId,
+    inviteCode: String(defaults.inviteCode || generateBlastInviteCode(cleanId)).toUpperCase(),
+    name: String(defaults.name || 'Knowza').trim().slice(0, 16) || 'Knowza',
+    unlockedLevel: Math.max(1, Number(defaults.unlockedLevel || 1)),
+    highBlockScore: Math.max(0, Number(defaults.highBlockScore || 0)),
+    highSprintScore: Math.max(0, Number(defaults.highSprintScore || 0)),
+    bestWinStreak: Math.max(0, Number(defaults.bestWinStreak || 0)),
+    stars: Math.max(0, Number(defaults.stars || 0)),
+    outfit: String(defaults.outfit || 'classic'),
+    accessory: String(defaults.accessory || 'none'),
+    dailyScores: {},
+    claimedReferralCode: null,
+    pendingGifts: [],
+    lastGiftSent: {},
+    updatedAt: new Date().toISOString(),
+  };
+  db.blastPlayers[cleanId] = created;
+  return created;
 }
 
 async function handleApi(req, res, pathname, urlObj) {
@@ -711,6 +766,187 @@ async function handleApi(req, res, pathname, urlObj) {
       console.error('[ElevenLabs TTS Exception]', err);
       return sendJson(res, 502, { ok: false, error: 'Ses sunucusuna bağlanılamadı.' });
     }
+  }
+
+  // Knowza Blast: Sync Profile & Daily Challenge Score
+  if (req.method === 'POST' && pathname === '/api/blast/sync') {
+    const body = await readJsonBody(req);
+    const p = ensureBlastPlayer(body.playerId, body);
+    if (!p) {
+      return sendJson(res, 400, { ok: false, error: 'playerId gerekli.' });
+    }
+    if (typeof body.name === 'string' && body.name.trim()) {
+      p.name = body.name.trim().slice(0, 16);
+    }
+    p.unlockedLevel = Math.max(p.unlockedLevel || 1, Number(body.unlockedLevel || 1));
+    p.highBlockScore = Math.max(p.highBlockScore || 0, Number(body.highBlockScore || 0));
+    p.highSprintScore = Math.max(p.highSprintScore || 0, Number(body.highSprintScore || 0));
+    p.bestWinStreak = Math.max(p.bestWinStreak || 0, Number(body.bestWinStreak || 0));
+    p.stars = Math.max(0, Number(body.stars ?? p.stars));
+    if (body.outfit) p.outfit = String(body.outfit);
+    if (body.accessory) p.accessory = String(body.accessory);
+
+    const dailyDate = typeof body.dailyDate === 'string' ? body.dailyDate.slice(0, 10) : '';
+    const dailyScore = Number(body.dailyScore || 0);
+    const dailyLines = Number(body.dailyLines || 0);
+    if (dailyDate && dailyScore > 0) {
+      const prevDaily = p.dailyScores[dailyDate];
+      if (!prevDaily || dailyScore > prevDaily.score) {
+        p.dailyScores[dailyDate] = {
+          score: dailyScore,
+          lines: dailyLines,
+          updatedAt: new Date().toISOString(),
+        };
+      }
+    }
+    p.updatedAt = new Date().toISOString();
+    persistDb();
+    return sendJson(res, 200, {
+      ok: true,
+      player: {
+        playerId: p.playerId,
+        inviteCode: p.inviteCode,
+        league: computeBlastLeague(p),
+        claimedReferralCode: p.claimedReferralCode,
+        pendingGiftsCount: p.pendingGifts.length,
+      },
+    });
+  }
+
+  // Knowza Blast: Global Real-Player Leaderboard
+  if (req.method === 'GET' && pathname === '/api/blast/leaderboard') {
+    const tab = String(urlObj.searchParams.get('tab') || 'endless');
+    const date = String(urlObj.searchParams.get('date') || new Date().toISOString().slice(0, 10)).slice(0, 10);
+    const myId = String(urlObj.searchParams.get('playerId') || '').trim();
+    const list = Object.values(db.blastPlayers || {});
+
+    const mapped = list
+      .map((p) => {
+        const daily = p.dailyScores?.[date];
+        return {
+          playerId: p.playerId,
+          inviteCode: p.inviteCode || generateBlastInviteCode(p.playerId),
+          name: p.name || 'Knowza',
+          unlockedLevel: Number(p.unlockedLevel || 1),
+          highBlockScore: Number(p.highBlockScore || 0),
+          highSprintScore: Number(p.highSprintScore || 0),
+          bestWinStreak: Number(p.bestWinStreak || 0),
+          stars: Number(p.stars || 0),
+          outfit: p.outfit || 'classic',
+          accessory: p.accessory || 'none',
+          dailyScore: Number(daily?.score || 0),
+          dailyLines: Number(daily?.lines || 0),
+          league: computeBlastLeague(p),
+        };
+      })
+      .filter((item) => (tab === 'daily' ? item.dailyScore > 0 : true))
+      .sort((a, b) => {
+        if (tab === 'daily') return b.dailyScore - a.dailyScore || b.dailyLines - a.dailyLines;
+        if (tab === 'sprint') return b.highSprintScore - a.highSprintScore || b.unlockedLevel - a.unlockedLevel;
+        if (tab === 'level') return b.unlockedLevel - a.unlockedLevel || b.stars - a.stars;
+        return b.highBlockScore - a.highBlockScore || b.unlockedLevel - a.unlockedLevel;
+      });
+
+    const myIndex = myId ? mapped.findIndex((x) => x.playerId === myId) : -1;
+    return sendJson(res, 200, {
+      ok: true,
+      tab,
+      date,
+      totalPlayers: mapped.length,
+      myRank: myIndex >= 0 ? myIndex + 1 : null,
+      players: mapped.slice(0, 40),
+    });
+  }
+
+  // Knowza Blast: Referral Code Claim (?ref=KB-XXXX)
+  if (req.method === 'POST' && pathname === '/api/blast/referral/claim') {
+    const body = await readJsonBody(req);
+    const claimer = ensureBlastPlayer(body.playerId, body);
+    const rawCode = String(body.inviteCode || '').trim().toUpperCase();
+    if (!claimer || !rawCode) {
+      return sendJson(res, 400, { ok: false, error: 'Geçersiz davet kodu.' });
+    }
+    if (claimer.claimedReferralCode) {
+      return sendJson(res, 409, { ok: false, error: 'Davet ödülünü zaten aldın.' });
+    }
+    const inviter = Object.values(db.blastPlayers || {}).find(
+      (p) => (p.inviteCode || '').toUpperCase() === rawCode
+    );
+    if (!inviter) {
+      return sendJson(res, 404, { ok: false, error: 'Bu davet koduyla kayıtlı oyuncu bulunamadı.' });
+    }
+    if (inviter.playerId === claimer.playerId) {
+      return sendJson(res, 400, { ok: false, error: 'Kendi davet kodunu kullanamazsın.' });
+    }
+
+    claimer.claimedReferralCode = rawCode;
+    if (!Array.isArray(inviter.pendingGifts)) inviter.pendingGifts = [];
+    inviter.pendingGifts.push({
+      id: `ref_${Date.now()}_${crypto.randomBytes(3).toString('hex')}`,
+      type: 'referral',
+      fromName: claimer.name || 'Yeni Oyuncu',
+      coins: 300,
+      hearts: 1,
+      createdAt: new Date().toISOString(),
+    });
+    persistDb();
+    return sendJson(res, 200, {
+      ok: true,
+      rewardCoins: 300,
+      rewardRocket: 1,
+      inviterName: inviter.name || 'Knowza Dostu',
+    });
+  }
+
+  // Knowza Blast: Send Friend Gift / Answer Heart Request
+  if (req.method === 'POST' && pathname === '/api/blast/gift/send') {
+    const body = await readJsonBody(req);
+    const sender = ensureBlastPlayer(body.fromPlayerId, { name: body.fromName });
+    const targetId = String(body.targetPlayerId || '').trim();
+    const targetCode = String(body.targetInviteCode || '').trim().toUpperCase();
+    const target = targetId
+      ? db.blastPlayers?.[targetId]
+      : Object.values(db.blastPlayers || {}).find((p) => (p.inviteCode || '').toUpperCase() === targetCode);
+
+    if (!sender || !target) {
+      return sendJson(res, 404, { ok: false, error: 'Oyuncu bulunamadı.' });
+    }
+    if (sender.playerId === target.playerId) {
+      return sendJson(res, 400, { ok: false, error: 'Kendine hediye gönderemezsin.' });
+    }
+    const today = new Date().toISOString().slice(0, 10);
+    if (sender.lastGiftSent?.[target.playerId] === today) {
+      return sendJson(res, 429, { ok: false, error: 'Bugün bu oyuncuya zaten can gönderdin.' });
+    }
+    sender.lastGiftSent[target.playerId] = today;
+    if (!Array.isArray(target.pendingGifts)) target.pendingGifts = [];
+    target.pendingGifts.push({
+      id: `gift_${Date.now()}_${crypto.randomBytes(3).toString('hex')}`,
+      type: 'heart',
+      fromName: sender.name || 'Arkadaş',
+      coins: 40,
+      hearts: 1,
+      createdAt: new Date().toISOString(),
+    });
+    persistDb();
+    return sendJson(res, 200, {
+      ok: true,
+      receiverName: target.name || 'Arkadaş',
+      helperCoins: 50,
+    });
+  }
+
+  // Knowza Blast: Collect Pending Referral / Heart Gifts
+  if (req.method === 'POST' && pathname === '/api/blast/gifts/claim') {
+    const body = await readJsonBody(req);
+    const p = ensureBlastPlayer(body.playerId);
+    if (!p) {
+      return sendJson(res, 400, { ok: false, error: 'playerId gerekli.' });
+    }
+    const gifts = Array.isArray(p.pendingGifts) ? [...p.pendingGifts] : [];
+    p.pendingGifts = [];
+    if (gifts.length > 0) persistDb();
+    return sendJson(res, 200, { ok: true, gifts });
   }
 
   return sendJson(res, 404, { ok: false, error: 'API endpoint bulunamadı.' });

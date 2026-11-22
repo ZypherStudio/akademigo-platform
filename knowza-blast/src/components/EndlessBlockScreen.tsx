@@ -1,18 +1,21 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { ArrowLeft, Crown, RotateCcw, RotateCw, Shuffle, Timer, Trophy } from 'lucide-react';
+import { ArrowLeft, Calendar, Check, Crown, RotateCcw, RotateCw, Share2, Shuffle, Timer, Trophy } from 'lucide-react';
 import { getBiomeForLevel } from '../data/biomes';
 import { CubeColor, FloatingCallout, Grid, KnowzaMood, PlayerProgress, PolyominoShape } from '../types/game';
 import {
   BLOCK_GRID_SIZE,
   canShapeFitAnywhere,
+  createDailyChallengeBoard,
   createEmptyGrid,
   generateBlockTray,
+  generateSeededBlockTray,
   hasAnyValidTrayMove,
   placeShapeAndClearLines,
   previewLineClears,
   rotatePolyomino,
   strikeFeverLightning
 } from '../utils/puzzleEngine';
+import { buildBlastShareUrl } from '../utils/blastApi';
 import { computeBlockDropCell, getShapeBounds } from '../utils/blockDrag';
 import { buildBlastVfx } from '../utils/boardVfx';
 import { triggerHaptic } from '../utils/haptics';
@@ -28,9 +31,10 @@ import { KnowzaSprite } from './KnowzaSprite';
 
 interface EndlessBlockScreenProps {
   progress: PlayerProgress;
-  mode?: 'endless' | 'sprint';
+  mode?: 'endless' | 'sprint' | 'daily';
   onExit: () => void;
-  onGameOverScore: (score: number, linesCleared: number, mode: 'endless' | 'sprint') => void;
+  onLineClearedDelta?: (lines: number) => void;
+  onGameOverScore: (score: number, linesCleared: number, mode: 'endless' | 'sprint' | 'daily') => void;
 }
 
 const ENDLESS_COLORS: CubeColor[] = ['blue', 'yellow', 'red', 'green', 'purple'];
@@ -72,23 +76,41 @@ export const EndlessBlockScreen: React.FC<EndlessBlockScreenProps> = ({
   progress,
   mode = 'endless',
   onExit,
+  onLineClearedDelta,
   onGameOverScore
 }) => {
   const isSprint = mode === 'sprint';
+  const isDaily = mode === 'daily';
+  const dailyDateStr = useMemo(() => new Date().toISOString().slice(0, 10), []);
+  const dailyTurnRef = useRef(0);
+  const [sharedDaily, setSharedDaily] = useState(false);
+
   const activeBiome = useMemo(() => getBiomeForLevel(progress.unlockedLevel), [progress.unlockedLevel]);
-  const buildEndlessTray = (boardGrid: Grid, curScore: number, feverActive: boolean) =>
-    generateBlockTray(ENDLESS_COLORS, boardGrid, {
+  const buildEndlessTray = (boardGrid: Grid, curScore: number, feverActive: boolean, turnIndex?: number) => {
+    if (isDaily) {
+      return generateSeededBlockTray(dailyDateStr, turnIndex ?? dailyTurnRef.current, ENDLESS_COLORS, boardGrid, {
+        allowAdvanced: true,
+        forceSpecial: feverActive,
+        specialChance: 0.16,
+        guaranteeFit: curScore < 350
+      });
+    }
+    return generateBlockTray(ENDLESS_COLORS, boardGrid, {
       allowAdvanced: true,
       forceSpecial: feverActive,
       specialChance: curScore >= 400 ? 0.08 : 0.14,
       hardMode: !isSprint && curScore >= 200,
       guaranteeFit: curScore < 350
     });
+  };
 
-  const [grid, setGrid] = useState<Grid>(() => createEmptyGrid(BLOCK_GRID_SIZE));
-  const [tray, setTray] = useState<(PolyominoShape | null)[]>(() =>
-    generateBlockTray(ENDLESS_COLORS, undefined, { allowAdvanced: true, specialChance: 0.14 })
+  const initialDailyBoard = useMemo(
+    () => (isDaily ? createDailyChallengeBoard(dailyDateStr, ENDLESS_COLORS) : createEmptyGrid(BLOCK_GRID_SIZE)),
+    [isDaily, dailyDateStr]
   );
+
+  const [grid, setGrid] = useState<Grid>(() => initialDailyBoard);
+  const [tray, setTray] = useState<(PolyominoShape | null)[]>(() => buildEndlessTray(initialDailyBoard, 0, false, 0));
   const [score, setScore] = useState(0);
   const rankInfo = useMemo(() => getEndlessRankInfo(score), [score]);
   const [combo, setCombo] = useState(0);
@@ -261,6 +283,7 @@ export const EndlessBlockScreen: React.FC<EndlessBlockScreenProps> = ({
           const nextRank = getEndlessRankInfo(newTotalScore).current.name;
           setCombo(nextCombo);
           setLinesTotal((l) => l + res.linesCleared);
+          onLineClearedDelta?.(res.linesCleared);
           setScore(newTotalScore);
 
           if (isSprint) {
@@ -366,7 +389,8 @@ export const EndlessBlockScreen: React.FC<EndlessBlockScreenProps> = ({
         setTray((prevTray) => {
           const nextTray = prevTray.map((it, idx) => (idx === drag.shapeIndex ? null : it));
           if (nextTray.every((it) => it === null)) {
-            return buildEndlessTray(finalGrid, nextScoreSnapshot, nextFeverActiveForTray);
+            dailyTurnRef.current += 1;
+            return buildEndlessTray(finalGrid, nextScoreSnapshot, nextFeverActiveForTray, dailyTurnRef.current);
           }
           return nextTray;
         });
@@ -446,13 +470,18 @@ export const EndlessBlockScreen: React.FC<EndlessBlockScreenProps> = ({
     sfx.reward();
     triggerHaptic(progress.hapticsEnabled, 14);
     setRerollCharges((c) => c - 1);
-    setTray(buildEndlessTray(grid, score, feverTurns > 0));
+    dailyTurnRef.current += 1;
+    setTray(buildEndlessTray(grid, score, feverTurns > 0, dailyTurnRef.current));
   };
 
   const restart = () => {
     sfx.click();
-    setGrid(createEmptyGrid(BLOCK_GRID_SIZE));
-    setTray(generateBlockTray(ENDLESS_COLORS, undefined, { allowAdvanced: true, specialChance: 0.14 }));
+    dailyTurnRef.current = 0;
+    const freshBoard = isDaily
+      ? createDailyChallengeBoard(dailyDateStr, ENDLESS_COLORS)
+      : createEmptyGrid(BLOCK_GRID_SIZE);
+    setGrid(freshBoard);
+    setTray(buildEndlessTray(freshBoard, 0, false, 0));
     setScore(0);
     setCombo(0);
     setLinesTotal(0);
@@ -461,13 +490,49 @@ export const EndlessBlockScreen: React.FC<EndlessBlockScreenProps> = ({
     setRotateCharges(1);
     setRerollCharges(1);
     setTimeLeft(90);
+    setSharedDaily(false);
     setGameOver(false);
   };
 
   const bestScore = Math.max(
-    isSprint ? progress.highSprintScore || 0 : progress.highBlockScore,
+    isDaily
+      ? progress.dailyChallengeBest || 0
+      : isSprint
+      ? progress.highSprintScore || 0
+      : progress.highBlockScore,
     score
   );
+
+  const handleShareDailyCard = async () => {
+    sfx.click();
+    const filledSquares = Math.min(8, Math.max(1, Math.round(score / 220)));
+    const gridRow = Array.from({ length: 8 }, (_, idx) => (idx < filledSquares ? '■' : '□')).join('');
+    const shareUrl = buildBlastShareUrl(progress.inviteCode ? { ref: progress.inviteCode } : {});
+    const summaryText = [
+      `Knowza Blast — Günün Bulmacası (${dailyDateStr})`,
+      `Skor: ${score} (${rankInfo.current.name}) • ${linesTotal} Satır`,
+      `[${gridRow}]`,
+      `Aynı tahtada yarış: ${shareUrl}`
+    ].join('\n');
+
+    if (typeof navigator !== 'undefined' && navigator.share) {
+      try {
+        await navigator.share({ title: 'Knowza Blast — Günün Bulmacası', text: summaryText, url: shareUrl });
+        setSharedDaily(true);
+        setTimeout(() => setSharedDaily(false), 2500);
+        return;
+      } catch {
+        // Fallback to clipboard copy
+      }
+    }
+    try {
+      await navigator.clipboard.writeText(summaryText);
+    } catch {
+      // Ignore restricted clipboard
+    }
+    setSharedDaily(true);
+    setTimeout(() => setSharedDaily(false), 2500);
+  };
 
   return (
     <div
@@ -561,13 +626,20 @@ export const EndlessBlockScreen: React.FC<EndlessBlockScreenProps> = ({
           />
         </button>
         <div className="parchment-subcard rounded-2xl px-3 py-1 text-[11px] font-extrabold text-[#4d2607]">
-          {isSprint
-            ? `90sn Yıldırım Sprint! Her satır temizliği +4sn • Rekor: ${bestScore}`
-            : !hasDirectFit && !gameOver
-            ? 'Yer kalmadı! Döndür veya Yenile kullan, yoksa tur biter!'
-            : combo >= 2
-            ? `Müthiş! ${combo}x Seri! Satırları aynı anda kapatıp skoru katla!`
-            : 'Blokları sürükleyip 8×8 tahtaya diz, satır/sütun doldurarak patlat!'}
+          {isDaily ? (
+            <span className="inline-flex items-center gap-1">
+              <Calendar className="w-3.5 h-3.5 text-indigo-600 shrink-0" />
+              Günün Ortak Bulmacası ({dailyDateStr}) • Dünya ile aynı tahta!
+            </span>
+          ) : isSprint ? (
+            `90sn Yıldırım Sprint! Her satır temizliği +4sn • Rekor: ${bestScore}`
+          ) : !hasDirectFit && !gameOver ? (
+            'Yer kalmadı! Döndür veya Yenile kullan, yoksa tur biter!'
+          ) : combo >= 2 ? (
+            `Müthiş! ${combo}x Seri! Satırları aynı anda kapatıp skoru katla!`
+          ) : (
+            'Blokları sürükleyip 8×8 tahtaya diz, satır/sütun doldurarak patlat!'
+          )}
         </div>
       </div>
 
@@ -831,6 +903,16 @@ export const EndlessBlockScreen: React.FC<EndlessBlockScreenProps> = ({
             </div>
 
             <div className="flex flex-col gap-2">
+              {isDaily && (
+                <button
+                  type="button"
+                  onClick={handleShareDailyCard}
+                  className="green-btn py-2.5 rounded-2xl font-display text-sm font-black flex items-center justify-center gap-1.5 shadow"
+                >
+                  {sharedDaily ? <Check className="w-4 h-4 stroke-[3]" /> : <Share2 className="w-4 h-4" />}
+                  <span>{sharedDaily ? 'Skor Kartı Kopyalandı!' : 'Günün Skorunu Paylaş'}</span>
+                </button>
+              )}
               <button type="button" onClick={restart} className="gold-btn py-3 rounded-2xl font-display text-lg font-bold">
                 Tekrar Oyna
               </button>

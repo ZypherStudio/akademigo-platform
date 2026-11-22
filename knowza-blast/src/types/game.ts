@@ -126,6 +126,15 @@ export interface PlayerProgress {
   unlockedAccessories: AccessoryId[];
   equippedBlockTheme: BlockThemeId;
   unlockedBlockThemes: BlockThemeId[];
+  playerId?: string;
+  inviteCode?: string;
+  claimedReferralCode?: string | null;
+  dailyChallengeDate?: string | null;
+  dailyChallengeBest?: number;
+  dailyChallengeLines?: number;
+  eventProgressDate?: string | null;
+  eventLinesProgress?: number;
+  eventClaimedTiers?: number[];
 }
 
 export interface FloatingCallout {

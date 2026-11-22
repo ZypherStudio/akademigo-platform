@@ -94,21 +94,63 @@ export const INITIAL_PROGRESS: PlayerProgress = {
   equippedAccessory: 'none',
   unlockedAccessories: ['none', 'bandana'],
   equippedBlockTheme: 'classic',
-  unlockedBlockThemes: ['classic', 'crystal']
+  unlockedBlockThemes: ['classic', 'crystal'],
+  claimedReferralCode: null,
+  dailyChallengeDate: null,
+  dailyChallengeBest: 0,
+  dailyChallengeLines: 0,
+  eventProgressDate: null,
+  eventLinesProgress: 0,
+  eventClaimedTiers: []
 };
 
+function makeFallbackPlayerIdentity(): { playerId: string; inviteCode: string } {
+  const rand = Math.random().toString(36).slice(2, 8).toUpperCase();
+  const suffix = rand.slice(0, 4).padEnd(4, 'K');
+  return {
+    playerId: `kb_${Date.now().toString(36)}_${rand}`,
+    inviteCode: `KB-${suffix}`
+  };
+}
+
+export function ensurePlayerIdentity(progress: PlayerProgress): PlayerProgress {
+  if (progress.playerId && progress.inviteCode) return progress;
+  const fallback = makeFallbackPlayerIdentity();
+  return {
+    ...progress,
+    playerId: progress.playerId || fallback.playerId,
+    inviteCode: progress.inviteCode || fallback.inviteCode
+  };
+}
+
 export function syncDailyQuests(progress: PlayerProgress, todayStr = new Date().toISOString().slice(0, 10)): PlayerProgress {
-  const hasStreakQuest = progress.quests.some((q) => q.type === 'win_streak');
-  if (progress.lastQuestRefreshDate === todayStr && hasStreakQuest) {
-    return progress;
+  const base = ensurePlayerIdentity(progress);
+  const resetDailyChallenge =
+    base.dailyChallengeDate !== todayStr
+      ? { dailyChallengeDate: todayStr, dailyChallengeBest: 0, dailyChallengeLines: 0 }
+      : {};
+  const resetEvent =
+    base.eventProgressDate !== todayStr
+      ? { eventProgressDate: todayStr, eventLinesProgress: 0, eventClaimedTiers: [] }
+      : {};
+
+  const hasStreakQuest = base.quests.some((q) => q.type === 'win_streak');
+  if (base.lastQuestRefreshDate === todayStr && hasStreakQuest) {
+    return {
+      ...base,
+      ...resetDailyChallenge,
+      ...resetEvent
+    };
   }
   const fresh = createDailyQuests();
   // Preserve current active winStreak progress onto fresh streak quest if carrying streak into new day
   const synced = fresh.map((q) =>
-    q.type === 'win_streak' ? { ...q, progress: Math.min(q.target, progress.winStreak || 0) } : q
+    q.type === 'win_streak' ? { ...q, progress: Math.min(q.target, base.winStreak || 0) } : q
   );
   return {
-    ...progress,
+    ...base,
+    ...resetDailyChallenge,
+    ...resetEvent,
     quests: synced,
     lastQuestRefreshDate: todayStr
   };

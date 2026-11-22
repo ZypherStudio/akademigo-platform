@@ -1,0 +1,19 @@
+{
+  "name": "Knowza Blast — Bilgi Dünyası",
+  "short_name": "Knowza Blast",
+  "description": "8 biyomlu, 1.200 seviyeli blok patlatma ve bilgi kalesi oyunu.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#2c1607",
+  "theme_color": "#3c1f0b",
+  "icons": [
+    {
+      "src": "assets/knowza_avatar_3d.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

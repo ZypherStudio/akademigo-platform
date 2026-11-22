@@ -11,6 +11,7 @@ import {
   createBlockAdventureBoard,
   createCrateCell,
   createCubeCell,
+  createDailyChallengeBoard,
   createEmptyGrid,
   createSparkCell,
   createStoneCell,
@@ -19,6 +20,7 @@ import {
   executeTapBlast,
   findCluster,
   generateBlockTray,
+  generateSeededBlockTray,
   getClusterHintMap,
   hasAnyValidTrayMove,
   placeShapeAndClearLines,
@@ -439,5 +441,19 @@ describe('Knowza Blast Engine (7x7 Toon Blast + 8x8 Block & Patlat)', () => {
     expect(hardTray).toHaveLength(3);
     expect(hardTray.every((s) => s.cells.length >= 2)).toBe(true);
     expect(hasAnyValidTrayMove(tightGrid, hardTray)).toBe(false);
+  });
+
+  it('creates deterministic identical Daily Challenge boards and trays per calendar date globally', () => {
+    const b1 = createDailyChallengeBoard('2026-11-22');
+    const b2 = createDailyChallengeBoard('2026-11-22');
+    const bOther = createDailyChallengeBoard('2026-11-23');
+    expect(b1).toEqual(b2);
+    expect(b1).not.toEqual(bOther);
+
+    const t1 = generateSeededBlockTray('2026-11-22', 0, ['blue', 'yellow', 'red', 'green', 'purple'], b1);
+    const t2 = generateSeededBlockTray('2026-11-22', 0, ['blue', 'yellow', 'red', 'green', 'purple'], b2);
+    const tTurn1 = generateSeededBlockTray('2026-11-22', 1, ['blue', 'yellow', 'red', 'green', 'purple'], b1);
+    expect(t1).toEqual(t2);
+    expect(t1[0].cells).not.toEqual(tTurn1[0].cells);
   });
 });

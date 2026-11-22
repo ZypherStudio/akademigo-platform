@@ -6,6 +6,7 @@ import {
   INITIAL_PROGRESS,
   addXpToProgress,
   applyHeartRegen,
+  ensurePlayerIdentity,
   syncDailyQuests,
   xpForNextLevel
 } from '../storage';
@@ -113,5 +114,25 @@ describe('Knowza Blast Levels & Progression', () => {
     const streakQuest = refreshed.quests.find((q) => q.type === 'win_streak')!;
     expect(streakQuest.progress).toBe(2);
     expect(streakQuest.claimed).toBe(false);
+
+    // Also verifies playerId/inviteCode generation and daily event/daily-challenge rollover
+    const withId = ensurePlayerIdentity(refreshed);
+    expect(withId.playerId).toBeTruthy();
+    expect(withId.inviteCode).toMatch(/^KB-/);
+
+    const rolled = syncDailyQuests(
+      {
+        ...withId,
+        dailyChallengeDate: '2026-11-21',
+        dailyChallengeBest: 850,
+        eventProgressDate: '2026-11-21',
+        eventLinesProgress: 18,
+        eventClaimedTiers: [1, 2]
+      },
+      '2026-11-22'
+    );
+    expect(rolled.dailyChallengeBest).toBe(0);
+    expect(rolled.eventLinesProgress).toBe(0);
+    expect(rolled.eventClaimedTiers).toEqual([]);
   });
 });

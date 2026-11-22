@@ -44,6 +44,28 @@ export function createCrateCell(): CellData {
   };
 }
 
+export function createStoneCell(): CellData {
+  return {
+    uid: nextUid(),
+    color: null,
+    special: null,
+    obstacle: 'stone',
+    obstacleHp: 2,
+    isNew: true
+  };
+}
+
+export function createSparkCell(color: CubeColor): CellData {
+  return {
+    uid: nextUid(),
+    color,
+    special: null,
+    obstacle: 'spark',
+    obstacleHp: 1,
+    isNew: true
+  };
+}
+
 /** Creates a full 7x7 Toon Blast board matching Reference Image 2 */
 export function createToonBoard(level: LevelConfig): Grid {
   const N = TOON_GRID_SIZE;
@@ -159,6 +181,25 @@ export function createBlockAdventureBoard(level: LevelConfig): Grid {
     });
     [[3, 3], [3, 4], [4, 3], [4, 4]].forEach(([r, c], i) => {
       grid[r][c] = createCubeCell(level.colors[i % level.colors.length], { obstacle: 'ice', obstacleHp: 1 });
+    });
+  } else if (preset === 'stone_guard') {
+    [[2, 3], [2, 4], [5, 3], [5, 4], [3, 1], [4, 6]]
+      .slice(0, level.targets.stone || 4)
+      .forEach(([r, c]) => {
+        grid[r][c] = createStoneCell();
+      });
+  } else if (preset === 'spark_grid') {
+    [[1, 3], [3, 6], [6, 4], [4, 1], [2, 5], [5, 2]]
+      .slice(0, level.targets.spark || 4)
+      .forEach(([r, c], i) => {
+        grid[r][c] = createSparkCell(level.colors[i % level.colors.length]);
+      });
+  } else if (preset === 'cosmos_mix') {
+    [[2, 2], [5, 5], [2, 5]].slice(0, level.targets.stone || 3).forEach(([r, c]) => {
+      grid[r][c] = createStoneCell();
+    });
+    [[1, 4], [4, 1], [6, 3], [3, 6]].slice(0, level.targets.spark || 3).forEach(([r, c], i) => {
+      grid[r][c] = createSparkCell(level.colors[i % level.colors.length]);
     });
   }
 
@@ -327,6 +368,7 @@ function detonateCoords(
   collected: Partial<Record<TargetKey, number>>
 ): {
   blastedCoords: [number, number][];
+  crackedCount: number;
   usedSound: 'pop' | 'rocket' | 'bomb' | 'disco';
   rocketBeams: { r: number; c: number; dir: 'h' | 'v' | 'both' }[];
   bombRings: [number, number][];
@@ -340,6 +382,7 @@ function detonateCoords(
   const bombRings: [number, number][] = [];
   const discoTargetCoords: [number, number][] = [];
   let usedSound: 'pop' | 'rocket' | 'bomb' | 'disco' = 'pop';
+  let crackedCount = 0;
 
   const pushCoord = (r: number, c: number) => {
     if (r >= 0 && r < N && c >= 0 && c < N && !visited.has(`${r},${c}`)) {
@@ -368,6 +411,33 @@ function detonateCoords(
       addCollect(collected, 'crate', 1);
       grid[r][c] = null;
       blasted.push([r, c]);
+      continue;
+    }
+
+    if (cell.obstacle === 'stone') {
+      const hp = cell.obstacleHp ?? 2;
+      if (hp > 1) {
+        grid[r][c] = { ...cell, obstacleHp: hp - 1, isNew: true };
+        crackedCount += 1;
+      } else {
+        addCollect(collected, 'stone', 1);
+        grid[r][c] = null;
+        blasted.push([r, c]);
+      }
+      continue;
+    }
+
+    if (cell.obstacle === 'spark') {
+      addCollect(collected, 'spark', 1);
+      if (cell.color) addCollect(collected, cell.color, 1);
+      grid[r][c] = null;
+      blasted.push([r, c]);
+      if (usedSound === 'pop') usedSound = 'rocket';
+      // Chain zap the 4 orthogonal neighbors
+      pushCoord(r - 1, c);
+      pushCoord(r + 1, c);
+      pushCoord(r, c - 1);
+      pushCoord(r, c + 1);
       continue;
     }
 
@@ -415,7 +485,7 @@ function detonateCoords(
     }
   }
 
-  return { blastedCoords: blasted, usedSound, rocketBeams, bombRings, discoTargetCoords };
+  return { blastedCoords: blasted, crackedCount, usedSound, rocketBeams, bombRings, discoTargetCoords };
 }
 
 export function executeTapBlast(
@@ -622,8 +692,48 @@ const SHAPE_DEFS: { name: string; cells: [number, number][] }[] = [
   { name: 'T-4', cells: [[0, 0], [0, 1], [0, 2], [1, 1]] },
   { name: 'Z-4', cells: [[0, 0], [0, 1], [1, 1], [1, 2]] },
   { name: 'Dörtlü Yatay', cells: [[0, 0], [0, 1], [0, 2], [0, 3]] },
-  { name: 'Dörtlü Dikey', cells: [[0, 0], [1, 0], [2, 0], [3, 0]] }
+  { name: 'Dörtlü Dikey', cells: [[0, 0], [1, 0], [2, 0], [3, 0]] },
+  // Advanced shapes (index 13+) for deeper tactical variety
+  { name: 'J-4', cells: [[0, 1], [1, 1], [2, 1], [2, 0]] },
+  { name: 'S-4', cells: [[0, 1], [0, 2], [1, 0], [1, 1]] },
+  { name: 'Blok 2x3', cells: [[0, 0], [0, 1], [0, 2], [1, 0], [1, 1], [1, 2]] },
+  { name: 'Blok 3x2', cells: [[0, 0], [0, 1], [1, 0], [1, 1], [2, 0], [2, 1]] },
+  { name: 'Dev Kare 3x3', cells: [[0, 0], [0, 1], [0, 2], [1, 0], [1, 1], [1, 2], [2, 0], [2, 1], [2, 2]] },
+  { name: 'Artı-5', cells: [[0, 1], [1, 0], [1, 1], [1, 2], [2, 1]] },
+  { name: 'U-5', cells: [[0, 0], [0, 2], [1, 0], [1, 1], [1, 2]] },
+  { name: 'Beşli Yatay', cells: [[0, 0], [0, 1], [0, 2], [0, 3], [0, 4]] },
+  { name: 'Beşli Dikey', cells: [[0, 0], [1, 0], [2, 0], [3, 0], [4, 0]] }
 ];
+
+/** Rotates a polyomino shape 90 degrees clockwise normalized to (0,0) top-left. */
+export function rotatePolyomino(shape: PolyominoShape): PolyominoShape {
+  const rotated = shape.cells.map(([r, c]) => [c, -r] as [number, number]);
+  let minR = Infinity;
+  let minC = Infinity;
+  for (const [r, c] of rotated) {
+    if (r < minR) minR = r;
+    if (c < minC) minC = c;
+  }
+  const normalized = rotated.map(([r, c]) => [r - minR, c - minC] as [number, number]);
+
+  let nextSpecial = shape.specialCell;
+  if (nextSpecial) {
+    const flipped: SpecialType =
+      nextSpecial.special === 'rocket_h'
+        ? 'rocket_v'
+        : nextSpecial.special === 'rocket_v'
+        ? 'rocket_h'
+        : nextSpecial.special;
+    nextSpecial = { ...nextSpecial, special: flipped };
+  }
+
+  return {
+    ...shape,
+    id: `${shape.id}_r`,
+    cells: normalized,
+    specialCell: nextSpecial
+  };
+}
 
 export function canPlaceShape(grid: Grid, shape: PolyominoShape, baseR: number, baseC: number): boolean {
   const N = grid.length;
@@ -646,10 +756,39 @@ export function canShapeFitAnywhere(grid: Grid, shape: PolyominoShape): boolean 
   return false;
 }
 
-export function generateBlockTray(colors: CubeColor[], grid?: Grid): PolyominoShape[] {
+export interface TrayOptions {
+  allowAdvanced?: boolean;
+  forceSpecial?: boolean;
+  specialChance?: number;
+  hardMode?: boolean;
+  guaranteeFit?: boolean;
+}
+
+export function generateBlockTray(
+  colors: CubeColor[],
+  grid?: Grid,
+  options: TrayOptions = {}
+): PolyominoShape[] {
+  const {
+    allowAdvanced = true,
+    forceSpecial = false,
+    specialChance = 0.28,
+    hardMode = false,
+    guaranteeFit = true
+  } = options;
+  const maxPool = allowAdvanced ? SHAPE_DEFS : SHAPE_DEFS.slice(0, 13);
+  const hardPool = SHAPE_DEFS.slice(7); // Larger L, T, Z, 3x3, 2x3, 5-bar shapes for real challenge
   const result: PolyominoShape[] = [];
+  const specialPool: SpecialType[] = ['rocket_h', 'rocket_v', 'bomb'];
+
   for (let i = 0; i < 3; i++) {
-    const pool = i === 0 ? SHAPE_DEFS.slice(0, 8) : SHAPE_DEFS;
+    const pool = hardMode
+      ? i === 0
+        ? SHAPE_DEFS.slice(1)
+        : hardPool
+      : i === 0
+      ? SHAPE_DEFS.slice(0, 8)
+      : maxPool;
     const def = pool[Math.floor(Math.random() * pool.length)];
     result.push({
       id: `shape_${nextUid()}_${i}`,
@@ -659,7 +798,23 @@ export function generateBlockTray(colors: CubeColor[], grid?: Grid): PolyominoSh
     });
   }
 
-  if (grid && !result.some((s) => canShapeFitAnywhere(grid, s))) {
+  // Embed special Rocket/Bomb/Disco power cell into one tray piece for chain-blast variety
+  const attachIdx = forceSpecial ? 1 : Math.random() < specialChance ? 1 : -1;
+  if (attachIdx >= 0 && result[attachIdx]) {
+    const target = result[attachIdx];
+    const cellIndex = Math.floor(Math.random() * target.cells.length);
+    const chosenSpecial: SpecialType =
+      forceSpecial && Math.random() < 0.35
+        ? 'disco'
+        : specialPool[Math.floor(Math.random() * specialPool.length)];
+    result[attachIdx] = {
+      ...target,
+      specialCell: { index: cellIndex, special: chosenSpecial },
+      isGoldBonus: forceSpecial
+    };
+  }
+
+  if (guaranteeFit && grid && !result.some((s) => canShapeFitAnywhere(grid, s))) {
     const smallFits = SHAPE_DEFS.slice(0, 5)
       .map((def, idx) => ({
         id: `shape_safe_${nextUid()}_${idx}`,
@@ -731,6 +886,10 @@ export interface PlaceShapeOutcome {
   linesCleared: number;
   collected: Partial<Record<TargetKey, number>>;
   blastedCoords: [number, number][];
+  rocketBeams: { r: number; c: number; dir: 'h' | 'v' | 'both' }[];
+  bombRings: [number, number][];
+  discoTargetCoords: [number, number][];
+  specialsTriggered: number;
 }
 
 export function placeShapeAndClearLines(
@@ -746,13 +905,14 @@ export function placeShapeAndClearLines(
   const next = cloneGrid(grid);
   const touchedRows = new Set<number>();
   const touchedCols = new Set<number>();
-  for (const [dr, dc] of shape.cells) {
+  shape.cells.forEach(([dr, dc], idx) => {
     const rr = baseR + dr;
     const cc = baseC + dc;
-    next[rr][cc] = createCubeCell(shape.color);
+    const embeddedSpecial = shape.specialCell?.index === idx ? shape.specialCell.special : null;
+    next[rr][cc] = createCubeCell(shape.color, embeddedSpecial ? { special: embeddedSpecial } : undefined);
     touchedRows.add(rr);
     touchedCols.add(cc);
-  }
+  });
 
   const clearedRows: number[] = [];
   const clearedCols: number[] = [];
@@ -775,9 +935,16 @@ export function placeShapeAndClearLines(
   }
 
   let blastedCoords: [number, number][] = [];
+  let rocketBeams: { r: number; c: number; dir: 'h' | 'v' | 'both' }[] = [];
+  let bombRings: [number, number][] = [];
+  let discoTargetCoords: [number, number][] = [];
+
   if (toDetonate.length > 0) {
     const res = detonateCoords(next, toDetonate, collected);
     blastedCoords = res.blastedCoords;
+    rocketBeams = res.rocketBeams;
+    bombRings = res.bombRings;
+    discoTargetCoords = res.discoTargetCoords;
   }
 
   const finalGrid = applyDropAfterClear && toDetonate.length > 0 ? applyGravity(next) : next;
@@ -788,8 +955,45 @@ export function placeShapeAndClearLines(
     clearedCols,
     linesCleared: clearedRows.length + clearedCols.length,
     collected,
-    blastedCoords
+    blastedCoords,
+    rocketBeams,
+    bombRings,
+    discoTargetCoords,
+    specialsTriggered: rocketBeams.length + bombRings.length + (discoTargetCoords.length > 0 ? 1 : 0)
   };
+}
+
+/** Strikes up to `count` obstacles or crowded blocks when Knowza Fever activates! */
+export function strikeFeverLightning(
+  grid: Grid,
+  count = 3
+): { grid: Grid; blastedCoords: [number, number][]; collected: Partial<Record<TargetKey, number>> } {
+  const N = grid.length;
+  const next = cloneGrid(grid);
+  const obstacleCoords: [number, number][] = [];
+  const blockCoords: [number, number][] = [];
+
+  for (let r = 0; r < N; r++) {
+    for (let c = 0; c < N; c++) {
+      const cell = next[r][c];
+      if (!cell) continue;
+      if (cell.obstacle) obstacleCoords.push([r, c]);
+      else blockCoords.push([r, c]);
+    }
+  }
+
+  const picks: [number, number][] = [...obstacleCoords.slice(0, count)];
+  while (picks.length < count && blockCoords.length > 0) {
+    const idx = Math.floor(Math.random() * blockCoords.length);
+    picks.push(blockCoords.splice(idx, 1)[0]);
+  }
+
+  const collected: Partial<Record<TargetKey, number>> = {};
+  if (picks.length === 0) {
+    return { grid: next, blastedCoords: [], collected };
+  }
+  const res = detonateCoords(next, picks, collected);
+  return { grid: next, blastedCoords: res.blastedCoords, collected };
 }
 
 export function applyInventoryBooster(
@@ -797,7 +1001,8 @@ export function applyInventoryBooster(
   booster: 'hammer' | 'rocket' | 'bomb' | 'disco',
   r: number,
   c: number,
-  refillColors?: CubeColor[]
+  refillColors?: CubeColor[],
+  staticBoard = false
 ): BlastOutcome | null {
   const N = grid.length;
   const cell = grid[r]?.[c];
@@ -837,9 +1042,11 @@ export function applyInventoryBooster(
   }
 
   const res = detonateCoords(next, coords, collected);
-  if (res.blastedCoords.length === 0) return null;
+  if (res.blastedCoords.length === 0 && res.crackedCount === 0) return null;
 
-  const { grid: settled, spawnedOffsets } = applyGravityAndRefill(next, refillColors);
+  const { grid: settled, spawnedOffsets } = staticBoard
+    ? { grid: next, spawnedOffsets: {} }
+    : applyGravityAndRefill(next, refillColors);
   return {
     grid: settled,
     spawnedOffsets,

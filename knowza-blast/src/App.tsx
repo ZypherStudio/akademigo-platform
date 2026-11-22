@@ -4,6 +4,7 @@ import {
   AccessoryId,
   BlockThemeId,
   InventoryBooster,
+  KnowzaMood,
   LevelConfig,
   OutfitId,
   PlayerProgress
@@ -15,6 +16,10 @@ import {
   loadProgress,
   saveProgress
 } from './utils/storage';
+import {
+  getWinStreakCoinMultiplier,
+  getWinStreakStartBoosters
+} from './utils/winStreak';
 import { TopHud } from './components/TopHud';
 import { HomeMenuScreen } from './components/HomeMenuScreen';
 import { WorldMapScreen } from './components/WorldMapScreen';
@@ -34,7 +39,7 @@ import {
   VictoryModal
 } from './components/GameModals';
 
-type Screen = 'home' | 'map' | 'game' | 'endless';
+type Screen = 'home' | 'map' | 'game' | 'endless' | 'sprint';
 
 export const App: React.FC = () => {
   const [progress, setProgress] = useState<PlayerProgress>(() => loadProgress());
@@ -44,10 +49,17 @@ export const App: React.FC = () => {
   const [externalArmBooster, setExternalArmBooster] = useState<InventoryBooster | null>(null);
   const [gameRunKey, setGameRunKey] = useState(1);
   const [bonusMovesCount, setBonusMovesCount] = useState(0);
+  const [hudMood, setHudMood] = useState<KnowzaMood>('idle');
 
   // Modals
   const [introLevel, setIntroLevel] = useState<LevelConfig | null>(null);
-  const [victoryInfo, setVictoryInfo] = useState<{ stars: number; bonusCoins: number } | null>(null);
+  const [victoryInfo, setVictoryInfo] = useState<{
+    stars: number;
+    bonusCoins: number;
+    winStreak: number;
+    streakBonusCoins: number;
+  } | null>(null);
+  const [lostWinStreak, setLostWinStreak] = useState(0);
   const [showFailModal, setShowFailModal] = useState(false);
   const [shopModalTab, setShopModalTab] = useState<'boosters' | 'coins' | null>(null);
   const [boosterDetail, setBoosterDetail] = useState<InventoryBooster | null>(null);
@@ -80,6 +92,11 @@ export const App: React.FC = () => {
       if (next.totalCubesBlasted >= 300) badges.add('pop_legend');
       if (next.totalLinesCleared >= 10) badges.add('line_king');
       if (next.unlockedLevel >= 10) badges.add('academy_hero');
+      if ((next.bestWinStreak || next.winStreak || 0) >= 3) badges.add('streak_3');
+      if ((next.bestWinStreak || next.winStreak || 0) >= 5) badges.add('streak_5');
+      if (Object.values(next.castleStages || {}).filter((v) => v > 0).length >= 5) {
+        badges.add('castle_king');
+      }
       return { ...next, badges: Array.from(badges) };
     });
   };
@@ -99,11 +116,13 @@ export const App: React.FC = () => {
         return { ...p, boosters: nextBoosters };
       });
     }
+    const streakBoosters = getWinStreakStartBoosters(progress.winStreak);
     setActiveLevel(lvl);
-    setSelectedStartBoosters(startBoosters);
+    setSelectedStartBoosters([...streakBoosters, ...startBoosters]);
     setIntroLevel(null);
     setVictoryInfo(null);
     setShowFailModal(false);
+    setLostWinStreak(0);
     setBonusMovesCount(0);
     setGameRunKey((k) => k + 1);
     setScreen('game');
@@ -129,6 +148,9 @@ export const App: React.FC = () => {
         if (q.type === 'clear_lines' && delta.linesCleared) {
           return { ...q, progress: q.progress + delta.linesCleared };
         }
+        if (q.type === 'use_boosters' && delta.boostersUsed) {
+          return { ...q, progress: q.progress + delta.boostersUsed };
+        }
         return q;
       });
       return {
@@ -142,17 +164,32 @@ export const App: React.FC = () => {
 
   const handleWin = (starsEarned: number, remainingMoves: number) => {
     const bonusCoins = Math.max(0, remainingMoves * 10);
-    setVictoryInfo({ stars: starsEarned, bonusCoins });
+    const nextStreak = (progress.winStreak || 0) + 1;
+    const mult = getWinStreakCoinMultiplier(nextStreak);
+    const baseCoins = activeLevel.rewards.coins + bonusCoins;
+    const streakBonusCoins = mult > 1 ? Math.round(baseCoins * (mult - 1)) : 0;
+
+    setVictoryInfo({
+      stars: starsEarned,
+      bonusCoins,
+      winStreak: nextStreak,
+      streakBonusCoins
+    });
     updateProgress((p) => {
       const prevStars = p.levelStars[activeLevel.id] || 0;
       const withXp = addXpToProgress(p, activeLevel.rewards.xp);
-      const nextQuests = withXp.quests.map((q) =>
-        q.type === 'win_levels' ? { ...q, progress: q.progress + 1 } : q
-      );
+      const updatedStreak = (withXp.winStreak || 0) + 1;
+      const nextQuests = withXp.quests.map((q) => {
+        if (q.type === 'win_levels') return { ...q, progress: q.progress + 1 };
+        if (q.type === 'win_streak') return { ...q, progress: Math.max(q.progress, updatedStreak) };
+        return q;
+      });
       return {
         ...withXp,
         stars: withXp.stars + activeLevel.rewards.stars,
-        coins: withXp.coins + activeLevel.rewards.coins + bonusCoins,
+        coins: withXp.coins + baseCoins + streakBonusCoins,
+        winStreak: updatedStreak,
+        bestWinStreak: Math.max(withXp.bestWinStreak || 0, updatedStreak),
         unlockedLevel: Math.min(LEVELS.length, Math.max(withXp.unlockedLevel, activeLevel.id + 1)),
         levelStars: {
           ...withXp.levelStars,
@@ -164,12 +201,20 @@ export const App: React.FC = () => {
   };
 
   const handleFail = () => {
+    setLostWinStreak(progress.winStreak || 0);
     setShowFailModal(true);
     updateProgress((p) => ({
       ...p,
+      winStreak: 0,
       hearts: Math.max(0, p.hearts - 1),
       lastHeartUpdate: p.hearts === p.maxHearts ? Date.now() : p.lastHeartUpdate
     }));
+  };
+
+  const handleSpendCoins = (amount: number): boolean => {
+    if (progress.coins < amount) return false;
+    updateProgress((p) => ({ ...p, coins: Math.max(0, p.coins - amount) }));
+    return true;
   };
 
   const handleBuyMoves = () => {
@@ -192,7 +237,7 @@ export const App: React.FC = () => {
     }));
   };
 
-  const handleEndlessGameOver = (score: number, linesCleared: number) => {
+  const handleEndlessGameOver = (score: number, linesCleared: number, mode: 'endless' | 'sprint' = 'endless') => {
     const coinsReward = Math.max(15, Math.floor(score / 25));
     const starsReward = Math.max(5, Math.floor(score / 80));
     updateProgress((p) => {
@@ -202,7 +247,11 @@ export const App: React.FC = () => {
       );
       return {
         ...withXp,
-        highBlockScore: Math.max(withXp.highBlockScore, score),
+        highBlockScore: mode === 'endless' ? Math.max(withXp.highBlockScore, score) : withXp.highBlockScore,
+        highSprintScore:
+          mode === 'sprint'
+            ? Math.max(withXp.highSprintScore || 0, score)
+            : withXp.highSprintScore || 0,
         totalLinesCleared: withXp.totalLinesCleared + linesCleared,
         coins: withXp.coins + coinsReward,
         stars: withXp.stars + starsReward,
@@ -262,9 +311,10 @@ export const App: React.FC = () => {
     <div className="w-full h-full bg-[#1e0e04] flex justify-center overflow-hidden">
       <div className="w-full max-w-[440px] h-full flex flex-col relative overflow-hidden bg-[#2b1405] shadow-[0_0_50px_rgba(0,0,0,0.75)] sm:border-x-2 sm:border-[#5a3010]">
         {/* Persistent Floating Top HUD */}
-        {screen !== 'endless' && (
+        {screen !== 'endless' && screen !== 'sprint' && (
           <TopHud
             progress={progress}
+            mood={screen === 'game' ? hudMood : 'idle'}
             mode={screen === 'game' ? 'game' : screen === 'map' ? 'map' : 'home'}
             onOpenProfile={() => setShowProfileModal(true)}
             onOpenShop={(tab = 'boosters') => setShopModalTab(tab)}
@@ -280,6 +330,7 @@ export const App: React.FC = () => {
             onPlayCurrent={(lvl) => setIntroLevel(lvl)}
             onOpenMap={() => setScreen('map')}
             onOpenEndless={() => setScreen('endless')}
+            onOpenSprint={() => setScreen('sprint')}
             onOpenWardrobe={() => setShowWardrobeModal(true)}
             onOpenQuests={() => setShowQuestsModal(true)}
             onOpenDaily={() => setShowDailyModal(true)}
@@ -317,14 +368,17 @@ export const App: React.FC = () => {
             onUseInventoryBooster={handleUseBooster}
             onOpenBoosterDetail={(type) => setBoosterDetail(type)}
             onProgressStats={handleProgressStats}
+            onSpendCoins={handleSpendCoins}
+            onMoodChange={setHudMood}
             onWin={handleWin}
             onFail={handleFail}
           />
         )}
 
-        {screen === 'endless' && (
+        {(screen === 'endless' || screen === 'sprint') && (
           <EndlessBlockScreen
             progress={progress}
+            mode={screen === 'sprint' ? 'sprint' : 'endless'}
             onExit={() => setScreen('home')}
             onGameOverScore={handleEndlessGameOver}
           />
@@ -336,6 +390,7 @@ export const App: React.FC = () => {
             level={introLevel}
             hearts={progress.hearts}
             boosters={progress.boosters}
+            winStreak={progress.winStreak}
             onStart={(chosen) => startLevel(introLevel, chosen)}
             onOpenShop={() => {
               setIntroLevel(null);
@@ -350,7 +405,11 @@ export const App: React.FC = () => {
             level={activeLevel}
             starsEarned={victoryInfo.stars}
             bonusCoins={victoryInfo.bonusCoins}
+            winStreak={victoryInfo.winStreak}
+            streakBonusCoins={victoryInfo.streakBonusCoins}
             hasNextLevel={Boolean(nextLevelObj)}
+            outfit={progress.equippedOutfit}
+            accessory={progress.equippedAccessory}
             onNextLevel={() => {
               if (nextLevelObj) startLevel(nextLevelObj);
             }}
@@ -364,6 +423,9 @@ export const App: React.FC = () => {
         {showFailModal && (
           <FailModal
             coins={progress.coins}
+            lostStreak={lostWinStreak}
+            outfit={progress.equippedOutfit}
+            accessory={progress.equippedAccessory}
             onBuyMoves={handleBuyMoves}
             onRetry={() => startLevel(activeLevel)}
             onMainMenu={() => {
@@ -430,6 +492,27 @@ export const App: React.FC = () => {
                 dailyClaimedDays: Array.from(new Set([...p.dailyClaimedDays, day]))
               }));
             }}
+            onSpinWheelReward={(prize, isFreeSpin, spinCoinCost) => {
+              const today = new Date().toISOString().slice(0, 10);
+              updateProgress((p) => {
+                if (!isFreeSpin && p.coins < spinCoinCost) return p;
+                let coins = p.coins - (isFreeSpin ? 0 : spinCoinCost);
+                let stars = p.stars;
+                const boosters = { ...p.boosters };
+                if (prize.kind === 'coins') coins += prize.amount;
+                if (prize.kind === 'stars') stars += prize.amount;
+                if (prize.kind === 'booster' && prize.booster) {
+                  boosters[prize.booster] = (boosters[prize.booster] || 0) + prize.amount;
+                }
+                return {
+                  ...p,
+                  coins,
+                  stars,
+                  boosters,
+                  lastWheelSpinDate: isFreeSpin ? today : p.lastWheelSpinDate
+                };
+              });
+            }}
             onClose={() => setShowDailyModal(false)}
           />
         )}
@@ -483,10 +566,16 @@ export const App: React.FC = () => {
             onToggleHaptics={() => updateProgress((p) => ({ ...p, hapticsEnabled: !p.hapticsEnabled }))}
             onRestartLevel={() => {
               setShowSettingsModal(false);
+              if (progress.winStreak > 0) {
+                updateProgress((p) => ({ ...p, winStreak: 0 }));
+              }
               startLevel(activeLevel);
             }}
             onExitToMap={() => {
               setShowSettingsModal(false);
+              if (progress.winStreak > 0) {
+                updateProgress((p) => ({ ...p, winStreak: 0 }));
+              }
               setScreen('home');
             }}
             onClose={() => setShowSettingsModal(false)}

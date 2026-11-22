@@ -396,3 +396,472 @@
   animation: cubeDrop 0.24s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
+/* Live Rigged Character Expression Animations */
+@keyframes bearBreathe {
+  0%, 100% { transform: translateY(0) scaleY(1); }
+  50% { transform: translateY(-2px) scaleY(1.02); }
+}
+.animate-bear-breathe {
+  animation: bearBreathe 2.8s ease-in-out infinite;
+  transform-origin: bottom center;
+}
+
+@keyframes bearCheer {
+  0%, 100% { transform: translateY(0) rotate(0deg) scale(1); }
+  25% { transform: translateY(-5px) rotate(-3deg) scale(1.05); }
+  65% { transform: translateY(-2px) rotate(3deg) scale(1.04); }
+}
+.animate-bear-cheer {
+  animation: bearCheer 0.72s ease-in-out infinite;
+  transform-origin: bottom center;
+}
+
+@keyframes bearWorried {
+  0%, 100% { transform: translateX(0) rotate(0deg); }
+  25% { transform: translateX(-1.5px) rotate(-1.5deg); }
+  75% { transform: translateX(1.5px) rotate(1.5deg); }
+}
+.animate-bear-worried {
+  animation: bearWorried 0.45s ease-in-out infinite;
+  transform-origin: bottom center;
+}
+
+@keyframes bearBlink {
+  0%, 92%, 100% { transform: scaleY(1); }
+  96% { transform: scaleY(0.08); }
+}
+.animate-bear-blink {
+  animation: bearBlink 4.2s ease-in-out infinite;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+@keyframes bandanaFlutter {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(-7deg); }
+}
+.animate-bandana-flutter {
+  animation: bandanaFlutter 1.8s ease-in-out infinite;
+  transform-box: fill-box;
+  transform-origin: right center;
+}
+
+/* Biome-Transformed Pedestal Styles */
+.pedestal-glacier-locked {
+  background: radial-gradient(circle at 50% 30%, #bae6fd 0%, #38bdf8 55%, #075985 100%);
+  border: 2.5px solid #e0f2fe;
+  box-shadow: 0 5px 0 #0c4a6e, 0 8px 16px rgba(12, 74, 110, 0.45);
+}
+.pedestal-glacier-done {
+  background: radial-gradient(circle at 50% 30%, #f0f9ff 0%, #0ea5e9 60%, #0369a1 100%);
+  border: 2.5px solid #bae6fd;
+  box-shadow: 0 5px 0 #075985, 0 0 12px rgba(56, 189, 248, 0.55);
+}
+.pedestal-glacier-current {
+  background: radial-gradient(circle at 50% 30%, #ffffff 0%, #38bdf8 52%, #0284c7 100%);
+  border: 3px solid #fef08a;
+  box-shadow: 0 6px 0 #075985, 0 0 22px rgba(103, 232, 249, 0.95);
+}
+
+.pedestal-volcano-locked {
+  background: radial-gradient(circle at 50% 30%, #78716c 0%, #44403c 60%, #1c1917 100%);
+  border: 2.5px solid #fb923c;
+  box-shadow: 0 5px 0 #0c0a09, 0 8px 16px rgba(127, 29, 29, 0.5);
+}
+.pedestal-volcano-done {
+  background: radial-gradient(circle at 50% 30%, #fdba74 0%, #ea580c 58%, #7c2d12 100%);
+  border: 2.5px solid #fde047;
+  box-shadow: 0 5px 0 #431407, 0 0 14px rgba(249, 115, 22, 0.65);
+}
+.pedestal-volcano-current {
+  background: radial-gradient(circle at 50% 30%, #fef08a 0%, #f97316 55%, #b91c1c 100%);
+  border: 3px solid #fffbeb;
+  box-shadow: 0 6px 0 #7f1d1d, 0 0 22px rgba(251, 146, 60, 0.95);
+}
+
+.pedestal-crystal-locked {
+  background: radial-gradient(circle at 50% 30%, #a855f7 0%, #6b21a8 60%, #2e1065 100%);
+  border: 2.5px solid #e9d5ff;
+  box-shadow: 0 5px 0 #1e1b4b, 0 8px 16px rgba(88, 28, 135, 0.5);
+}
+.pedestal-crystal-done {
+  background: radial-gradient(circle at 50% 30%, #f5d0fe 0%, #c026d3 60%, #701a75 100%);
+  border: 2.5px solid #fae8ff;
+  box-shadow: 0 5px 0 #4a044e, 0 0 14px rgba(217, 70, 239, 0.65);
+}
+.pedestal-crystal-current {
+  background: radial-gradient(circle at 50% 30%, #ffffff 0%, #e879f9 50%, #7e22ce 100%);
+  border: 3px solid #fde047;
+  box-shadow: 0 6px 0 #4c1d95, 0 0 22px rgba(232, 121, 249, 0.95);
+}
+
+.pedestal-dojo-locked {
+  background: radial-gradient(circle at 50% 30%, #94a3b8 0%, #475569 58%, #1e293b 100%);
+  border: 2.5px solid #fbcfe8;
+  box-shadow: 0 5px 0 #0f172a, 0 8px 14px rgba(15, 23, 42, 0.45);
+}
+.pedestal-dojo-done {
+  background: radial-gradient(circle at 50% 30%, #fda4af 0%, #e11d48 58%, #881337 100%);
+  border: 2.5px solid #fde047;
+  box-shadow: 0 5px 0 #4c0519, 0 0 12px rgba(244, 63, 94, 0.55);
+}
+.pedestal-dojo-current {
+  background: radial-gradient(circle at 50% 30%, #fff1f2 0%, #fb7185 45%, #be123c 100%);
+  border: 3px solid #fde047;
+  box-shadow: 0 6px 0 #881337, 0 0 22px rgba(251, 113, 133, 0.92);
+}
+
+.pedestal-desert-locked {
+  background: radial-gradient(circle at 50% 30%, #f59e0b 0%, #b45309 62%, #78350f 100%);
+  border: 2.5px solid #fde68a;
+  box-shadow: 0 5px 0 #451a03, 0 8px 14px rgba(69, 26, 3, 0.45);
+}
+.pedestal-desert-done {
+  background: radial-gradient(circle at 50% 30%, #5eead4 0%, #0d9488 60%, #115e59 100%);
+  border: 2.5px solid #fde047;
+  box-shadow: 0 5px 0 #042f2e, 0 0 12px rgba(45, 212, 191, 0.55);
+}
+.pedestal-desert-current {
+  background: radial-gradient(circle at 50% 30%, #fef9c3 0%, #facc15 55%, #b45309 100%);
+  border: 3px solid #fffbeb;
+  box-shadow: 0 6px 0 #78350f, 0 0 22px rgba(250, 204, 21, 0.95);
+}
+
+.pedestal-cyber-locked {
+  background: radial-gradient(circle at 50% 30%, #334155 0%, #0f172a 62%, #020617 100%);
+  border: 2.5px solid #22d3ee;
+  box-shadow: 0 5px 0 #082f49, 0 0 12px rgba(34, 211, 238, 0.4);
+}
+.pedestal-cyber-done {
+  background: radial-gradient(circle at 50% 30%, #a5f3fc 0%, #0284c7 60%, #0f172a 100%);
+  border: 2.5px solid #67e8f9;
+  box-shadow: 0 5px 0 #082f49, 0 0 16px rgba(34, 211, 238, 0.72);
+}
+.pedestal-cyber-current {
+  background: radial-gradient(circle at 50% 30%, #ecfeff 0%, #22d3ee 48%, #7e22ce 100%);
+  border: 3px solid #fde047;
+  box-shadow: 0 6px 0 #1e1b4b, 0 0 24px rgba(34, 211, 238, 0.98);
+}
+
+.pedestal-cosmos-locked {
+  background: radial-gradient(circle at 50% 30%, #4338ca 0%, #1e1b4b 62%, #090624 100%);
+  border: 2.5px solid #a5b4fc;
+  box-shadow: 0 5px 0 #060317, 0 0 12px rgba(129, 140, 248, 0.45);
+}
+.pedestal-cosmos-done {
+  background: radial-gradient(circle at 50% 30%, #c4b5fd 0%, #6366f1 58%, #312e81 100%);
+  border: 2.5px solid #fde047;
+  box-shadow: 0 5px 0 #1e1b4b, 0 0 16px rgba(167, 139, 250, 0.72);
+}
+.pedestal-cosmos-current {
+  background: radial-gradient(circle at 50% 30%, #fef08a 0%, #818cf8 55%, #312e81 100%);
+  border: 3px solid #ffffff;
+  box-shadow: 0 6px 0 #1e1b4b, 0 0 24px rgba(196, 181, 253, 0.98);
+}
+
+/* Biome Scene Ambient Animations */
+@keyframes biomeFall {
+  0% {
+    transform: translate3d(0, -12%, 0) rotate(0deg);
+    opacity: 0;
+  }
+  12% {
+    opacity: 0.95;
+  }
+  85% {
+    opacity: 0.85;
+  }
+  100% {
+    transform: translate3d(26px, 110dvh, 0) rotate(260deg);
+    opacity: 0;
+  }
+}
+.animate-biome-fall {
+  animation: biomeFall var(--dur, 7s) linear infinite;
+}
+
+@keyframes biomeRise {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+    opacity: 0;
+  }
+  15% {
+    opacity: 0.95;
+  }
+  85% {
+    opacity: 0.75;
+  }
+  100% {
+    transform: translate3d(-18px, -105dvh, 0) scale(0.45);
+    opacity: 0;
+  }
+}
+.animate-biome-rise {
+  animation: biomeRise var(--dur, 6s) ease-out infinite;
+}
+
+@keyframes biomeAurora {
+  0%, 100% {
+    transform: translateX(-6%) scaleY(1);
+    opacity: 0.55;
+  }
+  50% {
+    transform: translateX(6%) scaleY(1.16);
+    opacity: 0.85;
+  }
+}
+.animate-biome-aurora {
+  animation: biomeAurora 7s ease-in-out infinite;
+}
+
+@keyframes biomeSway {
+  0%, 100% {
+    transform: translateY(0) rotate(-3deg);
+  }
+  50% {
+    transform: translateY(-6px) rotate(3deg);
+  }
+}
+.animate-biome-sway {
+  animation: biomeSway 4.2s ease-in-out infinite;
+}
+
+@keyframes biomeMeteor {
+  0% {
+    transform: translate3d(0, 0, 0) rotate(-32deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.95;
+  }
+  45% {
+    transform: translate3d(-240px, 160px, 0) rotate(-32deg);
+    opacity: 0;
+  }
+  100% {
+    transform: translate3d(-240px, 160px, 0) rotate(-32deg);
+    opacity: 0;
+  }
+}
+.animate-biome-meteor {
+  animation: biomeMeteor 5.5s ease-in infinite;
+}
+
+@keyframes biomeRoadFlow {
+  to {
+    stroke-dashoffset: -36;
+  }
+}
+.animate-road-flow {
+  animation: biomeRoadFlow 2.4s linear infinite;
+}
+
+@keyframes tileShimmer {
+  0%, 75% {
+    transform: translateX(-130%) skewX(-18deg);
+    opacity: 0;
+  }
+  82% {
+    opacity: 0.65;
+  }
+  100% {
+    transform: translateX(180%) skewX(-18deg);
+    opacity: 0;
+  }
+}
+.animate-tile-shimmer {
+  animation: tileShimmer 4.6s ease-in-out infinite;
+}
+
+/* Biome-Themed UI Panel Surfaces */
+.biome-panel-forest {
+  background: linear-gradient(180deg, #985a26 0%, #723f15 52%, #522a0a 100%);
+  border: 2.5px solid #3c1c05;
+  box-shadow: inset 0 2px 0 rgba(255, 224, 155, 0.4), inset 0 -3px 0 rgba(25, 10, 0, 0.45), 0 6px 16px rgba(20, 8, 0, 0.38);
+}
+.biome-panel-glacier {
+  background: linear-gradient(180deg, #0ea5e9 0%, #0369a1 52%, #0c4a6e 100%);
+  border: 2.5px solid #bae6fd;
+  box-shadow: inset 0 2px 0 rgba(240, 249, 255, 0.55), 0 6px 16px rgba(8, 47, 73, 0.45);
+}
+.biome-panel-volcano {
+  background: linear-gradient(180deg, #572017 0%, #38100a 52%, #1c0503 100%);
+  border: 2.5px solid #fb923c;
+  box-shadow: inset 0 2px 0 rgba(254, 215, 170, 0.35), 0 6px 16px rgba(69, 10, 10, 0.55);
+}
+.biome-panel-crystal_cave {
+  background: linear-gradient(180deg, #6b21a8 0%, #4c1d95 52%, #2e1065 100%);
+  border: 2.5px solid #f0abfc;
+  box-shadow: inset 0 2px 0 rgba(250, 232, 255, 0.45), 0 6px 16px rgba(46, 16, 101, 0.55);
+}
+.biome-panel-dojo_peak {
+  background: linear-gradient(180deg, #be123c 0%, #881337 52%, #4c0519 100%);
+  border: 2.5px solid #fde047;
+  box-shadow: inset 0 2px 0 rgba(255, 241, 242, 0.4), 0 6px 16px rgba(76, 5, 25, 0.5);
+}
+.biome-panel-desert {
+  background: linear-gradient(180deg, #d97706 0%, #92400e 52%, #592205 100%);
+  border: 2.5px solid #fef08a;
+  box-shadow: inset 0 2px 0 rgba(254, 249, 195, 0.45), 0 6px 16px rgba(69, 26, 3, 0.45);
+}
+.biome-panel-cyber_city {
+  background: linear-gradient(180deg, #0f172a 0%, #082f49 52%, #020617 100%);
+  border: 2.5px solid #22d3ee;
+  box-shadow: inset 0 2px 0 rgba(165, 243, 252, 0.4), 0 0 14px rgba(34, 211, 238, 0.35);
+}
+.biome-panel-cosmos {
+  background: linear-gradient(180deg, #312e81 0%, #1e1b4b 52%, #090624 100%);
+  border: 2.5px solid #a5b4fc;
+  box-shadow: inset 0 2px 0 rgba(224, 231, 255, 0.4), 0 0 14px rgba(129, 140, 248, 0.4);
+}
+
+/* Interactive Booster Action Model Animations */
+@keyframes hammerSmash {
+  0% {
+    transform: translate(-18%, -92%) rotate(38deg) scale(0.8);
+    opacity: 0;
+  }
+  26% {
+    transform: translate(-12%, -98%) rotate(54deg) scale(1.16);
+    opacity: 1;
+  }
+  44% {
+    transform: translate(-44%, -46%) rotate(-32deg) scale(1.08);
+    opacity: 1;
+  }
+  62% {
+    transform: translate(-38%, -56%) rotate(-18deg) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-25%, -72%) rotate(0deg) scale(0.75);
+    opacity: 0;
+  }
+}
+.animate-hammer-smash {
+  animation: hammerSmash 0.48s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  transform-origin: bottom right;
+}
+
+@keyframes bombFuseBlast {
+  0% {
+    transform: translate(-50%, -50%) scale(0.65) rotate(-8deg);
+    opacity: 0;
+  }
+  25% {
+    transform: translate(-50%, -54%) scale(1.22) rotate(10deg);
+    opacity: 1;
+  }
+  48% {
+    transform: translate(-50%, -50%) scale(1.42) rotate(-10deg);
+    opacity: 1;
+  }
+  64% {
+    transform: translate(-50%, -50%) scale(1.85);
+    opacity: 0.9;
+    filter: brightness(2.2);
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(2.15);
+    opacity: 0;
+  }
+}
+.animate-bomb-fuse {
+  animation: bombFuseBlast 0.46s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes discoSpinZap {
+  0% {
+    transform: translate(-50%, -50%) scale(0.55) rotate(0deg);
+    opacity: 0;
+  }
+  25% {
+    transform: translate(-50%, -50%) scale(1.32) rotate(140deg);
+    opacity: 1;
+  }
+  62% {
+    transform: translate(-50%, -50%) scale(1.22) rotate(320deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(0.4) rotate(520deg);
+    opacity: 0;
+  }
+}
+.animate-disco-zap {
+  animation: discoSpinZap 0.54s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes impactStarburst {
+  0%, 34% {
+    transform: translate(-50%, -50%) scale(0.15);
+    opacity: 0;
+  }
+  46% {
+    transform: translate(-50%, -50%) scale(1.15);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1.85);
+    opacity: 0;
+  }
+}
+.animate-impact-starburst {
+  animation: impactStarburst 0.48s ease-out forwards;
+}
+
+@keyframes laserZap {
+  0% {
+    opacity: 0;
+    stroke-width: 0.4;
+  }
+  35% {
+    opacity: 1;
+    stroke-width: 2.2;
+  }
+  75% {
+    opacity: 0.95;
+    stroke-width: 1.4;
+  }
+  100% {
+    opacity: 0;
+    stroke-width: 0.2;
+  }
+}
+.animate-laser-zap {
+  animation: laserZap 0.44s ease-out forwards;
+}
+
+@keyframes rocketFlyR {
+  0% { transform: translate(-50%, -50%) rotate(48deg) scale(0.75); opacity: 1; }
+  100% { transform: translate(calc(-50% + 260px), -50%) rotate(48deg) scale(1.08); opacity: 0; }
+}
+.animate-rocket-fly-r {
+  animation: rocketFlyR 0.36s ease-in forwards;
+}
+
+@keyframes rocketFlyL {
+  0% { transform: translate(-50%, -50%) rotate(-132deg) scale(0.75); opacity: 1; }
+  100% { transform: translate(calc(-50% - 260px), -50%) rotate(-132deg) scale(1.08); opacity: 0; }
+}
+.animate-rocket-fly-l {
+  animation: rocketFlyL 0.36s ease-in forwards;
+}
+
+@keyframes rocketFlyU {
+  0% { transform: translate(-50%, -50%) rotate(-42deg) scale(0.75); opacity: 1; }
+  100% { transform: translate(-50%, calc(-50% - 260px)) rotate(-42deg) scale(1.08); opacity: 0; }
+}
+.animate-rocket-fly-u {
+  animation: rocketFlyU 0.36s ease-in forwards;
+}
+
+@keyframes rocketFlyD {
+  0% { transform: translate(-50%, -50%) rotate(138deg) scale(0.75); opacity: 1; }
+  100% { transform: translate(-50%, calc(-50% + 260px)) rotate(138deg) scale(1.08); opacity: 0; }
+}
+.animate-rocket-fly-d {
+  animation: rocketFlyD 0.36s ease-in forwards;
+}
+
+

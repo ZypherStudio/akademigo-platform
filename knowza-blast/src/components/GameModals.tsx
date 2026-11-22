@@ -4,6 +4,7 @@ import {
   Award,
   Check,
   Coins,
+  Flame,
   Gem,
   GraduationCap,
   Heart,
@@ -18,12 +19,16 @@ import {
   X,
   Zap
 } from 'lucide-react';
-import { InventoryBooster, LevelConfig, PlayerProgress, TargetKey } from '../types/game';
+import { getBiomeForLevel, TOTAL_LEVELS } from '../data/biomes';
+import { AccessoryId, InventoryBooster, LevelConfig, OutfitId, PlayerProgress, TargetKey } from '../types/game';
 import { assetUrl } from '../utils/assets';
 import { sfx } from '../utils/sound';
 import { getNextHeartSeconds, xpForNextLevel } from '../utils/storage';
+import { WIN_STREAK_MAX_TIER, getWinStreakInfo, getWinStreakTier } from '../utils/winStreak';
 import { BoosterIcon } from './BoosterIcon';
+import { CastleDiorama } from './CastleDiorama';
 import { KnowzaSprite } from './KnowzaSprite';
+import { LuckyWheel, WheelPrize } from './LuckyWheel';
 import { TargetChip } from './TargetChip';
 
 /* ============================================================================
@@ -33,10 +38,13 @@ export const LevelIntroModal: React.FC<{
   level: LevelConfig;
   hearts: number;
   boosters: Record<InventoryBooster, number>;
+  winStreak?: number;
   onStart: (selectedStartBoosters: ('rocket' | 'bomb')[]) => void;
   onOpenShop: () => void;
   onClose: () => void;
-}> = ({ level, hearts, boosters, onStart, onOpenShop, onClose }) => {
+}> = ({ level, hearts, boosters, winStreak = 0, onStart, onOpenShop, onClose }) => {
+  const biome = getBiomeForLevel(level.id);
+  const streakInfo = getWinStreakInfo(winStreak);
   const targetEntries = Object.entries(level.targets) as [TargetKey, number][];
   const [preRocket, setPreRocket] = useState(false);
   const [preBomb, setPreBomb] = useState(false);
@@ -62,9 +70,21 @@ export const LevelIntroModal: React.FC<{
           <X className="w-4 h-4 stroke-[3]" />
         </button>
 
-        <h2 className="font-display text-2xl font-black text-[#4a2206] mt-1">Seviye {level.id}</h2>
-        <div className="text-xs font-extrabold text-[#754014] mt-0.5">{level.name}</div>
+        <div className="flex items-center justify-center gap-1.5 mt-1">
+          <h2 className="font-display text-2xl font-black text-[#4a2206]">
+            Seviye {level.id}
+          </h2>
+          <span className={`px-2 py-0.5 rounded-full text-[9.5px] font-black border ${biome.badgeClass}`}>
+            {biome.name}
+          </span>
+        </div>
+        <div className="text-xs font-extrabold text-[#754014] mt-0.5">
+          {level.name} • {TOTAL_LEVELS.toLocaleString('tr-TR')} Seviye
+        </div>
         <p className="text-[11px] font-bold text-[#8a5220] mt-1 leading-snug">{level.subtitle}</p>
+        <div className="mt-1 text-[10px] font-extrabold text-[#5c2c09] bg-amber-100/80 border border-amber-300/80 rounded-xl px-2.5 py-1">
+          {biome.mechanicTitle}: {biome.mechanicDesc}
+        </div>
 
         <div className="parchment-subcard rounded-2xl p-2.5 my-2.5">
           <div className="text-[11px] font-black text-amber-900 uppercase mb-1.5">
@@ -72,8 +92,42 @@ export const LevelIntroModal: React.FC<{
           </div>
           <div className="flex items-center justify-center gap-4">
             {targetEntries.map(([k, qty]) => (
-              <TargetChip key={k} targetKey={k} remaining={qty} />
+              <TargetChip key={k} targetKey={k} remaining={qty} biome={biome.id} />
             ))}
+          </div>
+        </div>
+
+        {/* 3-Tier Kazanma Serisi Progress Card */}
+        <div className="parchment-subcard rounded-2xl px-2.5 py-2 mb-2.5 text-left">
+          <div className="flex items-center justify-between gap-1.5 mb-1">
+            <span className="inline-flex items-center gap-1 text-[10.5px] font-black text-[#471f04]">
+              <Flame className={`w-3.5 h-3.5 ${winStreak > 0 ? 'text-orange-500 fill-orange-500' : 'text-amber-700'}`} />
+              Kazanma Serisi ({streakInfo.tier}/{WIN_STREAK_MAX_TIER})
+            </span>
+            <span className="text-[9px] font-black px-1.5 py-0.5 rounded-full bg-orange-500/15 text-orange-800 border border-orange-300">
+              {winStreak > 0 ? `${winStreak} Galibiyet` : 'Kaybedince sıfırlanır'}
+            </span>
+          </div>
+          <div className="grid grid-cols-3 gap-1">
+            {[
+              { tier: 1, label: '+Roket' },
+              { tier: 2, label: '+Bomba' },
+              { tier: 3, label: '+%25 Altın' }
+            ].map((step) => {
+              const active = getWinStreakTier(winStreak) >= step.tier;
+              return (
+                <div
+                  key={step.tier}
+                  className={`rounded-lg py-1 px-1 text-center text-[9.5px] font-black border ${
+                    active
+                      ? 'bg-gradient-to-b from-amber-400 to-orange-500 text-white border-amber-200 shadow-sm'
+                      : 'bg-amber-950/10 text-[#7d4918] border-[#c49253]/40'
+                  }`}
+                >
+                  {step.tier}. {step.label}
+                </div>
+              );
+            })}
           </div>
         </div>
 
@@ -102,7 +156,7 @@ export const LevelIntroModal: React.FC<{
                 >
                   <BoosterIcon type={bType} className="w-8 h-8" />
                   <span className="absolute -bottom-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full text-[9px] font-black bg-[#5c300f] text-white border border-white flex items-center justify-center">
-                    {selected ? '✓' : count}
+                    {selected ? <Check className="w-3 h-3 stroke-[3]" /> : count}
                   </span>
                 </button>
               );
@@ -162,10 +216,25 @@ export const VictoryModal: React.FC<{
   level: LevelConfig;
   starsEarned: number;
   bonusCoins: number;
+  winStreak?: number;
+  streakBonusCoins?: number;
   hasNextLevel: boolean;
+  outfit?: OutfitId;
+  accessory?: AccessoryId;
   onNextLevel: () => void;
   onMap: () => void;
-}> = ({ level, starsEarned, bonusCoins, hasNextLevel, onNextLevel, onMap }) => {
+}> = ({
+  level,
+  starsEarned,
+  bonusCoins,
+  winStreak = 1,
+  streakBonusCoins = 0,
+  hasNextLevel,
+  outfit = 'classic',
+  accessory = 'none',
+  onNextLevel,
+  onMap
+}) => {
   useEffect(() => {
     sfx.win();
     confetti({ particleCount: 70, spread: 70, origin: { y: 0.55 } });
@@ -192,11 +261,15 @@ export const VictoryModal: React.FC<{
               />
             ))}
           </div>
-          <img
-            src={assetUrl('assets/knowza_cheering.png')}
-            alt="Knowza Kutluyor"
-            className="w-32 h-32 object-contain mx-auto drop-shadow-xl animate-float-slow"
-          />
+          <div className="w-36 h-28 mx-auto -mb-1">
+            <KnowzaSprite
+              pose="peek"
+              outfit={outfit}
+              accessory={accessory}
+              mood="celebrate"
+              className="w-full h-full drop-shadow-xl"
+            />
+          </div>
         </div>
 
         {/* Parchment Card */}
@@ -205,18 +278,29 @@ export const VictoryModal: React.FC<{
             Seviye {level.id} Tamamlandı!
           </div>
 
-          {bonusCoins > 0 && (
-            <div className="text-[11px] font-black text-emerald-700 bg-emerald-100 border border-emerald-300 rounded-full px-3 py-0.5 inline-block mb-2">
-              Bonus Zamanı! +{bonusCoins} Altın
-            </div>
-          )}
+          <div className="flex flex-wrap items-center justify-center gap-1.5 mb-2">
+            <span className="inline-flex items-center gap-1 text-[11px] font-black text-orange-800 bg-orange-100 border border-orange-300 rounded-full px-2.5 py-0.5">
+              <Flame className="w-3.5 h-3.5 text-orange-500 fill-orange-500" />
+              Seri: {winStreak} Galibiyet!
+            </span>
+            {streakBonusCoins > 0 && (
+              <span className="text-[11px] font-black text-amber-800 bg-amber-100 border border-amber-300 rounded-full px-2.5 py-0.5">
+                +{streakBonusCoins} Seri Altını
+              </span>
+            )}
+            {bonusCoins > 0 && (
+              <span className="text-[11px] font-black text-emerald-700 bg-emerald-100 border border-emerald-300 rounded-full px-2.5 py-0.5">
+                +{bonusCoins} Alan Bonusu
+              </span>
+            )}
+          </div>
 
           <div className="flex items-center justify-center gap-2 mb-4 text-xs font-black">
             <div className="parchment-subcard rounded-xl px-2.5 py-1.5 flex items-center gap-1 text-[#5c2c09]">
               <Star className="w-4 h-4 text-amber-500 fill-amber-500" /> +{level.rewards.stars}
             </div>
             <div className="parchment-subcard rounded-xl px-2.5 py-1.5 flex items-center gap-1 text-[#5c2c09]">
-              <Coins className="w-4 h-4 text-amber-600" /> +{level.rewards.coins + bonusCoins}
+              <Coins className="w-4 h-4 text-amber-600" /> +{level.rewards.coins + bonusCoins + streakBonusCoins}
             </div>
             <div className="parchment-subcard rounded-xl px-2.5 py-1.5 text-purple-800">
               +{level.rewards.xp} XP
@@ -258,10 +342,13 @@ export const VictoryModal: React.FC<{
  * ========================================================================== */
 export const FailModal: React.FC<{
   coins: number;
+  lostStreak?: number;
+  outfit?: OutfitId;
+  accessory?: AccessoryId;
   onBuyMoves: () => void;
   onRetry: () => void;
   onMainMenu: () => void;
-}> = ({ coins, onBuyMoves, onRetry, onMainMenu }) => {
+}> = ({ coins, lostStreak = 0, outfit = 'classic', accessory = 'none', onBuyMoves, onRetry, onMainMenu }) => {
   useEffect(() => {
     sfx.fail();
   }, []);
@@ -275,14 +362,24 @@ export const FailModal: React.FC<{
           Üzgünüm!
         </div>
 
-        {/* Clean sad Knowza peeking cleanly behind top rim of card */}
-        <img
-          src={assetUrl('assets/mascot_sad_clean.png')}
-          alt="Üzgün Knowza"
-          className="w-28 h-28 object-contain mx-auto -mb-7 relative z-10 drop-shadow-lg"
-        />
+        {/* Animated sad Knowza peeking cleanly behind top rim of card */}
+        <div className="w-32 h-24 mx-auto -mb-3 relative z-10">
+          <KnowzaSprite
+            pose="peek"
+            outfit={outfit}
+            accessory={accessory}
+            mood="sad"
+            className="w-full h-full drop-shadow-lg"
+          />
+        </div>
 
         <div className="parchment-card rounded-3xl pt-8 pb-5 px-5 relative z-20">
+          {lostStreak > 0 && (
+            <div className="mb-2 bg-rose-100 border border-rose-300 text-rose-800 rounded-xl px-3 py-1.5 text-[11px] font-black flex items-center justify-center gap-1.5">
+              <Flame className="w-3.5 h-3.5 text-rose-600 shrink-0" />
+              <span>Eyvah! {lostStreak} galibiyetlik serin sıfırlandı!</span>
+            </div>
+          )}
           <p className="font-display text-base font-bold text-[#4a2306] mb-4 leading-snug">
             Yer kalmadı! Tekrar denemek ister misin?
           </p>
@@ -647,18 +744,21 @@ export const BoosterDetailModal: React.FC<{
  * 6. Daily Login Modal (Reference Image 1 - "Günlük Giriş")
  * ========================================================================== */
 const DAILY_REWARDS = [
-  { day: 1, label: 'x50', stars: 50, coins: 0 },
-  { day: 2, label: 'x100', stars: 0, coins: 100 },
-  { day: 3, label: 'x10 ★+🪙', stars: 50, coins: 150 }
+  { day: 1, label: '50 Yıldız', stars: 50, coins: 0 },
+  { day: 2, label: '100 Altın', stars: 0, coins: 100 },
+  { day: 3, label: '50 Yıldız + 150 Altın', stars: 50, coins: 150 }
 ];
 
 export const DailyLoginModal: React.FC<{
   progress: PlayerProgress;
   onClaim: (day: number, stars: number, coins: number) => void;
+  onSpinWheelReward: (prize: WheelPrize, isFreeSpin: boolean, spinCoinCost: number) => void;
   onClose: () => void;
-}> = ({ progress, onClaim, onClose }) => {
+}> = ({ progress, onClaim, onSpinWheelReward, onClose }) => {
   const today = new Date().toISOString().slice(0, 10);
   const alreadyClaimedToday = progress.lastDailyClaimDate === today;
+  const freeSpinReady = progress.lastWheelSpinDate !== today;
+  const [tab, setTab] = useState<'login' | 'wheel'>(alreadyClaimedToday && freeSpinReady ? 'wheel' : 'login');
   const nextDayIndex = (progress.dailyClaimedDays.length % 3) + 1;
 
   return (
@@ -672,58 +772,115 @@ export const DailyLoginModal: React.FC<{
           <X className="w-4 h-4 stroke-[3]" />
         </button>
 
-        <div className="wood-ribbon inline-block px-5 py-1 rounded-full font-display text-base font-bold text-[#fff3d1] -mt-9">
-          Günlük Giriş
-        </div>
-        <p className="text-xs font-extrabold text-[#6e3a10] mt-2 mb-3">
-          Her gün gel, ödüller kazan!
-        </p>
-
-        <div className="grid grid-cols-3 gap-2 mb-4">
-          {DAILY_REWARDS.map((r) => {
-            const isTodayTarget = !alreadyClaimedToday && r.day === nextDayIndex;
-            const claimed = progress.dailyClaimedDays.includes(r.day) && (alreadyClaimedToday || r.day < nextDayIndex);
-            return (
-              <div
-                key={r.day}
-                className={`parchment-subcard rounded-2xl py-2.5 px-1.5 flex flex-col items-center ${
-                  isTodayTarget ? 'ring-2 ring-amber-400 bg-amber-50' : ''
-                }`}
-              >
-                <span className="text-[11px] font-black text-[#69370f]">{r.day}. Gün</span>
-                <div className="my-2">
-                  {r.day === 1 ? (
-                    <Star className="w-8 h-8 text-amber-500 fill-amber-400" />
-                  ) : r.day === 2 ? (
-                    <Coins className="w-8 h-8 text-amber-600" />
-                  ) : (
-                    <Gem className="w-8 h-8 text-purple-500 fill-purple-400" />
-                  )}
-                </div>
-                <span className="text-xs font-black text-[#471f04]">{r.label}</span>
-                {claimed && <Check className="w-4 h-4 text-emerald-600 mt-1 stroke-[3]" />}
-              </div>
-            );
-          })}
+        <div className="wood-ribbon inline-block px-5 py-1 rounded-full font-display text-base font-bold text-[#fff3d1] -mt-9 mb-2">
+          {tab === 'login' ? 'Günlük Giriş' : 'Bilgi Çarkı'}
         </div>
 
-        {alreadyClaimedToday ? (
-          <div className="green-btn w-full py-2.5 rounded-2xl font-display text-base font-bold flex items-center justify-center gap-1.5">
-            <Check className="w-5 h-5 stroke-[3]" />
-            <span>Toplandı!</span>
-          </div>
-        ) : (
+        {/* Daily Check-In vs Interactive Lucky Wheel Switch */}
+        <div className="bg-[#e8cb99] border border-[#c69554] rounded-2xl p-1 grid grid-cols-2 gap-1 mb-3">
           <button
             type="button"
             onClick={() => {
-              const target = DAILY_REWARDS[nextDayIndex - 1];
-              sfx.reward();
-              onClaim(target.day, target.stars, target.coins);
+              sfx.click();
+              setTab('login');
             }}
-            className="gold-btn w-full py-2.5 rounded-2xl font-display text-lg font-bold"
+            className={`py-1 rounded-xl font-extrabold text-[11px] flex items-center justify-center gap-1 relative transition ${
+              tab === 'login' ? 'bg-[#fffaf0] text-[#4a2206] shadow' : 'text-[#6e3d12]'
+            }`}
           >
-            Topla!
+            <span>Günlük Ödül</span>
+            {!alreadyClaimedToday && <span className="w-2 h-2 rounded-full bg-red-600" />}
           </button>
+          <button
+            type="button"
+            onClick={() => {
+              sfx.click();
+              setTab('wheel');
+            }}
+            className={`py-1 rounded-xl font-extrabold text-[11px] flex items-center justify-center gap-1 relative transition ${
+              tab === 'wheel' ? 'bg-[#fffaf0] text-[#4a2206] shadow' : 'text-[#6e3d12]'
+            }`}
+          >
+            <span>Şans Çarkı</span>
+            {freeSpinReady && <span className="w-2 h-2 rounded-full bg-red-600 animate-ping" />}
+          </button>
+        </div>
+
+        {tab === 'login' ? (
+          <>
+            <p className="text-xs font-extrabold text-[#6e3a10] mb-3">
+              Her gün gel, ödüller kazan! (Seri: {progress.dailyStreak} gün)
+            </p>
+
+            <div className="grid grid-cols-3 gap-2 mb-4">
+              {DAILY_REWARDS.map((r) => {
+                const isTodayTarget = !alreadyClaimedToday && r.day === nextDayIndex;
+                const claimed =
+                  progress.dailyClaimedDays.includes(r.day) && (alreadyClaimedToday || r.day < nextDayIndex);
+                return (
+                  <div
+                    key={r.day}
+                    className={`parchment-subcard rounded-2xl py-2.5 px-1.5 flex flex-col items-center ${
+                      isTodayTarget ? 'ring-2 ring-amber-400 bg-amber-50' : ''
+                    }`}
+                  >
+                    <span className="text-[11px] font-black text-[#69370f]">{r.day}. Gün</span>
+                    <div className="my-2">
+                      {r.day === 1 ? (
+                        <Star className="w-8 h-8 text-amber-500 fill-amber-400" />
+                      ) : r.day === 2 ? (
+                        <Coins className="w-8 h-8 text-amber-600" />
+                      ) : (
+                        <Gem className="w-8 h-8 text-purple-500 fill-purple-400" />
+                      )}
+                    </div>
+                    <span className="text-xs font-black text-[#471f04]">{r.label}</span>
+                    {claimed && <Check className="w-4 h-4 text-emerald-600 mt-1 stroke-[3]" />}
+                  </div>
+                );
+              })}
+            </div>
+
+            {alreadyClaimedToday ? (
+              <div className="flex flex-col gap-2">
+                <div className="green-btn w-full py-2.5 rounded-2xl font-display text-base font-bold flex items-center justify-center gap-1.5">
+                  <Check className="w-5 h-5 stroke-[3]" />
+                  <span>Bugün Toplandı!</span>
+                </div>
+                {freeSpinReady && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      sfx.click();
+                      setTab('wheel');
+                    }}
+                    className="gold-btn w-full py-2 rounded-2xl text-xs font-black"
+                  >
+                    Ücretsiz Şans Çarkını Çevir!
+                  </button>
+                )}
+              </div>
+            ) : (
+              <button
+                type="button"
+                onClick={() => {
+                  const target = DAILY_REWARDS[nextDayIndex - 1];
+                  sfx.reward();
+                  confetti({ particleCount: 35, spread: 50, origin: { y: 0.6 } });
+                  onClaim(target.day, target.stars, target.coins);
+                }}
+                className="gold-btn w-full py-2.5 rounded-2xl font-display text-lg font-bold"
+              >
+                Topla!
+              </button>
+            )}
+          </>
+        ) : (
+          <LuckyWheel
+            freeAvailable={freeSpinReady}
+            coins={progress.coins}
+            onAwardPrize={onSpinWheelReward}
+          />
         )}
       </div>
     </div>
@@ -753,6 +910,10 @@ export const QuestsModal: React.FC<{
           <div className="wood-ribbon inline-block px-5 py-1 rounded-full font-display text-base font-bold text-[#fff3d1] -mt-9">
             Günlük Görevler
           </div>
+          <div className="mt-1.5 inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-orange-100 border border-orange-300 text-[10.5px] font-black text-orange-800">
+            <Flame className="w-3.5 h-3.5 text-orange-500 fill-orange-500" />
+            <span>Kazanma Serin: {progress.winStreak || 0} (Her gün yenilenir!)</span>
+          </div>
         </div>
 
         <div className="flex flex-col gap-2.5">
@@ -763,8 +924,9 @@ export const QuestsModal: React.FC<{
               <div key={q.id} className="parchment-subcard rounded-2xl p-3">
                 <div className="flex items-center justify-between gap-2 mb-1.5">
                   <div className="font-extrabold text-sm text-[#471f04]">{q.title}</div>
-                  <div className="text-[11px] font-black text-amber-800">
-                    +{q.rewardCoins} Altın • +{q.rewardStars} ★
+                  <div className="text-[11px] font-black text-amber-800 inline-flex items-center gap-1">
+                    +{q.rewardCoins} Altın • +{q.rewardStars}
+                    <Star className="w-3 h-3 text-amber-500 fill-amber-500" />
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
@@ -806,10 +968,13 @@ export const QuestsModal: React.FC<{
 const BADGE_CATALOG = [
   { id: 'welcome_bear', title: 'Bilgili Ayı', desc: 'Knowza Blast macerasına katıldın!' },
   { id: 'first_win', title: 'Başarı Rozeti', desc: 'İlk seviyeni tamamladın!' },
+  { id: 'streak_3', title: 'Seri Avcısı', desc: 'Üst üste 3 galibiyet serisi yaptın!' },
+  { id: 'streak_5', title: 'Durdurulamaz', desc: 'Üst üste 5 galibiyet serisi yakaladın!' },
   { id: 'block_master', title: 'Blok Ustası', desc: 'Sonsuz Blok Modunda 500+ skor yaptın!' },
   { id: 'pop_legend', title: 'Bilgi Avcısı', desc: 'Toplam 300+ küp patlattın!' },
   { id: 'line_king', title: 'Satır Kralı', desc: '10+ blok satırı temizledin!' },
-  { id: 'academy_hero', title: 'Zirve Öğrenci', desc: 'Seviye 10 kilidini açtın!' }
+  { id: 'academy_hero', title: 'Zirve Öğrenci', desc: 'Seviye 10 kilidini açtın!' },
+  { id: 'castle_king', title: 'Kale Mimarı', desc: 'Bilgi Kalesi’nin 5 bölümünü de inşa ettin!' }
 ];
 
 export const ProfileModal: React.FC<{
@@ -892,12 +1057,19 @@ export const ProfileModal: React.FC<{
           </div>
         </div>
 
-        <div className="grid grid-cols-3 gap-2 my-3 text-center">
+        <div className="grid grid-cols-2 gap-2 my-3 text-center">
           <div className="parchment-subcard rounded-2xl p-2">
             <div className="font-display text-lg font-black text-[#471f04] flex items-center justify-center gap-1">
               <Star className="w-4 h-4 text-amber-500 fill-amber-500" /> {progress.stars}
             </div>
             <div className="text-[10px] font-extrabold text-amber-800">Toplam Yıldız</div>
+          </div>
+          <div className="parchment-subcard rounded-2xl p-2">
+            <div className="font-display text-lg font-black text-orange-600 flex items-center justify-center gap-1">
+              <Flame className="w-4 h-4 text-orange-500 fill-orange-500" /> {progress.winStreak || 0}
+              <span className="text-[11px] font-black text-[#7a4518]">(Rekor {progress.bestWinStreak || 0})</span>
+            </div>
+            <div className="text-[10px] font-extrabold text-amber-800">Kazanma Serisi</div>
           </div>
           <div className="parchment-subcard rounded-2xl p-2">
             <div className="font-display text-lg font-black text-[#471f04]">{progress.dailyStreak}</div>
@@ -1004,12 +1176,19 @@ export const SettingsModal: React.FC<{
             <div className="flex items-center gap-1 font-black text-[#471f04] mb-1">
               <HelpCircle className="w-3.5 h-3.5" /> Nasıl Oynanır?
             </div>
-            • <b>Block Blast Macera:</b> Alttaki 3 blok parçasını 8×8 tahtaya sürükle. Tam satır veya sütun doldurduğunda hedefler toplanır!
-            <br />• <b>Güçlendiriciler:</b> Sıkıştığında Çekiç, Roket, Bomba veya Gökkuşağı ile yer açabilirsin!
+            • <b>Block Blast Macera:</b> 3 parçayı 8×8 tahtaya sürükle. Tam satır/sütun doldurunca hedefler toplanır!
+            <br />• <b>Knowza Ateşi & Özel Parçalar:</b> Seri yapınca <b>Ateş 2×</b> dolar; Roket/Bomba küplü parçalar zincir patlama açar!
+            <br />• <b>Taktik & Güçlendiriciler:</b> Döndür, Yenile ve Çekiç/Bomba güçlerini kullan!
           </div>
         </div>
 
         <div className="flex flex-col gap-2">
+          {isPauseMode && (progress.winStreak || 0) > 0 && (
+            <div className="bg-amber-100 border border-amber-400 text-amber-900 rounded-xl px-2.5 py-1.5 text-[10.5px] font-black flex items-center justify-center gap-1.5">
+              <Flame className="w-3.5 h-3.5 text-orange-500 shrink-0" />
+              <span>Çıkarsan {progress.winStreak} galibiyetlik serin sıfırlanır!</span>
+            </div>
+          )}
           <button type="button" onClick={onClose} className="gold-btn w-full py-2.5 rounded-2xl font-display text-lg font-bold">
             Devam Et
           </button>
@@ -1037,7 +1216,7 @@ const CASTLE_LANDMARKS = [
   { id: 'library', name: 'Büyük Kütüphane', cost: 35, rewardCoins: 220, desc: 'Knowza’nın bilgelik arşivi' },
   { id: 'tower', name: 'Roket Gözlem Kulesi', cost: 50, rewardCoins: 300, desc: 'Göklerden kombo izler' },
   { id: 'garden', name: 'Yıldız Çiçek Bahçesi', cost: 70, rewardCoins: 400, desc: 'Adanın huzur köşesi' },
-  { id: 'throne', name: 'Büyük K-Taht Salonu', cost: 100, rewardCoins: 600, desc: 'Bilgi Dünyası’nın zirvesi!' }
+  { id: 'throne', name: 'Büyük Taht Salonu', cost: 100, rewardCoins: 600, desc: 'Knowza Dünyası’nın zirvesi!' }
 ];
 
 export const CastleModal: React.FC<{
@@ -1045,38 +1224,60 @@ export const CastleModal: React.FC<{
   onBuildStage: (id: string, costStars: number, rewardCoins: number) => void;
   onClose: () => void;
 }> = ({ progress, onBuildStage, onClose }) => {
+  const [selectedStageId, setSelectedStageId] = useState<string | null>(null);
   const builtCount = Object.values(progress.castleStages || {}).filter((v) => v > 0).length;
 
   return (
     <div className="fixed inset-0 z-50 bg-black/65 backdrop-blur-sm flex items-center justify-center p-4">
-      <div className="parchment-card rounded-3xl p-5 max-w-sm w-full relative animate-pop-in max-h-[86vh] overflow-y-auto no-scrollbar">
+      <div className="parchment-card rounded-3xl p-4 sm:p-5 max-w-sm w-full relative animate-pop-in max-h-[88vh] overflow-y-auto no-scrollbar">
         <button
           type="button"
           onClick={onClose}
-          className="absolute top-3 right-3 w-8 h-8 rounded-full bg-rose-500 border-2 border-white text-white flex items-center justify-center shadow"
+          className="absolute top-3 right-3 w-8 h-8 rounded-full bg-rose-500 border-2 border-white text-white flex items-center justify-center shadow z-10"
         >
           <X className="w-4 h-4 stroke-[3]" />
         </button>
 
-        <div className="text-center mb-3">
+        <div className="text-center mb-2.5">
           <div className="wood-ribbon inline-block px-5 py-1 rounded-full font-display text-base font-bold text-[#fff3d1]">
             Bilgi Kalesi ({builtCount}/5)
           </div>
-          <p className="text-[11px] font-bold text-[#6e3a10] mt-1.5">
-            Seviyelerden kazandığın yıldızlarla kaleyi inşa et, altın ödülleri kap!
+          <p className="text-[11px] font-bold text-[#6e3a10] mt-1">
+            Yıldızlarınla yapıları dik, canlı kalede yükselip altın kazan!
           </p>
-          <div className="inline-flex items-center gap-1.5 wood-pill text-white text-xs font-black px-3 py-1 rounded-full mt-2">
+          <div className="inline-flex items-center gap-1.5 wood-pill text-white text-xs font-black px-3 py-1 rounded-full mt-1.5">
             <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
             <span>Mevcut Yıldız: {progress.stars}</span>
           </div>
         </div>
 
-        <div className="flex flex-col gap-2.5">
+        {/* Live Animated Castle Diorama Preview */}
+        <div className="mb-3">
+          <CastleDiorama
+            stages={progress.castleStages || {}}
+            outfit={progress.equippedOutfit}
+            accessory={progress.equippedAccessory}
+            highlightedId={selectedStageId}
+            onSelectLandmark={(id) => {
+              sfx.click();
+              setSelectedStageId((cur) => (cur === id ? null : id));
+            }}
+          />
+        </div>
+
+        <div className="flex flex-col gap-2">
           {CASTLE_LANDMARKS.map((lm) => {
             const built = (progress.castleStages?.[lm.id] || 0) > 0;
             const canAfford = progress.stars >= lm.cost;
+            const isHighlighted = selectedStageId === lm.id;
             return (
-              <div key={lm.id} className="parchment-subcard rounded-2xl p-3 flex items-center justify-between gap-2">
+              <div
+                key={lm.id}
+                onMouseEnter={() => setSelectedStageId(lm.id)}
+                className={`parchment-subcard rounded-2xl p-2.5 flex items-center justify-between gap-2 transition ${
+                  isHighlighted ? 'ring-2 ring-amber-500 bg-amber-50/90' : ''
+                }`}
+              >
                 <div>
                   <div className="font-display text-sm font-black text-[#471f04]">{lm.name}</div>
                   <div className="text-[10px] font-bold text-[#7c4819]">{lm.desc}</div>
@@ -1094,7 +1295,8 @@ export const CastleModal: React.FC<{
                     disabled={!canAfford}
                     onClick={() => {
                       sfx.win();
-                      confetti({ particleCount: 40, spread: 55, origin: { y: 0.6 } });
+                      confetti({ particleCount: 45, spread: 60, origin: { y: 0.55 } });
+                      setSelectedStageId(lm.id);
                       onBuildStage(lm.id, lm.cost, lm.rewardCoins);
                     }}
                     className={`gold-btn px-3 py-1.5 rounded-xl text-xs font-black flex items-center gap-1 shrink-0 ${

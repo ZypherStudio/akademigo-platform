@@ -50,6 +50,7 @@ export const WardrobeModal: React.FC<WardrobeModalProps> = ({
               pose="flag"
               outfit={progress.equippedOutfit}
               accessory={progress.equippedAccessory}
+              mood="happy"
               className="w-full h-full object-contain"
             />
           </div>
@@ -197,7 +198,7 @@ export const WardrobeModal: React.FC<WardrobeModalProps> = ({
                       />
                     </div>
                     <div className="font-display text-xs font-black text-[#471f04]">
-                      {item.iconLabel} {item.name}
+                      {item.name}
                     </div>
                     <div className="text-[9.5px] font-bold text-[#7c4819] leading-tight my-1 min-h-[24px]">
                       {item.desc}

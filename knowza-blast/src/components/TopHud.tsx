@@ -1,12 +1,13 @@
 import React from 'react';
 import { Settings, Plus, Star, Heart, Mail } from 'lucide-react';
-import { PlayerProgress } from '../types/game';
+import { KnowzaMood, PlayerProgress } from '../types/game';
 import { getNextHeartSeconds, xpForNextLevel } from '../utils/storage';
 import { sfx } from '../utils/sound';
 import { KnowzaSprite } from './KnowzaSprite';
 
 interface TopHudProps {
   progress: PlayerProgress;
+  mood?: KnowzaMood;
   onOpenProfile: () => void;
   onOpenShop: (tab?: 'boosters' | 'coins') => void;
   onOpenQuests?: () => void;
@@ -16,6 +17,7 @@ interface TopHudProps {
 
 export const TopHud: React.FC<TopHudProps> = ({
   progress,
+  mood = 'idle',
   onOpenProfile,
   onOpenShop,
   onOpenQuests,
@@ -50,7 +52,8 @@ export const TopHud: React.FC<TopHudProps> = ({
               pose="portrait"
               outfit={progress.equippedOutfit}
               accessory={progress.equippedAccessory}
-              className="w-full h-full object-cover object-top scale-110"
+              mood={mood}
+              className="w-full h-full"
             />
           </div>
         </div>

@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Flame, Pause, Sparkles } from 'lucide-react';
+import { Flame, Pause, RotateCw, Shuffle } from 'lucide-react';
 import {
   BLOCK_GRID_SIZE,
   applyInventoryBooster,
@@ -8,25 +8,41 @@ import {
   generateBlockTray,
   hasAnyValidTrayMove,
   placeShapeAndClearLines,
-  previewLineClears
+  previewLineClears,
+  rotatePolyomino,
+  strikeFeverLightning
 } from '../utils/puzzleEngine';
 import {
   CubeColor,
   FloatingCallout,
   Grid,
   InventoryBooster,
+  KnowzaMood,
   LevelConfig,
   PlayerProgress,
   PolyominoShape,
   TargetKey
 } from '../types/game';
-import { assetUrl } from '../utils/assets';
-import { TOUCH_LIFT_PX, computeBlockDropCell, getBoardCellPx, getShapeBounds } from '../utils/blockDrag';
+import { getBiomeForLevel } from '../data/biomes';
+import { computeBlockDropCell, getShapeBounds } from '../utils/blockDrag';
+import { buildBlastVfx } from '../utils/boardVfx';
 import { triggerHaptic } from '../utils/haptics';
 import { sfx } from '../utils/sound';
+import { BiomeWorldBackground } from './BiomeWorldArt';
 import { BlockTrayPiece } from './BlockTrayPiece';
+import {
+  BeamVfx,
+  BoardVfxLayer,
+  BoosterActionLayer,
+  BoosterActionVfx,
+  GhostVfx,
+  RingVfx,
+  ShardVfx
+} from './BoardVfxLayer';
 import { BoosterIcon } from './BoosterIcon';
 import { CUBE_PALETTE, CubeEmblem, CubeTile } from './CubeTile';
+import { FeverMeterControl, INSTANT_FEVER_COIN_COST } from './FeverMeterControl';
+import { FloatingDraggedPiece } from './FloatingDraggedPiece';
 import { KnowzaSprite } from './KnowzaSprite';
 import { TargetChip } from './TargetChip';
 
@@ -41,9 +57,20 @@ interface HybridGameScreenProps {
   onUseInventoryBooster: (type: InventoryBooster) => void;
   onOpenBoosterDetail: (type: InventoryBooster) => void;
   onProgressStats: (delta: { cubesBlasted?: number; linesCleared?: number; boostersUsed?: number }) => void;
+  onSpendCoins?: (amount: number) => boolean;
+  onMoodChange?: (mood: KnowzaMood) => void;
   onWin: (starsEarned: number, remainingMoves: number) => void;
   onFail: () => void;
 }
+
+const START_BOOSTER_SLOTS: [number, number][] = [
+  [3, 3],
+  [4, 4],
+  [3, 4],
+  [4, 3],
+  [2, 3],
+  [5, 4]
+];
 
 interface DragState {
   shapeIndex: number;
@@ -67,17 +94,20 @@ export const HybridGameScreen: React.FC<HybridGameScreenProps> = ({
   onUseInventoryBooster,
   onOpenBoosterDetail,
   onProgressStats,
+  onSpendCoins,
+  onMoodChange,
   onWin,
   onFail
 }) => {
+  const biome = getBiomeForLevel(level.id);
+
   const buildBoard = () => {
     const b = createBlockAdventureBoard(level);
     startBoosters.forEach((sb, idx) => {
-      const rr = 3 + idx;
-      const cc = idx === 0 ? 3 : 4;
+      const [rr, cc] = START_BOOSTER_SLOTS[idx % START_BOOSTER_SLOTS.length];
       b[rr][cc] = {
         uid: `sb_${Date.now()}_${idx}`,
-        color: level.colors[0],
+        color: level.colors[idx % level.colors.length],
         special: sb === 'bomb' ? 'bomb' : 'rocket_h',
         obstacle: null
       };
@@ -86,20 +116,27 @@ export const HybridGameScreen: React.FC<HybridGameScreenProps> = ({
   };
 
   const [grid, setGrid] = useState<Grid>(() => buildBoard());
-  const [tray, setTray] = useState<(PolyominoShape | null)[]>(() => generateBlockTray(level.colors));
+  const [tray, setTray] = useState<(PolyominoShape | null)[]>(() =>
+    generateBlockTray(level.colors, undefined, { allowAdvanced: level.id >= 3 })
+  );
   const [score, setScore] = useState(0);
   const [comboStreak, setComboStreak] = useState(0);
   const [linesClearedTotal, setLinesClearedTotal] = useState(0);
+  const [feverPct, setFeverPct] = useState(0);
+  const [feverTurns, setFeverTurns] = useState(0);
+  const [rotateCharges, setRotateCharges] = useState(3);
+  const [rerollCharges, setRerollCharges] = useState(1);
   const [remainingTargets, setRemainingTargets] = useState<Partial<Record<TargetKey, number>>>(() => ({
     ...level.targets
   }));
   const [armedBooster, setArmedBooster] = useState<InventoryBooster | null>(null);
   const [drag, setDrag] = useState<DragState | null>(null);
   const [callouts, setCallouts] = useState<FloatingCallout[]>([]);
-  const [ghosts, setGhosts] = useState<{ id: string; r: number; c: number; color: CubeColor | null }[]>([]);
-  const [shards, setShards] = useState<
-    { id: string; r: number; c: number; color: string; dx: number; dy: number; rot: number; size: number }[]
-  >([]);
+  const [ghosts, setGhosts] = useState<GhostVfx[]>([]);
+  const [shards, setShards] = useState<ShardVfx[]>([]);
+  const [rocketBeams, setRocketBeams] = useState<BeamVfx[]>([]);
+  const [bombRings, setBombRings] = useState<RingVfx[]>([]);
+  const [boosterActions, setBoosterActions] = useState<BoosterActionVfx[]>([]);
   const [clearedFlash, setClearedFlash] = useState<{ rows: number[]; cols: number[] }>({ rows: [], cols: [] });
   const [flyingTargets, setFlyingTargets] = useState<
     { id: string; x: number; y: number; color: CubeColor; tx: number; ty: number }[]
@@ -107,6 +144,8 @@ export const HybridGameScreen: React.FC<HybridGameScreenProps> = ({
   const [targetPulse, setTargetPulse] = useState(false);
   const [boardShaking, setBoardShaking] = useState(false);
   const [mascotBounce, setMascotBounce] = useState(false);
+  const [mascotReaction, setMascotReaction] = useState<'none' | 'happy' | 'combo'>('none');
+  const [mascotSpeech, setMascotSpeech] = useState<string | null>(null);
   const [recentlyPlaced, setRecentlyPlaced] = useState<Set<string>>(new Set());
   const [outcomeTriggered, setOutcomeTriggered] = useState<'none' | 'won' | 'lost'>('none');
 
@@ -117,10 +156,14 @@ export const HybridGameScreen: React.FC<HybridGameScreenProps> = ({
   useEffect(() => {
     const init = buildBoard();
     setGrid(init);
-    setTray(generateBlockTray(level.colors, init));
+    setTray(generateBlockTray(level.colors, init, { allowAdvanced: level.id >= 3 }));
     setScore(0);
     setComboStreak(0);
     setLinesClearedTotal(0);
+    setFeverPct(0);
+    setFeverTurns(0);
+    setRotateCharges(3);
+    setRerollCharges(1);
     setRemainingTargets({ ...level.targets });
     setArmedBooster(null);
     setRecentlyPlaced(new Set());
@@ -165,80 +208,153 @@ export const HybridGameScreen: React.FC<HybridGameScreenProps> = ({
     return Math.max(0, Math.min(100, Math.round(((total - left) / total) * 100)));
   }, [level.targets, remainingTargets]);
 
-  // Win & Deadlock Fail check
+  // Win & Deadlock Fail check (also allows rotate/reroll tactical rescue before triggering Fail!)
+  const hasAnyDirectMove = useMemo(() => hasAnyValidTrayMove(grid, tray), [grid, tray]);
+  const canRescueByTactics = useMemo(() => {
+    if (hasAnyDirectMove) return true;
+    if (rerollCharges > 0) return true;
+    if (rotateCharges > 0) {
+      const rotatedTray = tray.map((s) => (s ? rotatePolyomino(s) : null));
+      if (hasAnyValidTrayMove(grid, rotatedTray)) return true;
+      const rotated2 = rotatedTray.map((s) => (s ? rotatePolyomino(s) : null));
+      if (hasAnyValidTrayMove(grid, rotated2)) return true;
+      const rotated3 = rotated2.map((s) => (s ? rotatePolyomino(s) : null));
+      if (hasAnyValidTrayMove(grid, rotated3)) return true;
+    }
+    return false;
+  }, [hasAnyDirectMove, rerollCharges, rotateCharges, grid, tray]);
+
+  const boosterBusy = boosterActions.length > 0;
+  const winMetaRef = useRef<{ stars: number; bonusMoves: number }>({ stars: 3, bonusMoves: 4 });
+  const onWinRef = useRef(onWin);
+  const onFailRef = useRef(onFail);
+  onWinRef.current = onWin;
+  onFailRef.current = onFail;
+
   useEffect(() => {
-    if (outcomeTriggered !== 'none') return;
+    if (outcomeTriggered !== 'none' || boosterBusy) return;
     const allDone = Object.values(remainingTargets).every((v) => (v ?? 0) <= 0);
     if (allDone) {
-      setOutcomeTriggered('won');
       const stars = comboStreak >= 2 || boardOccupancy < 0.45 ? 3 : 2;
-      const bonusMovesEquivalent = Math.max(2, Math.round((1 - boardOccupancy) * 8));
-      const t = setTimeout(() => onWin(stars, bonusMovesEquivalent), 480);
-      return () => clearTimeout(t);
+      const bonusMoves = Math.max(2, Math.round((1 - boardOccupancy) * 8));
+      winMetaRef.current = { stars, bonusMoves };
+      setOutcomeTriggered('won');
+      return;
     }
-    if (!hasAnyValidTrayMove(grid, tray)) {
+    if (!canRescueByTactics) {
       setOutcomeTriggered('lost');
-      const t = setTimeout(() => onFail(), 520);
-      return () => clearTimeout(t);
     }
-  }, [remainingTargets, grid, tray, outcomeTriggered, comboStreak, boardOccupancy, onWin, onFail]);
+  }, [remainingTargets, canRescueByTactics, outcomeTriggered, boosterBusy, comboStreak, boardOccupancy]);
+
+  useEffect(() => {
+    if (outcomeTriggered === 'won') {
+      const t = window.setTimeout(() => {
+        onWinRef.current(winMetaRef.current.stars, winMetaRef.current.bonusMoves);
+      }, 480);
+      return () => window.clearTimeout(t);
+    }
+    if (outcomeTriggered === 'lost') {
+      const t = window.setTimeout(() => {
+        onFailRef.current();
+      }, 520);
+      return () => window.clearTimeout(t);
+    }
+  }, [outcomeTriggered]);
+
+  const knowzaMood: KnowzaMood =
+    outcomeTriggered === 'won'
+      ? 'celebrate'
+      : outcomeTriggered === 'lost'
+      ? 'sad'
+      : feverTurns > 0
+      ? 'fever'
+      : mascotReaction === 'combo'
+      ? 'combo'
+      : mascotReaction === 'happy'
+      ? 'happy'
+      : boardOccupancy >= 0.75
+      ? 'worried'
+      : drag
+      ? 'drag'
+      : 'idle';
+
+  useEffect(() => {
+    onMoodChange?.(knowzaMood);
+  }, [knowzaMood, onMoodChange]);
+
+  const triggerMascotReaction = (reaction: 'happy' | 'combo', speech?: string) => {
+    setMascotReaction(reaction);
+    if (speech) setMascotSpeech(speech);
+    setMascotBounce(true);
+    setTimeout(() => setMascotBounce(false), 550);
+    setTimeout(() => {
+      setMascotReaction('none');
+      setMascotSpeech(null);
+    }, 1300);
+  };
+
+  const handlePetKnowza = () => {
+    sfx.pop(4, 2);
+    const cheerLines =
+      boardOccupancy >= 0.75
+        ? ['Dikkat, az yer kaldı!', 'Çekiç kullanabilirsin!']
+        : progress.equippedOutfit === 'karate'
+        ? ['Dojo odağı!', 'Harika hamle!']
+        : ['Haydi şampiyon!', 'Satırları doldur!'];
+    triggerMascotReaction('happy', cheerLines[Math.floor(Math.random() * cheerLines.length)]);
+  };
 
   const triggerShake = () => {
     setBoardShaking(true);
     setTimeout(() => setBoardShaking(false), 300);
   };
 
-  const pushCallout = (text: string, subtext?: string, colorClass = 'text-[#ffe659]') => {
+  const pushCallout = (
+    text: string,
+    subtext?: string,
+    colorClass = 'text-[#ffe659]',
+    variant: FloatingCallout['variant'] = 'clear'
+  ) => {
     const id = `co_${Date.now()}_${Math.random()}`;
-    setCallouts((prev) => [...prev.slice(-2), { id, text, subtext, colorClass }]);
-    setMascotBounce(true);
-    setTimeout(() => setMascotBounce(false), 550);
+    setCallouts((prev) => [...prev.slice(-2), { id, text, subtext, colorClass, variant }]);
     setTimeout(() => setCallouts((prev) => prev.filter((c) => c.id !== id)), 1050);
   };
 
-  const spawnVfx = (coords: [number, number][], sourceGrid: Grid) => {
-    const stamp = `${Date.now()}_${Math.random()}`;
-    const ghostList = coords.slice(0, 48).map(([r, c], idx) => ({
-      id: `g_${stamp}_${idx}`,
-      r,
-      c,
-      color: (sourceGrid[r]?.[c]?.color ?? null) as CubeColor | null
-    }));
-
+  const spawnVfx = (
+    coords: [number, number][],
+    sourceGrid: Grid,
+    beamsInput: { r: number; c: number; dir: 'h' | 'v' | 'both' }[] = [],
+    ringsInput: [number, number][] = []
+  ) => {
     const boardPx = boardRef.current?.getBoundingClientRect().width ?? 340;
-    const cellPx = boardPx / BLOCK_GRID_SIZE;
-    const shardList: typeof shards = [];
-    coords.slice(0, 32).forEach(([r, c], idx) => {
-      const col = sourceGrid[r]?.[c]?.color;
-      const hex = col ? CUBE_PALETTE[col].particle : '#fde68a';
-      for (let k = 0; k < 3; k++) {
-        const ang = Math.random() * Math.PI * 2;
-        const dist = cellPx * (0.65 + Math.random() * 1.1);
-        shardList.push({
-          id: `s_${stamp}_${idx}_${k}`,
-          r,
-          c,
-          color: hex,
-          dx: Math.cos(ang) * dist,
-          dy: Math.sin(ang) * dist - cellPx * 0.2,
-          rot: Math.random() * 360,
-          size: 5 + Math.random() * 5
-        });
-      }
-    });
+    const { ghosts: ghostList, shards: shardList, beams: beamList, rings: ringList } = buildBlastVfx(
+      coords,
+      sourceGrid,
+      boardPx,
+      beamsInput,
+      ringsInput
+    );
 
     setGhosts((prev) => [...prev.slice(-55), ...ghostList]);
     setShards((prev) => [...prev.slice(-110), ...shardList]);
+    if (beamList.length > 0) setRocketBeams((prev) => [...prev, ...beamList]);
+    if (ringList.length > 0) setBombRings((prev) => [...prev, ...ringList]);
+
     setTimeout(() => {
       const gids = new Set(ghostList.map((g) => g.id));
+      const bids = new Set(beamList.map((b) => b.id));
       setGhosts((prev) => prev.filter((g) => !gids.has(g.id)));
-    }, 300);
+      setRocketBeams((prev) => prev.filter((b) => !bids.has(b.id)));
+    }, 340);
     setTimeout(() => {
       const sids = new Set(shardList.map((x) => x.id));
+      const rids = new Set(ringList.map((r) => r.id));
       setShards((prev) => prev.filter((x) => !sids.has(x.id)));
+      setBombRings((prev) => prev.filter((r) => !rids.has(r.id)));
     }, 560);
 
     // Target Magnet Fly-to-HUD particles
+    const stamp = `${Date.now()}_${Math.random()}`;
     const bRect = boardRef.current?.getBoundingClientRect();
     const tRect = targetsBoxRef.current?.getBoundingClientRect();
     if (bRect && tRect) {
@@ -271,53 +387,127 @@ export const HybridGameScreen: React.FC<HybridGameScreenProps> = ({
     }
   };
 
-  const applyCollectedTargets = (collected: Partial<Record<TargetKey, number>>) => {
+  const applyCollectedTargets = (collected: Partial<Record<TargetKey, number>>, multiplier = 1) => {
     setRemainingTargets((prev) => {
       const next = { ...prev };
       (Object.keys(collected) as TargetKey[]).forEach((k) => {
         if (next[k] !== undefined) {
-          next[k] = Math.max(0, (next[k] || 0) - (collected[k] || 0));
+          next[k] = Math.max(0, (next[k] || 0) - (collected[k] || 0) * multiplier);
         }
       });
       return next;
     });
   };
 
-  // Armed inventory booster tap on any cell of the 8x8 board
+  // Armed inventory booster tap on any cell of the 8x8 board -> plays physical booster model animation!
   const handleCellClick = (r: number, c: number) => {
-    if (outcomeTriggered !== 'none' || !armedBooster) return;
-    const res = applyInventoryBooster(grid, armedBooster, r, c);
+    if (outcomeTriggered !== 'none' || !armedBooster || boosterBusy) return;
+    const usedBooster = armedBooster;
+    const res = applyInventoryBooster(grid, usedBooster, r, c, undefined, true);
     if (!res) {
       sfx.click();
       return;
     }
-    spawnVfx(res.blastedCoords, grid);
-    triggerHaptic(progress.hapticsEnabled, 22);
-    if (res.soundType === 'disco') {
-      sfx.disco();
-      triggerShake();
-    } else if (res.soundType === 'bomb') {
-      sfx.bomb();
-      triggerShake();
-    } else if (res.soundType === 'rocket') {
-      sfx.rocket();
-      triggerShake();
-    } else {
-      sfx.pop(4, 2);
-    }
-    // Keep Block Blast static coordinates (applyInventoryBooster uses gravity by default; restore exact positions without shifting remaining rows!)
-    const staticCleaned = grid.map((row, rr) =>
-      row.map((cell, cc) => {
-        const hit = res.blastedCoords.some(([br, bc]) => br === rr && bc === cc);
-        return hit ? null : cell;
+
+    const actionId = `ba_${Date.now()}_${Math.random()}`;
+    const delayMs =
+      usedBooster === 'hammer'
+        ? 185
+        : usedBooster === 'bomb'
+        ? 210
+        : usedBooster === 'disco'
+        ? 220
+        : 120;
+
+    sfx.click();
+    setArmedBooster(null);
+    onUseInventoryBooster(usedBooster);
+    setBoosterActions((prev) => [
+      ...prev,
+      {
+        id: actionId,
+        type: usedBooster,
+        r,
+        c,
+        targets: usedBooster === 'disco' ? res.blastedCoords : undefined
+      }
+    ]);
+
+    const sourceSnapshot = grid;
+    setTimeout(() => {
+      spawnVfx(res.blastedCoords, sourceSnapshot, res.rocketBeams, res.bombRings);
+      triggerHaptic(progress.hapticsEnabled, 24);
+      if (res.soundType === 'disco') {
+        sfx.disco();
+        triggerShake();
+      } else if (res.soundType === 'bomb') {
+        sfx.bomb();
+        triggerShake();
+      } else if (res.soundType === 'rocket') {
+        sfx.rocket();
+        triggerShake();
+      } else {
+        sfx.pop(5, 2);
+        triggerShake();
+      }
+      setGrid(res.grid);
+      applyCollectedTargets(res.collected);
+      onProgressStats({ cubesBlasted: res.cubesPopped, boostersUsed: 1 });
+      if (res.comboLabel) pushCallout(res.comboLabel, 'Güçlendirici!', 'text-amber-300');
+      triggerMascotReaction(
+        usedBooster === 'disco' || usedBooster === 'bomb' ? 'combo' : 'happy',
+        usedBooster === 'hammer'
+          ? 'Tam vuruş!'
+          : usedBooster === 'rocket'
+          ? 'Çapraz roket!'
+          : usedBooster === 'bomb'
+          ? 'Büyük patlama!'
+          : 'Renk yağmuru!'
+      );
+    }, delayMs);
+
+    setTimeout(() => {
+      setBoosterActions((prev) => prev.filter((a) => a.id !== actionId));
+    }, delayMs + 340);
+  };
+
+  const handleRotateTray = () => {
+    if (outcomeTriggered !== 'none' || rotateCharges <= 0 || boosterBusy) return;
+    sfx.rotate();
+    triggerHaptic(progress.hapticsEnabled, 10);
+    setRotateCharges((c) => c - 1);
+    setTray((prev) => prev.map((s) => (s ? rotatePolyomino(s) : null)));
+  };
+
+  const handleRerollTray = () => {
+    if (outcomeTriggered !== 'none' || rerollCharges <= 0 || boosterBusy) return;
+    sfx.reward();
+    triggerHaptic(progress.hapticsEnabled, 14);
+    setRerollCharges((c) => c - 1);
+    setTray(
+      generateBlockTray(level.colors, grid, {
+        allowAdvanced: level.id >= 3,
+        forceSpecial: feverTurns > 0
       })
     );
-    setGrid(staticCleaned);
-    applyCollectedTargets(res.collected);
-    onUseInventoryBooster(armedBooster);
-    onProgressStats({ cubesBlasted: res.cubesPopped, boostersUsed: 1 });
-    if (res.comboLabel) pushCallout(res.comboLabel, 'Güçlendirici!', 'text-amber-300');
-    setArmedBooster(null);
+  };
+
+  const handleInstantFever = () => {
+    if (outcomeTriggered !== 'none' || feverTurns > 0 || boosterBusy) return;
+    if (onSpendCoins && !onSpendCoins(INSTANT_FEVER_COIN_COST)) return;
+    setFeverPct(0);
+    setFeverTurns(3);
+    setRerollCharges((c) => Math.min(3, c + 1));
+    triggerShake();
+    triggerHaptic(progress.hapticsEnabled, [18, 28, 36]);
+    const lightning = strikeFeverLightning(grid, 3);
+    if (lightning.blastedCoords.length > 0) {
+      spawnVfx(lightning.blastedCoords, grid);
+      applyCollectedTargets(lightning.collected, 2);
+      setGrid(lightning.grid);
+    }
+    pushCallout('KNOWZA ATEŞİ 2×!', '3 Hamle 2× Hedef + Yıldırım!', 'text-orange-300', 'fever');
+    triggerMascotReaction('combo', 'Ateş modu!');
   };
 
   // =========================================================================
@@ -326,94 +516,184 @@ export const HybridGameScreen: React.FC<HybridGameScreenProps> = ({
   const computeDropCell = (clientX: number, clientY: number, pointerType: string, shape: PolyominoShape) =>
     computeBlockDropCell(boardRef.current, grid, clientX, clientY, pointerType, shape);
 
-  useEffect(() => {
+  const dragMoveRef = useRef<(e: PointerEvent) => void>(() => {});
+  const dragUpRef = useRef<() => void>(() => {});
+
+  dragMoveRef.current = (e: PointerEvent) => {
     if (!drag) return;
+    const pos = computeDropCell(e.clientX, e.clientY, e.pointerType, drag.shape);
+    setDrag((prev) => (prev ? { ...prev, pointerX: e.clientX, pointerY: e.clientY, ...pos } : null));
+  };
 
-    const handleMove = (e: PointerEvent) => {
-      const pos = computeDropCell(e.clientX, e.clientY, e.pointerType, drag.shape);
-      setDrag((prev) => (prev ? { ...prev, pointerX: e.clientX, pointerY: e.clientY, ...pos } : null));
-    };
+  dragUpRef.current = () => {
+    if (!drag) return;
+    if (drag.canDrop && drag.hoverR !== null && drag.hoverC !== null) {
+      const res = placeShapeAndClearLines(grid, drag.shape, drag.hoverR, drag.hoverC, false);
+      if (res) {
+        const isFeverActive = feverTurns > 0 || Boolean(drag.shape.isGoldBonus);
+        const scoreMult = isFeverActive ? 2 : 1;
+        const targetMult = isFeverActive ? 2 : 1;
+        const basePts = drag.shape.cells.length * 10 * scoreMult;
 
-    const handleUp = () => {
-      if (drag.canDrop && drag.hoverR !== null && drag.hoverC !== null) {
-        const res = placeShapeAndClearLines(grid, drag.shape, drag.hoverR, drag.hoverC, false);
-        if (res) {
-          const basePts = drag.shape.cells.length * 10;
-          if (res.linesCleared > 0) {
-            const nextStreak = comboStreak + 1;
-            const bonus = res.linesCleared * 100 * nextStreak;
-            setComboStreak(nextStreak);
-            setLinesClearedTotal((l) => l + res.linesCleared);
-            setScore((s) => s + basePts + bonus);
-            sfx.lineClear(res.linesCleared);
-            triggerHaptic(progress.hapticsEnabled, [18, 24, 30]);
-            triggerShake();
-            setClearedFlash({ rows: res.clearedRows, cols: res.clearedCols });
-            setTimeout(() => setClearedFlash({ rows: [], cols: [] }), 340);
+        let finalGrid = res.grid;
+        let nextFeverActiveForTray = isFeverActive;
 
-            // Visual source grid before clear for shards + flying target cubes
-            const preClearGrid = grid.map((r) => [...r]);
-            drag.shape.cells.forEach(([dr, dc]) => {
-              preClearGrid[drag.hoverR! + dr][drag.hoverC! + dc] = {
-                uid: 'tmp',
-                color: drag.shape.color
-              };
-            });
-            spawnVfx(res.blastedCoords, preClearGrid);
-            applyCollectedTargets(res.collected);
-            onProgressStats({
-              cubesBlasted: res.blastedCoords.length,
-              linesCleared: res.linesCleared
-            });
+        if (res.linesCleared > 0) {
+          const nextStreak = comboStreak + 1;
+          const isCross = res.clearedRows.length > 0 && res.clearedCols.length > 0;
+          const crossMult = isCross ? 2 : 1;
+          const specialBonus = res.specialsTriggered * 150;
+          const bonus = (res.linesCleared * 100 * nextStreak * crossMult + specialBonus) * scoreMult;
+          setComboStreak(nextStreak);
+          setLinesClearedTotal((l) => l + res.linesCleared);
+          setScore((s) => s + basePts + bonus);
 
-            pushCallout(
-              res.linesCleared > 1 ? `${res.linesCleared}x BLOK PATLAMASI!` : 'SATIR TEMİZLENDİ!',
-              nextStreak > 1 ? `🔥 ${nextStreak}x Seri! +${bonus}` : `+${bonus}`,
-              'text-[#ffe855]'
-            );
-          } else {
-            setComboStreak(0);
-            setScore((s) => s + basePts);
-            sfx.place();
-            triggerHaptic(progress.hapticsEnabled, 14);
+          if (res.linesCleared >= 2) {
+            setRotateCharges((c) => Math.min(5, c + 1));
           }
 
-          const clearedR = new Set(res.clearedRows);
-          const clearedC = new Set(res.clearedCols);
-          const landed = new Set(
-            drag.shape.cells
-              .map(([dr, dc]) => [drag.hoverR! + dr, drag.hoverC! + dc] as [number, number])
-              .filter(([rr, cc]) => !clearedR.has(rr) && !clearedC.has(cc))
-              .map(([rr, cc]) => `${rr},${cc}`)
-          );
-          setRecentlyPlaced(landed);
-          setTimeout(() => setRecentlyPlaced(new Set()), 240);
+          if (res.specialsTriggered > 0) {
+            sfx.disco();
+          } else {
+            sfx.lineClear(res.linesCleared);
+          }
+          triggerHaptic(progress.hapticsEnabled, [18, 24, 30]);
+          triggerShake();
+          setClearedFlash({ rows: res.clearedRows, cols: res.clearedCols });
+          setTimeout(() => setClearedFlash({ rows: [], cols: [] }), 340);
 
-          setGrid(res.grid);
-          setTray((prevTray) => {
-            const nextTray = prevTray.map((item, idx) => (idx === drag.shapeIndex ? null : item));
-            if (nextTray.every((item) => item === null)) {
-              return generateBlockTray(level.colors, res.grid);
-            }
-            return nextTray;
+          // Visual source grid before clear for shards + flying target cubes
+          const preClearGrid = grid.map((r) => [...r]);
+          drag.shape.cells.forEach(([dr, dc]) => {
+            preClearGrid[drag.hoverR! + dr][drag.hoverC! + dc] = {
+              uid: 'tmp',
+              color: drag.shape.color
+            };
           });
-        }
-      }
-      setDrag(null);
-    };
+          spawnVfx(res.blastedCoords, preClearGrid, res.rocketBeams, res.bombRings);
+          applyCollectedTargets(res.collected, targetMult);
+          onProgressStats({
+            cubesBlasted: res.blastedCoords.length,
+            linesCleared: res.linesCleared
+          });
 
-    window.addEventListener('pointermove', handleMove);
-    window.addEventListener('pointerup', handleUp);
-    window.addEventListener('pointercancel', handleUp);
+          // Charge Knowza Fever or tick active Fever
+          let triggeredFeverNow = false;
+          if (feverTurns > 0) {
+            const left = Math.max(0, feverTurns - 1);
+            setFeverTurns(left);
+            nextFeverActiveForTray = left > 0;
+          } else {
+            const gain = res.linesCleared * 28 + (isCross ? 25 : 0) + (nextStreak >= 2 ? 15 : 0);
+            const nextPct = feverPct + gain;
+            if (nextPct >= 100) {
+              triggeredFeverNow = true;
+              nextFeverActiveForTray = true;
+              setFeverPct(0);
+              setFeverTurns(3);
+              setRerollCharges((c) => Math.min(3, c + 1));
+              sfx.fever();
+
+              const lightning = strikeFeverLightning(finalGrid, 3);
+              if (lightning.blastedCoords.length > 0) {
+                spawnVfx(lightning.blastedCoords, finalGrid);
+                applyCollectedTargets(lightning.collected, 2);
+                finalGrid = lightning.grid;
+              }
+            } else {
+              setFeverPct(nextPct);
+            }
+          }
+
+          const title = triggeredFeverNow
+            ? 'KNOWZA ATEŞİ 2×!'
+            : isCross
+            ? 'ÇAPRAZ PATLAMA!'
+            : res.specialsTriggered > 0
+            ? 'ZİNCİR PATLAMA!'
+            : res.linesCleared > 1
+            ? `${res.linesCleared}x BLOK PATLAMASI!`
+            : 'SATIR TEMİZLENDİ!';
+          const sub =
+            triggeredFeverNow
+              ? '3 Hamle 2× Hedef + Yıldırım!'
+              : nextStreak > 1
+              ? `${nextStreak}x Seri! +${bonus}`
+              : isFeverActive
+              ? `2× Ateş! +${bonus}`
+              : `+${bonus}`;
+          const variant: FloatingCallout['variant'] = triggeredFeverNow
+            ? 'fever'
+            : isCross
+            ? 'cross'
+            : res.specialsTriggered > 0
+            ? 'chain'
+            : res.linesCleared > 1 || nextStreak > 1
+            ? 'combo'
+            : 'clear';
+          pushCallout(title, sub, triggeredFeverNow ? 'text-orange-300' : 'text-[#ffe855]', variant);
+          triggerMascotReaction(
+            res.linesCleared >= 2 || nextStreak >= 2 || triggeredFeverNow ? 'combo' : 'happy',
+            triggeredFeverNow ? 'Ateş modu!' : isCross ? 'Muhteşem!' : undefined
+          );
+        } else {
+          setComboStreak(0);
+          setScore((s) => s + basePts);
+          if (feverTurns > 0) {
+            const left = Math.max(0, feverTurns - 1);
+            setFeverTurns(left);
+            nextFeverActiveForTray = left > 0;
+          } else {
+            setFeverPct((p) => Math.min(95, p + 6));
+          }
+          sfx.place();
+          triggerHaptic(progress.hapticsEnabled, 14);
+        }
+
+        const clearedR = new Set(res.clearedRows);
+        const clearedC = new Set(res.clearedCols);
+        const landed = new Set(
+          drag.shape.cells
+            .map(([dr, dc]) => [drag.hoverR! + dr, drag.hoverC! + dc] as [number, number])
+            .filter(([rr, cc]) => !clearedR.has(rr) && !clearedC.has(cc))
+            .map(([rr, cc]) => `${rr},${cc}`)
+        );
+        setRecentlyPlaced(landed);
+        setTimeout(() => setRecentlyPlaced(new Set()), 240);
+
+        setGrid(finalGrid);
+        setTray((prevTray) => {
+          const nextTray = prevTray.map((item, idx) => (idx === drag.shapeIndex ? null : item));
+          if (nextTray.every((item) => item === null)) {
+            return generateBlockTray(level.colors, finalGrid, {
+              allowAdvanced: level.id >= 3,
+              forceSpecial: nextFeverActiveForTray
+            });
+          }
+          return nextTray;
+        });
+      }
+    }
+    setDrag(null);
+  };
+
+  const dragActive = drag !== null;
+  useEffect(() => {
+    if (!dragActive) return;
+    const onMove = (e: PointerEvent) => dragMoveRef.current(e);
+    const onUp = () => dragUpRef.current();
+    window.addEventListener('pointermove', onMove, { passive: true });
+    window.addEventListener('pointerup', onUp);
+    window.addEventListener('pointercancel', onUp);
     return () => {
-      window.removeEventListener('pointermove', handleMove);
-      window.removeEventListener('pointerup', handleUp);
-      window.removeEventListener('pointercancel', handleUp);
+      window.removeEventListener('pointermove', onMove);
+      window.removeEventListener('pointerup', onUp);
+      window.removeEventListener('pointercancel', onUp);
     };
-  }, [drag, grid, comboStreak, level.colors]);
+  }, [dragActive]);
 
   const startDrag = (e: React.PointerEvent, index: number, shape: PolyominoShape) => {
-    if (outcomeTriggered !== 'none') return;
+    if (outcomeTriggered !== 'none' || boosterBusy) return;
     e.preventDefault();
     setArmedBooster(null);
     sfx.click();
@@ -430,11 +710,28 @@ export const HybridGameScreen: React.FC<HybridGameScreenProps> = ({
   };
 
   const dragPreview = useMemo(() => {
-    if (!drag || !drag.canDrop || drag.hoverR === null || drag.hoverC === null) {
-      return { cells: new Set<string>(), lines: { rows: [] as number[], cols: [] as number[] } };
+    if (!drag || drag.hoverR === null || drag.hoverC === null) {
+      return {
+        cells: new Set<string>(),
+        invalidCells: new Set<string>(),
+        lines: { rows: [] as number[], cols: [] as number[] }
+      };
+    }
+    const coords = drag.shape.cells
+      .map(([dr, dc]) => [drag.hoverR! + dr, drag.hoverC! + dc] as [number, number])
+      .filter(([rr, cc]) => rr >= 0 && rr < BLOCK_GRID_SIZE && cc >= 0 && cc < BLOCK_GRID_SIZE)
+      .map(([rr, cc]) => `${rr},${cc}`);
+
+    if (!drag.canDrop) {
+      return {
+        cells: new Set<string>(),
+        invalidCells: new Set(coords),
+        lines: { rows: [] as number[], cols: [] as number[] }
+      };
     }
     return {
-      cells: new Set(drag.shape.cells.map(([dr, dc]) => `${drag.hoverR! + dr},${drag.hoverC! + dc}`)),
+      cells: new Set(coords),
+      invalidCells: new Set<string>(),
       lines: previewLineClears(grid, drag.shape, drag.hoverR, drag.hoverC)
     };
   }, [drag, grid]);
@@ -442,65 +739,72 @@ export const HybridGameScreen: React.FC<HybridGameScreenProps> = ({
   const targetEntries = Object.entries(level.targets) as [TargetKey, number][];
 
   return (
-    <div className="relative flex-1 w-full h-full overflow-hidden flex flex-col items-center justify-center pt-14 pb-3 px-3">
-      {/* Scenic Gameplay Backdrop */}
-      <img
-        src={assetUrl('assets/bg_gameplay.jpg')}
-        alt="Oyun Arkaplanı"
-        className="absolute inset-0 w-full h-full object-cover pointer-events-none select-none"
-      />
-      <div className="absolute inset-0 bg-gradient-to-b from-sky-400/5 via-transparent to-[#2e1606]/40 pointer-events-none" />
+    <div
+      className={`relative flex-1 w-full h-full overflow-hidden flex flex-col items-center justify-center pt-14 pb-3 px-3 ${
+        dragActive ? 'touch-none select-none' : ''
+      }`}
+    >
+      {/* Illustrated & Animated Biome Gameplay World */}
+      <BiomeWorldBackground biome={biome} variant="gameplay" />
 
       {/* Center Stage: Peeking Knowza + Skor|Hedefler Card + 8x8 Oak Board + 3-Piece Tray + 4 Boosters */}
       <div className="relative z-20 w-full max-w-[404px] flex flex-col items-center">
         {/* Top HUD Row */}
         <div className="relative z-30 w-full flex items-end justify-end mb-1">
-          {/* Peeking Knowza Bear resting paw right onto the oak frame */}
-          <div
-            className={`absolute left-0 -bottom-[9px] w-[136px] h-[106px] pointer-events-none z-30 transition-transform duration-300 origin-bottom ${
-              mascotBounce ? '-translate-y-1.5 scale-105' : ''
+          {/* Interactive Live Animated Knowza Mascot resting paws onto the oak frame */}
+          <button
+            type="button"
+            onClick={handlePetKnowza}
+            className={`absolute left-0 -bottom-[9px] w-[136px] h-[106px] z-30 transition-transform duration-300 origin-bottom focus:outline-none ${
+              mascotBounce ? '-translate-y-1.5 scale-105' : 'active:scale-95'
             }`}
+            title="Knowza"
           >
-            {boardOccupancy >= 0.78 ? (
-              <img
-                src={assetUrl('assets/mascot_sad_clean.png')}
-                alt="Knowza"
-                className="w-full h-full object-contain object-bottom drop-shadow-[0_6px_12px_rgba(0,0,0,0.42)]"
-              />
-            ) : (
-              <KnowzaSprite
-                pose="peek"
-                outfit={progress.equippedOutfit}
-                accessory={progress.equippedAccessory}
-                className="w-full h-full object-contain object-bottom drop-shadow-[0_6px_12px_rgba(0,0,0,0.42)]"
-              />
+            {mascotSpeech && (
+              <span className="absolute -top-4 left-2 whitespace-nowrap bg-[#fff7dc] border-2 border-[#a86f34] text-[#471f04] text-[10px] font-black px-2.5 py-0.5 rounded-full shadow-lg animate-pop-in z-40">
+                {mascotSpeech}
+              </span>
             )}
-          </div>
+            <KnowzaSprite
+              pose="peek"
+              outfit={progress.equippedOutfit}
+              accessory={progress.equippedAccessory}
+              mood={knowzaMood}
+              className="w-full h-full object-contain object-bottom drop-shadow-[0_6px_12px_rgba(0,0,0,0.42)]"
+            />
+          </button>
 
-          {/* Unified Skor/Seri | Hedefler Parchment Card */}
-          <div className="parchment-card rounded-[20px] px-3 pt-1.5 pb-2 flex flex-col gap-1 w-[66%] ml-auto">
+          {/* Unified Skor/Seri | Hedefler Biome-Themed Card */}
+          <div className={`${biome.hudCardClass} rounded-[20px] px-3 pt-1.5 pb-2 flex flex-col gap-1 w-[66%] ml-auto transition-colors duration-300`}>
             <div className="flex items-center gap-2.5">
               <div className="flex flex-col items-center justify-center min-w-[60px]">
-                <span className="text-[10.5px] font-extrabold text-[#6b3910] leading-none">
+                <span className={`text-[10.5px] font-extrabold ${biome.hudSubTextClass} leading-none`}>
                   {comboStreak >= 2 ? (
-                    <span className="inline-flex items-center gap-0.5 text-orange-600 animate-pulse">
+                    <span className="inline-flex items-center gap-0.5 text-orange-500 animate-pulse">
                       <Flame className="w-3 h-3 fill-orange-500" /> {comboStreak}x Seri
                     </span>
                   ) : (
                     'Skor'
                   )}
                 </span>
-                <span className="font-display text-2xl font-black text-[#3d1c04] leading-none mt-1 tabular-nums">
+                <span className={`font-display text-2xl font-black ${biome.hudTitleTextClass} leading-none mt-1 tabular-nums`}>
                   {score}
                 </span>
               </div>
 
-              <div className="w-[1.5px] self-stretch bg-[#d29f61]/65 rounded-full" />
+              <div className="w-[1.5px] self-stretch bg-current opacity-20 rounded-full" />
 
               <div ref={targetsBoxRef} className="flex-1 flex flex-col items-center justify-center">
-                <span className="text-[10.5px] font-extrabold text-[#6b3910] leading-none mb-1">
-                  Hedefler
-                </span>
+                <div className="w-full flex items-center justify-between gap-1 mb-1 px-0.5">
+                  <span className={`text-[10.5px] font-extrabold ${biome.hudSubTextClass} leading-none`}>
+                    Hedefler
+                  </span>
+                  <span
+                    className={`px-1.5 py-[1px] rounded-full text-[8.5px] font-black border leading-tight ${biome.badgeClass}`}
+                  >
+                    {biome.name}
+                  </span>
+                </div>
                 <div className="flex items-center justify-center gap-2">
                   {targetEntries.map(([key]) => (
                     <TargetChip
@@ -508,6 +812,8 @@ export const HybridGameScreen: React.FC<HybridGameScreenProps> = ({
                       targetKey={key}
                       remaining={remainingTargets[key] ?? 0}
                       theme={progress.equippedBlockTheme}
+                      biome={biome.id}
+                      labelClass={biome.hudTitleTextClass}
                       pulse={targetPulse}
                       size="sm"
                     />
@@ -529,7 +835,7 @@ export const HybridGameScreen: React.FC<HybridGameScreenProps> = ({
         {/* Armed Booster Banner */}
         {armedBooster && (
           <div className="relative z-40 mb-1 px-4 py-0.5 rounded-full bg-amber-400 border-2 border-[#6a3204] shadow-lg flex items-center gap-2 animate-pop-in">
-            <Sparkles className="w-3.5 h-3.5 text-[#5e2900]" />
+            <BoosterIcon type={armedBooster} className="w-4 h-4 shrink-0 drop-shadow" />
             <span className="text-[11px] font-black text-[#471d00]">
               {armedBooster === 'rocket' || armedBooster === 'bomb'
                 ? 'Patlatmak istediğin kareye dokun!'
@@ -545,22 +851,29 @@ export const HybridGameScreen: React.FC<HybridGameScreenProps> = ({
           </div>
         )}
 
-        {/* Main 8x8 Oak Wooden Block Blast Board */}
+        {/* Main Biome-Styled 8x8 Block Blast Board */}
         <div
-          className={`wood-board-frame rounded-[20px] p-2 w-full aspect-square max-w-[355px] relative ${
+          className={`rounded-[20px] border-4 ${biome.boardFrameClass} shadow-[0_12px_28px_rgba(0,0,0,0.42)] p-2 w-full aspect-square max-w-[355px] relative transition-shadow ${
             boardShaking ? 'animate-board-shake' : ''
+          } ${
+            feverTurns > 0
+              ? 'ring-2 ring-amber-300 shadow-[0_0_24px_rgba(251,191,36,0.8)]'
+              : boardOccupancy >= 0.78
+              ? 'ring-2 ring-rose-400/80'
+              : ''
           }`}
         >
           <div
             ref={boardRef}
-            className="w-full h-full rounded-[13px] bg-[#552d0d]/95 relative shadow-inner overflow-hidden"
+            className={`w-full h-full rounded-[13px] ${biome.boardInnerColor} relative shadow-inner overflow-hidden`}
           >
-            {/* 8x8 Grid Slots + Drag Ghost + Glowing Line-Clear Preview */}
+            {/* 8x8 Grid Slots + Crisp Snapped Slot Guide + Glowing Line-Clear Preview */}
             <div className="absolute inset-0 grid grid-cols-8 grid-rows-8 p-0.5">
               {grid.map((row, r) =>
                 row.map((cell, c) => {
                   const key = `${r},${c}`;
                   const isGhost = dragPreview.cells.has(key);
+                  const isInvalidGhost = dragPreview.invalidCells.has(key);
                   const isLineHighlight =
                     dragPreview.lines.rows.includes(r) ||
                     dragPreview.lines.cols.includes(c) ||
@@ -575,17 +888,15 @@ export const HybridGameScreen: React.FC<HybridGameScreenProps> = ({
                     >
                       <div
                         className={`w-full h-full rounded-[7px] transition-colors ${
-                          isLineHighlight ? 'bg-amber-300/50 ring-2 ring-amber-200' : 'bg-[#381b05]/60'
+                          isLineHighlight
+                            ? 'bg-amber-300/50 ring-2 ring-amber-200'
+                            : isInvalidGhost
+                            ? 'bg-rose-500/45 ring-2 ring-rose-300'
+                            : !cell && isGhost
+                            ? 'bg-white/25 ring-2 ring-white/90'
+                            : 'bg-black/25'
                         }`}
-                      >
-                        {!cell && isGhost && drag ? (
-                          <div
-                            className={`w-full h-full rounded-[7px] bg-gradient-to-b ${
-                              CUBE_PALETTE[drag.shape.color].bg
-                            } opacity-70 border-2 border-white/90 animate-pulse`}
-                          />
-                        ) : null}
-                      </div>
+                      />
                     </div>
                   );
                 })
@@ -620,6 +931,7 @@ export const HybridGameScreen: React.FC<HybridGameScreenProps> = ({
                       <CubeTile
                         cell={cell}
                         theme={progress.equippedBlockTheme}
+                        biome={biome.id}
                         highlighted={isLineHit}
                         onClick={armedBooster ? () => handleCellClick(r, c) : undefined}
                       />
@@ -628,91 +940,67 @@ export const HybridGameScreen: React.FC<HybridGameScreenProps> = ({
                 })}
             </div>
 
-            {/* Blasting Ghosts */}
-            {ghosts.map((g) => (
-              <div
-                key={g.id}
-                className="absolute p-[1.5px] pointer-events-none animate-ghost-pop"
-                style={{
-                  left: `${(g.c / BLOCK_GRID_SIZE) * 100}%`,
-                  top: `${(g.r / BLOCK_GRID_SIZE) * 100}%`,
-                  width: `${100 / BLOCK_GRID_SIZE}%`,
-                  height: `${100 / BLOCK_GRID_SIZE}%`,
-                  zIndex: 20
-                }}
-              >
-                <div
-                  className={`w-full h-full rounded-[9px] cube-gloss border-2 border-white/85 ${
-                    g.color ? `bg-gradient-to-b ${CUBE_PALETTE[g.color].bg}` : 'bg-amber-400'
-                  }`}
-                />
-              </div>
-            ))}
-
-            {/* Flying Shards */}
-            {shards.map((s) => (
-              <span
-                key={s.id}
-                className="absolute pointer-events-none rounded-[3px] animate-shard-fly"
-                style={{
-                  left: `${((s.c + 0.5) / BLOCK_GRID_SIZE) * 100}%`,
-                  top: `${((s.r + 0.5) / BLOCK_GRID_SIZE) * 100}%`,
-                  width: s.size,
-                  height: s.size,
-                  backgroundColor: s.color,
-                  boxShadow: `0 0 8px ${s.color}`,
-                  ['--dx' as string]: `${s.dx}px`,
-                  ['--dy' as string]: `${s.dy}px`,
-                  ['--rot' as string]: `${s.rot}deg`,
-                  zIndex: 25
-                }}
-              />
-            ))}
-
-            {/* Shockwave Line-Clear Beams */}
-            {clearedFlash.rows.map((rr) => (
-              <div
-                key={`bbeam_r_${rr}`}
-                className="absolute left-0 right-0 h-[12.5%] pointer-events-none bg-gradient-to-r from-transparent via-white/95 to-transparent animate-beam-flash"
-                style={{ top: `${(rr / BLOCK_GRID_SIZE) * 100}%`, zIndex: 30 }}
-              />
-            ))}
-            {clearedFlash.cols.map((cc) => (
-              <div
-                key={`bbeam_c_${cc}`}
-                className="absolute top-0 bottom-0 w-[12.5%] pointer-events-none bg-gradient-to-b from-transparent via-white/95 to-transparent animate-beam-flash"
-                style={{ left: `${(cc / BLOCK_GRID_SIZE) * 100}%`, zIndex: 30 }}
-              />
-            ))}
-
-            {/* Floating Callouts */}
-            <div className="absolute inset-0 pointer-events-none flex flex-col items-center justify-center z-40">
-              {callouts.map((co) => (
-                <div key={co.id} className="animate-combo-float text-center">
-                  <div
-                    className={`font-display text-2xl sm:text-3xl font-black tracking-wide text-stroke-brown ${co.colorClass}`}
-                  >
-                    {co.text}
-                  </div>
-                  {co.subtext && (
-                    <div className="text-xs font-black text-white bg-[#4d2407]/85 px-2.5 py-0.5 rounded-full inline-block border border-amber-300">
-                      {co.subtext}
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
+            <BoardVfxLayer
+              ghosts={ghosts}
+              shards={shards}
+              clearedFlash={clearedFlash}
+              rocketBeams={rocketBeams}
+              bombRings={bombRings}
+              callouts={callouts}
+            />
           </div>
+          <BoosterActionLayer actions={boosterActions} />
         </div>
+
+        {/* Interactive Fever Meter + Tactical Rotate / Reroll Controls */}
+        <div className="w-full max-w-[355px] mt-1.5 flex items-center justify-between gap-2 relative z-30">
+          <FeverMeterControl
+            feverPct={feverPct}
+            feverTurns={feverTurns}
+            panelClass={biome.panelClass}
+            coins={progress.coins}
+            onInstantIgnite={onSpendCoins ? handleInstantFever : undefined}
+          />
+
+          <button
+            type="button"
+            disabled={rotateCharges <= 0}
+            onClick={handleRotateTray}
+            className={`brown-btn rounded-full px-2.5 py-1 flex items-center gap-1 text-[10.5px] font-black shrink-0 disabled:opacity-40 ${
+              !hasAnyDirectMove && rotateCharges > 0 ? 'ring-2 ring-yellow-300 animate-pulse' : ''
+            }`}
+          >
+            <RotateCw className="w-3 h-3" />
+            <span>Döndür ({rotateCharges})</span>
+          </button>
+
+          <button
+            type="button"
+            disabled={rerollCharges <= 0}
+            onClick={handleRerollTray}
+            className={`brown-btn rounded-full px-2.5 py-1 flex items-center gap-1 text-[10.5px] font-black shrink-0 disabled:opacity-40 ${
+              !hasAnyDirectMove && rerollCharges > 0 ? 'ring-2 ring-emerald-300 animate-pulse' : ''
+            }`}
+          >
+            <Shuffle className="w-3 h-3" />
+            <span>Yenile ({rerollCharges})</span>
+          </button>
+        </div>
+
+        {!hasAnyDirectMove && outcomeTriggered === 'none' && (
+          <div className="w-full max-w-[355px] mt-1 bg-rose-600/95 border border-rose-200 rounded-xl px-2.5 py-1 text-center text-[10px] font-black text-white shadow animate-pop-in">
+            Sığacak blok kalmadı! Döndür, Yenile veya Güçlendirici kullan!
+          </div>
+        )}
 
         {/* Sleek Block Blast 3-Piece Polyomino Tray */}
         <div
           onContextMenu={(e) => e.preventDefault()}
-          className="w-full max-w-[355px] mt-2 parchment-card rounded-2xl p-1.5 grid grid-cols-3 gap-1.5 items-center select-none"
+          className={`w-full max-w-[355px] mt-1.5 ${biome.hudCardClass} rounded-2xl p-1.5 grid grid-cols-3 gap-1.5 items-center select-none transition-colors duration-300`}
         >
           {tray.map((shape, idx) => {
             if (!shape) {
-              return <div key={`empty_${idx}`} className="h-[58px] rounded-xl bg-[#e4c48e]/45" />;
+              return <div key={`empty_${idx}`} className="h-[58px] rounded-xl bg-black/15" />;
             }
             const fits = canShapeFitAnywhere(grid, shape);
             const isDragging = drag?.shapeIndex === idx;
@@ -723,16 +1011,24 @@ export const HybridGameScreen: React.FC<HybridGameScreenProps> = ({
               <div
                 key={shape.id}
                 onPointerDown={(e) => startDrag(e, idx, shape)}
-                className={`h-[58px] rounded-xl bg-[#f4dab0]/80 border border-[#cca065] flex items-center justify-center overflow-hidden cursor-grab active:cursor-grabbing touch-none transition-transform ${
-                  isDragging ? 'opacity-20 scale-90' : 'hover:scale-105'
-                }`}
+                className={`h-[58px] rounded-xl flex items-center justify-center overflow-hidden cursor-grab active:cursor-grabbing touch-none transition-transform relative ${
+                  shape.specialCell || shape.isGoldBonus
+                    ? 'bg-gradient-to-b from-[#fff3bf] to-[#f4ca64] border-2 border-[#d97706] shadow-[0_0_10px_rgba(251,191,36,0.45)]'
+                    : `${biome.traySlotBgClass} border`
+                } ${isDragging ? 'opacity-20 scale-90' : 'hover:scale-105'}`}
               >
                 <BlockTrayPiece
                   shape={shape}
                   cellPx={trayCellPx}
                   disabled={!fits}
                   theme={progress.equippedBlockTheme}
+                  biome={biome.id}
                 />
+                {shape.isGoldBonus && (
+                  <span className="absolute top-0.5 right-1 text-[8px] font-black bg-orange-600 text-white px-1 rounded">
+                    2×
+                  </span>
+                )}
               </div>
             );
           })}
@@ -755,7 +1051,7 @@ export const HybridGameScreen: React.FC<HybridGameScreenProps> = ({
                   }
                   setArmedBooster((cur) => (cur === bType ? null : bType));
                 }}
-                className={`relative flex-1 h-[52px] rounded-2xl booster-tile p-1 flex items-center justify-center transition-transform active:scale-95 ${
+                className={`relative flex-1 h-[52px] rounded-2xl ${biome.panelClass} p-1 flex items-center justify-center transition-transform active:scale-95 ${
                   isArmed ? 'ring-4 ring-yellow-300 -translate-y-1 scale-105' : ''
                 }`}
               >
@@ -787,23 +1083,20 @@ export const HybridGameScreen: React.FC<HybridGameScreenProps> = ({
         </div>
       </div>
 
-      {/* Floating Dragged Polyomino Piece */}
+      {/* Floating Snapped CubeTile Polyomino Piece */}
       {drag && (
-        <div
-          className="fixed pointer-events-none z-50 drop-shadow-[0_14px_20px_rgba(0,0,0,0.45)]"
-          style={{
-            left: drag.pointerX,
-            top: drag.pointerY - (drag.pointerType === 'touch' ? TOUCH_LIFT_PX : 0),
-            transform: 'translate(-50%, -50%)'
-          }}
-        >
-          <BlockTrayPiece
-            shape={drag.shape}
-            cellPx={getBoardCellPx(boardRef.current)}
-            gapPx={3}
-            theme={progress.equippedBlockTheme}
-          />
-        </div>
+        <FloatingDraggedPiece
+          boardEl={boardRef.current}
+          shape={drag.shape}
+          pointerX={drag.pointerX}
+          pointerY={drag.pointerY}
+          pointerType={drag.pointerType}
+          hoverR={drag.hoverR}
+          hoverC={drag.hoverC}
+          canDrop={drag.canDrop}
+          theme={progress.equippedBlockTheme}
+          biome={biome.id}
+        />
       )}
 
       {/* Unclipped Fixed Layer for Target Magnet Fly-to-HUD Mini Cubes */}

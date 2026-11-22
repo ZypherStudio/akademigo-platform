@@ -1,9 +1,11 @@
-import React from 'react';
-import { Calendar, Coins, Crown, Gift, Map, Play, Shirt, ShoppingBag, Sparkles, Star, Trophy } from 'lucide-react';
+import React, { useState } from 'react';
+import { Calendar, Coins, Crown, Flame, Gift, Map, Play, Shirt, ShoppingBag, Sparkles, Star, Timer, Trophy, X } from 'lucide-react';
+import { TOTAL_LEVELS, getBiomeForLevel } from '../data/biomes';
 import { LEVELS } from '../data/levels';
-import { LevelConfig, PlayerProgress } from '../types/game';
-import { assetUrl } from '../utils/assets';
+import { KnowzaMood, LevelConfig, PlayerProgress } from '../types/game';
 import { sfx } from '../utils/sound';
+import { WIN_STREAK_MAX_TIER, getWinStreakInfo, getWinStreakTier } from '../utils/winStreak';
+import { BiomeWorldBackground } from './BiomeWorldArt';
 import { CubeTile } from './CubeTile';
 import { KnowzaSprite } from './KnowzaSprite';
 
@@ -12,6 +14,7 @@ interface HomeMenuScreenProps {
   onPlayCurrent: (level: LevelConfig) => void;
   onOpenMap: () => void;
   onOpenEndless: () => void;
+  onOpenSprint: () => void;
   onOpenWardrobe: () => void;
   onOpenQuests: () => void;
   onOpenDaily: () => void;
@@ -25,6 +28,7 @@ export const HomeMenuScreen: React.FC<HomeMenuScreenProps> = ({
   onPlayCurrent,
   onOpenMap,
   onOpenEndless,
+  onOpenSprint,
   onOpenWardrobe,
   onOpenQuests,
   onOpenDaily,
@@ -32,9 +36,31 @@ export const HomeMenuScreen: React.FC<HomeMenuScreenProps> = ({
   onOpenProfile,
   onOpenCastle
 }) => {
+  const [homeMood, setHomeMood] = useState<KnowzaMood>('idle');
+  const [heroNote, setHeroNote] = useState<string | null>(null);
+  const [showStreakInfo, setShowStreakInfo] = useState(false);
+  const winStreak = progress.winStreak || 0;
+  const streakInfo = getWinStreakInfo(winStreak);
+
+  const handleTapHeroMascot = () => {
+    sfx.pop(4, 2);
+    const lines =
+      progress.equippedOutfit === 'karate'
+        ? ['Dojo modu hazır!', 'Sert bloklar kıralım!', 'Odaklan ve patlat!']
+        : ['Haydi başlayalım!', 'Bomba kombolar kur!', 'Yeni rekor seni bekler!'];
+    setHomeMood((m) => (m === 'combo' ? 'happy' : 'combo'));
+    setHeroNote(lines[Math.floor(Math.random() * lines.length)]);
+    setTimeout(() => {
+      setHomeMood('idle');
+      setHeroNote(null);
+    }, 1500);
+  };
+
   const currentLvl = LEVELS.find((l) => l.id === progress.unlockedLevel) || LEVELS[0];
+  const activeBiome = getBiomeForLevel(currentLvl.id);
   const today = new Date().toISOString().slice(0, 10);
-  const dailyAvailable = progress.lastDailyClaimDate !== today;
+  const dailyAvailable =
+    progress.lastDailyClaimDate !== today || progress.lastWheelSpinDate !== today;
   const questClaimable = progress.quests.some((q) => !q.claimed && q.progress >= q.target);
 
   const previewSteps = [
@@ -45,25 +71,44 @@ export const HomeMenuScreen: React.FC<HomeMenuScreenProps> = ({
   ].filter((v, idx, arr) => arr.indexOf(v) === idx);
 
   return (
-    <div className="relative flex-1 w-full h-full overflow-hidden flex flex-col justify-between bg-gradient-to-b from-[#4a260b] via-[#341805] to-[#230e02]">
-      {/* Warm wood backdrop texture */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,198,92,0.16),transparent_55%)] pointer-events-none" />
+    <div className="relative flex-1 w-full h-full overflow-hidden flex flex-col justify-between bg-[#2b1304]">
+      {/* Subtle Biome World Backdrop + Warm Wood Ambient Overlay */}
+      <div className="absolute inset-0 opacity-35 blur-[2px] scale-105 pointer-events-none">
+        <BiomeWorldBackground biome={activeBiome} variant="map" />
+      </div>
+      <div className="absolute inset-0 bg-gradient-to-b from-[#3d1e07]/80 via-[#2d1404]/70 to-[#1f0c02]/95 pointer-events-none" />
 
       {/* Main Content below Floating TopHud */}
       <div className="relative z-20 flex-1 flex flex-col gap-2.5 px-3 pt-14 pb-2 overflow-y-auto no-scrollbar">
-        {/* Coin Balance + Castle Bar */}
-        <div className="flex items-center justify-between gap-2">
+        {/* Coin Balance + Win Streak + Castle Bar */}
+        <div className="flex items-center justify-between gap-1.5 relative">
           <button
             type="button"
             onClick={() => {
               sfx.click();
               onOpenShop();
             }}
-            className="wood-pill rounded-full px-3 py-1 flex items-center gap-1.5 shadow active:scale-95 transition-transform"
+            className="wood-pill rounded-full px-2.5 py-1 flex items-center gap-1 shadow active:scale-95 transition-transform"
           >
-            <Coins className="w-4 h-4 text-yellow-400" />
-            <span className="text-xs font-black text-white tabular-nums">
+            <Coins className="w-3.5 h-3.5 text-yellow-400" />
+            <span className="text-[11px] font-black text-white tabular-nums">
               {progress.coins.toLocaleString('tr-TR')} Altın
+            </span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => {
+              sfx.click();
+              setShowStreakInfo((v) => !v);
+            }}
+            className={`wood-pill rounded-full px-2.5 py-1 flex items-center gap-1 shadow active:scale-95 transition-transform ${
+              winStreak > 0 ? 'ring-1 ring-orange-400' : ''
+            }`}
+          >
+            <Flame className={`w-3.5 h-3.5 ${winStreak > 0 ? 'text-orange-400 fill-orange-400 animate-pulse' : 'text-amber-200'}`} />
+            <span className="text-[11px] font-black text-[#fff3d1] tabular-nums">
+              Seri {winStreak}
             </span>
           </button>
 
@@ -73,13 +118,55 @@ export const HomeMenuScreen: React.FC<HomeMenuScreenProps> = ({
               sfx.click();
               onOpenCastle();
             }}
-            className="wood-pill rounded-full px-3 py-1 flex items-center gap-1.5 shadow active:scale-95 transition-transform"
+            className="wood-pill rounded-full px-2.5 py-1 flex items-center gap-1 shadow active:scale-95 transition-transform"
           >
-            <Crown className="w-4 h-4 text-amber-300" />
-            <span className="text-xs font-black text-[#fff3d1]">
+            <Crown className="w-3.5 h-3.5 text-amber-300" />
+            <span className="text-[11px] font-black text-[#fff3d1]">
               Kale {Object.values(progress.castleStages || {}).filter((v) => v > 0).length}/5
             </span>
           </button>
+
+          {showStreakInfo && (
+            <div className="absolute top-full inset-x-0 mt-1.5 flex justify-center z-50 px-1">
+              <div className="w-full max-w-[300px] parchment-card rounded-2xl p-3 text-left shadow-2xl animate-pop-in">
+                <div className="flex items-center justify-between gap-2 mb-1">
+                  <span className="inline-flex items-center gap-1 font-display text-xs font-black text-[#471f04]">
+                    <Flame className="w-4 h-4 text-orange-500 fill-orange-500" />
+                    Kazanma Serisi ({streakInfo.tier}/{WIN_STREAK_MAX_TIER})
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setShowStreakInfo(false)}
+                    aria-label="Kapat"
+                    className="w-5 h-5 rounded-full bg-[#6b3910]/15 text-[#471f04] flex items-center justify-center"
+                  >
+                    <X className="w-3 h-3 stroke-[3]" />
+                  </button>
+                </div>
+                <p className="text-[10.5px] font-bold text-[#6e3a10] leading-snug mb-2">
+                  {streakInfo.perkDesc} (Rekor: {Math.max(progress.bestWinStreak || 0, winStreak)})
+                </p>
+                <div className="grid grid-cols-3 gap-1">
+                  {[
+                    { tier: 1, label: '+Roket' },
+                    { tier: 2, label: '+Bomba' },
+                    { tier: 3, label: '+%25 Altın' }
+                  ].map((s) => (
+                    <div
+                      key={s.tier}
+                      className={`rounded-lg py-1 text-center text-[9.5px] font-black border ${
+                        getWinStreakTier(winStreak) >= s.tier
+                          ? 'bg-gradient-to-b from-amber-400 to-orange-500 text-white border-amber-200'
+                          : 'bg-amber-950/10 text-[#7d4918] border-[#c49253]/40'
+                      }`}
+                    >
+                      {s.tier}. {s.label}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Hero Row: Left Vertical Menu + Center "Bilgi Akademisi" Scenic Card (Reference Image 3!) */}
@@ -153,23 +240,23 @@ export const HomeMenuScreen: React.FC<HomeMenuScreenProps> = ({
             </button>
           </div>
 
-          {/* Center Hero Card: "Knowza Blast" Castle World Preview */}
+          {/* Center Hero Card: Active Biome World Showcase */}
           <div className="flex-1 relative rounded-3xl overflow-hidden border-[3px] border-[#b87635] shadow-2xl min-h-[252px] flex flex-col justify-between">
-            <img
-              src={assetUrl('assets/bg_world_map.jpg')}
-              alt="Knowza Blast"
-              className="absolute inset-0 w-full h-full object-cover object-center pointer-events-none"
-            />
-            <div className="absolute inset-0 bg-gradient-to-b from-[#2f1605]/45 via-transparent to-[#241003]/75 pointer-events-none" />
+            <BiomeWorldBackground biome={activeBiome} variant="map" />
 
             {/* Top Hero Title + Reward Chest */}
             <div className="relative z-10 p-2.5 flex items-start justify-between gap-1">
-              <div className="bg-[#3d1e07]/78 backdrop-blur-sm border border-[#e3a857]/60 rounded-2xl px-2.5 py-1.5">
-                <h1 className="font-display text-base font-black text-[#fff3d1] leading-tight">
-                  Knowza Blast
-                </h1>
+              <div className="bg-[#3d1e07]/85 backdrop-blur-sm border border-[#e3a857]/60 rounded-2xl px-2.5 py-1.5">
+                <div className="flex items-center gap-1.5">
+                  <h1 className="font-display text-base font-black text-[#fff3d1] leading-tight">
+                    Knowza Blast
+                  </h1>
+                  <span className={`px-1.5 py-[1px] rounded-full text-[8.5px] font-black border ${activeBiome.badgeClass}`}>
+                    {activeBiome.name}
+                  </span>
+                </div>
                 <p className="text-[10px] font-bold text-[#ffdf94] leading-tight mt-0.5">
-                  Blokları yerleştir, satırları patlat!
+                  Seviye {currentLvl.id}/{TOTAL_LEVELS.toLocaleString('tr-TR')} • Blokları patlat!
                 </p>
               </div>
 
@@ -191,14 +278,25 @@ export const HomeMenuScreen: React.FC<HomeMenuScreenProps> = ({
 
             {/* Knowza Mascot + Stepping Pedestal Preview */}
             <div className="relative z-10 px-2 pb-2.5 flex items-end justify-between">
-              <div className="w-24 h-24 shrink-0 animate-float-slow -ml-1">
+              <button
+                type="button"
+                onClick={handleTapHeroMascot}
+                className="w-28 h-28 shrink-0 -ml-1 -mb-1 relative active:scale-95 transition-transform focus:outline-none"
+                title="Knowza ile etkileş"
+              >
+                {heroNote && (
+                  <span className="absolute -top-6 left-2 whitespace-nowrap bg-[#fff7dc] border-2 border-[#a86f34] text-[#471f04] text-[10px] font-black px-2 py-0.5 rounded-full shadow-md animate-pop-in z-20">
+                    {heroNote}
+                  </span>
+                )}
                 <KnowzaSprite
                   pose="flag"
                   outfit={progress.equippedOutfit}
                   accessory={progress.equippedAccessory}
+                  mood={homeMood}
                   className="w-full h-full object-contain drop-shadow-[0_6px_12px_rgba(0,0,0,0.5)]"
                 />
-              </div>
+              </button>
 
               <div className="flex items-center gap-1.5 mb-1">
                 {previewSteps.map((num) => {
@@ -220,10 +318,10 @@ export const HomeMenuScreen: React.FC<HomeMenuScreenProps> = ({
                       }}
                       className={`w-10 h-9 rounded-full flex flex-col items-center justify-center relative ${
                         isCurr
-                          ? 'pedestal-gold scale-110'
+                          ? `${activeBiome.pedestalCurrentClass} scale-110`
                           : unlocked
-                          ? 'pedestal-done'
-                          : 'pedestal-stone opacity-85'
+                          ? activeBiome.pedestalUnlockedClass
+                          : `${activeBiome.pedestalLockedClass} opacity-90`
                       }`}
                     >
                       {stars > 0 && (
@@ -240,7 +338,9 @@ export const HomeMenuScreen: React.FC<HomeMenuScreenProps> = ({
                       )}
                       <span
                         className={`font-display text-xs font-black ${
-                          isCurr ? 'text-[#4e2200]' : 'text-white'
+                          isCurr && !activeBiome.isDarkTheme && activeBiome.id !== 'glacier'
+                            ? 'text-[#4e2200]'
+                            : 'text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.85)]'
                         }`}
                       >
                         {num}
@@ -266,32 +366,62 @@ export const HomeMenuScreen: React.FC<HomeMenuScreenProps> = ({
           <span>Blok Patlat — Seviye {currentLvl.id}</span>
         </button>
 
-        {/* Secondary Dual Cards: "Sonsuz Blok Blast" + "Karakter & Blok Tasarımı" */}
-        <div className="grid grid-cols-2 gap-2.5">
-          {/* Classic Endless Block Blast Card */}
+        {/* Secondary Trio Cards: "Sonsuz Hibrit" + "90sn Sprint" + "Karakter & Blok" */}
+        <div className="grid grid-cols-3 gap-2">
+          {/* Classic + Hybrid Endless Block Blast Card */}
           <button
             type="button"
             onClick={() => {
               sfx.click();
               onOpenEndless();
             }}
-            className="parchment-card rounded-2xl p-2.5 text-left flex flex-col justify-between gap-2 active:scale-95 transition-transform"
+            className="parchment-card rounded-2xl p-2 text-left flex flex-col justify-between gap-1.5 active:scale-95 transition-transform"
           >
-            <div className="flex items-center justify-between">
-              <div className="grid grid-cols-2 gap-0.5 p-1 rounded-lg bg-[#6b3915]">
-                <span className="w-3 h-3 rounded-[3px] bg-sky-400" />
-                <span className="w-3 h-3 rounded-[3px] bg-amber-400" />
-                <span className="w-3 h-3 rounded-[3px] bg-rose-500" />
-                <span className="w-3 h-3 rounded-[3px] bg-emerald-400" />
+            <div className="flex items-center justify-between gap-1">
+              <div className="grid grid-cols-2 gap-0.5 p-0.5 rounded-md bg-[#6b3915]">
+                <span className="w-2.5 h-2.5 rounded-[2px] bg-sky-400" />
+                <span className="w-2.5 h-2.5 rounded-[2px] bg-amber-400" />
+                <span className="w-2.5 h-2.5 rounded-[2px] bg-rose-500" />
+                <span className="w-2.5 h-2.5 rounded-[2px] bg-emerald-400" />
               </div>
-              <span className="text-[10px] font-black bg-amber-200 text-amber-900 px-2 py-0.5 rounded-full">
-                Rekor: {progress.highBlockScore}
+              <span className="text-[9px] font-black bg-amber-200 text-amber-900 px-1.5 py-0.5 rounded-full truncate">
+                {progress.highBlockScore}
               </span>
             </div>
             <div>
-              <div className="font-display text-sm font-black text-[#471f04]">Sonsuz Blok</div>
-              <div className="text-[10px] font-bold text-[#7c4819] leading-tight">
-                Klasik Block Blast yüksek skor yarışı!
+              <div className="font-display text-xs font-black text-[#471f04] leading-tight">
+                Sonsuz Blok
+              </div>
+              <div className="text-[9.5px] font-bold text-[#7c4819] leading-tight mt-0.5">
+                Klasik Blok • Zorlu
+              </div>
+            </div>
+          </button>
+
+          {/* 90-Second Lightning Sprint Mode */}
+          <button
+            type="button"
+            onClick={() => {
+              sfx.click();
+              onOpenSprint();
+            }}
+            className="parchment-card rounded-2xl p-2 text-left flex flex-col justify-between gap-1.5 active:scale-95 transition-transform ring-1 ring-orange-400/70"
+          >
+            <div className="flex items-center justify-between gap-1">
+              <div className="w-6 h-6 rounded-lg bg-gradient-to-b from-[#fb923c] to-[#ea580c] flex items-center justify-center shadow">
+                <Timer className="w-3.5 h-3.5 text-white" />
+              </div>
+              <span className="text-[9px] font-black bg-orange-100 text-orange-900 px-1.5 py-0.5 rounded-full truncate inline-flex items-center gap-0.5">
+                <Flame className="w-2.5 h-2.5 text-orange-600" />
+                {progress.highSprintScore || 0}
+              </span>
+            </div>
+            <div>
+              <div className="font-display text-xs font-black text-[#471f04] leading-tight">
+                90 Sn Yarış
+              </div>
+              <div className="text-[9.5px] font-bold text-[#7c4819] leading-tight mt-0.5">
+                Süre & 2× Ateş
               </div>
             </div>
           </button>
@@ -303,29 +433,31 @@ export const HomeMenuScreen: React.FC<HomeMenuScreenProps> = ({
               sfx.click();
               onOpenWardrobe();
             }}
-            className="parchment-card rounded-2xl p-2.5 text-left flex flex-col justify-between gap-2 active:scale-95 transition-transform"
+            className="parchment-card rounded-2xl p-2 text-left flex flex-col justify-between gap-1.5 active:scale-95 transition-transform"
           >
             <div className="flex items-center justify-between">
               <div className="flex gap-1">
-                <div className="w-6 h-6">
+                <div className="w-5 h-5">
                   <CubeTile
                     cell={{ uid: 'demo_b', color: 'blue' }}
                     theme={progress.equippedBlockTheme}
                   />
                 </div>
-                <div className="w-6 h-6">
+                <div className="w-5 h-5">
                   <CubeTile
                     cell={{ uid: 'demo_y', color: 'yellow' }}
                     theme={progress.equippedBlockTheme}
                   />
                 </div>
               </div>
-              <Shirt className="w-5 h-5 text-rose-600" />
+              <Shirt className="w-4 h-4 text-rose-600" />
             </div>
             <div>
-              <div className="font-display text-sm font-black text-[#471f04]">Karakter & Blok</div>
-              <div className="text-[10px] font-bold text-[#7c4819] leading-tight">
-                Tişört, Karate & Küp tasarımı seç!
+              <div className="font-display text-xs font-black text-[#471f04] leading-tight">
+                Tarz & Blok
+              </div>
+              <div className="text-[9.5px] font-bold text-[#7c4819] leading-tight mt-0.5">
+                Karate & Tema
               </div>
             </div>
           </button>

@@ -12,6 +12,8 @@ import {
   createCrateCell,
   createCubeCell,
   createEmptyGrid,
+  createSparkCell,
+  createStoneCell,
   createToonBoard,
   ensurePlayableBoard,
   executeTapBlast,
@@ -20,10 +22,18 @@ import {
   getClusterHintMap,
   hasAnyValidTrayMove,
   placeShapeAndClearLines,
-  previewLineClears
+  previewLineClears,
+  rotatePolyomino,
+  strikeFeverLightning
 } from '../puzzleEngine';
 import { assetUrl } from '../assets';
-import { TOUCH_LIFT_PX, computeBlockDropCell, getShapeBounds } from '../blockDrag';
+import {
+  BOARD_GRID_PADDING_PX,
+  TOUCH_LIFT_PX,
+  computeBlockDropCell,
+  getDragFloatingMetrics,
+  getShapeBounds
+} from '../blockDrag';
 
 describe('Knowza Blast Engine (7x7 Toon Blast + 8x8 Block & Patlat)', () => {
   it('createToonBoard spawns a full 7x7 board with playable 2+ clusters', () => {
@@ -305,8 +315,129 @@ describe('Knowza Blast Engine (7x7 Toon Blast + 8x8 Block & Patlat)', () => {
     };
     expect(getShapeBounds(barShape)).toEqual({ rows: 1, cols: 2 });
 
-    // Cell is 40x40; row 2 center is y=200, with TOUCH_LIFT_PX lifted from finger
+    // Cell width is (320 - 4)/8 = 39.5; snap metrics align identically with inner board padding
     const drop = computeBlockDropCell(rectBoard, emptyGrid, 40, 200 + TOUCH_LIFT_PX, 'touch', barShape);
     expect(drop).toEqual({ hoverR: 2, hoverC: 0, canDrop: true });
+
+    const snap = getDragFloatingMetrics(rectBoard, barShape, 40, 200 + TOUCH_LIFT_PX, 'touch', 2, 0, true);
+    expect(snap.snapped).toBe(true);
+    expect(snap.left).toBeCloseTo(BOARD_GRID_PADDING_PX, 5);
+    expect(snap.top).toBeCloseTo(100 + BOARD_GRID_PADDING_PX + 2 * snap.cellH, 5);
+  });
+
+  it('rotatePolyomino rotates shape coordinates 90deg clockwise and flips rocket orientation', () => {
+    const hBar: PolyominoShape = {
+      id: 'h3',
+      name: 'Üçlü Yatay',
+      cells: [
+        [0, 0],
+        [0, 1],
+        [0, 2]
+      ],
+      color: 'green',
+      specialCell: { index: 1, special: 'rocket_h' }
+    };
+    const vBar = rotatePolyomino(hBar);
+    expect(vBar.cells).toEqual([
+      [0, 0],
+      [1, 0],
+      [2, 0]
+    ]);
+    expect(vBar.specialCell).toEqual({ index: 1, special: 'rocket_v' });
+    expect(rotatePolyomino(vBar).specialCell).toEqual({ index: 1, special: 'rocket_h' });
+  });
+
+  it('placeShapeAndClearLines triggers embedded specialCell bombs/rockets on line completion', () => {
+    const grid = createEmptyGrid(BLOCK_GRID_SIZE);
+    for (let c = 0; c < 7; c++) grid[7][c] = createCubeCell('blue');
+    // Put an obstacle in row 6 col 7 adjacent to (7,7) bomb
+    grid[6][7] = createCrateCell();
+
+    const specialSingle: PolyominoShape = {
+      id: 'sb1',
+      name: 'Bomba Tekli',
+      cells: [[0, 0]],
+      color: 'red',
+      specialCell: { index: 0, special: 'bomb' }
+    };
+
+    const res = placeShapeAndClearLines(grid, specialSingle, 7, 7, false);
+    expect(res).not.toBeNull();
+    expect(res!.linesCleared).toBe(1);
+    expect(res!.specialsTriggered).toBeGreaterThanOrEqual(1);
+    expect(res!.bombRings).toContainEqual([7, 7]);
+    expect(res!.collected.crate).toBe(1);
+    expect(res!.grid[6][7]).toBeNull();
+  });
+
+  it('generateBlockTray forceSpecial embeds power cell & strikeFeverLightning breaks obstacles', () => {
+    const grid = createEmptyGrid(BLOCK_GRID_SIZE);
+    grid[2][2] = createCrateCell();
+    grid[3][3] = createCubeCell('yellow');
+
+    const tray = generateBlockTray(['blue', 'red'], grid, { forceSpecial: true, allowAdvanced: true });
+    expect(tray.some((s) => Boolean(s.specialCell))).toBe(true);
+
+    const strike = strikeFeverLightning(grid, 2);
+    expect(strike.blastedCoords).toHaveLength(2);
+    expect(strike.collected.crate).toBe(1);
+    expect(strike.collected.yellow).toBe(1);
+    expect(strike.grid[2][2]).toBeNull();
+    expect(strike.grid[3][3]).toBeNull();
+  });
+
+  it('stone takes 2 hits (cracks then breaks statically) and spark chain-zaps orthogonal neighbors', () => {
+    const grid = createEmptyGrid(BLOCK_GRID_SIZE);
+    grid[2][2] = createStoneCell();
+    grid[5][5] = createSparkCell('blue');
+    grid[5][4] = createCubeCell('red');
+    grid[4][5] = createCrateCell();
+
+    // First hammer strike cracks 2-HP stone to HP=1 in static mode
+    const crack = applyInventoryBooster(grid, 'hammer', 2, 2, undefined, true);
+    expect(crack).not.toBeNull();
+    expect(crack!.grid[2][2]?.obstacle).toBe('stone');
+    expect(crack!.grid[2][2]?.obstacleHp).toBe(1);
+    expect(crack!.collected.stone).toBeUndefined();
+
+    // Second strike destroys the cracked stone and collects it
+    const shatter = applyInventoryBooster(crack!.grid, 'hammer', 2, 2, undefined, true);
+    expect(shatter).not.toBeNull();
+    expect(shatter!.grid[2][2]).toBeNull();
+    expect(shatter!.collected.stone).toBe(1);
+
+    // Detonating spark chain-zaps orthogonal neighbors statically without dropping cubes
+    const zap = applyInventoryBooster(shatter!.grid, 'hammer', 5, 5, undefined, true);
+    expect(zap).not.toBeNull();
+    expect(zap!.grid[5][5]).toBeNull();
+    expect(zap!.grid[5][4]).toBeNull();
+    expect(zap!.grid[4][5]).toBeNull();
+    expect(zap!.collected.spark).toBe(1);
+    expect(zap!.collected.red).toBe(1);
+    expect(zap!.collected.crate).toBe(1);
+
+    // Biome adventure presets spawn valid stones/sparks
+    const volcanoLvl = LEVELS[35];
+    const volcanoBoard = createBlockAdventureBoard(volcanoLvl);
+    expect(volcanoBoard.some((row) => row.some((c) => c?.obstacle === 'stone'))).toBe(true);
+
+    const cyberLvl = LEVELS[95];
+    const cyberBoard = createBlockAdventureBoard(cyberLvl);
+    expect(cyberBoard.some((row) => row.some((c) => c?.obstacle === 'spark'))).toBe(true);
+
+    // Hard mode tray with guaranteeFit=false allows real deadlocks on nearly-full Endless boards
+    const tightGrid = createEmptyGrid(BLOCK_GRID_SIZE);
+    for (let r = 0; r < BLOCK_GRID_SIZE; r++) {
+      for (let c = 0; c < BLOCK_GRID_SIZE; c++) {
+        if (!(r === 0 && c === 0)) tightGrid[r][c] = createCubeCell('blue');
+      }
+    }
+    const hardTray = generateBlockTray(['blue', 'red'], tightGrid, {
+      hardMode: true,
+      guaranteeFit: false
+    });
+    expect(hardTray).toHaveLength(3);
+    expect(hardTray.every((s) => s.cells.length >= 2)).toBe(true);
+    expect(hasAnyValidTrayMove(tightGrid, hardTray)).toBe(false);
   });
 });

@@ -3,38 +3,52 @@ import { PlayerProgress, QuestProgress } from '../types/game';
 const STORAGE_KEY = 'knowza_blast_progress_v1';
 const HEART_REGEN_MS = 15 * 60 * 1000; // 15 minutes per heart
 
-export const DEFAULT_QUESTS: QuestProgress[] = [
-  {
-    id: 'q_cubes',
-    title: '120 Küp Patlat',
-    target: 120,
-    progress: 0,
-    rewardCoins: 150,
-    rewardStars: 20,
-    claimed: false,
-    type: 'blast_cubes'
-  },
-  {
-    id: 'q_lines',
-    title: '5 Blok Satırı Temizle',
-    target: 5,
-    progress: 0,
-    rewardCoins: 200,
-    rewardStars: 30,
-    claimed: false,
-    type: 'clear_lines'
-  },
-  {
-    id: 'q_levels',
-    title: '2 Seviye Tamamla',
-    target: 2,
-    progress: 0,
-    rewardCoins: 250,
-    rewardStars: 40,
-    claimed: false,
-    type: 'win_levels'
-  }
-];
+export function createDailyQuests(): QuestProgress[] {
+  return [
+    {
+      id: 'q_cubes',
+      title: '200 Küp Patlat',
+      target: 200,
+      progress: 0,
+      rewardCoins: 150,
+      rewardStars: 20,
+      claimed: false,
+      type: 'blast_cubes'
+    },
+    {
+      id: 'q_lines',
+      title: '8 Blok Satırı Temizle',
+      target: 8,
+      progress: 0,
+      rewardCoins: 200,
+      rewardStars: 30,
+      claimed: false,
+      type: 'clear_lines'
+    },
+    {
+      id: 'q_streak',
+      title: 'Üst Üste 2 Galibiyet (Seri)',
+      target: 2,
+      progress: 0,
+      rewardCoins: 300,
+      rewardStars: 45,
+      claimed: false,
+      type: 'win_streak'
+    },
+    {
+      id: 'q_boosters',
+      title: '2 Güçlendirici Kullan',
+      target: 2,
+      progress: 0,
+      rewardCoins: 180,
+      rewardStars: 25,
+      claimed: false,
+      type: 'use_boosters'
+    }
+  ];
+}
+
+export const DEFAULT_QUESTS: QuestProgress[] = createDailyQuests();
 
 export const INITIAL_PROGRESS: PlayerProgress = {
   name: 'Knowza',
@@ -48,6 +62,7 @@ export const INITIAL_PROGRESS: PlayerProgress = {
   unlockedLevel: 1,
   levelStars: {},
   highBlockScore: 0,
+  highSprintScore: 0,
   totalCubesBlasted: 0,
   totalLinesCleared: 0,
   boosters: {
@@ -58,7 +73,11 @@ export const INITIAL_PROGRESS: PlayerProgress = {
   },
   dailyStreak: 1,
   lastDailyClaimDate: null,
+  lastWheelSpinDate: null,
   dailyClaimedDays: [],
+  lastQuestRefreshDate: null,
+  winStreak: 0,
+  bestWinStreak: 0,
   quests: DEFAULT_QUESTS,
   badges: ['welcome_bear'],
   soundEnabled: true,
@@ -78,25 +97,45 @@ export const INITIAL_PROGRESS: PlayerProgress = {
   unlockedBlockThemes: ['classic', 'crystal']
 };
 
+export function syncDailyQuests(progress: PlayerProgress, todayStr = new Date().toISOString().slice(0, 10)): PlayerProgress {
+  const hasStreakQuest = progress.quests.some((q) => q.type === 'win_streak');
+  if (progress.lastQuestRefreshDate === todayStr && hasStreakQuest) {
+    return progress;
+  }
+  const fresh = createDailyQuests();
+  // Preserve current active winStreak progress onto fresh streak quest if carrying streak into new day
+  const synced = fresh.map((q) =>
+    q.type === 'win_streak' ? { ...q, progress: Math.min(q.target, progress.winStreak || 0) } : q
+  );
+  return {
+    ...progress,
+    quests: synced,
+    lastQuestRefreshDate: todayStr
+  };
+}
+
 export function loadProgress(): PlayerProgress {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return INITIAL_PROGRESS;
+    const today = new Date().toISOString().slice(0, 10);
+    if (!raw) return syncDailyQuests(INITIAL_PROGRESS, today);
     const parsed = JSON.parse(raw) as Partial<PlayerProgress>;
     const merged: PlayerProgress = {
       ...INITIAL_PROGRESS,
       ...parsed,
       boosters: { ...INITIAL_PROGRESS.boosters, ...(parsed.boosters || {}) },
       castleStages: { ...INITIAL_PROGRESS.castleStages, ...(parsed.castleStages || {}) },
+      winStreak: Math.max(0, parsed.winStreak ?? 0),
+      bestWinStreak: Math.max(0, parsed.bestWinStreak ?? 0),
       unlockedOutfits: parsed.unlockedOutfits?.length ? parsed.unlockedOutfits : INITIAL_PROGRESS.unlockedOutfits,
       unlockedAccessories: parsed.unlockedAccessories?.length ? parsed.unlockedAccessories : INITIAL_PROGRESS.unlockedAccessories,
       unlockedBlockThemes: parsed.unlockedBlockThemes?.length ? parsed.unlockedBlockThemes : INITIAL_PROGRESS.unlockedBlockThemes,
-      quests: parsed.quests && parsed.quests.length ? parsed.quests : DEFAULT_QUESTS,
+      quests: parsed.quests && parsed.quests.length ? parsed.quests : createDailyQuests(),
       badges: parsed.badges && parsed.badges.length ? parsed.badges : INITIAL_PROGRESS.badges
     };
-    return applyHeartRegen(merged);
+    return applyHeartRegen(syncDailyQuests(merged, today));
   } catch {
-    return INITIAL_PROGRESS;
+    return syncDailyQuests(INITIAL_PROGRESS);
   }
 }
 

@@ -13,7 +13,6 @@ export interface AccessoryItem {
   name: string;
   desc: string;
   priceCoins: number;
-  iconLabel: string;
 }
 
 export interface BlockThemeItem {
@@ -73,29 +72,25 @@ export const ACCESSORY_CATALOG: AccessoryItem[] = [
     id: 'none',
     name: 'Klasik Kep',
     desc: 'Sade mezuniyet kepi görünümü.',
-    priceCoins: 0,
-    iconLabel: '🎓'
+    priceCoins: 0
   },
   {
     id: 'bandana',
     name: 'Dojo Bandanası',
     desc: 'Karate ustası kırmızı savaşçı alın bandı.',
-    priceCoins: 0,
-    iconLabel: '🥋'
+    priceCoins: 0
   },
   {
     id: 'crown',
     name: 'Altın Taç',
     desc: 'Yakut taşlı parlayan krallık tacı.',
-    priceCoins: 400,
-    iconLabel: '👑'
+    priceCoins: 400
   },
   {
     id: 'visor',
     name: 'Siber Vizör',
     desc: 'Parlayan neon camgöbeği gözlük.',
-    priceCoins: 350,
-    iconLabel: '🕶️'
+    priceCoins: 350
   }
 ];
 

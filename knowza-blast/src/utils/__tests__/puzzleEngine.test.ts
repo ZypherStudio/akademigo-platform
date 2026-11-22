@@ -12,7 +12,9 @@ import {
   createCrateCell,
   createCubeCell,
   createDailyChallengeBoard,
+  createEmberCell,
   createEmptyGrid,
+  createPrismCell,
   createSparkCell,
   createStoneCell,
   createToonBoard,
@@ -26,7 +28,9 @@ import {
   placeShapeAndClearLines,
   previewLineClears,
   rotatePolyomino,
-  strikeFeverLightning
+  stampBossBlock,
+  strikeFeverLightning,
+  tickBoardEmbers
 } from '../puzzleEngine';
 import { assetUrl } from '../assets';
 import {
@@ -455,5 +459,88 @@ describe('Knowza Blast Engine (7x7 Toon Blast + 8x8 Block & Patlat)', () => {
     const tTurn1 = generateSeededBlockTray('2026-11-22', 1, ['blue', 'yellow', 'red', 'green', 'purple'], b1);
     expect(t1).toEqual(t2);
     expect(t1[0].cells).not.toEqual(tTurn1[0].cells);
+  });
+
+  it('supports ember countdowns, prism refraction, 2x2 milestone boss blocks, and super power fusion', () => {
+    // 1. Ember countdown tick & 3x3 clear burst
+    const emberGrid = createEmptyGrid(BLOCK_GRID_SIZE);
+    for (let c = 0; c < BLOCK_GRID_SIZE - 1; c++) emberGrid[0][c] = createCubeCell('blue');
+    emberGrid[0][2] = createEmberCell('red', 1);
+    emberGrid[1][2] = createCubeCell('yellow');
+
+    const ticked = tickBoardEmbers(emberGrid);
+    expect(ticked.eruptedCoords).toEqual([[0, 2]]);
+    expect(ticked.grid[0][2]?.emberMovesLeft).toBe(3);
+
+    const emberOutcome = placeShapeAndClearLines(
+      emberGrid,
+      { id: 'dot', name: 'Tekli', cells: [[0, 0]], color: 'green' },
+      0,
+      BLOCK_GRID_SIZE - 1
+    );
+    expect(emberOutcome!.collected.ember).toBe(1);
+    expect(emberOutcome!.grid[1][2]).toBeNull(); // Popped by ember's 3x3 thermal ring
+
+    // 2. Prism refraction hits remote obstacle
+    const prismGrid = createEmptyGrid(BLOCK_GRID_SIZE);
+    for (let c = 0; c < BLOCK_GRID_SIZE - 1; c++) prismGrid[0][c] = createCubeCell('blue');
+    prismGrid[0][4] = createPrismCell('purple');
+    prismGrid[7][7] = createCrateCell();
+    const prismOutcome = placeShapeAndClearLines(
+      prismGrid,
+      { id: 'dot2', name: 'Tekli', cells: [[0, 0]], color: 'green' },
+      0,
+      BLOCK_GRID_SIZE - 1
+    );
+    expect(prismOutcome!.collected.prism).toBe(1);
+    expect(prismOutcome!.grid[7][7]).toBeNull();
+
+    // 3. Every 5th level spawns a unified 2x2 Boss Block at (3,3)-(4,4)
+    const lvl5 = LEVELS[4];
+    expect(lvl5.targets.boss).toBe(1);
+    const bossBoard = createBlockAdventureBoard(lvl5);
+    expect(bossBoard[3][3]?.obstacle).toBe('boss');
+    expect(bossBoard[4][4]?.obstacle).toBe('boss');
+
+    const bossTestGrid = createEmptyGrid(BLOCK_GRID_SIZE);
+    stampBossBlock(bossTestGrid, 3, 3, 2);
+    for (let c = 0; c < BLOCK_GRID_SIZE; c++) {
+      if (c !== 3 && c !== 4 && c !== 7) bossTestGrid[3][c] = createCubeCell('red');
+    }
+    const hit1 = placeShapeAndClearLines(
+      bossTestGrid,
+      { id: 'dot3', name: 'Tekli', cells: [[0, 0]], color: 'blue' },
+      3,
+      7
+    );
+    expect(hit1!.grid[3][3]?.obstacleHp).toBe(1);
+    expect(hit1!.grid[4][4]?.obstacleHp).toBe(1);
+
+    for (let c = 0; c < BLOCK_GRID_SIZE; c++) {
+      if (c !== 3 && c !== 4 && c !== 7) hit1!.grid[4][c] = createCubeCell('yellow');
+    }
+    const hit2 = placeShapeAndClearLines(
+      hit1!.grid,
+      { id: 'dot4', name: 'Tekli', cells: [[0, 0]], color: 'green' },
+      4,
+      7
+    );
+    expect(hit2!.collected.boss).toBe(1);
+    expect(hit2!.grid[3][3]).toBeNull();
+    expect(hit2!.grid[4][4]).toBeNull();
+
+    // 4. Super Power Fusion when 2+ specials detonate together
+    const fusionGrid = createEmptyGrid(BLOCK_GRID_SIZE);
+    for (let c = 0; c < BLOCK_GRID_SIZE - 1; c++) fusionGrid[2][c] = createCubeCell('blue');
+    fusionGrid[2][1] = createCubeCell('blue', { special: 'rocket_h' });
+    fusionGrid[2][5] = createCubeCell('yellow', { special: 'bomb' });
+    const fusionOut = placeShapeAndClearLines(
+      fusionGrid,
+      { id: 'dot5', name: 'Tekli', cells: [[0, 0]], color: 'red' },
+      2,
+      BLOCK_GRID_SIZE - 1
+    );
+    expect(fusionOut!.superFusionTriggered).toBe(true);
+    expect(fusionOut!.rocketBeams.length).toBeGreaterThanOrEqual(4);
   });
 });

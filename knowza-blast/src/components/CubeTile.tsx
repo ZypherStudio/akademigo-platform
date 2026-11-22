@@ -286,6 +286,87 @@ export const CubeTile: React.FC<CubeTileProps> = ({
     );
   }
 
+  if (cell.obstacle === 'ember') {
+    const countdown = cell.emberMovesLeft ?? 4;
+    const urgent = countdown <= 1;
+    return (
+      <Tag
+        type={onClick ? 'button' : undefined}
+        onClick={onClick}
+        className={`w-full h-full rounded-[10px] bg-gradient-to-b from-[#ff7b3b] via-[#b91c1c] to-[#450a0a] border-2 ${
+          urgent ? 'border-yellow-300 animate-pulse ring-2 ring-amber-300' : 'border-[#fb923c]'
+        } shadow-[inset_0_2px_0_rgba(255,237,213,0.55),0_0_10px_rgba(249,115,22,0.55)] relative flex items-center justify-center transition-transform active:scale-90 overflow-hidden ${
+          highlighted ? 'ring-2 ring-white scale-[1.06]' : ''
+        }`}
+      >
+        <svg viewBox="0 0 36 36" className="w-[78%] h-[78%] drop-shadow">
+          <path
+            d="M18 4 C23 11 28 15 27 23 A9 9 0 0 1 9 23 C8 16 14 12 15 7 C16 10 18 11 18 4 Z"
+            fill="#fde047"
+            stroke="#7c2d12"
+            strokeWidth="1.6"
+            strokeLinejoin="round"
+          />
+          <path d="M18 16 C21 20 22 24 18 28 C14 24 15 20 18 16 Z" fill="#f97316" />
+        </svg>
+        <span
+          className={`absolute top-0.5 right-0.5 min-w-[14px] px-1 rounded-full text-[9px] font-black text-center leading-tight border ${
+            urgent
+              ? 'bg-red-600 text-white border-yellow-200'
+              : 'bg-black/80 text-amber-200 border-orange-400/70'
+          }`}
+        >
+          {countdown}
+        </span>
+      </Tag>
+    );
+  }
+
+  if (cell.obstacle === 'prism') {
+    return (
+      <Tag
+        type={onClick ? 'button' : undefined}
+        onClick={onClick}
+        className={`w-full h-full rounded-[10px] bg-gradient-to-br from-[#67e8f9] via-[#c084fc] to-[#2563eb] border-2 border-[#f0abfc] shadow-[inset_0_2px_0_rgba(255,255,255,0.8),0_0_10px_rgba(192,132,252,0.6)] relative flex items-center justify-center transition-transform active:scale-90 overflow-hidden ${
+          highlighted ? 'ring-2 ring-white scale-[1.06]' : ''
+        }`}
+      >
+        <svg viewBox="0 0 36 36" className="w-[82%] h-[82%] drop-shadow">
+          <polygon points="18,4 30,15 18,32 6,15" fill="rgba(255,255,255,0.28)" stroke="#ffffff" strokeWidth="1.8" strokeLinejoin="round" />
+          <polygon points="18,4 23,15 18,32 13,15" fill="rgba(255,255,255,0.35)" />
+          <line x1="6" y1="15" x2="30" y2="15" stroke="#fff" strokeWidth="1.4" opacity="0.85" />
+        </svg>
+      </Tag>
+    );
+  }
+
+  if (cell.obstacle === 'boss') {
+    const cornerRadius =
+      cell.bossCorner === 'tl'
+        ? 'rounded-tl-[12px]'
+        : cell.bossCorner === 'tr'
+        ? 'rounded-tr-[12px]'
+        : cell.bossCorner === 'bl'
+        ? 'rounded-bl-[12px]'
+        : 'rounded-br-[12px]';
+    const cracked = (cell.obstacleHp ?? 4) <= Math.ceil((cell.bossMaxHp ?? 4) / 2);
+    return (
+      <Tag
+        type={onClick ? 'button' : undefined}
+        onClick={onClick}
+        className={`w-full h-full ${cornerRadius} ${
+          cracked
+            ? 'bg-gradient-to-br from-[#f59e0b] via-[#b45309] to-[#451a03] border-[#fde047]'
+            : 'bg-gradient-to-br from-[#7e22ce] via-[#4c1d95] to-[#1e1b4b] border-[#fbbf24]'
+        } border relative flex items-center justify-center shadow-[inset_0_2px_0_rgba(255,255,255,0.35)] overflow-hidden ${
+          highlighted ? 'brightness-125 ring-2 ring-yellow-300' : ''
+        }`}
+      >
+        <div className="w-[70%] h-[70%] rounded border border-amber-300/35 bg-black/15" />
+      </Tag>
+    );
+  }
+
   if (cell.special) {
     const specialKind =
       cell.special === 'disco' ? 'disco' : cell.special === 'bomb' ? 'bomb' : 'rocket';

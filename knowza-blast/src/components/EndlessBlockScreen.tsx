@@ -338,27 +338,35 @@ export const EndlessBlockScreen: React.FC<EndlessBlockScreenProps> = ({
           pushCallout(
             triggeredFeverNow
               ? 'KNOWZA ATEŞİ 2×!'
+              : res.superFusionTriggered
+              ? 'SÜPER BİRLEŞİM!'
               : isCross
               ? 'ÇAPRAZ PATLAMA!'
               : res.linesCleared > 1
               ? `${res.linesCleared}x SATIR!`
               : 'BLOK TEMİZLİĞİ!',
-            isSprint
+            res.superFusionTriggered
+              ? `3× Lazer! +${bonus}`
+              : isSprint
               ? `+${bonus} • +${res.linesCleared * 4}sn`
               : nextCombo > 1
               ? `${nextCombo}x Seri! +${bonus}`
               : `+${bonus}`,
             triggeredFeverNow
               ? 'fever'
+              : res.superFusionTriggered || res.specialsTriggered > 0
+              ? 'chain'
               : isCross
               ? 'cross'
-              : res.specialsTriggered > 0
-              ? 'chain'
               : res.linesCleared > 1 || nextCombo > 1
               ? 'combo'
               : 'clear'
           );
-          triggerReaction(res.linesCleared >= 2 || nextCombo >= 2 || triggeredFeverNow ? 'combo' : 'happy');
+          triggerReaction(
+            res.linesCleared >= 2 || nextCombo >= 2 || triggeredFeverNow || res.superFusionTriggered
+              ? 'combo'
+              : 'happy'
+          );
         } else {
           setCombo(0);
           setScore((s) => s + basePts);

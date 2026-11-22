@@ -48,6 +48,12 @@ describe('Knowza Blast Levels & Progression', () => {
     expect(pedestalSets.size).toBe(8);
     expect(BIOMES[1].mapBgImage).toBe('assets/bg_biome_glacier.jpg');
     expect(BIOMES[2].mapBgImage).toBe('assets/bg_biome_volcano.jpg');
+    expect(BIOMES[3].mapBgImage).toBe('assets/bg_biome_crystal.jpg');
+    expect(BIOMES[4].mapBgImage).toBe('assets/bg_biome_dojo.jpg');
+    expect(BIOMES[5].mapBgImage).toBe('assets/bg_biome_desert.jpg');
+    expect(getLevelConfig(5).targets.boss).toBe(1);
+    expect(getLevelConfig(76).targets.ember).toBeGreaterThanOrEqual(1);
+    expect(getLevelConfig(46).targets.prism).toBeGreaterThanOrEqual(1);
   });
 
   it('addXpToProgress levels up cleanly and carries overflow XP', () => {

@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Flame, Pause, RotateCw, Shuffle } from 'lucide-react';
+import { Crown, Flame, Pause, RotateCw, Shuffle } from 'lucide-react';
 import {
   BLOCK_GRID_SIZE,
   applyInventoryBooster,
@@ -10,7 +10,8 @@ import {
   placeShapeAndClearLines,
   previewLineClears,
   rotatePolyomino,
-  strikeFeverLightning
+  strikeFeverLightning,
+  tickBoardEmbers
 } from '../utils/puzzleEngine';
 import {
   CubeColor,
@@ -56,7 +57,12 @@ interface HybridGameScreenProps {
   onPause: () => void;
   onUseInventoryBooster: (type: InventoryBooster) => void;
   onOpenBoosterDetail: (type: InventoryBooster) => void;
-  onProgressStats: (delta: { cubesBlasted?: number; linesCleared?: number; boostersUsed?: number }) => void;
+  onProgressStats: (delta: {
+    cubesBlasted?: number;
+    linesCleared?: number;
+    boostersUsed?: number;
+    bonusCoins?: number;
+  }) => void;
   onSpendCoins?: (amount: number) => boolean;
   onMoodChange?: (mood: KnowzaMood) => void;
   onWin: (starsEarned: number, remainingMoves: number) => void;
@@ -64,13 +70,28 @@ interface HybridGameScreenProps {
 }
 
 const START_BOOSTER_SLOTS: [number, number][] = [
-  [3, 3],
-  [4, 4],
-  [3, 4],
-  [4, 3],
-  [2, 3],
-  [5, 4]
+  [1, 2],
+  [6, 5],
+  [2, 5],
+  [5, 2],
+  [1, 4],
+  [6, 3]
 ];
+
+function pickBonusCoords(boardGrid: Grid, count = 2): Set<string> {
+  const empty: string[] = [];
+  for (let r = 0; r < boardGrid.length; r++) {
+    for (let c = 0; c < boardGrid[r].length; c++) {
+      if (boardGrid[r][c] === null) empty.push(`${r},${c}`);
+    }
+  }
+  const picked = new Set<string>();
+  while (picked.size < count && empty.length > 0) {
+    const idx = Math.floor(Math.random() * empty.length);
+    picked.add(empty.splice(idx, 1)[0]);
+  }
+  return picked;
+}
 
 interface DragState {
   shapeIndex: number;
@@ -104,7 +125,10 @@ export const HybridGameScreen: React.FC<HybridGameScreenProps> = ({
   const buildBoard = () => {
     const b = createBlockAdventureBoard(level);
     startBoosters.forEach((sb, idx) => {
-      const [rr, cc] = START_BOOSTER_SLOTS[idx % START_BOOSTER_SLOTS.length];
+      const candidateSlots = [...START_BOOSTER_SLOTS, [0, 0] as [number, number], [7, 7] as [number, number]];
+      const slot = candidateSlots.find(([rr, cc], i) => i >= idx && b[rr][cc]?.obstacle !== 'boss');
+      if (!slot) return;
+      const [rr, cc] = slot;
       b[rr][cc] = {
         uid: `sb_${Date.now()}_${idx}`,
         color: level.colors[idx % level.colors.length],
@@ -116,6 +140,7 @@ export const HybridGameScreen: React.FC<HybridGameScreenProps> = ({
   };
 
   const [grid, setGrid] = useState<Grid>(() => buildBoard());
+  const [bonusCoords, setBonusCoords] = useState<Set<string>>(() => pickBonusCoords(grid, 2));
   const [tray, setTray] = useState<(PolyominoShape | null)[]>(() =>
     generateBlockTray(level.colors, undefined, { allowAdvanced: level.id >= 3 })
   );
@@ -156,6 +181,7 @@ export const HybridGameScreen: React.FC<HybridGameScreenProps> = ({
   useEffect(() => {
     const init = buildBoard();
     setGrid(init);
+    setBonusCoords(pickBonusCoords(init, 2));
     setTray(generateBlockTray(level.colors, init, { allowAdvanced: level.id >= 3 }));
     setScore(0);
     setComboStreak(0);
@@ -531,8 +557,11 @@ export const HybridGameScreen: React.FC<HybridGameScreenProps> = ({
       const res = placeShapeAndClearLines(grid, drag.shape, drag.hoverR, drag.hoverC, false);
       if (res) {
         const isFeverActive = feverTurns > 0 || Boolean(drag.shape.isGoldBonus);
-        const scoreMult = isFeverActive ? 2 : 1;
-        const targetMult = isFeverActive ? 2 : 1;
+        const hitBonusSquare = drag.shape.cells.some(([dr, dc]) =>
+          bonusCoords.has(`${drag.hoverR! + dr},${drag.hoverC! + dc}`)
+        );
+        const scoreMult = (isFeverActive ? 2 : 1) * (hitBonusSquare ? 2 : 1);
+        const targetMult = isFeverActive || hitBonusSquare ? 2 : 1;
         const basePts = drag.shape.cells.length * 10 * scoreMult;
 
         let finalGrid = res.grid;
@@ -542,7 +571,7 @@ export const HybridGameScreen: React.FC<HybridGameScreenProps> = ({
           const nextStreak = comboStreak + 1;
           const isCross = res.clearedRows.length > 0 && res.clearedCols.length > 0;
           const crossMult = isCross ? 2 : 1;
-          const specialBonus = res.specialsTriggered * 150;
+          const specialBonus = res.specialsTriggered * 150 + (res.superFusionTriggered ? 300 : 0);
           const bonus = (res.linesCleared * 100 * nextStreak * crossMult + specialBonus) * scoreMult;
           setComboStreak(nextStreak);
           setLinesClearedTotal((l) => l + res.linesCleared);
@@ -552,7 +581,7 @@ export const HybridGameScreen: React.FC<HybridGameScreenProps> = ({
             setRotateCharges((c) => Math.min(5, c + 1));
           }
 
-          if (res.specialsTriggered > 0) {
+          if (res.superFusionTriggered || res.specialsTriggered > 0) {
             sfx.disco();
           } else {
             sfx.lineClear(res.linesCleared);
@@ -574,7 +603,8 @@ export const HybridGameScreen: React.FC<HybridGameScreenProps> = ({
           applyCollectedTargets(res.collected, targetMult);
           onProgressStats({
             cubesBlasted: res.blastedCoords.length,
-            linesCleared: res.linesCleared
+            linesCleared: res.linesCleared,
+            bonusCoins: hitBonusSquare ? 15 : 0
           });
 
           // Charge Knowza Fever or tick active Fever
@@ -607,6 +637,10 @@ export const HybridGameScreen: React.FC<HybridGameScreenProps> = ({
 
           const title = triggeredFeverNow
             ? 'KNOWZA ATEŞİ 2×!'
+            : res.superFusionTriggered
+            ? 'SÜPER BİRLEŞİM!'
+            : hitBonusSquare
+            ? '2× ALTIN KARE!'
             : isCross
             ? 'ÇAPRAZ PATLAMA!'
             : res.specialsTriggered > 0
@@ -617,6 +651,10 @@ export const HybridGameScreen: React.FC<HybridGameScreenProps> = ({
           const sub =
             triggeredFeverNow
               ? '3 Hamle 2× Hedef + Yıldırım!'
+              : res.superFusionTriggered
+              ? `3× Lazer Fırtınası! +${bonus}`
+              : hitBonusSquare
+              ? `2× Hedef & +15 Altın! +${bonus}`
               : nextStreak > 1
               ? `${nextStreak}x Seri! +${bonus}`
               : isFeverActive
@@ -624,21 +662,29 @@ export const HybridGameScreen: React.FC<HybridGameScreenProps> = ({
               : `+${bonus}`;
           const variant: FloatingCallout['variant'] = triggeredFeverNow
             ? 'fever'
+            : res.superFusionTriggered || res.specialsTriggered > 0
+            ? 'chain'
             : isCross
             ? 'cross'
-            : res.specialsTriggered > 0
-            ? 'chain'
             : res.linesCleared > 1 || nextStreak > 1
             ? 'combo'
             : 'clear';
           pushCallout(title, sub, triggeredFeverNow ? 'text-orange-300' : 'text-[#ffe855]', variant);
           triggerMascotReaction(
-            res.linesCleared >= 2 || nextStreak >= 2 || triggeredFeverNow ? 'combo' : 'happy',
-            triggeredFeverNow ? 'Ateş modu!' : isCross ? 'Muhteşem!' : undefined
+            res.linesCleared >= 2 || nextStreak >= 2 || triggeredFeverNow || res.superFusionTriggered
+              ? 'combo'
+              : 'happy',
+            triggeredFeverNow ? 'Ateş modu!' : res.superFusionTriggered ? 'Efsane birleşim!' : isCross ? 'Muhteşem!' : undefined
           );
+          setBonusCoords(pickBonusCoords(finalGrid, 2));
         } else {
           setComboStreak(0);
           setScore((s) => s + basePts);
+          if (hitBonusSquare) {
+            onProgressStats({ bonusCoins: 8 });
+            pushCallout('ALTIN KARE!', '+8 Altın Kapıldı!', 'text-yellow-300', 'combo');
+            setBonusCoords(pickBonusCoords(finalGrid, 2));
+          }
           if (feverTurns > 0) {
             const left = Math.max(0, feverTurns - 1);
             setFeverTurns(left);
@@ -648,6 +694,17 @@ export const HybridGameScreen: React.FC<HybridGameScreenProps> = ({
           }
           sfx.place();
           triggerHaptic(progress.hapticsEnabled, 14);
+        }
+
+        // Tick countdown timers on remaining ember obstacles
+        const emberTick = tickBoardEmbers(finalGrid);
+        finalGrid = emberTick.grid;
+        if (emberTick.eruptedCoords.length > 0) {
+          spawnVfx(emberTick.eruptedCoords, finalGrid, [], emberTick.eruptedCoords);
+          triggerShake();
+          sfx.fail();
+          pushCallout('KÖZ PATLADI!', 'Sönmeyen közü temizle!', 'text-orange-300', 'fever');
+          triggerMascotReaction('happy', 'Közlere dikkat!');
         }
 
         const clearedR = new Set(res.clearedRows);
@@ -805,7 +862,7 @@ export const HybridGameScreen: React.FC<HybridGameScreenProps> = ({
                     {biome.name}
                   </span>
                 </div>
-                <div className="flex items-center justify-center gap-2">
+                <div className="flex items-center justify-center gap-1.5 flex-wrap">
                   {targetEntries.map(([key]) => (
                     <TargetChip
                       key={key}
@@ -880,6 +937,8 @@ export const HybridGameScreen: React.FC<HybridGameScreenProps> = ({
                     clearedFlash.rows.includes(r) ||
                     clearedFlash.cols.includes(c);
 
+                  const isBonusTile = !cell && bonusCoords.has(key);
+
                   return (
                     <div
                       key={`slot_${key}`}
@@ -887,16 +946,24 @@ export const HybridGameScreen: React.FC<HybridGameScreenProps> = ({
                       className="p-[1.5px]"
                     >
                       <div
-                        className={`w-full h-full rounded-[7px] transition-colors ${
+                        className={`w-full h-full rounded-[7px] transition-colors flex items-center justify-center relative ${
                           isLineHighlight
                             ? 'bg-amber-300/50 ring-2 ring-amber-200'
                             : isInvalidGhost
                             ? 'bg-rose-500/45 ring-2 ring-rose-300'
                             : !cell && isGhost
                             ? 'bg-white/25 ring-2 ring-white/90'
+                            : isBonusTile
+                            ? 'bg-amber-400/20 ring-1 ring-amber-300/90 shadow-[inset_0_0_8px_rgba(251,191,36,0.45)]'
                             : 'bg-black/25'
                         }`}
-                      />
+                      >
+                        {isBonusTile && !isGhost && (
+                          <span className="text-[9px] font-black text-amber-200 drop-shadow animate-pulse pointer-events-none">
+                            2×
+                          </span>
+                        )}
+                      </div>
                     </div>
                   );
                 })
@@ -938,6 +1005,36 @@ export const HybridGameScreen: React.FC<HybridGameScreenProps> = ({
                     </div>
                   );
                 })}
+
+              {/* Unified 2x2 Milestone Boss Crest + Live HP Bar */}
+              {(() => {
+                const bossCell = grid.flat().find((cell) => cell?.obstacle === 'boss');
+                if (!bossCell) return null;
+                const hp = bossCell.obstacleHp ?? 4;
+                const maxHp = bossCell.bossMaxHp ?? 4;
+                const hpPct = Math.max(8, Math.round((hp / maxHp) * 100));
+                return (
+                  <div
+                    className="absolute pointer-events-none z-20 flex flex-col items-center justify-center p-1"
+                    style={{ left: '37.5%', top: '37.5%', width: '25%', height: '25%' }}
+                  >
+                    <div className="w-7 h-7 rounded-full bg-gradient-to-b from-yellow-300 to-amber-500 border-2 border-[#4a2000] flex items-center justify-center shadow-md mb-1">
+                      <Crown className="w-4 h-4 text-[#4a2000]" />
+                    </div>
+                    <div className="w-[82%] bg-black/80 border border-amber-300 rounded-full px-1 py-0.5 text-center shadow">
+                      <div className="text-[7.5px] font-black text-amber-200 leading-none mb-0.5">
+                        PATRON {hp}/{maxHp}
+                      </div>
+                      <div className="w-full h-1 bg-stone-700 rounded-full overflow-hidden">
+                        <div
+                          className="h-full bg-gradient-to-r from-rose-500 via-amber-400 to-yellow-300 transition-all duration-300"
+                          style={{ width: `${hpPct}%` }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                );
+              })()}
             </div>
 
             <BoardVfxLayer

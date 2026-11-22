@@ -58,17 +58,32 @@ export function generateLevelConfig(id: number): LevelConfig {
   } else if (biome.id === 'glacier') {
     obstaclePreset = localIdx % 2 === 0 ? 'ice_center' : 'ice_checker';
     targets.ice = Math.min(8, 3 + Math.floor(localIdx / 4) + Math.floor((tier - 1) / 2));
-  } else if (biome.id === 'volcano' || biome.id === 'dojo_peak') {
+  } else if (biome.id === 'volcano') {
+    if (localIdx >= 8) {
+      obstaclePreset = 'ember_forge';
+      targets.ember = Math.min(4, 2 + Math.floor(localIdx / 6));
+      targets.stone = 2;
+    } else {
+      obstaclePreset = localIdx % 3 === 0 ? 'crates_mid' : 'stone_guard';
+      targets.stone = Math.min(6, 2 + Math.floor(localIdx / 5) + Math.floor((tier - 1) / 3));
+    }
+  } else if (biome.id === 'dojo_peak') {
     obstaclePreset = localIdx % 3 === 0 ? 'crates_mid' : 'stone_guard';
     targets.stone = Math.min(6, 2 + Math.floor(localIdx / 5) + Math.floor((tier - 1) / 3));
   } else if (biome.id === 'crystal_cave') {
-    obstaclePreset = localIdx % 2 === 0 ? 'ice_checker' : 'castle_fort';
-    targets.ice = Math.min(7, 3 + Math.floor(localIdx / 5));
-    if (localIdx >= 6) targets.crate = 3;
+    obstaclePreset = localIdx % 2 === 0 ? 'prism_vault' : 'ice_checker';
+    if (obstaclePreset === 'prism_vault') {
+      targets.prism = Math.min(6, 3 + Math.floor(localIdx / 4));
+    } else {
+      targets.ice = Math.min(7, 3 + Math.floor(localIdx / 5));
+    }
   } else if (biome.id === 'desert') {
-    obstaclePreset = localIdx % 2 === 0 ? 'castle_fort' : 'stone_guard';
-    targets.crate = Math.min(6, 3 + Math.floor(localIdx / 5));
-    targets.stone = Math.min(4, 2 + Math.floor(localIdx / 7));
+    obstaclePreset = localIdx % 2 === 0 ? 'ember_forge' : 'castle_fort';
+    if (obstaclePreset === 'ember_forge') {
+      targets.ember = Math.min(5, 2 + Math.floor(localIdx / 4));
+    } else {
+      targets.crate = Math.min(6, 3 + Math.floor(localIdx / 5));
+    }
   } else if (biome.id === 'cyber_city') {
     obstaclePreset = 'spark_grid';
     targets.spark = Math.min(7, 3 + Math.floor(localIdx / 4) + Math.floor((tier - 1) / 2));
@@ -76,21 +91,30 @@ export function generateLevelConfig(id: number): LevelConfig {
     obstaclePreset = 'cosmos_mix';
     targets.stone = 2 + Math.floor(localIdx / 6);
     targets.spark = 3 + Math.floor(localIdx / 5);
+    if (localIdx >= 5) targets.prism = 2;
+    if (localIdx >= 10) targets.ember = 1;
+  }
+
+  const isBossMilestone = safeId % 5 === 0;
+  if (isBossMilestone) {
+    targets.boss = 1;
   }
 
   return {
     id: safeId,
     name: safeId === 1 ? 'Blok Başlangıcı' : `${stageName}${tierTag}`,
-    subtitle: `${biome.name}: ${biome.mechanicDesc}`,
+    subtitle: isBossMilestone
+      ? `${biome.name}: 2×2 Kademe Patronu!`
+      : `${biome.name}: ${biome.mechanicDesc}`,
     biomeId: biome.id,
-    moves: Math.min(18, 3 + Math.floor(localIdx / 2) + tier),
+    moves: Math.min(20, 3 + Math.floor(localIdx / 2) + tier + (isBossMilestone ? 2 : 0)),
     colors,
     targets,
     obstaclePreset,
     rewards: {
-      stars: 25 + Math.min(150, Math.floor(safeId * 0.4) + localIdx * 2),
-      coins: 100 + Math.min(800, safeId * 2 + localIdx * 10),
-      xp: 80 + Math.min(450, safeId + localIdx * 6)
+      stars: 25 + Math.min(150, Math.floor(safeId * 0.4) + localIdx * 2) + (isBossMilestone ? 15 : 0),
+      coins: 100 + Math.min(800, safeId * 2 + localIdx * 10) + (isBossMilestone ? 60 : 0),
+      xp: 80 + Math.min(450, safeId + localIdx * 6) + (isBossMilestone ? 30 : 0)
     }
   };
 }

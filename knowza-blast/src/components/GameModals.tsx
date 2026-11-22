@@ -90,7 +90,7 @@ export const LevelIntroModal: React.FC<{
           <div className="text-[11px] font-black text-amber-900 uppercase mb-1.5">
             Toplanacak Bloklar • 8×8 Block Blast
           </div>
-          <div className="flex items-center justify-center gap-4">
+          <div className="flex items-center justify-center gap-2.5 flex-wrap">
             {targetEntries.map(([k, qty]) => (
               <TargetChip key={k} targetKey={k} remaining={qty} biome={biome.id} />
             ))}

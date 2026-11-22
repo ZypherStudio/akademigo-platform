@@ -66,6 +66,77 @@ export function createSparkCell(color: CubeColor): CellData {
   };
 }
 
+export function createEmberCell(color: CubeColor, movesLeft = 4): CellData {
+  return {
+    uid: nextUid(),
+    color,
+    special: null,
+    obstacle: 'ember',
+    obstacleHp: 1,
+    emberMovesLeft: movesLeft,
+    isNew: true
+  };
+}
+
+export function createPrismCell(color: CubeColor): CellData {
+  return {
+    uid: nextUid(),
+    color,
+    special: null,
+    obstacle: 'prism',
+    obstacleHp: 1,
+    isNew: true
+  };
+}
+
+export function stampBossBlock(grid: Grid, topR = 3, leftC = 3, bossHp = 4) {
+  const bossId = `boss_${topR}_${leftC}`;
+  const corners: { dr: number; dc: number; corner: 'tl' | 'tr' | 'bl' | 'br' }[] = [
+    { dr: 0, dc: 0, corner: 'tl' },
+    { dr: 0, dc: 1, corner: 'tr' },
+    { dr: 1, dc: 0, corner: 'bl' },
+    { dr: 1, dc: 1, corner: 'br' }
+  ];
+  for (const { dr, dc, corner } of corners) {
+    const r = topR + dr;
+    const c = leftC + dc;
+    if (grid[r]?.[c] !== undefined) {
+      grid[r][c] = {
+        uid: `${bossId}_${corner}`,
+        color: null,
+        special: null,
+        obstacle: 'boss',
+        obstacleHp: bossHp,
+        bossMaxHp: bossHp,
+        bossId,
+        bossCorner: corner,
+        isNew: true
+      };
+    }
+  }
+}
+
+/** Decrements countdown timers on remaining `ember` obstacles; returns any that reached 0 and reset. */
+export function tickBoardEmbers(grid: Grid): { grid: Grid; eruptedCoords: [number, number][] } {
+  const N = grid.length;
+  const next = cloneGrid(grid);
+  const eruptedCoords: [number, number][] = [];
+  for (let r = 0; r < N; r++) {
+    for (let c = 0; c < N; c++) {
+      const cell = next[r][c];
+      if (!cell || cell.obstacle !== 'ember') continue;
+      const rem = (cell.emberMovesLeft ?? 4) - 1;
+      if (rem <= 0) {
+        eruptedCoords.push([r, c]);
+        next[r][c] = { ...cell, emberMovesLeft: 3, isNew: true };
+      } else {
+        next[r][c] = { ...cell, emberMovesLeft: rem };
+      }
+    }
+  }
+  return { grid: next, eruptedCoords };
+}
+
 /** Creates a full 7x7 Toon Blast board matching Reference Image 2 */
 export function createToonBoard(level: LevelConfig): Grid {
   const N = TOON_GRID_SIZE;
@@ -194,6 +265,28 @@ export function createBlockAdventureBoard(level: LevelConfig): Grid {
       .forEach(([r, c], i) => {
         grid[r][c] = createSparkCell(level.colors[i % level.colors.length]);
       });
+  } else if (preset === 'ember_forge') {
+    [[2, 1], [2, 6], [5, 1], [5, 6], [3, 4]]
+      .slice(0, level.targets.ember || 3)
+      .forEach(([r, c], i) => {
+        grid[r][c] = createEmberCell(level.colors[i % level.colors.length], 4 + (i % 2));
+      });
+    [[1, 3], [6, 4]].slice(0, level.targets.stone || 0).forEach(([r, c]) => {
+      grid[r][c] = createStoneCell();
+    });
+  } else if (preset === 'prism_vault') {
+    [[1, 2], [2, 5], [5, 2], [6, 5], [3, 6]]
+      .slice(0, level.targets.prism || 4)
+      .forEach(([r, c], i) => {
+        grid[r][c] = createPrismCell(level.colors[i % level.colors.length]);
+      });
+  } else if (preset === 'boss_arena') {
+    [[1, 1], [1, 6], [6, 1], [6, 6]].forEach(([r, c], i) => {
+      grid[r][c] =
+        i % 2 === 0
+          ? createCrateCell()
+          : createPrismCell(level.colors[i % level.colors.length]);
+    });
   } else if (preset === 'cosmos_mix') {
     [[2, 2], [5, 5], [2, 5]].slice(0, level.targets.stone || 3).forEach(([r, c]) => {
       grid[r][c] = createStoneCell();
@@ -201,6 +294,19 @@ export function createBlockAdventureBoard(level: LevelConfig): Grid {
     [[1, 4], [4, 1], [6, 3], [3, 6]].slice(0, level.targets.spark || 3).forEach(([r, c], i) => {
       grid[r][c] = createSparkCell(level.colors[i % level.colors.length]);
     });
+    if (level.targets.prism) {
+      grid[1][1] = createPrismCell(level.colors[0]);
+      grid[6][6] = createPrismCell(level.colors[1]);
+    }
+    if (level.targets.ember) {
+      grid[1][6] = createEmberCell(level.colors[2], 4);
+    }
+  }
+
+  // Every 5th milestone Boss level spawns a unified 2x2 armored Boss cube at center (3,3)-(4,4)
+  if (level.targets.boss && level.targets.boss > 0) {
+    const bossHp = Math.min(8, 4 + Math.floor(level.id / 60));
+    stampBossBlock(grid, 3, 3, bossHp);
   }
 
   return grid;
@@ -373,19 +479,26 @@ function detonateCoords(
   rocketBeams: { r: number; c: number; dir: 'h' | 'v' | 'both' }[];
   bombRings: [number, number][];
   discoTargetCoords: [number, number][];
+  superFusionTriggered: boolean;
 } {
   const N = grid.length;
   const visited = new Set<string>();
+  const queued = new Set<string>(initialCoords.map(([r, c]) => `${r},${c}`));
   const queue: [number, number][] = [...initialCoords];
   const blasted: [number, number][] = [];
   const rocketBeams: { r: number; c: number; dir: 'h' | 'v' | 'both' }[] = [];
   const bombRings: [number, number][] = [];
   const discoTargetCoords: [number, number][] = [];
+  const bossGroupsDamaged = new Set<string>();
+  let specialsCount = 0;
+  let superFusionTriggered = false;
   let usedSound: 'pop' | 'rocket' | 'bomb' | 'disco' = 'pop';
   let crackedCount = 0;
 
   const pushCoord = (r: number, c: number) => {
-    if (r >= 0 && r < N && c >= 0 && c < N && !visited.has(`${r},${c}`)) {
+    const k = `${r},${c}`;
+    if (r >= 0 && r < N && c >= 0 && c < N && !visited.has(k) && !queued.has(k)) {
+      queued.add(k);
       queue.push([r, c]);
     }
   };
@@ -398,6 +511,40 @@ function detonateCoords(
 
     const cell = grid[r]?.[c];
     if (!cell) continue;
+
+    if (cell.obstacle === 'boss') {
+      const bId = cell.bossId || 'boss_center';
+      if (bossGroupsDamaged.has(bId)) continue;
+      bossGroupsDamaged.add(bId);
+      const curHp = cell.obstacleHp ?? 4;
+      const nextHp = curHp - 1;
+      if (nextHp <= 0) {
+        addCollect(collected, 'boss', 1);
+        usedSound = 'bomb';
+        bombRings.push([r, c]);
+        for (let rr = 0; rr < N; rr++) {
+          for (let cc = 0; cc < N; cc++) {
+            const targetCell = grid[rr][cc];
+            if (targetCell?.obstacle === 'boss' && (targetCell.bossId || 'boss_center') === bId) {
+              grid[rr][cc] = null;
+              blasted.push([rr, cc]);
+              visited.add(`${rr},${cc}`);
+            }
+          }
+        }
+      } else {
+        crackedCount += 1;
+        for (let rr = 0; rr < N; rr++) {
+          for (let cc = 0; cc < N; cc++) {
+            const targetCell = grid[rr][cc];
+            if (targetCell?.obstacle === 'boss' && (targetCell.bossId || 'boss_center') === bId) {
+              grid[rr][cc] = { ...targetCell, obstacleHp: nextHp, isNew: true };
+            }
+          }
+        }
+      }
+      continue;
+    }
 
     if (cell.obstacle === 'ice') {
       addCollect(collected, 'ice', 1);
@@ -441,6 +588,47 @@ function detonateCoords(
       continue;
     }
 
+    if (cell.obstacle === 'ember') {
+      addCollect(collected, 'ember', 1);
+      if (cell.color) addCollect(collected, cell.color, 1);
+      grid[r][c] = null;
+      blasted.push([r, c]);
+      if (usedSound !== 'disco') usedSound = 'bomb';
+      bombRings.push([r, c]);
+      // Clearing an ember unleashes a 3x3 thermal ring around it
+      for (let dr = -1; dr <= 1; dr++) {
+        for (let dc = -1; dc <= 1; dc++) {
+          pushCoord(r + dr, c + dc);
+        }
+      }
+      continue;
+    }
+
+    if (cell.obstacle === 'prism') {
+      addCollect(collected, 'prism', 1);
+      if (cell.color) addCollect(collected, cell.color, 1);
+      grid[r][c] = null;
+      blasted.push([r, c]);
+      if (usedSound === 'pop') usedSound = 'rocket';
+      // Refract crystal laser beams onto up to 2 surviving board tiles (prioritizing remaining obstacles)
+      const prismTargets: [number, number][] = [];
+      for (let pass = 0; pass < 2 && prismTargets.length < 2; pass++) {
+        for (let rr = 0; rr < N && prismTargets.length < 2; rr++) {
+          for (let cc = 0; cc < N && prismTargets.length < 2; cc++) {
+            const k = `${rr},${cc}`;
+            const cand = grid[rr][cc];
+            if (!cand || visited.has(k) || queued.has(k)) continue;
+            if (pass === 0 ? Boolean(cand.obstacle) : Boolean(cand.color || cand.special)) {
+              prismTargets.push([rr, cc]);
+              pushCoord(rr, cc);
+            }
+          }
+        }
+      }
+      prismTargets.forEach((pt) => discoTargetCoords.push(pt));
+      continue;
+    }
+
     if (cell.color) {
       addCollect(collected, cell.color, 1);
     }
@@ -448,12 +636,33 @@ function detonateCoords(
     grid[r][c] = null;
     blasted.push([r, c]);
 
+    if (spec) {
+      specialsCount += 1;
+      if (specialsCount >= 2 && !superFusionTriggered) {
+        superFusionTriggered = true;
+        usedSound = 'disco';
+        // Super Power Fusion: combining 2+ specials unleashes a 3-row + 3-col mega cross storm!
+        for (let offset = -1; offset <= 1; offset++) {
+          const sr = r + offset;
+          const sc = c + offset;
+          if (sr >= 0 && sr < N) {
+            rocketBeams.push({ r: sr, c, dir: 'h' });
+            for (let cc = 0; cc < N; cc++) pushCoord(sr, cc);
+          }
+          if (sc >= 0 && sc < N) {
+            rocketBeams.push({ r, c: sc, dir: 'v' });
+            for (let rr = 0; rr < N; rr++) pushCoord(rr, sc);
+          }
+        }
+      }
+    }
+
     if (spec === 'rocket_h') {
-      usedSound = 'rocket';
+      if (usedSound !== 'disco') usedSound = 'rocket';
       rocketBeams.push({ r, c, dir: 'h' });
       for (let cc = 0; cc < N; cc++) pushCoord(r, cc);
     } else if (spec === 'rocket_v') {
-      usedSound = 'rocket';
+      if (usedSound !== 'disco') usedSound = 'rocket';
       rocketBeams.push({ r, c, dir: 'v' });
       for (let rr = 0; rr < N; rr++) pushCoord(rr, c);
     } else if (spec === 'bomb') {
@@ -485,7 +694,15 @@ function detonateCoords(
     }
   }
 
-  return { blastedCoords: blasted, crackedCount, usedSound, rocketBeams, bombRings, discoTargetCoords };
+  return {
+    blastedCoords: blasted,
+    crackedCount,
+    usedSound,
+    rocketBeams,
+    bombRings,
+    discoTargetCoords,
+    superFusionTriggered
+  };
 }
 
 export function executeTapBlast(
@@ -966,6 +1183,7 @@ export interface PlaceShapeOutcome {
   bombRings: [number, number][];
   discoTargetCoords: [number, number][];
   specialsTriggered: number;
+  superFusionTriggered: boolean;
 }
 
 export function placeShapeAndClearLines(
@@ -1014,6 +1232,7 @@ export function placeShapeAndClearLines(
   let rocketBeams: { r: number; c: number; dir: 'h' | 'v' | 'both' }[] = [];
   let bombRings: [number, number][] = [];
   let discoTargetCoords: [number, number][] = [];
+  let superFusionTriggered = false;
 
   if (toDetonate.length > 0) {
     const res = detonateCoords(next, toDetonate, collected);
@@ -1021,6 +1240,7 @@ export function placeShapeAndClearLines(
     rocketBeams = res.rocketBeams;
     bombRings = res.bombRings;
     discoTargetCoords = res.discoTargetCoords;
+    superFusionTriggered = res.superFusionTriggered;
   }
 
   const finalGrid = applyDropAfterClear && toDetonate.length > 0 ? applyGravity(next) : next;
@@ -1035,7 +1255,8 @@ export function placeShapeAndClearLines(
     rocketBeams,
     bombRings,
     discoTargetCoords,
-    specialsTriggered: rocketBeams.length + bombRings.length + (discoTargetCoords.length > 0 ? 1 : 0)
+    specialsTriggered: rocketBeams.length + bombRings.length + (discoTargetCoords.length > 0 ? 1 : 0),
+    superFusionTriggered
   };
 }
 

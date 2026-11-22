@@ -205,6 +205,7 @@ export const App: React.FC = () => {
     cubesBlasted?: number;
     linesCleared?: number;
     boostersUsed?: number;
+    bonusCoins?: number;
   }) => {
     updateProgress((p) => {
       const nextQuests = p.quests.map((q) => {
@@ -221,6 +222,7 @@ export const App: React.FC = () => {
       });
       return {
         ...p,
+        coins: p.coins + (delta.bonusCoins || 0),
         totalCubesBlasted: p.totalCubesBlasted + (delta.cubesBlasted || 0),
         totalLinesCleared: p.totalLinesCleared + (delta.linesCleared || 0),
         eventLinesProgress: (p.eventLinesProgress || 0) + (delta.linesCleared || 0),

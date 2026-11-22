@@ -2,7 +2,7 @@ export type CubeColor = 'blue' | 'yellow' | 'red' | 'green' | 'purple';
 
 export type SpecialType = 'rocket_h' | 'rocket_v' | 'bomb' | 'disco';
 
-export type ObstacleType = 'crate' | 'ice' | 'stone' | 'spark';
+export type ObstacleType = 'crate' | 'ice' | 'stone' | 'spark' | 'ember' | 'prism' | 'boss';
 
 export type InventoryBooster = 'hammer' | 'rocket' | 'bomb' | 'disco';
 
@@ -38,6 +38,10 @@ export interface CellData {
   special?: SpecialType | null;
   obstacle?: ObstacleType | null;
   obstacleHp?: number;
+  emberMovesLeft?: number;
+  bossId?: string;
+  bossCorner?: 'tl' | 'tr' | 'bl' | 'br';
+  bossMaxHp?: number;
   isNew?: boolean;
   dropFrom?: number;
   isBlasting?: boolean;
@@ -54,7 +58,15 @@ export interface PolyominoShape {
   isGoldBonus?: boolean;
 }
 
-export type TargetKey = CubeColor | 'crate' | 'ice' | 'stone' | 'spark';
+export type TargetKey =
+  | CubeColor
+  | 'crate'
+  | 'ice'
+  | 'stone'
+  | 'spark'
+  | 'ember'
+  | 'prism'
+  | 'boss';
 
 export interface LevelConfig {
   id: number;
@@ -73,6 +85,9 @@ export interface LevelConfig {
     | 'castle_fort'
     | 'stone_guard'
     | 'spark_grid'
+    | 'ember_forge'
+    | 'prism_vault'
+    | 'boss_arena'
     | 'cosmos_mix';
   rewards: {
     stars: number;

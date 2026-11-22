@@ -69,6 +69,30 @@ export const TargetChip: React.FC<TargetChipProps> = ({
             <path d="M16 3 L7 15 H13.5 L11.5 25 L21 12.5 H14.5 Z" fill="#fef08a" stroke="#083344" strokeWidth="1.4" strokeLinejoin="round" />
           </svg>
         </div>
+      ) : targetKey === 'ember' ? (
+        <div
+          className={`${dim} rounded-[9px] bg-gradient-to-b from-[#ff7b3b] via-[#b91c1c] to-[#450a0a] border-2 border-[#fb923c] shadow flex items-center justify-center`}
+        >
+          <svg viewBox="0 0 28 28" className="w-[74%] h-[74%]">
+            <path d="M14 3 C18 9 22 12 21 18 A7 7 0 0 1 7 18 C6 13 11 10 12 6 C13 8 14 9 14 3 Z" fill="#fde047" stroke="#7c2d12" strokeWidth="1.4" />
+          </svg>
+        </div>
+      ) : targetKey === 'prism' ? (
+        <div
+          className={`${dim} rounded-[9px] bg-gradient-to-br from-[#67e8f9] via-[#c084fc] to-[#2563eb] border-2 border-[#f0abfc] shadow flex items-center justify-center`}
+        >
+          <svg viewBox="0 0 28 28" className="w-[74%] h-[74%]">
+            <polygon points="14,3 23,12 14,25 5,12" fill="rgba(255,255,255,0.35)" stroke="#ffffff" strokeWidth="1.5" strokeLinejoin="round" />
+          </svg>
+        </div>
+      ) : targetKey === 'boss' ? (
+        <div
+          className={`${dim} rounded-[9px] bg-gradient-to-br from-[#7e22ce] via-[#4c1d95] to-[#1e1b4b] border-2 border-[#fbbf24] shadow flex items-center justify-center`}
+        >
+          <svg viewBox="0 0 28 28" className="w-[74%] h-[74%]">
+            <path d="M5 20 L7 9 L12 14 L14 7 L16 14 L21 9 L23 20 Z" fill="#fde047" stroke="#78350f" strokeWidth="1.4" strokeLinejoin="round" />
+          </svg>
+        </div>
       ) : (
         <div
           className={`${dim} ${radius} ${biomeFrame} bg-gradient-to-b ${CUBE_PALETTE[targetKey as CubeColor].bg} border-2 ${CUBE_PALETTE[targetKey as CubeColor].border} ${CUBE_PALETTE[targetKey as CubeColor].lip} cube-gloss flex items-center justify-center relative overflow-hidden`}

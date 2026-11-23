@@ -34,6 +34,7 @@ import { HybridGameScreen } from './components/HybridGameScreen';
 import { EndlessBlockScreen } from './components/EndlessBlockScreen';
 import { WardrobeModal } from './components/WardrobeModal';
 import { BeforeInstallPromptEvent, SocialHubModal, SocialTab } from './components/SocialHubModal';
+import { ActiveDuelSession, DuelLobbyModal } from './components/DuelLobbyModal';
 import {
   BoosterDetailModal,
   CastleModal,
@@ -47,7 +48,7 @@ import {
   VictoryModal
 } from './components/GameModals';
 
-type Screen = 'home' | 'map' | 'game' | 'endless' | 'sprint' | 'daily';
+type Screen = 'home' | 'map' | 'game' | 'endless' | 'sprint' | 'daily' | 'duel';
 
 export const App: React.FC = () => {
   const [progress, setProgress] = useState<PlayerProgress>(() => loadProgress());
@@ -81,6 +82,9 @@ export const App: React.FC = () => {
   const [incomingRefCode, setIncomingRefCode] = useState('');
   const [pendingGiftBanner, setPendingGiftBanner] = useState<string | null>(null);
   const [deferredInstallPrompt, setDeferredInstallPrompt] = useState<BeforeInstallPromptEvent | null>(null);
+  const [showDuelLobby, setShowDuelLobby] = useState(false);
+  const [duelSession, setDuelSession] = useState<ActiveDuelSession | null>(null);
+  const [incomingDuelCode, setIncomingDuelCode] = useState('');
 
   useEffect(() => {
     sfx.enabled = progress.soundEnabled;
@@ -120,9 +124,14 @@ export const App: React.FC = () => {
       const params = new URLSearchParams(window.location.search);
       const ref = (params.get('ref') || '').trim().toUpperCase();
       const giftReq = (params.get('gift_req') || '').trim();
+      const duelCode = (params.get('duel') || '').trim().toUpperCase();
       if (ref && !progress.claimedReferralCode && active) {
         setIncomingRefCode(ref);
         setSocialModalTab('invite');
+      }
+      if (duelCode && active) {
+        setIncomingDuelCode(duelCode);
+        setShowDuelLobby(true);
       }
       if (giftReq && giftReq !== progress.playerId && active) {
         const res = await sendBlastGift(progress, { targetPlayerId: giftReq });
@@ -132,7 +141,7 @@ export const App: React.FC = () => {
           setTimeout(() => setPendingGiftBanner(null), 5000);
         }
       }
-      if ((ref || giftReq) && window.history?.replaceState) {
+      if ((ref || giftReq || duelCode) && window.history?.replaceState) {
         window.history.replaceState({}, '', window.location.pathname);
       }
     };
@@ -336,9 +345,24 @@ export const App: React.FC = () => {
     });
   };
 
-  const handleEndlessGameOver = (score: number, linesCleared: number, mode: 'endless' | 'sprint' | 'daily' = 'endless') => {
-    const coinsReward = Math.max(15, Math.floor(score / 25));
-    const starsReward = Math.max(5, Math.floor(score / 80));
+  const handleEndlessGameOver = (
+    score: number,
+    linesCleared: number,
+    mode: 'endless' | 'sprint' | 'daily' | 'duel' = 'endless',
+    extra?: { duelWon?: boolean }
+  ) => {
+    const coinsReward =
+      mode === 'duel'
+        ? extra?.duelWon
+          ? 250
+          : 60
+        : Math.max(15, Math.floor(score / 25));
+    const starsReward =
+      mode === 'duel'
+        ? extra?.duelWon
+          ? 25
+          : 5
+        : Math.max(5, Math.floor(score / 80));
     const today = new Date().toISOString().slice(0, 10);
     updateProgress((p) => {
       const withXp = addXpToProgress(p, Math.min(120, Math.max(20, Math.floor(score / 15))));
@@ -425,7 +449,7 @@ export const App: React.FC = () => {
     <div className="w-full h-full bg-[#1e0e04] flex justify-center overflow-hidden">
       <div className="w-full max-w-[440px] h-full flex flex-col relative overflow-hidden bg-[#2b1405] shadow-[0_0_50px_rgba(0,0,0,0.75)] sm:border-x-2 sm:border-[#5a3010]">
         {/* Persistent Floating Top HUD */}
-        {screen !== 'endless' && screen !== 'sprint' && screen !== 'daily' && (
+        {screen !== 'endless' && screen !== 'sprint' && screen !== 'daily' && screen !== 'duel' && (
           <TopHud
             progress={progress}
             mood={screen === 'game' ? hudMood : 'idle'}
@@ -447,6 +471,7 @@ export const App: React.FC = () => {
             onOpenEndless={() => setScreen('endless')}
             onOpenSprint={() => setScreen('sprint')}
             onOpenDailyChallenge={() => setScreen('daily')}
+            onOpenDuel={() => setShowDuelLobby(true)}
             onOpenSocial={(tab = 'leaderboard') => setSocialModalTab(tab)}
             onClaimEventTier={handleClaimEventTier}
             onOpenWardrobe={() => setShowWardrobeModal(true)}
@@ -493,18 +518,42 @@ export const App: React.FC = () => {
           />
         )}
 
-        {(screen === 'endless' || screen === 'sprint' || screen === 'daily') && (
+        {(screen === 'endless' || screen === 'sprint' || screen === 'daily' || screen === 'duel') && (
           <EndlessBlockScreen
-            key={`eb_${screen}`}
+            key={
+              screen === 'duel' && duelSession
+                ? `eb_duel_${duelSession.seedKey}_${duelSession.roomCode || 'bot'}`
+                : `eb_${screen}`
+            }
             progress={progress}
             mode={screen}
-            onExit={() => setScreen('home')}
+            duelSession={duelSession}
+            onExit={() => {
+              setDuelSession(null);
+              setScreen('home');
+            }}
             onLineClearedDelta={handleEventLineDelta}
             onGameOverScore={handleEndlessGameOver}
           />
         )}
 
         {/* Modals */}
+        {showDuelLobby && (
+          <DuelLobbyModal
+            progress={progress}
+            initialJoinCode={incomingDuelCode}
+            onStartDuel={(session) => {
+              setDuelSession(session);
+              setShowDuelLobby(false);
+              setIncomingDuelCode('');
+              setScreen('duel');
+            }}
+            onClose={() => {
+              setShowDuelLobby(false);
+              setIncomingDuelCode('');
+            }}
+          />
+        )}
         {introLevel && (
           <LevelIntroModal
             level={introLevel}

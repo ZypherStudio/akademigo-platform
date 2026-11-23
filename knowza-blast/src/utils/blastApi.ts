@@ -157,3 +157,89 @@ export async function claimPendingBlastGifts(playerId?: string): Promise<Pending
     return [];
   }
 }
+
+export interface BlastDuelSide {
+  id: string;
+  name: string;
+  score: number;
+  finished: boolean;
+}
+
+export interface BlastDuelRoom {
+  code: string;
+  status: 'waiting' | 'active' | 'finished';
+  host: BlastDuelSide;
+  guest: BlastDuelSide | null;
+  createdAt: string;
+}
+
+export async function createBlastDuelRoom(progress: PlayerProgress): Promise<{ ok: boolean; room?: BlastDuelRoom; error?: string }> {
+  try {
+    const res = await fetch('/api/duel/room', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        playerId: progress.playerId,
+        playerName: progress.name
+      })
+    });
+    const data = await res.json();
+    if (!res.ok || !data?.ok) return { ok: false, error: data?.error || 'Oda kurulamadı.' };
+    return { ok: true, room: data.room };
+  } catch {
+    return { ok: false, error: 'Sunucuya bağlanılamadı.' };
+  }
+}
+
+export async function joinBlastDuelRoom(
+  code: string,
+  progress: PlayerProgress
+): Promise<{ ok: boolean; room?: BlastDuelRoom; error?: string }> {
+  try {
+    const res = await fetch('/api/duel/room/join', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        code: code.trim().toUpperCase(),
+        playerId: progress.playerId,
+        playerName: progress.name
+      })
+    });
+    const data = await res.json();
+    if (!res.ok || !data?.ok) return { ok: false, error: data?.error || 'Odaya katılınamadı.' };
+    return { ok: true, room: data.room };
+  } catch {
+    return { ok: false, error: 'Sunucuya bağlanılamadı.' };
+  }
+}
+
+export async function fetchBlastDuelRoom(code: string): Promise<BlastDuelRoom | null> {
+  try {
+    const res = await fetch(`/api/duel/room?code=${encodeURIComponent(code.trim().toUpperCase())}`);
+    if (!res.ok) return null;
+    const data = await res.json();
+    return data?.ok ? data.room : null;
+  } catch {
+    return null;
+  }
+}
+
+export async function submitBlastDuelScore(
+  code: string,
+  role: 'host' | 'guest',
+  score: number,
+  finished: boolean
+): Promise<BlastDuelRoom | null> {
+  try {
+    const res = await fetch('/api/duel/room/score', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ code, role, score, finished })
+    });
+    if (!res.ok) return null;
+    const data = await res.json();
+    return data?.ok ? data.room : null;
+  } catch {
+    return null;
+  }
+}

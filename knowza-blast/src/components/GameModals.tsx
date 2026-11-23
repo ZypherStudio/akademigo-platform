@@ -235,10 +235,42 @@ export const VictoryModal: React.FC<{
   onNextLevel,
   onMap
 }) => {
+  const totalCoinsAwarded = level.rewards.coins + bonusCoins + streakBonusCoins;
+  const [revealedStars, setRevealedStars] = useState(0);
+  const [coinTally, setCoinTally] = useState(0);
+
   useEffect(() => {
     sfx.win();
     confetti({ particleCount: 70, spread: 70, origin: { y: 0.55 } });
-  }, []);
+
+    const timers: number[] = [];
+    for (let s = 1; s <= 3; s++) {
+      const t = window.setTimeout(() => {
+        if (s <= starsEarned) {
+          setRevealedStars(s);
+          sfx.pop(s + 2, s === 3 ? 2 : 1);
+        }
+      }, 180 + (s - 1) * 220);
+      timers.push(t);
+    }
+
+    let step = 0;
+    const totalSteps = 14;
+    const coinTimer = window.setInterval(() => {
+      step += 1;
+      if (step >= totalSteps) {
+        setCoinTally(totalCoinsAwarded);
+        window.clearInterval(coinTimer);
+      } else {
+        setCoinTally(Math.round((totalCoinsAwarded * step) / totalSteps));
+      }
+    }, 40);
+
+    return () => {
+      timers.forEach((t) => window.clearTimeout(t));
+      window.clearInterval(coinTimer);
+    };
+  }, [starsEarned, totalCoinsAwarded]);
 
   return (
     <div className="fixed inset-0 z-50 bg-black/65 backdrop-blur-sm flex items-center justify-center p-4">
@@ -250,16 +282,19 @@ export const VictoryModal: React.FC<{
             Harika!
           </div>
           <div className="flex items-end justify-center gap-2 -mb-2">
-            {[1, 2, 3].map((s) => (
-              <Star
-                key={s}
-                className={`${s === 2 ? 'w-12 h-12 -translate-y-2' : 'w-9 h-9'} ${
-                  s <= starsEarned
-                    ? 'text-[#ffcf1a] fill-[#ffcf1a] drop-shadow-[0_4px_6px_rgba(120,60,0,0.65)]'
-                    : 'text-[#8c6b43] fill-[#5c4327]'
-                }`}
-              />
-            ))}
+            {[1, 2, 3].map((s) => {
+              const lit = s <= revealedStars && s <= starsEarned;
+              return (
+                <Star
+                  key={s}
+                  className={`transition-all duration-300 ${s === 2 ? 'w-12 h-12 -translate-y-2' : 'w-9 h-9'} ${
+                    lit
+                      ? 'scale-110 animate-pop-in text-[#ffcf1a] fill-[#ffcf1a] drop-shadow-[0_4px_6px_rgba(120,60,0,0.65)]'
+                      : 'scale-90 opacity-80 text-[#8c6b43] fill-[#5c4327]'
+                  }`}
+                />
+              );
+            })}
           </div>
           <div className="w-36 h-28 mx-auto -mb-1">
             <KnowzaSprite
@@ -300,7 +335,7 @@ export const VictoryModal: React.FC<{
               <Star className="w-4 h-4 text-amber-500 fill-amber-500" /> +{level.rewards.stars}
             </div>
             <div className="parchment-subcard rounded-xl px-2.5 py-1.5 flex items-center gap-1 text-[#5c2c09]">
-              <Coins className="w-4 h-4 text-amber-600" /> +{level.rewards.coins + bonusCoins + streakBonusCoins}
+              <Coins className="w-4 h-4 text-amber-600" /> +{coinTally}
             </div>
             <div className="parchment-subcard rounded-xl px-2.5 py-1.5 text-purple-800">
               +{level.rewards.xp} XP

@@ -7,6 +7,7 @@ import {
   createBlockAdventureBoard,
   generateBlockTray,
   hasAnyValidTrayMove,
+  pickBonusCoords,
   placeShapeAndClearLines,
   previewLineClears,
   rotatePolyomino,
@@ -44,6 +45,7 @@ import { BoosterIcon } from './BoosterIcon';
 import { CUBE_PALETTE, CubeEmblem, CubeTile } from './CubeTile';
 import { FeverMeterControl, INSTANT_FEVER_COIN_COST } from './FeverMeterControl';
 import { FloatingDraggedPiece } from './FloatingDraggedPiece';
+import { HoldSlotBox } from './HoldSlotBox';
 import { KnowzaSprite } from './KnowzaSprite';
 import { TargetChip } from './TargetChip';
 
@@ -77,21 +79,6 @@ const START_BOOSTER_SLOTS: [number, number][] = [
   [1, 4],
   [6, 3]
 ];
-
-function pickBonusCoords(boardGrid: Grid, count = 2): Set<string> {
-  const empty: string[] = [];
-  for (let r = 0; r < boardGrid.length; r++) {
-    for (let c = 0; c < boardGrid[r].length; c++) {
-      if (boardGrid[r][c] === null) empty.push(`${r},${c}`);
-    }
-  }
-  const picked = new Set<string>();
-  while (picked.size < count && empty.length > 0) {
-    const idx = Math.floor(Math.random() * empty.length);
-    picked.add(empty.splice(idx, 1)[0]);
-  }
-  return picked;
-}
 
 interface DragState {
   shapeIndex: number;
@@ -141,6 +128,8 @@ export const HybridGameScreen: React.FC<HybridGameScreenProps> = ({
 
   const [grid, setGrid] = useState<Grid>(() => buildBoard());
   const [bonusCoords, setBonusCoords] = useState<Set<string>>(() => pickBonusCoords(grid, 2));
+  const [heldShape, setHeldShape] = useState<PolyominoShape | null>(null);
+  const [armHoldMode, setArmHoldMode] = useState(false);
   const [tray, setTray] = useState<(PolyominoShape | null)[]>(() =>
     generateBlockTray(level.colors, undefined, { allowAdvanced: level.id >= 3 })
   );
@@ -182,6 +171,8 @@ export const HybridGameScreen: React.FC<HybridGameScreenProps> = ({
     const init = buildBoard();
     setGrid(init);
     setBonusCoords(pickBonusCoords(init, 2));
+    setHeldShape(null);
+    setArmHoldMode(false);
     setTray(generateBlockTray(level.colors, init, { allowAdvanced: level.id >= 3 }));
     setScore(0);
     setComboStreak(0);
@@ -235,10 +226,16 @@ export const HybridGameScreen: React.FC<HybridGameScreenProps> = ({
   }, [level.targets, remainingTargets]);
 
   // Win & Deadlock Fail check (also allows rotate/reroll tactical rescue before triggering Fail!)
-  const hasAnyDirectMove = useMemo(() => hasAnyValidTrayMove(grid, tray), [grid, tray]);
+  const hasAnyDirectMove = useMemo(
+    () =>
+      hasAnyValidTrayMove(grid, tray) ||
+      Boolean(heldShape && canShapeFitAnywhere(grid, heldShape)),
+    [grid, tray, heldShape]
+  );
   const canRescueByTactics = useMemo(() => {
     if (hasAnyDirectMove) return true;
     if (rerollCharges > 0) return true;
+    if (!heldShape && tray.some((s) => s !== null)) return true; // Holding 1 piece might unlock refill moves!
     if (rotateCharges > 0) {
       const rotatedTray = tray.map((s) => (s ? rotatePolyomino(s) : null));
       if (hasAnyValidTrayMove(grid, rotatedTray)) return true;
@@ -248,7 +245,7 @@ export const HybridGameScreen: React.FC<HybridGameScreenProps> = ({
       if (hasAnyValidTrayMove(grid, rotated3)) return true;
     }
     return false;
-  }, [hasAnyDirectMove, rerollCharges, rotateCharges, grid, tray]);
+  }, [hasAnyDirectMove, rerollCharges, rotateCharges, grid, tray, heldShape]);
 
   const boosterBusy = boosterActions.length > 0;
   const winMetaRef = useRef<{ stars: number; bonusMoves: number }>({ stars: 3, bonusMoves: 4 });
@@ -719,16 +716,20 @@ export const HybridGameScreen: React.FC<HybridGameScreenProps> = ({
         setTimeout(() => setRecentlyPlaced(new Set()), 240);
 
         setGrid(finalGrid);
-        setTray((prevTray) => {
-          const nextTray = prevTray.map((item, idx) => (idx === drag.shapeIndex ? null : item));
-          if (nextTray.every((item) => item === null)) {
-            return generateBlockTray(level.colors, finalGrid, {
-              allowAdvanced: level.id >= 3,
-              forceSpecial: nextFeverActiveForTray
-            });
-          }
-          return nextTray;
-        });
+        if (drag.shapeIndex === -1) {
+          setHeldShape(null);
+        } else {
+          setTray((prevTray) => {
+            const nextTray = prevTray.map((item, idx) => (idx === drag.shapeIndex ? null : item));
+            if (nextTray.every((item) => item === null)) {
+              return generateBlockTray(level.colors, finalGrid, {
+                allowAdvanced: level.id >= 3,
+                forceSpecial: nextFeverActiveForTray
+              });
+            }
+            return nextTray;
+          });
+        }
       }
     }
     setDrag(null);
@@ -753,6 +754,23 @@ export const HybridGameScreen: React.FC<HybridGameScreenProps> = ({
     if (outcomeTriggered !== 'none' || boosterBusy) return;
     e.preventDefault();
     setArmedBooster(null);
+    if (armHoldMode && index >= 0 && !heldShape) {
+      sfx.rotate();
+      setHeldShape(shape);
+      setArmHoldMode(false);
+      setTray((prevTray) => {
+        const nextTray = prevTray.map((item, idx) => (idx === index ? null : item));
+        if (nextTray.every((item) => item === null)) {
+          return generateBlockTray(level.colors, grid, {
+            allowAdvanced: level.id >= 3,
+            forceSpecial: feverTurns > 0
+          });
+        }
+        return nextTray;
+      });
+      pushCallout('YEDEK ALINDI!', 'İstediğin tur sürükle!', 'text-amber-200', 'clear');
+      return;
+    }
     sfx.click();
     triggerHaptic(progress.hapticsEnabled, 8);
     const pos = computeDropCell(e.clientX, e.clientY, e.pointerType, shape);
@@ -1084,16 +1102,22 @@ export const HybridGameScreen: React.FC<HybridGameScreenProps> = ({
           </button>
         </div>
 
+        {armHoldMode && !heldShape && outcomeTriggered === 'none' && (
+          <div className="w-full max-w-[355px] mt-1 bg-amber-500/95 border border-yellow-200 rounded-xl px-2.5 py-1 text-center text-[10px] font-black text-[#471f04] shadow animate-pop-in">
+            Yedeklemek istediğin parçaya dokun! (Tekrar Yedek’e basarak iptal edebilirsin)
+          </div>
+        )}
+
         {!hasAnyDirectMove && outcomeTriggered === 'none' && (
           <div className="w-full max-w-[355px] mt-1 bg-rose-600/95 border border-rose-200 rounded-xl px-2.5 py-1 text-center text-[10px] font-black text-white shadow animate-pop-in">
             Sığacak blok kalmadı! Döndür, Yenile veya Güçlendirici kullan!
           </div>
         )}
 
-        {/* Sleek Block Blast 3-Piece Polyomino Tray */}
+        {/* Sleek Block Blast 3-Piece Polyomino Tray + Hold Pocket */}
         <div
           onContextMenu={(e) => e.preventDefault()}
-          className={`w-full max-w-[355px] mt-1.5 ${biome.hudCardClass} rounded-2xl p-1.5 grid grid-cols-3 gap-1.5 items-center select-none transition-colors duration-300`}
+          className={`w-full max-w-[355px] mt-1.5 ${biome.hudCardClass} rounded-2xl p-1.5 grid grid-cols-[1fr_1fr_1fr_62px] gap-1.5 items-center select-none transition-colors duration-300`}
         >
           {tray.map((shape, idx) => {
             if (!shape) {
@@ -1103,13 +1127,15 @@ export const HybridGameScreen: React.FC<HybridGameScreenProps> = ({
             const isDragging = drag?.shapeIndex === idx;
             const { rows: sRows, cols: sCols } = getShapeBounds(shape);
             const maxDim = Math.max(sRows, sCols);
-            const trayCellPx = maxDim >= 5 ? 9 : maxDim === 4 ? 11 : maxDim === 3 ? 13 : 15;
+            const trayCellPx = maxDim >= 5 ? 8 : maxDim === 4 ? 10 : maxDim === 3 ? 12 : 14;
             return (
               <div
                 key={shape.id}
                 onPointerDown={(e) => startDrag(e, idx, shape)}
                 className={`h-[58px] rounded-xl flex items-center justify-center overflow-hidden cursor-grab active:cursor-grabbing touch-none transition-transform relative ${
-                  shape.specialCell || shape.isGoldBonus
+                  armHoldMode
+                    ? 'ring-2 ring-amber-400 animate-pulse bg-amber-100/80'
+                    : shape.specialCell || shape.isGoldBonus
                     ? 'bg-gradient-to-b from-[#fff3bf] to-[#f4ca64] border-2 border-[#d97706] shadow-[0_0_10px_rgba(251,191,36,0.45)]'
                     : `${biome.traySlotBgClass} border`
                 } ${isDragging ? 'opacity-20 scale-90' : 'hover:scale-105'}`}
@@ -1117,7 +1143,7 @@ export const HybridGameScreen: React.FC<HybridGameScreenProps> = ({
                 <BlockTrayPiece
                   shape={shape}
                   cellPx={trayCellPx}
-                  disabled={!fits}
+                  disabled={!fits && !armHoldMode}
                   theme={progress.equippedBlockTheme}
                   biome={biome.id}
                 />
@@ -1129,6 +1155,22 @@ export const HybridGameScreen: React.FC<HybridGameScreenProps> = ({
               </div>
             );
           })}
+
+          <HoldSlotBox
+            heldShape={heldShape}
+            armHoldMode={armHoldMode}
+            isDraggingHeld={drag?.shapeIndex === -1}
+            canFitHeld={Boolean(heldShape && canShapeFitAnywhere(grid, heldShape))}
+            theme={progress.equippedBlockTheme}
+            biome={biome.id}
+            heightClass="h-[58px]"
+            slotClass={biome.traySlotBgClass}
+            onToggleArm={() => {
+              sfx.click();
+              setArmHoldMode((v) => !v);
+            }}
+            onStartDragHeld={(e, shape) => startDrag(e, -1, shape)}
+          />
         </div>
 
         {/* Bottom 4 Wooden Booster Medallions + Golden Pause Button */}

@@ -137,6 +137,22 @@ export function tickBoardEmbers(grid: Grid): { grid: Grid; eruptedCoords: [numbe
   return { grid: next, eruptedCoords };
 }
 
+/** Picks `count` random empty coordinates on the board for 2x Golden Bonus Squares. */
+export function pickBonusCoords(boardGrid: Grid, count = 2): Set<string> {
+  const empty: string[] = [];
+  for (let r = 0; r < boardGrid.length; r++) {
+    for (let c = 0; c < boardGrid[r].length; c++) {
+      if (boardGrid[r][c] === null) empty.push(`${r},${c}`);
+    }
+  }
+  const picked = new Set<string>();
+  while (picked.size < count && empty.length > 0) {
+    const idx = Math.floor(Math.random() * empty.length);
+    picked.add(empty.splice(idx, 1)[0]);
+  }
+  return picked;
+}
+
 /** Creates a full 7x7 Toon Blast board matching Reference Image 2 */
 export function createToonBoard(level: LevelConfig): Grid {
   const N = TOON_GRID_SIZE;

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Calendar, Check, Coins, Crown, Flame, Gift, Map, Play, Shirt, ShoppingBag, Smartphone, Sparkles, Star, Timer, Trophy, UserPlus, X } from 'lucide-react';
+import { Calendar, Check, Coins, Crown, Flame, Gift, Map, Play, Shirt, ShoppingBag, Smartphone, Sparkles, Star, Swords, Timer, Trophy, UserPlus, X } from 'lucide-react';
 import { TOTAL_LEVELS, getBiomeForLevel } from '../data/biomes';
 import { LEVELS } from '../data/levels';
 import { KnowzaMood, LevelConfig, PlayerProgress } from '../types/game';
@@ -24,6 +24,7 @@ interface HomeMenuScreenProps {
   onOpenEndless: () => void;
   onOpenSprint: () => void;
   onOpenDailyChallenge: () => void;
+  onOpenDuel: () => void;
   onOpenSocial: (tab?: SocialTab) => void;
   onClaimEventTier: (tier: number) => void;
   onOpenWardrobe: () => void;
@@ -42,6 +43,7 @@ export const HomeMenuScreen: React.FC<HomeMenuScreenProps> = ({
   onOpenEndless,
   onOpenSprint,
   onOpenDailyChallenge,
+  onOpenDuel,
   onOpenSocial,
   onClaimEventTier,
   onOpenWardrobe,
@@ -485,7 +487,7 @@ export const HomeMenuScreen: React.FC<HomeMenuScreenProps> = ({
           </div>
         )}
 
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid grid-cols-3 gap-1.5">
           {/* Global Seeded Daily Challenge */}
           <button
             type="button"
@@ -493,18 +495,46 @@ export const HomeMenuScreen: React.FC<HomeMenuScreenProps> = ({
               sfx.click();
               onOpenDailyChallenge();
             }}
-            className="parchment-card rounded-2xl p-2.5 text-left flex items-center gap-2 active:scale-95 transition-transform ring-1 ring-indigo-400/70"
+            className="parchment-card rounded-2xl p-2 text-left flex flex-col justify-between active:scale-95 transition-transform ring-1 ring-indigo-400/70 min-w-0"
           >
-            <div className="w-8 h-8 rounded-xl bg-gradient-to-b from-indigo-400 to-indigo-700 border border-indigo-900 flex items-center justify-center shrink-0 shadow">
-              <Calendar className="w-4 h-4 text-white" />
+            <div className="flex items-center justify-between gap-1 mb-1">
+              <div className="w-6 h-6 rounded-lg bg-gradient-to-b from-indigo-400 to-indigo-700 border border-indigo-900 flex items-center justify-center shrink-0 shadow-sm">
+                <Calendar className="w-3.5 h-3.5 text-white" />
+              </div>
+              <span className="text-[9px] font-black text-indigo-900 bg-indigo-100 rounded-full px-1.5 py-0.5 leading-none">
+                Ortak
+              </span>
             </div>
-            <div className="min-w-0 flex-1">
-              <div className="font-display text-xs font-black text-[#471f04] leading-tight truncate">
-                Günün Bulmacası
+            <div className="font-display text-[11px] font-black text-[#471f04] leading-tight">
+              Günün Oyunu
+            </div>
+            <div className="text-[9px] font-bold text-[#7c4819] leading-tight mt-0.5">
+              Rekor: {progress.dailyChallengeBest || 0}
+            </div>
+          </button>
+
+          {/* 1v1 Duel Arena */}
+          <button
+            type="button"
+            onClick={() => {
+              sfx.click();
+              onOpenDuel();
+            }}
+            className="parchment-card rounded-2xl p-2 text-left flex flex-col justify-between active:scale-95 transition-transform ring-1 ring-rose-500/80 min-w-0"
+          >
+            <div className="flex items-center justify-between gap-1 mb-1">
+              <div className="w-6 h-6 rounded-lg bg-gradient-to-b from-rose-400 to-rose-700 border border-rose-900 flex items-center justify-center shrink-0 shadow-sm">
+                <Swords className="w-3.5 h-3.5 text-white" />
               </div>
-              <div className="text-[9.5px] font-bold text-[#7c4819] leading-tight mt-0.5 truncate">
-                Ortak Tahta • Rekor: {progress.dailyChallengeBest || 0}
-              </div>
+              <span className="text-[9px] font-black text-rose-900 bg-rose-100 rounded-full px-1.5 py-0.5 leading-none">
+                60 Sn
+              </span>
+            </div>
+            <div className="font-display text-[11px] font-black text-[#471f04] leading-tight">
+              1v1 Düello
+            </div>
+            <div className="text-[9px] font-bold text-[#9a2815] leading-tight mt-0.5">
+              Ödül: +250 Altın
             </div>
           </button>
 
@@ -515,18 +545,21 @@ export const HomeMenuScreen: React.FC<HomeMenuScreenProps> = ({
               sfx.click();
               onOpenSocial('leaderboard');
             }}
-            className="parchment-card rounded-2xl p-2.5 text-left flex items-center gap-2 active:scale-95 transition-transform ring-1 ring-emerald-400/70"
+            className="parchment-card rounded-2xl p-2 text-left flex flex-col justify-between active:scale-95 transition-transform ring-1 ring-emerald-400/70 min-w-0"
           >
-            <div className="w-8 h-8 rounded-xl bg-gradient-to-b from-emerald-400 to-emerald-700 border border-emerald-900 flex items-center justify-center shrink-0 shadow">
-              <UserPlus className="w-4 h-4 text-white" />
+            <div className="flex items-center justify-between gap-1 mb-1">
+              <div className="w-6 h-6 rounded-lg bg-gradient-to-b from-emerald-400 to-emerald-700 border border-emerald-900 flex items-center justify-center shrink-0 shadow-sm">
+                <UserPlus className="w-3.5 h-3.5 text-white" />
+              </div>
+              <span className="text-[9px] font-black text-emerald-900 bg-emerald-100 rounded-full px-1.5 py-0.5 leading-none">
+                Lig
+              </span>
             </div>
-            <div className="min-w-0 flex-1">
-              <div className="font-display text-xs font-black text-[#471f04] leading-tight truncate">
-                Sıralama & Davet
-              </div>
-              <div className="text-[9.5px] font-bold text-[#7c4819] leading-tight mt-0.5 truncate">
-                Can & +300 Altın Kodu
-              </div>
+            <div className="font-display text-[11px] font-black text-[#471f04] leading-tight">
+              Sıralama
+            </div>
+            <div className="text-[9px] font-bold text-[#7c4819] leading-tight mt-0.5">
+              Can & +300 Altın
             </div>
           </button>
         </div>

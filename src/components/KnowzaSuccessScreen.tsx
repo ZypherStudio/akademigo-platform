@@ -52,7 +52,7 @@ export const KnowzaSuccessScreen: React.FC<KnowzaSuccessScreenProps> = ({
         </div>
 
         {/* Big 3D Golden Star with +10 XP */}
-        <div className="my-5 flex items-center justify-center gap-2 bg-white/10 backdrop-blur-md px-6 py-2.5 rounded-full border border-white/20 shadow-inner">
+        <div className="my-5 flex items-center justify-center gap-2 bg-white/10 px-6 py-2.5 rounded-full border border-white/20 shadow-inner">
           <span className="text-3xl animate-spin-slow">⭐</span>
           <span className="text-2xl sm:text-3xl font-black text-[#FFD54F] font-mono">
             +{earnedXp} XP

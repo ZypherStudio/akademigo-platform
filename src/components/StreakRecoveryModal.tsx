@@ -13,7 +13,7 @@ export const StreakRecoveryModal: React.FC = () => {
 
   if (restoredBanner) {
     return (
-      <div className="fixed inset-0 z-[130] bg-black/75 backdrop-blur-sm flex items-center justify-center p-4 animate-fade">
+      <div className="fixed inset-0 z-[130] bg-black/75 flex items-center justify-center p-4 animate-fade">
         <div className="w-full max-w-sm rounded-3xl bg-white p-6 text-center shadow-2xl border-2 border-amber-300 space-y-4">
           <div className="w-24 h-24 mx-auto">
             <img src="/assets/knowza_cheering.png" alt="Knowza Ayı" className="w-full h-full object-contain" />
@@ -53,7 +53,7 @@ export const StreakRecoveryModal: React.FC = () => {
   };
 
   return (
-    <div className="fixed inset-0 z-[130] bg-black/75 backdrop-blur-sm flex items-center justify-center p-4 animate-fade">
+    <div className="fixed inset-0 z-[130] bg-black/75 flex items-center justify-center p-4 animate-fade">
       <div className="w-full max-w-sm rounded-3xl bg-white p-6 text-center shadow-2xl border-2 border-orange-300 space-y-4 relative">
         <button
           onClick={dismissBrokenStreak}

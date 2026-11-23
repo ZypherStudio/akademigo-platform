@@ -230,7 +230,7 @@ export const KahootArena: React.FC = () => {
           
           {/* Main Hero Card */}
           <div className="bg-gradient-to-r from-purple-600 via-indigo-600 to-blue-700 rounded-3xl p-6 sm:p-8 text-white shadow-xl relative overflow-hidden text-center">
-            <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-md px-4 py-1 rounded-full text-xs font-black uppercase tracking-wider mb-3">
+            <div className="inline-flex items-center gap-2 bg-white/20 px-4 py-1 rounded-full text-xs font-black uppercase tracking-wider mb-3">
               <Sparkles className="w-4 h-4 text-amber-300" />
               CANLI ÇOK OYUNCULU TEST ARENASI
             </div>
@@ -243,7 +243,7 @@ export const KahootArena: React.FC = () => {
             </p>
 
             {/* Giant Room PIN Badge */}
-            <div className="mt-6 inline-flex flex-col sm:flex-row items-center gap-3 bg-black/30 backdrop-blur-md p-3 sm:px-6 rounded-2xl border border-white/20">
+            <div className="mt-6 inline-flex flex-col sm:flex-row items-center gap-3 bg-black/30 p-3 sm:px-6 rounded-2xl border border-white/20">
               <span className="text-xs font-black uppercase text-amber-300 tracking-wider">OYUN ODA PIN KODU:</span>
               <span className="text-3xl sm:text-4xl font-black font-mono tracking-widest text-white drop-shadow">
                 {roomPin}

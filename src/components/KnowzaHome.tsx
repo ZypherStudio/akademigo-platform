@@ -296,7 +296,7 @@ export const KnowzaHome: React.FC<KnowzaHomeProps> = ({
       <div className="bg-gradient-to-br from-[#FFFDF6] via-[#FFF5DE] to-[#FFEAB6] rounded-[28px] p-4 sm:p-5 border-2 border-[#FFDA85] shadow-[0_10px_26px_rgba(255,184,0,0.18)] relative overflow-hidden">
         
         {/* Soft Background Radial Light */}
-        <div className="absolute -top-12 -right-12 w-44 h-44 bg-amber-400/20 rounded-full blur-2xl pointer-events-none" />
+        <div className="absolute -top-12 -right-12 w-44 h-44 bg-amber-400/20 rounded-full pointer-events-none" />
 
         <div className="flex items-center justify-between gap-3 relative z-10">
           
@@ -406,7 +406,7 @@ export const KnowzaHome: React.FC<KnowzaHomeProps> = ({
               >
                 <div className="flex items-start justify-between gap-2 mb-1.5">
                   <span className="text-2xl leading-none drop-shadow-xs">{meta.emoji}</span>
-                  <span className="px-2 py-0.5 rounded-full bg-white/20 backdrop-blur-xs text-[9px] font-black uppercase tracking-wider">
+                  <span className="px-2 py-0.5 rounded-full bg-white/20 text-[9px] font-black uppercase tracking-wider">
                     {meta.badge}
                   </span>
                 </div>
@@ -683,7 +683,7 @@ export const KnowzaHome: React.FC<KnowzaHomeProps> = ({
         className="bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 rounded-3xl p-4 text-white shadow-lg border-2 border-amber-300/40 flex items-center justify-between cursor-pointer active:scale-98 transition group relative overflow-hidden"
       >
         <div className="space-y-1 relative z-10 max-w-[70%]">
-          <div className="inline-flex items-center gap-1.5 bg-white/25 backdrop-blur-xs text-white text-[9px] font-black px-2.5 py-0.5 rounded-full uppercase tracking-wider shadow-xs">
+          <div className="inline-flex items-center gap-1.5 bg-white/25 text-white text-[9px] font-black px-2.5 py-0.5 rounded-full uppercase tracking-wider shadow-xs">
             <span>YENİ ÖZELLİK</span>
             <span>📱</span>
           </div>
@@ -735,7 +735,7 @@ export const KnowzaHome: React.FC<KnowzaHomeProps> = ({
       {/* ================= TÜM DERSLER MODALI ================= */}
       {showAllCategoriesModal && (
         <div
-          className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-sm p-0 sm:p-4 animate-fade"
+          className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/60 p-0 sm:p-4 animate-fade"
           onClick={() => setShowAllCategoriesModal(false)}
         >
           <div

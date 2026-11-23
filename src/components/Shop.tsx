@@ -192,7 +192,7 @@ export const Shop: React.FC = () => {
         </p>
 
         {/* Current Balance Bar */}
-        <div className="mt-3 flex items-center justify-center gap-4 bg-black/20 py-1.5 px-4 rounded-2xl backdrop-blur-xs">
+        <div className="mt-3 flex items-center justify-center gap-4 bg-black/20 py-1.5 px-4 rounded-2xl ">
           <div className="flex items-center gap-1 text-xs font-extrabold text-amber-200">
             <span>💎</span>
             <span>{stats.gems} Elmas</span>
@@ -1006,7 +1006,7 @@ export const Shop: React.FC = () => {
 
       {/* ================= DISCORD-STYLE LIVE FRAME PREVIEW MODAL ================= */}
       {previewFrame && (
-        <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4 animate-fade">
+        <div className="fixed inset-0 z-50 bg-black/75 flex items-center justify-center p-4 animate-fade">
           <div className="bg-[#181614] text-white rounded-3xl p-5 max-w-sm w-full border border-amber-500/40 shadow-2xl relative space-y-4">
             <button
               onClick={() => setPreviewFrame(null)}

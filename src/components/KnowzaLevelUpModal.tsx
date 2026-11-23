@@ -29,10 +29,10 @@ export const KnowzaLevelUpModal: React.FC<KnowzaLevelUpModalProps> = ({
   }, []);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#15110B]/90 backdrop-blur-md animate-fade-in select-none">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#15110B]/90 animate-fade-in select-none">
       <div className="relative w-full max-w-sm h-full max-h-[840px] flex flex-col justify-between overflow-hidden bg-gradient-to-b from-[#1C160F] via-[#2A1D11] to-[#17120B] rounded-none sm:rounded-[40px] shadow-2xl border-0 sm:border border-amber-900/30">
         {/* Ambient golden glow */}
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-72 h-72 bg-amber-500/15 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-72 h-72 bg-amber-500/15 rounded-full pointer-events-none" />
 
         {/* Floating Stars Decoration */}
         <div className="absolute top-12 left-10 text-amber-300 animate-pulse pointer-events-none">

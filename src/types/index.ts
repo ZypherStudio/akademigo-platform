@@ -272,6 +272,12 @@ export interface UserStats {
     xpGainedToday: number;
     perfectLessonsToday: number;
   };
+  reelsStats?: {
+    solved: number;
+    correct: number;
+    bestCombo: number;
+    xpEarned: number;
+  };
   targetGoal?: CourseCategory;
   gradeOrTarget?: string;
   dailyGoalQuestions?: number;

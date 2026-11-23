@@ -189,6 +189,38 @@ export const KnowzaStats: React.FC<KnowzaStatsProps> = ({ onBack }) => {
         </div>
       </div>
 
+      {/* Soru Kaydır (Akış) İstatistikleri */}
+      <div className="bg-white rounded-3xl p-4 border-2 border-orange-200 shadow-xs space-y-3">
+        <div className="flex items-center justify-between">
+          <h3 className="text-xs font-black text-[#2A1E00] flex items-center gap-1.5">
+            <span className="text-base">🔥</span>
+            <span>Soru Kaydır (Akış) İstatistikleri</span>
+          </h3>
+          <span className="text-[10px] font-black text-orange-700 bg-orange-100 px-2.5 py-0.5 rounded-full">
+            +{stats.reelsStats?.xpEarned || 0} Akış XP
+          </span>
+        </div>
+
+        <div className="grid grid-cols-3 gap-2 text-center">
+          <div className="bg-orange-50/70 rounded-2xl p-2.5 border border-orange-100">
+            <div className="text-base font-black text-slate-900">{stats.reelsStats?.solved || 0}</div>
+            <div className="text-[10px] font-bold text-slate-500">Çözülen Soru</div>
+          </div>
+          <div className="bg-emerald-50/70 rounded-2xl p-2.5 border border-emerald-100">
+            <div className="text-base font-black text-emerald-700">
+              {stats.reelsStats?.solved
+                ? `%${Math.round(((stats.reelsStats.correct || 0) / stats.reelsStats.solved) * 100)}`
+                : '%0'}
+            </div>
+            <div className="text-[10px] font-bold text-slate-500">Doğruluk ({stats.reelsStats?.correct || 0})</div>
+          </div>
+          <div className="bg-amber-50/70 rounded-2xl p-2.5 border border-amber-100">
+            <div className="text-base font-black text-amber-700">{stats.reelsStats?.bestCombo || 0}x</div>
+            <div className="text-[10px] font-bold text-slate-500">En İyi Kombo</div>
+          </div>
+        </div>
+      </div>
+
     </div>
   );
 };

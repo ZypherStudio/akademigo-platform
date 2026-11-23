@@ -116,7 +116,7 @@ export const Profile: React.FC = () => {
           
           {/* Avatar with Level Badge */}
           <div className="relative">
-            <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-3xl bg-white/20 backdrop-blur-md border-4 border-white/40 flex items-center justify-center text-6xl shadow-inner select-none p-2 animate-bounceSubtle">
+            <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-3xl bg-white/20 border-4 border-white/40 flex items-center justify-center text-6xl shadow-inner select-none p-2 animate-bounceSubtle">
               {stats.avatar === 'haribo' || stats.avatar === 'owl' || !stats.avatar ? (
                 <KnowzaAvatar size="xl" costume={stats.selectedCostume} animate="dance" />
               ) : (
@@ -207,7 +207,7 @@ export const Profile: React.FC = () => {
                 sound.playClick();
                 setShowAuthModal(true);
               }}
-              className="bg-white/20 hover:bg-white/30 backdrop-blur-md border border-white/30 px-3.5 py-2 rounded-2xl text-xs font-black text-white flex items-center gap-1.5 transition-all active:scale-95 shadow-sm"
+              className="bg-white/20 hover:bg-white/30 border border-white/30 px-3.5 py-2 rounded-2xl text-xs font-black text-white flex items-center gap-1.5 transition-all active:scale-95 shadow-sm"
             >
               <ShieldCheck className="w-4 h-4" />
               <span>{stats.isLoggedIn ? 'Hesap Detayları' : 'Google / E-posta Bağla'}</span>

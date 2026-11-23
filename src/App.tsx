@@ -1,33 +1,40 @@
-import React, { useState } from 'react';
+import React, { useState, lazy, Suspense } from 'react';
 import { GameProvider, useGame } from './context/GameContext';
 import { KnowzaSplash } from './components/KnowzaSplash';
 import { KnowzaHome } from './components/KnowzaHome';
-import { KnowzaStats } from './components/KnowzaStats';
-import { KnowzaBadges } from './components/KnowzaBadges';
-import { KnowzaProfile } from './components/KnowzaProfile';
 import { KnowzaBottomNav, KnowzaTab } from './components/KnowzaBottomNav';
-import { KnowzaQuizModal } from './components/KnowzaQuizModal';
-import { KnowzaLevelUpModal } from './components/KnowzaLevelUpModal';
-import { LessonModal } from './components/LessonModal';
-import { ExamSimulator } from './components/ExamSimulator';
-import { ExamCountdown } from './components/ExamCountdown';
-import { ErrorNotebook } from './components/ErrorNotebook';
-import { CodeLab } from './components/CodeLab';
-import { LearnPath } from './components/LearnPath';
-import { KahootArena } from './components/KahootArena';
-import { QuizDuel } from './components/QuizDuel';
-import { ReelsQuestions } from './components/ReelsQuestions';
-import { AiCoach } from './components/AiCoach';
 import { AuthModal } from './components/AuthModal';
-import { Shop } from './components/Shop';
 import { KnowzaOnboarding } from './components/KnowzaOnboarding';
 import { AchievementToast } from './components/AchievementToast';
-import { KnowzaWidgetHub } from './components/KnowzaWidgetHub';
 import { StreakRecoveryModal } from './components/StreakRecoveryModal';
 import { DailyCoachReminderHost } from './components/KnowzaBearNotice';
-import { ArrowLeft, Smartphone, Monitor } from 'lucide-react';
-import { soundSystem } from './utils/audio';
+import { ArrowLeft } from 'lucide-react';
 import { loadAccountRecord, SavedAccountSummary } from './utils/accountStorage';
+
+const KnowzaStats = lazy(() => import('./components/KnowzaStats').then((m) => ({ default: m.KnowzaStats })));
+const KnowzaBadges = lazy(() => import('./components/KnowzaBadges').then((m) => ({ default: m.KnowzaBadges })));
+const KnowzaProfile = lazy(() => import('./components/KnowzaProfile').then((m) => ({ default: m.KnowzaProfile })));
+const KnowzaQuizModal = lazy(() => import('./components/KnowzaQuizModal').then((m) => ({ default: m.KnowzaQuizModal })));
+const KnowzaLevelUpModal = lazy(() => import('./components/KnowzaLevelUpModal').then((m) => ({ default: m.KnowzaLevelUpModal })));
+const LessonModal = lazy(() => import('./components/LessonModal').then((m) => ({ default: m.LessonModal })));
+const ExamSimulator = lazy(() => import('./components/ExamSimulator').then((m) => ({ default: m.ExamSimulator })));
+const ExamCountdown = lazy(() => import('./components/ExamCountdown').then((m) => ({ default: m.ExamCountdown })));
+const ErrorNotebook = lazy(() => import('./components/ErrorNotebook').then((m) => ({ default: m.ErrorNotebook })));
+const CodeLab = lazy(() => import('./components/CodeLab').then((m) => ({ default: m.CodeLab })));
+const LearnPath = lazy(() => import('./components/LearnPath').then((m) => ({ default: m.LearnPath })));
+const KahootArena = lazy(() => import('./components/KahootArena').then((m) => ({ default: m.KahootArena })));
+const QuizDuel = lazy(() => import('./components/QuizDuel').then((m) => ({ default: m.QuizDuel })));
+const ReelsQuestions = lazy(() => import('./components/ReelsQuestions').then((m) => ({ default: m.ReelsQuestions })));
+const AiCoach = lazy(() => import('./components/AiCoach').then((m) => ({ default: m.AiCoach })));
+const Shop = lazy(() => import('./components/Shop').then((m) => ({ default: m.Shop })));
+const KnowzaWidgetHub = lazy(() => import('./components/KnowzaWidgetHub').then((m) => ({ default: m.KnowzaWidgetHub })));
+
+const TabLoaderFallback: React.FC = () => (
+  <div className="flex-1 flex flex-col items-center justify-center py-20 gap-3 text-amber-900">
+    <div className="w-10 h-10 rounded-full border-4 border-amber-200 border-t-[#FFB800] animate-spin" />
+    <span className="text-xs font-black tracking-wide">Yükleniyor...</span>
+  </div>
+);
 
 const KnowzaAppContent: React.FC = () => {
   const { stats, loginUser, activeLesson, closeLesson, activeAchievement, dismissAchievement } = useGame();
@@ -40,7 +47,9 @@ const KnowzaAppContent: React.FC = () => {
   const [showLevelUpModal, setShowLevelUpModal] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [authInitialMode, setAuthInitialMode] = useState<'google' | 'email'>('google');
+  const [authInitialEmailSubTab, setAuthInitialEmailSubTab] = useState<'login' | 'register'>('login');
   const [showOnboarding, setShowOnboarding] = useState(false);
+  const [reelsExitSignal, setReelsExitSignal] = useState(0);
 
   React.useEffect(() => {
     window.scrollTo({ top: 0, left: 0 });
@@ -73,10 +82,12 @@ const KnowzaAppContent: React.FC = () => {
             }}
             onOpenEmailAuth={() => {
               setAuthInitialMode('email');
+              setAuthInitialEmailSubTab('register');
               setShowAuthModal(true);
             }}
             onGuestStart={() => {
-              setAuthInitialMode('google');
+              setAuthInitialMode('email');
+              setAuthInitialEmailSubTab('login');
               setShowAuthModal(true);
             }}
             onSelectSavedAccount={handleSelectSavedAccount}
@@ -84,6 +95,7 @@ const KnowzaAppContent: React.FC = () => {
           {showAuthModal && (
             <AuthModal
               initialMode={authInitialMode}
+              initialEmailSubTab={authInitialEmailSubTab}
               onClose={() => setShowAuthModal(false)}
             />
           )}
@@ -115,6 +127,7 @@ const KnowzaAppContent: React.FC = () => {
         <StreakRecoveryModal />
         <DailyCoachReminderHost onOpenCoach={() => setCurrentTab('aicoach')} />
         <main className="flex-1 w-full flex flex-col">
+          <Suspense fallback={<TabLoaderFallback />}>
           {currentTab === 'home' && (
             <KnowzaHome
               onStartQuiz={(subject) => setActiveQuizSubject(subject)}
@@ -206,7 +219,7 @@ const KnowzaAppContent: React.FC = () => {
             <div className="flex-1 flex flex-col">
               <div className="sticky top-0 z-30 bg-orange-950 px-4 py-3 flex items-center justify-between text-white border-b border-orange-900">
                 <button
-                  onClick={() => setCurrentTab('home')}
+                  onClick={() => setReelsExitSignal((s) => s + 1)}
                   className="flex items-center gap-1.5 text-xs font-bold bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded-full transition"
                 >
                   <ArrowLeft className="w-4 h-4" />
@@ -216,7 +229,11 @@ const KnowzaAppContent: React.FC = () => {
                 <div className="w-12" />
               </div>
               <div className="flex-1 pb-24">
-                <ReelsQuestions />
+                <ReelsQuestions
+                  exitSignal={reelsExitSignal}
+                  onExitHome={() => setCurrentTab('home')}
+                  onOpenStats={() => setCurrentTab('stats')}
+                />
               </div>
             </div>
           )}
@@ -350,6 +367,7 @@ const KnowzaAppContent: React.FC = () => {
               />
             </div>
           )}
+          </Suspense>
         </main>
 
         {/* 4-Tab Bottom Navigation matching Screens 2, 5, 6, 8 */}
@@ -362,26 +380,32 @@ const KnowzaAppContent: React.FC = () => {
 
         {/* Real Interactive Lesson Solver (Runs when ANY lesson is tapped!) */}
         {activeLesson && (
-          <LessonModal
-            lesson={activeLesson}
-            onClose={closeLesson}
-          />
+          <Suspense fallback={<TabLoaderFallback />}>
+            <LessonModal
+              lesson={activeLesson}
+              onClose={closeLesson}
+            />
+          </Suspense>
         )}
 
         {/* Interactive Lesson / Quiz Modal (Screen 3 & 4 sample test) */}
         {activeQuizSubject && (
-          <KnowzaQuizModal
-            subject={activeQuizSubject}
-            onClose={() => setActiveQuizSubject(null)}
-          />
+          <Suspense fallback={<TabLoaderFallback />}>
+            <KnowzaQuizModal
+              subject={activeQuizSubject}
+              onClose={() => setActiveQuizSubject(null)}
+            />
+          </Suspense>
         )}
 
         {/* Level Up Celebration Modal (Screen 7) */}
         {showLevelUpModal && (
-          <KnowzaLevelUpModal
-            level={Math.max(1, Math.floor((stats.xp || 0) / 100) + 1)}
-            onClose={() => setShowLevelUpModal(false)}
-          />
+          <Suspense fallback={<TabLoaderFallback />}>
+            <KnowzaLevelUpModal
+              level={Math.max(1, Math.floor((stats.xp || 0) / 100) + 1)}
+              onClose={() => setShowLevelUpModal(false)}
+            />
+          </Suspense>
         )}
 
         {/* Top-Sliding Achievement Celebration Toast */}

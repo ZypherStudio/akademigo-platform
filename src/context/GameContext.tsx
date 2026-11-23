@@ -70,7 +70,7 @@ interface GameContextType {
   closeLesson: () => void;
   completeLesson: (lessonId: string, earnedXp: number, earnedGems: number, accuracy: number) => void;
   openChest: (chestId: string, earnedXp: number, earnedGems: number) => void;
-  loseHeart: (mistake?: Partial<MistakeItem>) => void;
+  loseHeart: (mistake?: Partial<MistakeItem>, skipQuestionCount?: boolean) => void;
   refillHearts: () => boolean;
   buyShopItem: (item: 'freeze' | 'refill' | 'double') => boolean;
   notes: StudyNote[];
@@ -120,6 +120,7 @@ interface GameContextType {
   appLang: AppLang;
   setRegionAndLang: (region: RegionCode, lang: AppLang) => void;
   grantRewardedHeart: () => void;
+  recordReelsAnswer: (isCorrect: boolean, xpEarned: number, currentCombo: number) => void;
   nextHeartInSec: number;
   purchasePackage: (pkg: 'ad_free' | 'ai_coach' | 'moon_wolf' | 'cyber_warrior') => void;
   buyCostumeDirect: (costumeId: KnowzaCostume) => void;
@@ -189,6 +190,12 @@ const DEFAULT_STATS: UserStats = {
     completedLessonsToday: 0,
     xpGainedToday: 0,
     perfectLessonsToday: 0
+  },
+  reelsStats: {
+    solved: 0,
+    correct: 0,
+    bestCombo: 0,
+    xpEarned: 0
   },
   targetGoal: 'yks',
   dailyGoalQuestions: 25,
@@ -452,7 +459,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setActiveLesson(null);
   };
 
-  const loseHeart = (mistake?: Partial<MistakeItem>) => {
+  const loseHeart = (mistake?: Partial<MistakeItem>, skipQuestionCount = false) => {
     sound.playWrong();
     setStats(prev => {
       let updatedErrors = prev.errorList;
@@ -475,7 +482,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (prev.isPro || prev.isFounder) {
         return {
           ...prev,
-          totalQuestionsAnswered: prev.totalQuestionsAnswered + 1,
+          totalQuestionsAnswered: prev.totalQuestionsAnswered + (skipQuestionCount ? 0 : 1),
           errorList: updatedErrors
         };
       }
@@ -485,7 +492,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
         ...prev,
         hearts: nextHearts,
         lastHeartRegenAt: prev.lastHeartRegenAt || Date.now(),
-        totalQuestionsAnswered: prev.totalQuestionsAnswered + 1,
+        totalQuestionsAnswered: prev.totalQuestionsAnswered + (skipQuestionCount ? 0 : 1),
         errorList: updatedErrors
       };
     });
@@ -1152,6 +1159,49 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
     });
   };
 
+  const recordReelsAnswer = (isCorrect: boolean, xpEarned: number, currentCombo: number) => {
+    setStats(prev => {
+      const prevReels = prev.reelsStats || { solved: 0, correct: 0, bestCombo: 0, xpEarned: 0 };
+      const gainedXp = isCorrect ? Math.max(0, xpEarned) : 0;
+      const gainedGems = isCorrect && currentCombo > 0 && currentCombo % 3 === 0 ? 2 : isCorrect ? 1 : 0;
+      const newXp = prev.xp + gainedXp;
+      const newGems = prev.gems + gainedGems;
+      const nextReels = {
+        solved: prevReels.solved + 1,
+        correct: prevReels.correct + (isCorrect ? 1 : 0),
+        bestCombo: Math.max(prevReels.bestCombo || 0, currentCombo),
+        xpEarned: prevReels.xpEarned + gainedXp,
+      };
+      if (gainedXp <= 0) {
+        return {
+          ...prev,
+          totalQuestionsAnswered: (prev.totalQuestionsAnswered || 0) + 1,
+          reelsStats: nextReels,
+        };
+      }
+      const { nextStreak, todayStr, dailyQuest, nextStreakFreezeCount } = computeNextStreakState(prev);
+      return {
+        ...prev,
+        xp: newXp,
+        gems: newGems,
+        streak: nextStreak,
+        inventory: {
+          ...prev.inventory,
+          streakFreeze: nextStreakFreezeCount,
+        },
+        lastActiveDate: todayStr,
+        currentLevel: Math.floor(newXp / 100) + 1,
+        levelProgress: newXp % 100,
+        totalQuestionsAnswered: (prev.totalQuestionsAnswered || 0) + 1,
+        reelsStats: nextReels,
+        dailyQuestProgress: {
+          ...dailyQuest,
+          xpGainedToday: dailyQuest.xpGainedToday + gainedXp,
+        },
+      };
+    });
+  };
+
   const upgradeToPro = () => {
     sound.playVictory();
     confetti({ particleCount: 120, spread: 80 });
@@ -1521,6 +1571,7 @@ export const GameProvider: React.FC<{ children: React.ReactNode }> = ({ children
         appLang,
         setRegionAndLang,
         grantRewardedHeart,
+        recordReelsAnswer,
         nextHeartInSec,
         purchasePackage,
         buyCostumeDirect,

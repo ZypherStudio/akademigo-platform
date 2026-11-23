@@ -310,7 +310,7 @@ export const KnowzaBadges: React.FC<KnowzaBadgesProps> = ({ onBack, onNavigateTo
   return (
     <div className="min-h-screen bg-[#FFFDF7] text-slate-800 pb-28 select-none">
       {/* Top Header */}
-      <div className="sticky top-0 z-30 bg-[#FFFDF7]/95 backdrop-blur-md px-4 py-3 flex items-center justify-between border-b border-amber-100/50">
+      <div className="sticky top-0 z-30 bg-[#FFFDF7] px-4 py-3 flex items-center justify-between border-b border-amber-100/50">
         <button
           onClick={onBack}
           className="w-10 h-10 rounded-full flex items-center justify-center text-slate-700 hover:bg-amber-100/60 active:scale-95 transition"
@@ -390,7 +390,7 @@ export const KnowzaBadges: React.FC<KnowzaBadgesProps> = ({ onBack, onNavigateTo
 
                   {/* Tier Stars on Unlocked */}
                   {badge.unlocked && (
-                    <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 flex items-center gap-0.5 bg-black/40 backdrop-blur-xs px-1.5 py-0.2 rounded-full shadow-xs">
+                    <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 flex items-center gap-0.5 bg-black/40 px-1.5 py-0.2 rounded-full shadow-xs">
                       {Array.from({ length: badge.tier }).map((_, i) => (
                         <span key={i} className="text-[8px] text-amber-300">★</span>
                       ))}
@@ -456,7 +456,7 @@ export const KnowzaBadges: React.FC<KnowzaBadgesProps> = ({ onBack, onNavigateTo
       {/* Badge Detail Modal */}
       {selectedBadge && (
         <div
-          className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-fade"
+          className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/60 p-4 animate-fade"
           onClick={() => setSelectedBadge(null)}
         >
           <div

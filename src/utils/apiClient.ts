@@ -209,17 +209,27 @@ export async function registerWithEmailPassword(rawEmail: string, password: stri
 
   if (isFirebaseConfigured()) {
     const fb = await registerWithFirebaseEmail(cleanEmail, password);
-    if (!fb.ok || !fb.email) {
+    if (fb.ok && fb.email) {
+      // Mirror locally so offline sign-in and account recovery stay fast
+      registerEmailAccount(cleanEmail, password);
+      return {
+        ok: true,
+        isNewAccount: true,
+        email: fb.email,
+        firebaseUid: fb.uid,
+        stats: fb.stats || null,
+        notes: fb.notes || [],
+      };
+    }
+    const errCode = String(fb.errorCode || '');
+    const canFallbackLocal =
+      errCode === 'auth/network-request-failed' ||
+      errCode === 'auth/operation-not-allowed' ||
+      errCode === 'auth/too-many-requests' ||
+      errCode === 'auth/not-configured';
+    if (!canFallbackLocal) {
       return { ok: false, error: fb.error || 'Kayıt başarısız.' };
     }
-    return {
-      ok: true,
-      isNewAccount: true,
-      email: fb.email,
-      firebaseUid: fb.uid,
-      stats: fb.stats || null,
-      notes: fb.notes || [],
-    };
   }
 
   const apiRes = await postJson('/api/auth/register', { email: cleanEmail, password });
@@ -261,19 +271,26 @@ export async function loginWithEmailPassword(rawEmail: string, password: string)
 
   if (isFirebaseConfigured()) {
     const fb = await loginWithFirebaseEmail(cleanEmail, password);
-    if (!fb.ok || !fb.email) {
+    if (fb.ok && fb.email) {
+      return {
+        ok: true,
+        isNewAccount: fb.isNewAccount,
+        email: fb.email,
+        firebaseUid: fb.uid,
+        googleName: fb.displayName,
+        avatarUrl: fb.photoURL,
+        stats: fb.stats || null,
+        notes: fb.notes || [],
+      };
+    }
+    const errCode = String(fb.errorCode || '');
+    const canFallbackLocal =
+      errCode === 'auth/network-request-failed' ||
+      errCode === 'auth/operation-not-allowed' ||
+      errCode === 'auth/not-configured';
+    if (!canFallbackLocal) {
       return { ok: false, error: fb.error || 'E-posta veya şifre hatalı.' };
     }
-    return {
-      ok: true,
-      isNewAccount: fb.isNewAccount,
-      email: fb.email,
-      firebaseUid: fb.uid,
-      googleName: fb.displayName,
-      avatarUrl: fb.photoURL,
-      stats: fb.stats || null,
-      notes: fb.notes || [],
-    };
   }
 
   const apiRes = await postJson('/api/auth/login', { email: cleanEmail, password });

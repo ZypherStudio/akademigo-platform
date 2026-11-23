@@ -107,7 +107,7 @@ export const AdInterstitialModal: React.FC<AdInterstitialModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-[120] bg-black/85 backdrop-blur-md flex items-center justify-center p-4 animate-fade-in">
+    <div className="fixed inset-0 z-[120] bg-black/85 flex items-center justify-center p-4 animate-fade-in">
       <div className="w-full max-w-md rounded-3xl bg-[#131f24] border-2 border-[#2a3f4a] shadow-2xl overflow-hidden text-white">
         {/* Top Ad Bar */}
         <div className="flex items-center justify-between px-4 py-3 bg-[#0e171b] border-b border-white/10">

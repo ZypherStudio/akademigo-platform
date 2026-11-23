@@ -38,7 +38,7 @@ export const KnowzaProfile: React.FC<KnowzaProfileProps> = ({
   onOpenAuth,
   onOpenOnboarding
 }) => {
-  const { stats, updateUsername, logoutUser, regionCode, appLang, setRegionAndLang, remainingStreakRestores, leaderboard } = useGame();
+  const { stats, updateUsername, logoutUser, regionCode, appLang, setRegionAndLang, remainingStreakRestores, leaderboard, selectCostume } = useGame();
   const currentRegionInfo = getRegionInfo(regionCode);
   const streakTier = getStreakTier(stats.streak || 0);
   const eloLeague = getEloLeague(stats.eloRating || 1000);
@@ -51,13 +51,25 @@ export const KnowzaProfile: React.FC<KnowzaProfileProps> = ({
   const [sfxOn, setSfxOn] = useState(() => soundSystem.getSfxEnabled());
   const [isEditingName, setIsEditingName] = useState(false);
   const [nameInput, setNameInput] = useState(stats.username || '');
+  const [nameFeedback, setNameFeedback] = useState<string | null>(null);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [activeModal, setActiveModal] = useState<string | null>(null);
 
+  React.useEffect(() => {
+    setNameInput(stats.username || '');
+  }, [stats.username]);
+
   const handleSaveName = () => {
-    updateUsername(nameInput.trim());
+    const res = updateUsername(nameInput.trim());
+    if (!res.success) {
+      soundSystem.playWrong();
+      setNameFeedback(res.error || 'Kullanıcı adı kaydedilemedi.');
+      return;
+    }
+    setNameFeedback('Profil adı kaydedildi ✅');
     setIsEditingName(false);
     soundSystem.playCorrect();
+    window.setTimeout(() => setNameFeedback(null), 2500);
   };
 
   const currentLevel = Math.max(1, Math.floor((stats.xp || 0) / 100) + 1);
@@ -68,7 +80,7 @@ export const KnowzaProfile: React.FC<KnowzaProfileProps> = ({
   return (
     <div className="min-h-screen bg-[#FFFDF7] text-slate-800 pb-28 select-none">
       {/* Top Header */}
-      <div className="sticky top-0 z-30 bg-[#FFFDF7]/95 backdrop-blur-md px-4 py-3 flex items-center justify-between border-b border-amber-100/50">
+      <div className="sticky top-0 z-30 bg-[#FFFDF7] px-4 py-3 flex items-center justify-between border-b border-amber-100/50">
         <button
           onClick={onBack}
           className="w-10 h-10 rounded-full flex items-center justify-center text-slate-700 hover:bg-amber-100/60 active:scale-95 transition"
@@ -133,12 +145,40 @@ export const KnowzaProfile: React.FC<KnowzaProfileProps> = ({
             </div>
           ) : (
             <button
-              onClick={() => setIsEditingName(true)}
+              onClick={() => {
+                setNameFeedback(null);
+                setIsEditingName(true);
+              }}
               className="group flex items-center gap-1.5 text-xl font-extrabold text-slate-900 hover:text-amber-600 transition"
             >
               <span>{displayIdentity.primary}</span>
               <Edit3 className="w-4 h-4 text-slate-400 group-hover:text-amber-500 transition" />
             </button>
+          )}
+          {nameFeedback && (
+            <span className="text-[11px] font-black text-amber-700 mt-1 mb-1">{nameFeedback}</span>
+          )}
+
+          {/* Quick Unlocked Mascot Costume Switcher */}
+          {(stats.unlockedCostumes?.length || 0) > 1 && (
+            <div className="flex flex-wrap items-center justify-center gap-1.5 my-2">
+              {stats.unlockedCostumes.map((c) => (
+                <button
+                  key={c}
+                  onClick={() => {
+                    soundSystem.playClick();
+                    selectCostume(c);
+                  }}
+                  className={`px-2.5 py-1 rounded-full text-[10px] font-black uppercase border transition ${
+                    stats.selectedCostume === c
+                      ? 'bg-[#FFB800] border-amber-600 text-slate-950 shadow-xs'
+                      : 'bg-white border-amber-200 text-slate-600 hover:bg-amber-50'
+                  }`}
+                >
+                  {c}
+                </button>
+              ))}
+            </div>
           )}
 
           {/* Founder Badge */}
@@ -390,7 +430,7 @@ export const KnowzaProfile: React.FC<KnowzaProfileProps> = ({
       {/* Info & Settings Modal */}
       {activeModal && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-fade-in"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 animate-fade-in"
           onClick={() => setActiveModal(null)}
         >
           <div
@@ -499,6 +539,12 @@ export const KnowzaProfile: React.FC<KnowzaProfileProps> = ({
                   <span className="font-bold text-slate-500">Toplam XP & Seviye:</span>
                   <span className="font-black text-slate-900">{stats.xp} XP • Seviye {currentLevel}</span>
                 </div>
+                <div className="flex justify-between py-1 border-b border-amber-200/40">
+                  <span className="font-bold text-slate-500">Soru Kaydır İstatistiği:</span>
+                  <span className="font-black text-orange-700">
+                    {stats.reelsStats?.correct || 0}/{stats.reelsStats?.solved || 0} ({stats.reelsStats?.bestCombo || 0}x)
+                  </span>
+                </div>
                 <div className="flex justify-between py-1">
                   <span className="font-bold text-slate-500">Günlük Seri:</span>
                   <span className="font-black text-amber-600">🔥 {stats.streak} Gün</span>
@@ -525,7 +571,7 @@ export const KnowzaProfile: React.FC<KnowzaProfileProps> = ({
 
       {/* Discord-style Logout Confirmation Modal */}
       {showLogoutConfirm && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 animate-fade">
+        <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4 animate-fade">
           <div className="bg-[#FFFDF7] rounded-3xl p-5 max-w-sm w-full border-2 border-amber-300 shadow-2xl text-center space-y-3.5 relative">
             <div className="w-20 h-20 mx-auto filter drop-shadow-md">
               <img
@@ -568,7 +614,7 @@ export const KnowzaProfile: React.FC<KnowzaProfileProps> = ({
         </div>
       )}
       {activeModal === 'region' && (
-        <div className="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm flex items-center justify-center p-4 animate-fade">
+        <div className="fixed inset-0 z-50 bg-slate-950/60 flex items-center justify-center p-4 animate-fade">
           <div className="bg-white rounded-3xl max-w-md w-full p-5 shadow-2xl border border-amber-200 space-y-4">
             <div className="flex items-center justify-between">
               <h3 className="text-base font-black text-slate-900">{t(appLang, 'profile_region_title')}</h3>

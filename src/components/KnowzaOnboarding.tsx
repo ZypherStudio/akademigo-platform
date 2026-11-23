@@ -227,7 +227,7 @@ export const KnowzaOnboarding: React.FC<KnowzaOnboardingProps> = ({ onComplete, 
         {step === 1 && (
           <div className="w-full flex flex-col items-center text-center animate-fade space-y-2.5">
             <div className="relative w-28 sm:w-32 flex items-center justify-center animate-bounceSubtle">
-              <div className="absolute inset-3 rounded-full bg-amber-400/20 blur-xl pointer-events-none" />
+              <div className="absolute inset-3 rounded-full bg-amber-400/20 pointer-events-none" />
               <img
                 src={
                   targetGoal === 'yks'
@@ -334,7 +334,7 @@ export const KnowzaOnboarding: React.FC<KnowzaOnboardingProps> = ({ onComplete, 
         {step === 2 && (
           <div className="w-full flex flex-col items-center text-center animate-fade space-y-3">
             <div className="relative w-24 sm:w-28 flex items-center justify-center">
-              <div className="absolute inset-2 rounded-full bg-amber-400/20 blur-xl pointer-events-none" />
+              <div className="absolute inset-2 rounded-full bg-amber-400/20 pointer-events-none" />
               <img
                 src="/assets/knowza_reading.png"
                 alt="Knowza Ayıcık"
@@ -395,7 +395,7 @@ export const KnowzaOnboarding: React.FC<KnowzaOnboardingProps> = ({ onComplete, 
         {step === 3 && (
           <div className="w-full flex flex-col items-center text-center animate-fade space-y-4">
             <div className="relative w-28 sm:w-32 flex items-center justify-center animate-bounceSubtle">
-              <div className="absolute inset-2 rounded-full bg-amber-400/20 blur-xl pointer-events-none" />
+              <div className="absolute inset-2 rounded-full bg-amber-400/20 pointer-events-none" />
               <img
                 src="/assets/knowza_main.png"
                 alt="Knowza Ayıcık Başparmak"
@@ -472,7 +472,7 @@ export const KnowzaOnboarding: React.FC<KnowzaOnboardingProps> = ({ onComplete, 
         {step === 4 && (
           <div className="w-full flex flex-col items-center text-center animate-fade space-y-4">
             <div className="relative w-28 sm:w-32 flex items-center justify-center animate-bounceSubtle">
-              <div className="absolute inset-2 rounded-full bg-amber-400/20 blur-xl pointer-events-none" />
+              <div className="absolute inset-2 rounded-full bg-amber-400/20 pointer-events-none" />
               <img
                 src="/assets/knowza_cheering.png"
                 alt="Knowza Ayıcık Kutluyor"

@@ -123,7 +123,7 @@ export const KnowzaWidgetHub: React.FC<KnowzaWidgetHubProps> = ({
   return (
     <div className="flex-1 w-full bg-[#FFFDF7] min-h-screen flex flex-col pb-36 select-none animate-fade">
       {/* ================= TOP APP BAR ================= */}
-      <div className="sticky top-0 z-30 bg-[#FFFDF7]/95 backdrop-blur-md px-4 py-3 flex items-center justify-between border-b border-[#F2E8D5] shadow-xs">
+      <div className="sticky top-0 z-30 bg-[#FFFDF7] px-4 py-3 flex items-center justify-between border-b border-[#F2E8D5] shadow-xs">
         <button
           onClick={() => {
             sound.playClick();
@@ -687,7 +687,7 @@ export const KnowzaWidgetHub: React.FC<KnowzaWidgetHubProps> = ({
                 <div className="bg-gradient-to-br from-[#121110] via-[#1A1815] to-[#0A0908] rounded-[32px] p-4 border border-amber-500/40 shadow-lg text-white flex items-center justify-between relative overflow-hidden">
                   <div className="space-y-2 min-w-0 flex-1 pr-3">
                     <span className="text-[11px] font-bold text-amber-400">Bugünün hedefi</span>
-                    <div className="bg-white/10 backdrop-blur-md rounded-2xl p-2.5 border border-white/15 space-y-1.5">
+                    <div className="bg-white/10 rounded-2xl p-2.5 border border-white/15 space-y-1.5">
                       <div className="flex items-center gap-2">
                         <span className="text-base">🎯</span>
                         <span className="text-xs font-black text-white">

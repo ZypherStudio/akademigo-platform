@@ -298,7 +298,7 @@ export const LearnPath: React.FC = () => {
 
       {/* Guidebook Modal */}
       {selectedGuideUnit && (
-        <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4 backdrop-blur-sm animate-pop">
+        <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4 animate-pop">
           <div className="bg-white dark:bg-[#1a2c35] rounded-3xl max-w-lg w-full p-6 shadow-2xl border-2 border-gray-200 dark:border-[#2b3d45] transition-colors duration-300">
             <div className="flex items-center justify-between pb-4 border-b border-gray-100 dark:border-[#2b3d45]">
               <div>
@@ -345,7 +345,7 @@ export const LearnPath: React.FC = () => {
 
       {/* ── Ders Başlatma Ayar Modalı ── */}
       {pendingLesson && (
-        <div className="fixed inset-0 z-50 bg-black/70 flex items-end sm:items-center justify-center p-0 sm:p-4 backdrop-blur-sm animate-pop">
+        <div className="fixed inset-0 z-50 bg-black/70 flex items-end sm:items-center justify-center p-0 sm:p-4 animate-pop">
           <div className="bg-white dark:bg-[#1a2c35] rounded-t-3xl sm:rounded-3xl max-w-md w-full p-6 shadow-2xl border-2 border-gray-200 dark:border-[#2b3d45]">
             {/* Header */}
             <div className="flex items-center justify-between mb-5">

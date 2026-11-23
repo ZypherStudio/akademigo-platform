@@ -35,16 +35,18 @@ interface AuthModalProps {
   onClose?: () => void;
   isOpenAsScreen?: boolean;
   initialMode?: 'google' | 'email';
+  initialEmailSubTab?: 'login' | 'register';
 }
 
 export const AuthModal: React.FC<AuthModalProps> = ({
   onClose,
   isOpenAsScreen = false,
   initialMode = 'google',
+  initialEmailSubTab = 'login',
 }) => {
   const { loginUser } = useGame();
   const [activeTab, setActiveTab] = useState<'google' | 'email'>(initialMode);
-  const [emailSubTab, setEmailSubTab] = useState<'login' | 'register'>('login');
+  const [emailSubTab, setEmailSubTab] = useState<'login' | 'register'>(initialEmailSubTab);
 
   // Google / Firebase Auth State
   const [firebaseReady] = useState<boolean>(() => isFirebaseConfigured());
@@ -273,17 +275,17 @@ export const AuthModal: React.FC<AuthModalProps> = ({
 
   return (
     <div
-      className={`fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade ${
+      className={`fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/65 ${
         isOpenAsScreen ? 'static bg-transparent p-0' : ''
       }`}
       onClick={() => onClose && onClose()}
     >
       <div
-        className="relative w-full max-w-sm bg-white rounded-3xl p-5 sm:p-6 shadow-2xl border border-amber-200/80 text-slate-800 animate-scale-up overflow-y-auto overflow-x-hidden max-h-[92dvh] no-scrollbar"
+        className="relative w-full max-w-sm bg-white rounded-3xl p-5 sm:p-6 shadow-2xl border border-amber-200/80 text-slate-800 overflow-y-auto overflow-x-hidden max-h-[92dvh] no-scrollbar"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="absolute inset-0 overflow-hidden pointer-events-none rounded-3xl">
-          <div className="absolute -top-16 -right-16 w-36 h-36 bg-amber-400/10 rounded-full blur-2xl" />
+          <div className="absolute -top-16 -right-16 w-36 h-36 bg-amber-400/10 rounded-full" />
         </div>
 
         {onClose && (

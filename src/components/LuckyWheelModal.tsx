@@ -72,7 +72,7 @@ export const LuckyWheelModal: React.FC<LuckyWheelModalProps> = ({ onClose }) => 
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 select-none animate-fade">
+    <div className="fixed inset-0 z-50 bg-black/70 flex items-center justify-center p-3 sm:p-4 select-none animate-fade">
       <div className="bg-white dark:bg-[#1a2c35] border-4 border-amber-400 dark:border-amber-500 rounded-3xl max-w-md w-full p-6 shadow-2xl text-center relative overflow-hidden animate-pop">
         
         {/* Close Button */}

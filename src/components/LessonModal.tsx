@@ -147,7 +147,7 @@ export const LessonModal: React.FC<LessonModalProps> = ({ lesson, onClose }) => 
   // If Out of Hearts
   if (stats.hearts <= 0) {
     return (
-      <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
+      <div className="fixed inset-0 z-50 bg-black/70 flex items-center justify-center p-4">
         <div className="bg-white dark:bg-[#1a2c35] rounded-3xl max-w-md w-full p-6 text-center shadow-2xl animate-pop border-2 border-red-200 dark:border-red-900/60">
           <div className="text-6xl mb-3">💔</div>
           <h2 className="text-2xl font-black text-gray-800 dark:text-white">{t(appLang, 'hearts_out_title')}</h2>

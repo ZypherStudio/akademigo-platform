@@ -111,7 +111,7 @@ export const WorldMapScreen: React.FC<WorldMapScreenProps> = ({
       <BiomeWorldBackground biome={chapterBiome} variant="map" />
 
       {/* Top Row below Floating HUD: Golden Back Button + Wooden "Bilgi Dünyası" Plaque + "Ödül" Chest */}
-      <div className="relative z-20 pt-14 px-3 flex items-center justify-between gap-2 pointer-events-none">
+      <div className="relative z-20 pt-[62px] px-3 flex items-center justify-between gap-2 pointer-events-none">
         <div className="pointer-events-auto flex items-center gap-1.5">
           <button
             type="button"

@@ -99,8 +99,11 @@ export const HomeMenuScreen: React.FC<HomeMenuScreenProps> = ({
       </div>
       <div className="absolute inset-0 bg-gradient-to-b from-[#3d1e07]/80 via-[#2d1404]/70 to-[#1f0c02]/95 pointer-events-none" />
 
-      {/* Main Content below Floating TopHud */}
-      <div className="relative z-20 flex-1 flex flex-col gap-2.5 px-3 pt-14 pb-2 overflow-y-auto no-scrollbar">
+      {/* Non-scrolling Top Guard matching Floating TopHud so scrolled cards never collide behind HUD */}
+      <div className="relative z-20 h-[62px] shrink-0 bg-gradient-to-b from-[#2b1304] via-[#2b1304]/90 to-transparent pointer-events-none" />
+
+      {/* Main Content below TopHud */}
+      <div className="relative z-20 flex-1 min-h-0 flex flex-col gap-2 px-3 pt-0.5 pb-1.5 overflow-y-auto no-scrollbar">
         {/* Coin Balance + Win Streak + Castle Bar */}
         <div className="flex items-center justify-between gap-1.5 relative">
           <button
@@ -190,22 +193,22 @@ export const HomeMenuScreen: React.FC<HomeMenuScreenProps> = ({
           )}
         </div>
 
-        {/* Hero Row: Left Vertical Menu + Center "Bilgi Akademisi" Scenic Card (Reference Image 3!) */}
+        {/* Hero Row: Left Vertical Menu + Center "Bilgi Akademisi" Scenic Card */}
         <div className="flex gap-2 items-stretch">
-          {/* Left Side Vertical Action Buttons (Reference Image 3) */}
-          <div className="flex flex-col justify-between gap-1.5 shrink-0">
+          {/* Left Side Vertical Action Buttons */}
+          <div className="flex flex-col justify-between gap-1 shrink-0">
             <button
               type="button"
               onClick={() => {
                 sfx.click();
                 onOpenQuests();
               }}
-              className="wood-panel rounded-2xl w-[62px] py-1.5 px-1 flex flex-col items-center gap-0.5 relative active:scale-95 transition-transform"
+              className="wood-panel rounded-2xl w-[60px] py-1 px-1 flex flex-col items-center gap-0.5 relative active:scale-95 transition-transform"
             >
-              <div className="w-8 h-8 rounded-xl bg-gradient-to-b from-[#c084fc] to-[#7e22ce] border border-[#4c1d95] flex items-center justify-center shadow">
-                <Gift className="w-4 h-4 text-[#fde047]" />
+              <div className="w-7 h-7 rounded-xl bg-gradient-to-b from-[#c084fc] to-[#7e22ce] border border-[#4c1d95] flex items-center justify-center shadow">
+                <Gift className="w-3.5 h-3.5 text-[#fde047]" />
               </div>
-              <span className="text-[9.5px] font-extrabold text-[#fff4d8] leading-none">Görevler</span>
+              <span className="text-[9px] font-extrabold text-[#fff4d8] leading-none">Görevler</span>
               {questClaimable && (
                 <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-red-600 border border-white text-[9px] font-black text-white flex items-center justify-center animate-bounce">
                   !
@@ -219,12 +222,12 @@ export const HomeMenuScreen: React.FC<HomeMenuScreenProps> = ({
                 sfx.click();
                 onOpenProfile();
               }}
-              className="wood-panel rounded-2xl w-[62px] py-1.5 px-1 flex flex-col items-center gap-0.5 active:scale-95 transition-transform"
+              className="wood-panel rounded-2xl w-[60px] py-1 px-1 flex flex-col items-center gap-0.5 active:scale-95 transition-transform"
             >
-              <div className="w-8 h-8 rounded-xl bg-gradient-to-b from-[#ffe066] to-[#d97706] border border-[#78350f] flex items-center justify-center shadow">
-                <Trophy className="w-4 h-4 text-[#5e2a00]" />
+              <div className="w-7 h-7 rounded-xl bg-gradient-to-b from-[#ffe066] to-[#d97706] border border-[#78350f] flex items-center justify-center shadow">
+                <Trophy className="w-3.5 h-3.5 text-[#5e2a00]" />
               </div>
-              <span className="text-[9.5px] font-extrabold text-[#fff4d8] leading-none">Başarımlar</span>
+              <span className="text-[9px] font-extrabold text-[#fff4d8] leading-none">Başarımlar</span>
             </button>
 
             <button
@@ -233,12 +236,12 @@ export const HomeMenuScreen: React.FC<HomeMenuScreenProps> = ({
                 sfx.click();
                 onOpenDaily();
               }}
-              className="wood-panel rounded-2xl w-[62px] py-1.5 px-1 flex flex-col items-center gap-0.5 relative active:scale-95 transition-transform"
+              className="wood-panel rounded-2xl w-[60px] py-1 px-1 flex flex-col items-center gap-0.5 relative active:scale-95 transition-transform"
             >
-              <div className="w-8 h-8 rounded-xl bg-gradient-to-b from-[#60a5fa] to-[#1d4ed8] border border-[#1e3a8a] flex items-center justify-center shadow">
-                <Calendar className="w-4 h-4 text-white" />
+              <div className="w-7 h-7 rounded-xl bg-gradient-to-b from-[#60a5fa] to-[#1d4ed8] border border-[#1e3a8a] flex items-center justify-center shadow">
+                <Calendar className="w-3.5 h-3.5 text-white" />
               </div>
-              <span className="text-[9.5px] font-extrabold text-[#fff4d8] leading-none">Günlük</span>
+              <span className="text-[9px] font-extrabold text-[#fff4d8] leading-none">Günlük</span>
               {dailyAvailable && (
                 <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-red-600 border border-white text-[9px] font-black text-white flex items-center justify-center animate-bounce">
                   !
@@ -252,17 +255,17 @@ export const HomeMenuScreen: React.FC<HomeMenuScreenProps> = ({
                 sfx.click();
                 onOpenWardrobe();
               }}
-              className="wood-panel rounded-2xl w-[62px] py-1.5 px-1 flex flex-col items-center gap-0.5 active:scale-95 transition-transform ring-1 ring-amber-300/45"
+              className="wood-panel rounded-2xl w-[60px] py-1 px-1 flex flex-col items-center gap-0.5 active:scale-95 transition-transform ring-1 ring-amber-300/45"
             >
-              <div className="w-8 h-8 rounded-xl bg-gradient-to-b from-[#fb7185] to-[#be123c] border border-[#881337] flex items-center justify-center shadow">
-                <Shirt className="w-4 h-4 text-white" />
+              <div className="w-7 h-7 rounded-xl bg-gradient-to-b from-[#fb7185] to-[#be123c] border border-[#881337] flex items-center justify-center shadow">
+                <Shirt className="w-3.5 h-3.5 text-white" />
               </div>
-              <span className="text-[9.5px] font-extrabold text-[#fff4d8] leading-none">Tarzın</span>
+              <span className="text-[9px] font-extrabold text-[#fff4d8] leading-none">Tarzın</span>
             </button>
           </div>
 
           {/* Center Hero Card: Active Biome World Showcase */}
-          <div className="flex-1 relative rounded-3xl overflow-hidden border-[3px] border-[#b87635] shadow-2xl min-h-[252px] flex flex-col justify-between">
+          <div className="flex-1 relative rounded-3xl overflow-hidden border-[3px] border-[#b87635] shadow-2xl min-h-[214px] flex flex-col justify-between">
             <BiomeWorldBackground biome={activeBiome} variant="map" />
 
             {/* Top Hero Title + Reward Chest */}
@@ -339,11 +342,11 @@ export const HomeMenuScreen: React.FC<HomeMenuScreenProps> = ({
             </div>
 
             {/* Knowza Mascot + Stepping Pedestal Preview */}
-            <div className="relative z-10 px-2 pb-2.5 flex items-end justify-between">
+            <div className="relative z-10 px-2 pb-2 flex items-end justify-between">
               <button
                 type="button"
                 onClick={handleTapHeroMascot}
-                className="w-28 h-28 shrink-0 -ml-1 -mb-1 relative active:scale-95 transition-transform focus:outline-none"
+                className="w-24 h-24 shrink-0 -ml-1 -mb-1 relative active:scale-95 transition-transform focus:outline-none"
                 title="Knowza ile etkileş"
               >
                 {heroNote && (
@@ -680,7 +683,7 @@ export const HomeMenuScreen: React.FC<HomeMenuScreenProps> = ({
       </div>
 
       {/* Bottom Mode Navigation Bar */}
-      <div className="relative z-30 px-3 pb-3 pt-1">
+      <div className="relative z-30 px-3 pb-2.5 pt-1 shrink-0">
         <nav className="wood-panel rounded-2xl p-1.5 grid grid-cols-4 gap-1">
           <button
             type="button"

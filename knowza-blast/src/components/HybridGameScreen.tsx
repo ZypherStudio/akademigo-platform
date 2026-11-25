@@ -838,15 +838,23 @@ export const HybridGameScreen: React.FC<HybridGameScreenProps> = ({
 
   return (
     <div
-      className={`relative flex-1 w-full h-full overflow-hidden flex flex-col items-center justify-center pt-14 pb-3 px-3 ${
+      className={`relative flex-1 w-full h-full overflow-hidden flex flex-col items-center ${
         dragActive ? 'touch-none select-none' : ''
       }`}
     >
       {/* Illustrated & Animated Biome Gameplay World */}
       <BiomeWorldBackground biome={biome} variant="gameplay" />
 
+      {/* Non-scrolling Top Guard matching Floating TopHud */}
+      <div className="relative z-20 h-[60px] shrink-0 w-full pointer-events-none" />
+
       {/* Center Stage: Peeking Knowza + Skor|Hedefler Card + 8x8 Oak Board + 3-Piece Tray + 4 Boosters */}
-      <div className="relative z-20 w-full max-w-[404px] flex flex-col items-center">
+      <div
+        className={`relative z-20 flex-1 min-h-0 w-full flex flex-col items-center px-3 pb-2 no-scrollbar ${
+          dragActive ? 'overflow-hidden touch-none' : 'overflow-y-auto'
+        }`}
+      >
+        <div className="w-full max-w-[404px] flex flex-col items-center my-auto">
         {/* Top HUD Row */}
         <div className="relative z-30 w-full flex items-end justify-end mb-1">
           {/* Interactive Live Animated Knowza Mascot resting paws onto the oak frame */}
@@ -1247,6 +1255,7 @@ export const HybridGameScreen: React.FC<HybridGameScreenProps> = ({
           >
             <Pause className="w-6 h-6 fill-current" />
           </button>
+        </div>
         </div>
       </div>
 

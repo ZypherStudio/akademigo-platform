@@ -150,6 +150,8 @@ export interface PlayerProgress {
   eventProgressDate?: string | null;
   eventLinesProgress?: number;
   eventClaimedTiers?: number[];
+  starChestProgress?: number;
+  seenTutorialTips?: string[];
 }
 
 export interface FloatingCallout {

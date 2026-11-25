@@ -101,7 +101,9 @@ export const INITIAL_PROGRESS: PlayerProgress = {
   dailyChallengeLines: 0,
   eventProgressDate: null,
   eventLinesProgress: 0,
-  eventClaimedTiers: []
+  eventClaimedTiers: [],
+  starChestProgress: 0,
+  seenTutorialTips: []
 };
 
 function makeFallbackPlayerIdentity(): { playerId: string; inviteCode: string } {
@@ -173,7 +175,9 @@ export function loadProgress(): PlayerProgress {
       unlockedAccessories: parsed.unlockedAccessories?.length ? parsed.unlockedAccessories : INITIAL_PROGRESS.unlockedAccessories,
       unlockedBlockThemes: parsed.unlockedBlockThemes?.length ? parsed.unlockedBlockThemes : INITIAL_PROGRESS.unlockedBlockThemes,
       quests: parsed.quests && parsed.quests.length ? parsed.quests : createDailyQuests(),
-      badges: parsed.badges && parsed.badges.length ? parsed.badges : INITIAL_PROGRESS.badges
+      badges: parsed.badges && parsed.badges.length ? parsed.badges : INITIAL_PROGRESS.badges,
+      starChestProgress: Math.max(0, parsed.starChestProgress ?? 0),
+      seenTutorialTips: Array.isArray(parsed.seenTutorialTips) ? parsed.seenTutorialTips : []
     };
     return applyHeartRegen(syncDailyQuests(merged, today));
   } catch {
@@ -224,4 +228,38 @@ export function addXpToProgress(p: PlayerProgress, addedXp: number): PlayerProgr
     level += 1;
   }
   return { ...p, xp, level };
+}
+
+export const STAR_CHEST_GOAL = 25;
+export const STAR_CHEST_REWARD_COINS = 150;
+
+export function addStarChestProgress(p: PlayerProgress, addedStars: number): PlayerProgress {
+  if (addedStars <= 0) return p;
+  return {
+    ...p,
+    starChestProgress: (p.starChestProgress || 0) + addedStars
+  };
+}
+
+export function openStarChest(
+  p: PlayerProgress,
+  boosterChoice?: 'rocket' | 'bomb' | 'hammer'
+): { progress: PlayerProgress; coins: number; booster: 'rocket' | 'bomb' | 'hammer' } | null {
+  const current = p.starChestProgress || 0;
+  if (current < STAR_CHEST_GOAL) return null;
+  const pool: ('rocket' | 'bomb' | 'hammer')[] = ['rocket', 'bomb', 'hammer'];
+  const picked = boosterChoice || pool[Math.floor(Math.random() * pool.length)];
+  return {
+    coins: STAR_CHEST_REWARD_COINS,
+    booster: picked,
+    progress: {
+      ...p,
+      starChestProgress: current - STAR_CHEST_GOAL,
+      coins: p.coins + STAR_CHEST_REWARD_COINS,
+      boosters: {
+        ...p.boosters,
+        [picked]: (p.boosters[picked] || 0) + 1
+      }
+    }
+  };
 }

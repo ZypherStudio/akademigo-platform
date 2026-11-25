@@ -18,9 +18,11 @@ import {
 } from './utils/blastApi';
 import { sfx } from './utils/sound';
 import {
+  addStarChestProgress,
   addXpToProgress,
   applyHeartRegen,
   loadProgress,
+  openStarChest,
   saveProgress
 } from './utils/storage';
 import {
@@ -35,6 +37,7 @@ import { EndlessBlockScreen } from './components/EndlessBlockScreen';
 import { WardrobeModal } from './components/WardrobeModal';
 import { BeforeInstallPromptEvent, SocialHubModal, SocialTab } from './components/SocialHubModal';
 import { ActiveDuelSession, DuelLobbyModal } from './components/DuelLobbyModal';
+import { CoachTipId } from './components/CoachMarkTip';
 import {
   BoosterDetailModal,
   CastleModal,
@@ -262,19 +265,22 @@ export const App: React.FC = () => {
         if (q.type === 'win_streak') return { ...q, progress: Math.max(q.progress, updatedStreak) };
         return q;
       });
-      const nextPlayerProgress: PlayerProgress = {
-        ...withXp,
-        stars: withXp.stars + activeLevel.rewards.stars,
-        coins: withXp.coins + baseCoins + streakBonusCoins,
-        winStreak: updatedStreak,
-        bestWinStreak: Math.max(withXp.bestWinStreak || 0, updatedStreak),
-        unlockedLevel: Math.min(LEVELS.length, Math.max(withXp.unlockedLevel, activeLevel.id + 1)),
-        levelStars: {
-          ...withXp.levelStars,
-          [activeLevel.id]: Math.max(prevStars, starsEarned)
+      const nextPlayerProgress: PlayerProgress = addStarChestProgress(
+        {
+          ...withXp,
+          stars: withXp.stars + activeLevel.rewards.stars,
+          coins: withXp.coins + baseCoins + streakBonusCoins,
+          winStreak: updatedStreak,
+          bestWinStreak: Math.max(withXp.bestWinStreak || 0, updatedStreak),
+          unlockedLevel: Math.min(LEVELS.length, Math.max(withXp.unlockedLevel, activeLevel.id + 1)),
+          levelStars: {
+            ...withXp.levelStars,
+            [activeLevel.id]: Math.max(prevStars, starsEarned)
+          },
+          quests: nextQuests
         },
-        quests: nextQuests
-      };
+        activeLevel.rewards.stars
+      );
       syncBlastPlayer(nextPlayerProgress);
       return nextPlayerProgress;
     });
@@ -315,6 +321,31 @@ export const App: React.FC = () => {
       coins: p.coins - price,
       boosters: { ...p.boosters, [type]: (p.boosters[type] || 0) + 1 }
     }));
+  };
+
+  const handleDismissTutorialTip = (tipId: CoachTipId) => {
+    updateProgress((p) => {
+      const seen = p.seenTutorialTips || [];
+      if (seen.includes(tipId)) return p;
+      return { ...p, seenTutorialTips: [...seen, tipId] };
+    });
+  };
+
+  const handleClaimStarChest = (): { coins: number; booster: 'rocket' | 'bomb' | 'hammer' } | null => {
+    const res = openStarChest(progress);
+    if (!res) return null;
+    updateProgress((p) => {
+      const opened = openStarChest(p, res.booster);
+      return opened ? opened.progress : p;
+    });
+    const labels: Record<'rocket' | 'bomb' | 'hammer', string> = {
+      rocket: 'Roket',
+      bomb: 'Bomba',
+      hammer: 'Çekiç'
+    };
+    setPendingGiftBanner(`Yıldız Sandığı Açıldı! +${res.coins} Altın & +1 ${labels[res.booster]}!`);
+    setTimeout(() => setPendingGiftBanner(null), 4500);
+    return { coins: res.coins, booster: res.booster };
   };
 
   const handleEventLineDelta = (lines: number) => {
@@ -369,27 +400,30 @@ export const App: React.FC = () => {
       const nextQuests = withXp.quests.map((q) =>
         q.type === 'clear_lines' ? { ...q, progress: q.progress + linesCleared } : q
       );
-      const nextProgress: PlayerProgress = {
-        ...withXp,
-        highBlockScore: mode === 'endless' ? Math.max(withXp.highBlockScore, score) : withXp.highBlockScore,
-        highSprintScore:
-          mode === 'sprint'
-            ? Math.max(withXp.highSprintScore || 0, score)
-            : withXp.highSprintScore || 0,
-        dailyChallengeDate: today,
-        dailyChallengeBest:
-          mode === 'daily'
-            ? Math.max(withXp.dailyChallengeBest || 0, score)
-            : withXp.dailyChallengeBest || 0,
-        dailyChallengeLines:
-          mode === 'daily'
-            ? Math.max(withXp.dailyChallengeLines || 0, linesCleared)
-            : withXp.dailyChallengeLines || 0,
-        totalLinesCleared: withXp.totalLinesCleared + linesCleared,
-        coins: withXp.coins + coinsReward,
-        stars: withXp.stars + starsReward,
-        quests: nextQuests
-      };
+      const nextProgress: PlayerProgress = addStarChestProgress(
+        {
+          ...withXp,
+          highBlockScore: mode === 'endless' ? Math.max(withXp.highBlockScore, score) : withXp.highBlockScore,
+          highSprintScore:
+            mode === 'sprint'
+              ? Math.max(withXp.highSprintScore || 0, score)
+              : withXp.highSprintScore || 0,
+          dailyChallengeDate: today,
+          dailyChallengeBest:
+            mode === 'daily'
+              ? Math.max(withXp.dailyChallengeBest || 0, score)
+              : withXp.dailyChallengeBest || 0,
+          dailyChallengeLines:
+            mode === 'daily'
+              ? Math.max(withXp.dailyChallengeLines || 0, linesCleared)
+              : withXp.dailyChallengeLines || 0,
+          totalLinesCleared: withXp.totalLinesCleared + linesCleared,
+          coins: withXp.coins + coinsReward,
+          stars: withXp.stars + starsReward,
+          quests: nextQuests
+        },
+        starsReward
+      );
       syncBlastPlayer(
         nextProgress,
         mode === 'daily' ? { date: today, score, lines: linesCleared } : undefined
@@ -474,6 +508,7 @@ export const App: React.FC = () => {
             onOpenDuel={() => setShowDuelLobby(true)}
             onOpenSocial={(tab = 'leaderboard') => setSocialModalTab(tab)}
             onClaimEventTier={handleClaimEventTier}
+            onClaimStarChest={handleClaimStarChest}
             onOpenWardrobe={() => setShowWardrobeModal(true)}
             onOpenQuests={() => setShowQuestsModal(true)}
             onOpenDaily={() => setShowDailyModal(true)}
@@ -513,6 +548,8 @@ export const App: React.FC = () => {
             onProgressStats={handleProgressStats}
             onSpendCoins={handleSpendCoins}
             onMoodChange={setHudMood}
+            seenTutorialTips={progress.seenTutorialTips || []}
+            onDismissTutorialTip={handleDismissTutorialTip}
             onWin={handleWin}
             onFail={handleFail}
           />
@@ -528,6 +565,8 @@ export const App: React.FC = () => {
             progress={progress}
             mode={screen}
             duelSession={duelSession}
+            seenTutorialTips={progress.seenTutorialTips || []}
+            onDismissTutorialTip={handleDismissTutorialTip}
             onExit={() => {
               setDuelSession(null);
               setScreen('home');
@@ -576,9 +615,11 @@ export const App: React.FC = () => {
             bonusCoins={victoryInfo.bonusCoins}
             winStreak={victoryInfo.winStreak}
             streakBonusCoins={victoryInfo.streakBonusCoins}
+            starChestProgress={progress.starChestProgress || 0}
             hasNextLevel={Boolean(nextLevelObj)}
             outfit={progress.equippedOutfit}
             accessory={progress.equippedAccessory}
+            onClaimStarChest={handleClaimStarChest}
             onNextLevel={() => {
               if (nextLevelObj) startLevel(nextLevelObj);
             }}

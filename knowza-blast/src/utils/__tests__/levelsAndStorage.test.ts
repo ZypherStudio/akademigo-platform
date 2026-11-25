@@ -4,12 +4,18 @@ import { ACCESSORY_CATALOG, BLOCK_THEME_CATALOG, OUTFIT_CATALOG } from '../../da
 import { LEVELS, getLevelConfig, getLevelsByChapter } from '../../data/levels';
 import {
   INITIAL_PROGRESS,
+  STAR_CHEST_GOAL,
+  STAR_CHEST_REWARD_COINS,
+  addStarChestProgress,
   addXpToProgress,
   applyHeartRegen,
   ensurePlayerIdentity,
+  openStarChest,
   syncDailyQuests,
   xpForNextLevel
 } from '../storage';
+import { createEmptyGrid, createEmberCell } from '../puzzleEngine';
+import { detectActiveCoachTip } from '../../components/CoachMarkTip';
 import {
   getWinStreakCoinMultiplier,
   getWinStreakInfo,
@@ -140,5 +146,42 @@ describe('Knowza Blast Levels & Progression', () => {
     expect(rolled.dailyChallengeBest).toBe(0);
     expect(rolled.eventLinesProgress).toBe(0);
     expect(rolled.eventClaimedTiers).toEqual([]);
+  });
+
+  it('tracks Star Chest milestones and prioritizes unseen CoachMark tips cleanly', () => {
+    const partial = addStarChestProgress(INITIAL_PROGRESS, 20);
+    expect(partial.starChestProgress).toBe(20);
+    expect(openStarChest(partial)).toBeNull();
+
+    const ready = addStarChestProgress(partial, 10);
+    expect(ready.starChestProgress).toBe(30);
+    const opened = openStarChest(ready, 'rocket');
+    expect(opened).not.toBeNull();
+    expect(opened!.coins).toBe(STAR_CHEST_REWARD_COINS);
+    expect(opened!.progress.starChestProgress).toBe(30 - STAR_CHEST_GOAL);
+    expect(opened!.progress.coins).toBe(INITIAL_PROGRESS.coins + STAR_CHEST_REWARD_COINS);
+    expect(opened!.progress.boosters.rocket).toBe(INITIAL_PROGRESS.boosters.rocket + 1);
+
+    const gridWithEmber = createEmptyGrid(8);
+    gridWithEmber[2][2] = createEmberCell('red', 3);
+    expect(
+      detectActiveCoachTip({ grid: gridWithEmber, bonusCount: 2, seenTips: [], allowHoldHint: true })
+    ).toBe('ember_hazard');
+    expect(
+      detectActiveCoachTip({
+        grid: gridWithEmber,
+        bonusCount: 2,
+        seenTips: ['ember_hazard'],
+        allowHoldHint: true
+      })
+    ).toBe('bonus_2x');
+    expect(
+      detectActiveCoachTip({
+        grid: createEmptyGrid(8),
+        bonusCount: 0,
+        seenTips: ['ember_hazard', 'bonus_2x'],
+        allowHoldHint: true
+      })
+    ).toBe('hold_pocket');
   });
 });

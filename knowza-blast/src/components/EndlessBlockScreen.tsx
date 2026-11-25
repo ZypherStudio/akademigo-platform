@@ -32,6 +32,7 @@ import { BlockTrayPiece } from './BlockTrayPiece';
 import { BeamVfx, BoardVfxLayer, GhostVfx, RingVfx, ShardVfx } from './BoardVfxLayer';
 import { CubeTile } from './CubeTile';
 import { ActiveDuelSession } from './DuelLobbyModal';
+import { CoachMarkTip, CoachTipId, detectActiveCoachTip } from './CoachMarkTip';
 import { FeverMeterControl } from './FeverMeterControl';
 import { FloatingDraggedPiece } from './FloatingDraggedPiece';
 import { HoldSlotBox } from './HoldSlotBox';
@@ -41,6 +42,8 @@ interface EndlessBlockScreenProps {
   progress: PlayerProgress;
   mode?: 'endless' | 'sprint' | 'daily' | 'duel';
   duelSession?: ActiveDuelSession | null;
+  seenTutorialTips?: string[];
+  onDismissTutorialTip?: (tipId: CoachTipId) => void;
   onExit: () => void;
   onLineClearedDelta?: (lines: number) => void;
   onGameOverScore: (
@@ -90,6 +93,8 @@ export const EndlessBlockScreen: React.FC<EndlessBlockScreenProps> = ({
   progress,
   mode = 'endless',
   duelSession = null,
+  seenTutorialTips = [],
+  onDismissTutorialTip,
   onExit,
   onLineClearedDelta,
   onGameOverScore
@@ -157,6 +162,35 @@ export const EndlessBlockScreen: React.FC<EndlessBlockScreenProps> = ({
   const [recentlyPlaced, setRecentlyPlaced] = useState<Set<string>>(new Set());
 
   const boardRef = useRef<HTMLDivElement | null>(null);
+  const initialSavedBest = isDaily
+    ? progress.dailyChallengeBest || 0
+    : isSprint
+    ? progress.highSprintScore || 0
+    : isDuel
+    ? 0
+    : progress.highBlockScore;
+  const passedRecordRef = useRef(false);
+
+  const activeCoachTip = useMemo(
+    () =>
+      detectActiveCoachTip({
+        grid,
+        bonusCount: bonusCoords.size,
+        seenTips: seenTutorialTips,
+        allowHoldHint: true
+      }),
+    [grid, bonusCoords, seenTutorialTips]
+  );
+
+  useEffect(() => {
+    if (!isDuel && initialSavedBest > 0 && score > initialSavedBest && !passedRecordRef.current) {
+      passedRecordRef.current = true;
+      sfx.reward();
+      triggerReaction('combo');
+      pushCallout('YENİ REKOR!', `${initialSavedBest} geçildi!`, 'cross');
+      confetti({ particleCount: 42, spread: 65, origin: { y: 0.45 } });
+    }
+  }, [score, initialSavedBest, isDuel]);
 
   const endlessMood: KnowzaMood = gameOver
     ? gameOverReason === 'time'
@@ -600,6 +634,7 @@ export const EndlessBlockScreen: React.FC<EndlessBlockScreenProps> = ({
     setRotateCharges(1);
     setRerollCharges(1);
     setTimeLeft(isDuel ? 60 : 90);
+    passedRecordRef.current = false;
     setSharedDaily(false);
     setGameOver(false);
   };
@@ -821,6 +856,13 @@ export const EndlessBlockScreen: React.FC<EndlessBlockScreenProps> = ({
           </span>
         </div>
       </div>
+
+      {/* First-Time Mechanic Coach Tip */}
+      {activeCoachTip && onDismissTutorialTip && !gameOver && (
+        <div className="relative z-30 w-full flex justify-center px-3 mt-1">
+          <CoachMarkTip tipId={activeCoachTip} onDismiss={onDismissTutorialTip} />
+        </div>
+      )}
 
       {/* 8x8 Board */}
       <div className="relative z-20 w-full max-w-[400px] px-3 flex items-center justify-center my-auto">

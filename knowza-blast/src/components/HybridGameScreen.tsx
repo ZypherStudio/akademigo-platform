@@ -42,6 +42,7 @@ import {
   ShardVfx
 } from './BoardVfxLayer';
 import { BoosterIcon } from './BoosterIcon';
+import { CoachMarkTip, CoachTipId, detectActiveCoachTip } from './CoachMarkTip';
 import { CUBE_PALETTE, CubeEmblem, CubeTile } from './CubeTile';
 import { FeverMeterControl, INSTANT_FEVER_COIN_COST } from './FeverMeterControl';
 import { FloatingDraggedPiece } from './FloatingDraggedPiece';
@@ -67,6 +68,8 @@ interface HybridGameScreenProps {
   }) => void;
   onSpendCoins?: (amount: number) => boolean;
   onMoodChange?: (mood: KnowzaMood) => void;
+  seenTutorialTips?: string[];
+  onDismissTutorialTip?: (tipId: CoachTipId) => void;
   onWin: (starsEarned: number, remainingMoves: number) => void;
   onFail: () => void;
 }
@@ -104,6 +107,8 @@ export const HybridGameScreen: React.FC<HybridGameScreenProps> = ({
   onProgressStats,
   onSpendCoins,
   onMoodChange,
+  seenTutorialTips = [],
+  onDismissTutorialTip,
   onWin,
   onFail
 }) => {
@@ -162,10 +167,28 @@ export const HybridGameScreen: React.FC<HybridGameScreenProps> = ({
   const [mascotSpeech, setMascotSpeech] = useState<string | null>(null);
   const [recentlyPlaced, setRecentlyPlaced] = useState<Set<string>>(new Set());
   const [outcomeTriggered, setOutcomeTriggered] = useState<'none' | 'won' | 'lost'>('none');
+  const [showStageIntro, setShowStageIntro] = useState(true);
 
   const boardRef = useRef<HTMLDivElement | null>(null);
   const targetsBoxRef = useRef<HTMLDivElement | null>(null);
   const prevBonusRef = useRef<number>(bonusMovesCount);
+
+  useEffect(() => {
+    setShowStageIntro(true);
+    const t = setTimeout(() => setShowStageIntro(false), 1950);
+    return () => clearTimeout(t);
+  }, [level.id]);
+
+  const activeCoachTip = useMemo(
+    () =>
+      detectActiveCoachTip({
+        grid,
+        bonusCount: bonusCoords.size,
+        seenTips: seenTutorialTips,
+        allowHoldHint: level.id >= 2
+      }),
+    [grid, bonusCoords, seenTutorialTips, level.id]
+  );
 
   useEffect(() => {
     const init = buildBoard();
@@ -926,6 +949,11 @@ export const HybridGameScreen: React.FC<HybridGameScreenProps> = ({
           </div>
         )}
 
+        {/* Contextual First-Time Spotlight Tip (non-blocking dismiss) */}
+        {activeCoachTip && onDismissTutorialTip && !armedBooster && (
+          <CoachMarkTip tipId={activeCoachTip} onDismiss={onDismissTutorialTip} />
+        )}
+
         {/* Main Biome-Styled 8x8 Block Blast Board */}
         <div
           className={`rounded-[20px] border-4 ${biome.boardFrameClass} shadow-[0_12px_28px_rgba(0,0,0,0.42)] p-2 w-full aspect-square max-w-[355px] relative transition-shadow ${
@@ -1253,6 +1281,25 @@ export const HybridGameScreen: React.FC<HybridGameScreenProps> = ({
           <CubeEmblem color={ft.color} className="w-3.5 h-3.5 text-white/80" />
         </div>
       ))}
+
+      {/* Non-blocking Stage Intro Banner Overlay */}
+      {showStageIntro && (
+        <div className="pointer-events-none fixed inset-x-0 top-[29%] z-40 flex justify-center px-4">
+          <div className="ribbon-banner-gold rounded-2xl px-4 py-2 text-center animate-stage-ribbon max-w-[300px]">
+            <div className="flex items-center justify-center gap-1.5">
+              <span className="font-display text-lg font-black text-[#471f04]">
+                Seviye {level.id}
+              </span>
+              <span className={`px-2 py-0.5 rounded-full text-[9px] font-black border ${biome.badgeClass}`}>
+                {biome.name}
+              </span>
+            </div>
+            <div className="text-[10px] font-black text-[#693506]">
+              {level.subtitle}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

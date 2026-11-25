@@ -6,6 +6,7 @@ import {
   Coins,
   Flame,
   Gem,
+  Gift,
   GraduationCap,
   Heart,
   HelpCircle,
@@ -23,7 +24,7 @@ import { getBiomeForLevel, TOTAL_LEVELS } from '../data/biomes';
 import { AccessoryId, InventoryBooster, LevelConfig, OutfitId, PlayerProgress, TargetKey } from '../types/game';
 import { assetUrl } from '../utils/assets';
 import { sfx } from '../utils/sound';
-import { getNextHeartSeconds, xpForNextLevel } from '../utils/storage';
+import { STAR_CHEST_GOAL, STAR_CHEST_REWARD_COINS, getNextHeartSeconds, xpForNextLevel } from '../utils/storage';
 import { WIN_STREAK_MAX_TIER, getWinStreakInfo, getWinStreakTier } from '../utils/winStreak';
 import { BoosterIcon } from './BoosterIcon';
 import { CastleDiorama } from './CastleDiorama';
@@ -70,16 +71,19 @@ export const LevelIntroModal: React.FC<{
           <X className="w-4 h-4 stroke-[3]" />
         </button>
 
-        <div className="flex items-center justify-center gap-1.5 mt-1">
-          <h2 className="font-display text-2xl font-black text-[#4a2206]">
+        <div className="-mt-9 mb-1.5 flex items-center justify-center">
+          <div className="ribbon-banner-gold px-6 py-1 rounded-full font-display text-xl font-black text-[#471f04] shadow-md">
             Seviye {level.id}
-          </h2>
+          </div>
+        </div>
+
+        <div className="flex items-center justify-center gap-1.5">
           <span className={`px-2 py-0.5 rounded-full text-[9.5px] font-black border ${biome.badgeClass}`}>
             {biome.name}
           </span>
-        </div>
-        <div className="text-xs font-extrabold text-[#754014] mt-0.5">
-          {level.name} • {TOTAL_LEVELS.toLocaleString('tr-TR')} Seviye
+          <span className="text-[11px] font-extrabold text-[#754014]">
+            {level.name}
+          </span>
         </div>
         <p className="text-[11px] font-bold text-[#8a5220] mt-1 leading-snug">{level.subtitle}</p>
         <div className="mt-1 text-[10px] font-extrabold text-[#5c2c09] bg-amber-100/80 border border-amber-300/80 rounded-xl px-2.5 py-1">
@@ -212,15 +216,32 @@ export const LevelIntroModal: React.FC<{
 /* ============================================================================
  * 2. Victory Modal (Reference Image 1 & 2 - "Harika! / Seviye Tamamlandı!")
  * ========================================================================== */
+const VICTORY_COIN_RAYS = [
+  { cx: '-42px', cy: '-52px', delay: '0ms' },
+  { cx: '-18px', cy: '-66px', delay: '70ms' },
+  { cx: '14px', cy: '-68px', delay: '130ms' },
+  { cx: '40px', cy: '-54px', delay: '90ms' },
+  { cx: '-30px', cy: '-38px', delay: '180ms' },
+  { cx: '28px', cy: '-40px', delay: '220ms' }
+];
+
+const BOOSTER_TURKISH_LABELS: Record<'rocket' | 'bomb' | 'hammer', string> = {
+  rocket: 'Roket',
+  bomb: 'Bomba',
+  hammer: 'Çekiç'
+};
+
 export const VictoryModal: React.FC<{
   level: LevelConfig;
   starsEarned: number;
   bonusCoins: number;
   winStreak?: number;
   streakBonusCoins?: number;
+  starChestProgress?: number;
   hasNextLevel: boolean;
   outfit?: OutfitId;
   accessory?: AccessoryId;
+  onClaimStarChest?: () => { coins: number; booster: 'rocket' | 'bomb' | 'hammer' } | null;
   onNextLevel: () => void;
   onMap: () => void;
 }> = ({
@@ -229,15 +250,20 @@ export const VictoryModal: React.FC<{
   bonusCoins,
   winStreak = 1,
   streakBonusCoins = 0,
+  starChestProgress = 0,
   hasNextLevel,
   outfit = 'classic',
   accessory = 'none',
+  onClaimStarChest,
   onNextLevel,
   onMap
 }) => {
   const totalCoinsAwarded = level.rewards.coins + bonusCoins + streakBonusCoins;
   const [revealedStars, setRevealedStars] = useState(0);
   const [coinTally, setCoinTally] = useState(0);
+  const [chestOpenedNote, setChestOpenedNote] = useState<string | null>(null);
+  const chestReady = starChestProgress >= STAR_CHEST_GOAL;
+  const chestPct = Math.min(100, Math.round((starChestProgress / STAR_CHEST_GOAL) * 100));
 
   useEffect(() => {
     sfx.win();
@@ -309,7 +335,7 @@ export const VictoryModal: React.FC<{
 
         {/* Parchment Card */}
         <div className="parchment-card rounded-3xl pt-7 pb-5 px-5 relative z-20">
-          <div className="bg-gradient-to-r from-[#ffcf33] via-[#ffe875] to-[#ffcf33] border-2 border-[#a85900] rounded-xl py-1 px-3 font-display text-base font-black text-[#471f04] shadow -mt-10 mb-3">
+          <div className="ribbon-banner-gold inline-block rounded-full py-1 px-5 font-display text-base font-black text-[#471f04] -mt-10 mb-3">
             Seviye {level.id} Tamamlandı!
           </div>
 
@@ -330,16 +356,74 @@ export const VictoryModal: React.FC<{
             )}
           </div>
 
-          <div className="flex items-center justify-center gap-2 mb-4 text-xs font-black">
+          <div className="flex items-center justify-center gap-2 mb-3 text-xs font-black">
             <div className="parchment-subcard rounded-xl px-2.5 py-1.5 flex items-center gap-1 text-[#5c2c09]">
               <Star className="w-4 h-4 text-amber-500 fill-amber-500" /> +{level.rewards.stars}
             </div>
-            <div className="parchment-subcard rounded-xl px-2.5 py-1.5 flex items-center gap-1 text-[#5c2c09]">
+            <div className="parchment-subcard rounded-xl px-2.5 py-1.5 flex items-center gap-1 text-[#5c2c09] relative">
               <Coins className="w-4 h-4 text-amber-600" /> +{coinTally}
+              {VICTORY_COIN_RAYS.map((ray, idx) => (
+                <span
+                  key={idx}
+                  aria-hidden="true"
+                  className="pointer-events-none absolute left-1/2 top-1/2 w-3.5 h-3.5 rounded-full bg-gradient-to-b from-yellow-300 to-amber-500 border border-amber-800 shadow animate-coin-burst"
+                  style={{
+                    ['--cx' as string]: ray.cx,
+                    ['--cy' as string]: ray.cy,
+                    animationDelay: ray.delay
+                  }}
+                />
+              ))}
             </div>
             <div className="parchment-subcard rounded-xl px-2.5 py-1.5 text-purple-800">
               +{level.rewards.xp} XP
             </div>
+          </div>
+
+          {/* 25-Star Milestone Star Chest Loop */}
+          <div className="parchment-subcard rounded-2xl px-3 py-2 mb-3 text-left">
+            <div className="flex items-center justify-between gap-2 mb-1">
+              <span className="inline-flex items-center gap-1 text-[10.5px] font-black text-[#471f04]">
+                <Gift className={`w-3.5 h-3.5 ${chestReady ? 'text-emerald-600 animate-bounce' : 'text-amber-600'}`} />
+                Yıldız Sandığı
+              </span>
+              <span className="text-[10px] font-black text-[#754014] tabular-nums">
+                {Math.min(STAR_CHEST_GOAL, starChestProgress)}/{STAR_CHEST_GOAL}
+              </span>
+            </div>
+            <div className="w-full h-2 rounded-full bg-[#e3c38d] overflow-hidden border border-[#b98344]/60">
+              <div
+                className="h-full rounded-full bg-gradient-to-r from-[#ffbe18] via-[#fb923c] to-[#22c55e] transition-all duration-500"
+                style={{ width: `${chestPct}%` }}
+              />
+            </div>
+            {chestOpenedNote ? (
+              <div className="mt-1.5 text-center text-[10.5px] font-black text-emerald-700 animate-pop-in">
+                {chestOpenedNote}
+              </div>
+            ) : chestReady && onClaimStarChest ? (
+              <button
+                type="button"
+                onClick={() => {
+                  const res = onClaimStarChest();
+                  if (res) {
+                    sfx.reward();
+                    confetti({ particleCount: 55, spread: 70, origin: { y: 0.6 } });
+                    setChestOpenedNote(
+                      `Açıldı! +${res.coins || STAR_CHEST_REWARD_COINS} Altın & +1 ${BOOSTER_TURKISH_LABELS[res.booster]}!`
+                    );
+                  }
+                }}
+                className="mt-1.5 green-btn w-full py-1.5 rounded-xl text-[11px] font-black flex items-center justify-center gap-1"
+              >
+                <Gift className="w-3.5 h-3.5" />
+                <span>Sandığı Aç! (+{STAR_CHEST_REWARD_COINS} Altın & Güçlendirici)</span>
+              </button>
+            ) : (
+              <div className="mt-1 text-[9.5px] font-bold text-[#7c4819]">
+                Sandığa {Math.max(0, STAR_CHEST_GOAL - starChestProgress)} yıldız kaldı!
+              </div>
+            )}
           </div>
 
           <div className="flex flex-col gap-2">
@@ -408,7 +492,10 @@ export const FailModal: React.FC<{
           />
         </div>
 
-        <div className="parchment-card rounded-3xl pt-8 pb-5 px-5 relative z-20">
+        <div className="parchment-card rounded-3xl pt-7 pb-5 px-5 relative z-20">
+          <div className="ribbon-banner-crimson inline-block rounded-full py-1 px-5 font-display text-sm font-black text-white -mt-10 mb-2.5">
+            Alan Doldu!
+          </div>
           {lostStreak > 0 && (
             <div className="mb-2 bg-rose-100 border border-rose-300 text-rose-800 rounded-xl px-3 py-1.5 text-[11px] font-black flex items-center justify-center gap-1.5">
               <Flame className="w-3.5 h-3.5 text-rose-600 shrink-0" />
@@ -807,7 +894,7 @@ export const DailyLoginModal: React.FC<{
           <X className="w-4 h-4 stroke-[3]" />
         </button>
 
-        <div className="wood-ribbon inline-block px-5 py-1 rounded-full font-display text-base font-bold text-[#fff3d1] -mt-9 mb-2">
+        <div className="ribbon-banner-royal inline-block px-5 py-1 rounded-full font-display text-base font-bold text-white -mt-9 mb-2">
           {tab === 'login' ? 'Günlük Giriş' : 'Bilgi Çarkı'}
         </div>
 
@@ -942,7 +1029,7 @@ export const QuestsModal: React.FC<{
         </button>
 
         <div className="text-center mb-3">
-          <div className="wood-ribbon inline-block px-5 py-1 rounded-full font-display text-base font-bold text-[#fff3d1] -mt-9">
+          <div className="ribbon-banner-gold inline-block px-5 py-1 rounded-full font-display text-base font-black text-[#471f04] -mt-9">
             Günlük Görevler
           </div>
           <div className="mt-1.5 inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-orange-100 border border-orange-300 text-[10.5px] font-black text-orange-800">

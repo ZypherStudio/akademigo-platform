@@ -864,4 +864,76 @@
   animation: rocketFlyD 0.36s ease-in forwards;
 }
 
+/* Game UI Database Tactile Ribbon Banners & Choreographed VFX */
+.ribbon-banner-gold {
+  background: linear-gradient(180deg, #ffe972 0%, #ffb71c 52%, #d97800 100%);
+  border: 2.5px solid #6b3000;
+  box-shadow:
+    inset 0 2px 0 rgba(255, 255, 255, 0.78),
+    inset 0 -3px 0 rgba(145, 70, 0, 0.45),
+    0 4px 0 #703400,
+    0 8px 18px rgba(35, 14, 0, 0.48);
+}
+
+.ribbon-banner-royal {
+  background: linear-gradient(180deg, #9d6bff 0%, #7339db 54%, #4f20a8 100%);
+  border: 2.5px solid #2e1065;
+  box-shadow:
+    inset 0 2px 0 rgba(244, 232, 255, 0.65),
+    inset 0 -3px 0 rgba(40, 12, 92, 0.5),
+    0 4px 0 #31126b,
+    0 8px 18px rgba(20, 8, 52, 0.5);
+}
+
+.ribbon-banner-crimson {
+  background: linear-gradient(180deg, #fb7185 0%, #e11d48 54%, #9f1239 100%);
+  border: 2.5px solid #4c0519;
+  box-shadow:
+    inset 0 2px 0 rgba(255, 228, 235, 0.62),
+    inset 0 -3px 0 rgba(100, 10, 35, 0.45),
+    0 4px 0 #6b0b25,
+    0 8px 18px rgba(45, 5, 18, 0.48);
+}
+
+@keyframes stageRibbonSlide {
+  0% {
+    transform: translateY(-28px) scale(0.86);
+    opacity: 0;
+  }
+  16% {
+    transform: translateY(2px) scale(1.03);
+    opacity: 1;
+  }
+  24%, 78% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-16px) scale(0.95);
+    opacity: 0;
+  }
+}
+.animate-stage-ribbon {
+  animation: stageRibbonSlide 1.95s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes coinBurstUp {
+  0% {
+    transform: translate(0, 0) scale(0.6) rotate(0deg);
+    opacity: 0;
+  }
+  18% {
+    transform: translate(calc(var(--cx) * 0.35), -18px) scale(1.1) rotate(25deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(var(--cx), var(--cy)) scale(0.45) rotate(180deg);
+    opacity: 0;
+  }
+}
+.animate-coin-burst {
+  animation: coinBurstUp 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+
 

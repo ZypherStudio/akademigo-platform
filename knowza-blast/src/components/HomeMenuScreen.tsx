@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
+import confetti from 'canvas-confetti';
 import { Calendar, Check, Coins, Crown, Flame, Gift, Map, Play, Shirt, ShoppingBag, Smartphone, Sparkles, Star, Swords, Timer, Trophy, UserPlus, X } from 'lucide-react';
 import { TOTAL_LEVELS, getBiomeForLevel } from '../data/biomes';
 import { LEVELS } from '../data/levels';
 import { KnowzaMood, LevelConfig, PlayerProgress } from '../types/game';
 import { sfx } from '../utils/sound';
+import { STAR_CHEST_GOAL } from '../utils/storage';
 import { WIN_STREAK_MAX_TIER, getWinStreakInfo, getWinStreakTier } from '../utils/winStreak';
 import { BiomeWorldBackground } from './BiomeWorldArt';
 import { CubeTile } from './CubeTile';
@@ -27,6 +29,7 @@ interface HomeMenuScreenProps {
   onOpenDuel: () => void;
   onOpenSocial: (tab?: SocialTab) => void;
   onClaimEventTier: (tier: number) => void;
+  onClaimStarChest?: () => { coins: number; booster: 'rocket' | 'bomb' | 'hammer' } | null;
   onOpenWardrobe: () => void;
   onOpenQuests: () => void;
   onOpenDaily: () => void;
@@ -46,6 +49,7 @@ export const HomeMenuScreen: React.FC<HomeMenuScreenProps> = ({
   onOpenDuel,
   onOpenSocial,
   onClaimEventTier,
+  onClaimStarChest,
   onOpenWardrobe,
   onOpenQuests,
   onOpenDaily,
@@ -263,7 +267,7 @@ export const HomeMenuScreen: React.FC<HomeMenuScreenProps> = ({
 
             {/* Top Hero Title + Reward Chest */}
             <div className="relative z-10 p-2.5 flex items-start justify-between gap-1">
-              <div className="bg-[#3d1e07]/85 backdrop-blur-sm border border-[#e3a857]/60 rounded-2xl px-2.5 py-1.5">
+              <div className="bg-[#3d1e07]/90 backdrop-blur-sm border border-[#e3a857]/60 rounded-2xl px-2.5 py-1.5">
                 <div className="flex items-center gap-1.5">
                   <h1 className="font-display text-base font-black text-[#fff3d1] leading-tight">
                     Knowza Blast
@@ -277,20 +281,61 @@ export const HomeMenuScreen: React.FC<HomeMenuScreenProps> = ({
                 </p>
               </div>
 
-              <button
-                type="button"
-                onClick={() => {
-                  sfx.click();
-                  onOpenDaily();
-                }}
-                className="parchment-card rounded-xl px-2 py-1 flex items-center gap-1 relative shrink-0 active:scale-95 transition-transform"
-              >
-                <Gift className="w-3.5 h-3.5 text-amber-600" />
-                <span className="text-[9px] font-black text-[#4d2407]">Ödül</span>
-                {dailyAvailable && (
-                  <span className="w-2 h-2 rounded-full bg-red-600 animate-ping" />
-                )}
-              </button>
+              <div className="flex flex-col items-end gap-1 shrink-0">
+                <button
+                  type="button"
+                  onClick={() => {
+                    sfx.click();
+                    onOpenDaily();
+                  }}
+                  className="parchment-card rounded-xl px-2 py-1 flex items-center gap-1 relative shrink-0 active:scale-95 transition-transform"
+                >
+                  <Gift className="w-3.5 h-3.5 text-amber-600" />
+                  <span className="text-[9px] font-black text-[#4d2407]">Ödül</span>
+                  {dailyAvailable && (
+                    <span className="w-2 h-2 rounded-full bg-red-600 animate-ping" />
+                  )}
+                </button>
+
+                {(() => {
+                  const chestProg = progress.starChestProgress || 0;
+                  const chestReady = chestProg >= STAR_CHEST_GOAL;
+                  return (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (chestReady && onClaimStarChest) {
+                          const res = onClaimStarChest();
+                          if (res) {
+                            sfx.reward();
+                            confetti({ particleCount: 55, spread: 70, origin: { y: 0.4 } });
+                            setHeroNote(`+${res.coins} Altın!` );
+                            setTimeout(() => setHeroNote(null), 2200);
+                            return;
+                          }
+                        }
+                        sfx.click();
+                        setHomeMood('happy');
+                        setHeroNote(`${Math.min(STAR_CHEST_GOAL, chestProg)}/${STAR_CHEST_GOAL} Yıldız Sandığı`);
+                        setTimeout(() => {
+                          setHomeMood('idle');
+                          setHeroNote(null);
+                        }, 1800);
+                      }}
+                      className={`rounded-xl px-2 py-0.5 flex items-center gap-1 shadow active:scale-95 transition-transform ${
+                        chestReady
+                          ? 'green-btn border border-emerald-200 animate-pulse'
+                          : 'bg-[#3d1e07]/90 border border-[#ffd466]/60 text-[#ffe699]'
+                      }`}
+                    >
+                      <Star className={`w-3 h-3 ${chestReady ? 'text-yellow-200 fill-yellow-200' : 'text-amber-400 fill-amber-400'}`} />
+                      <span className="text-[9px] font-black tabular-nums">
+                        {chestReady ? 'Sandık Aç!' : `${chestProg}/${STAR_CHEST_GOAL}`}
+                      </span>
+                    </button>
+                  );
+                })()}
+              </div>
             </div>
 
             {/* Knowza Mascot + Stepping Pedestal Preview */}
